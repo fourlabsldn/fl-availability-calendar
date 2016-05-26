@@ -1,0 +1,105 @@
+.multi-sub-calendar {
+  position: absolute;
+  padding: 10px;
+  -webkit-user-select: none;
+  /* Chrome/Safari/Opera */
+  user-select: none; }
+  .multi-sub-calendar tr:not(.th):hover {
+    -webkit-filter: brightness(90%);
+    filter: brightness(90%); }
+  .multi-sub-calendar td, .multi-sub-calendar th {
+    padding: 0;
+    margin: 5px;
+    text-align: center;
+    white-space: nowrap;
+    position: relative;
+    max-width: 30px; }
+  .multi-sub-calendar th {
+    background-color: #bddaf7;
+    padding: 0 5px;
+    overflow: hidden; }
+  .multi-sub-calendar td:first-of-type {
+    background-color: white;
+    max-width: none; }
+  .multi-sub-calendar td {
+    border: 5px solid transparent;
+    background-color: #88d3b2;
+    padding: 5px;
+    min-width: 30px;
+    min-height: 30px;
+    max-width: 30px;
+    max-height: 30px; }
+    .multi-sub-calendar td:not(:first-child):hover {
+      -webkit-filter: brightness(130%);
+      filter: brightness(130%); }
+  .multi-sub-calendar .half-busy {
+    background-color: #ffdd77 !important; }
+  .multi-sub-calendar .busy {
+    background-color: #f5b2b4 !important; }
+  .multi-sub-calendar .month0 {
+    background-color: #f5b2b4 !important; }
+  .multi-sub-calendar .month1 {
+    background-color: #ade1ca !important; }
+  .multi-sub-calendar .month2 {
+    background-color: #90c1f1 !important; }
+
+.cal-popup {
+  top: 0px;
+  left: 0px;
+  display: block;
+  position: absolute;
+  z-index: 5;
+  min-width: 200px;
+  background-color: #273238;
+  color: white;
+  border-radius: 5px;
+  padding: 2px 5px;
+  text-align: center;
+  transition: all 0.2s ease;
+  pointer-events: none; }
+
+.cal-button-bar {
+  display: inline-block;
+  background-color: #bddaf7; }
+  .cal-button-bar .cal-btn {
+    background-color: #bddaf7;
+    border: none;
+    text-align: center;
+    vertical-align: bottom; }
+  .cal-button-bar .cal-btn:hover {
+    background-color: #d4e7f9; }
+
+.cal-datepicker {
+  display: inline;
+  position: relative;
+  min-width: 24px;
+  min-height: 24px;
+  padding: 0px 5px;
+  margin: 0px;
+  font-size: 18px; }
+  .cal-datepicker::-webkit-datetime-edit, .cal-datepicker::-webkit-inner-spin-button, .cal-datepicker::-webkit-clear-button {
+    display: none; }
+  .cal-datepicker::-webkit-calendar-picker-indicator, .cal-datepicker::-webkit-calendar-picker-indicator:hover {
+    background-color: #63A8EB;
+    opacity: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    margin: auto;
+    width: 100%;
+    height: 100%; }
+
+.cal-rows-wrapper {
+  max-height: 100px;
+  overflow: scroll; }
+
+.multi-sub-cal-container {
+  display: block;
+  width: 100%; }
+  .multi-sub-cal-container .cal-phantom-el {
+    display: block;
+    min-height: 100px; }
+
+/*# sourceMappingURL=fl-multi-subject-calendar.css.map */

@@ -15,8 +15,8 @@ const paths = {
     dest: './dist/',
   },
   sass: {
-    src: './src/sass',
-    dest: `./dist/${moduleName}.css`,
+    src: './src/sass/main.scss',
+    dest: `./dist/`,
   },
   demo: {
     src: './demo',
@@ -48,22 +48,27 @@ gulp.task('watch:build:src', () => {
   gulp.watch(paths.js.src, ['build:src']);
 });
 
+
+gulp.task('build:sass', () => {
+  return gulp.src(paths.sass.src)
+  .pipe(sourcemaps.init())
+  .pipe(sass().on('error', sass.logError))
+  .pipe(rename({ basename: moduleName }))
+  .pipe(sourcemaps.write('.'))
+  .pipe(gulp.dest(paths.sass.dest));
+});
+
+gulp.task('watch:build:sass', () => {
+  gulp.watch(paths.sass.dest, ['build:sass']);
+});
+
 gulp.task('build', [
   'build:src',
+  'build:sass',
 ]);
 
-gulp.task('sass', () => {
-  return gulp.src(paths.sass.src)
-    .pipe(sass().on('error', sass.logError))
-    .pipe(gulp.dest(paths.sass.dest));
-});
-
-gulp.task('watch:sass', () => {
-  gulp.watch(paths.sass.dest, ['sass']);
-});
-
 gulp.task('watch', [
-  'watch:sass',
+  'watch:build:sass',
   'watch:build:src',
 ]);
 
