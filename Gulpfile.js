@@ -7,6 +7,8 @@ const rollup = require('gulp-rollup');
 const sass = require('gulp-sass');
 const DepLinker = require('dep-linker');
 const rename = require('gulp-rename');
+const autoprefixer = require('autoprefixer');
+const postcss = require('gulp-postcss');
 
 const moduleName = 'fl-multi-subject-calendar';
 const paths = {
@@ -55,6 +57,7 @@ gulp.task('build:sass', () => {
   return gulp.src(paths.sass.main)
   .pipe(sourcemaps.init())
   .pipe(sass().on('error', sass.logError))
+  .pipe(postcss([autoprefixer({ browsers: ['last 15 versions'] })]))
   .pipe(rename({ basename: moduleName }))
   .pipe(sourcemaps.write('.'))
   .pipe(gulp.dest(paths.sass.dest));

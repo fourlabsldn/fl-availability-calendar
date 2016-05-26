@@ -498,7 +498,7 @@ function Calendar(el) {
 
     var btn3 = document.createElement('button');
     btn3.innerText = 'Scroll up';
-    btn3.classList.add('cal-btn');
+    btn3.classList.add(CSS_PREFIX + '-btn-bar-btn');
     btn3.addEventListener('mousedown', function () {
       var interval = setInterval(function () {
         _this.scroll('up');
@@ -512,7 +512,7 @@ function Calendar(el) {
 
     var btn4 = document.createElement('button');
     btn4.innerText = 'Scroll down';
-    btn4.classList.add('cal-btn');
+    btn4.classList.add(CSS_PREFIX + '-btn-bar-btn');
     btn4.addEventListener('mousedown', function () {
       var interval = setInterval(function () {
         _this.scroll('down');
@@ -525,10 +525,10 @@ function Calendar(el) {
     });
 
     datepicker.setAttribute('type', 'month');
-    datepicker.classList.add('cal-datepicker');
+    datepicker.classList.add(CSS_PREFIX + '-btn-bar-datepicker');
     datepicker.classList.add('glyphicon');
     datepicker.classList.add('glyphicon-calendar');
-    datepicker.classList.add('cal-btn');
+    datepicker.classList.add(CSS_PREFIX + '-btn-bar-btn');
 
     datepicker.addEventListener('change', function (e) {
       _this.setStartDate(moment(e.target.value));
