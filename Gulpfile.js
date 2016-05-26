@@ -6,15 +6,17 @@ const babel = require('rollup-plugin-babel');
 const rollup = require('gulp-rollup');
 const sass = require('gulp-sass');
 const DepLinker = require('dep-linker');
+const rename = require('gulp-rename');
 
+const moduleName = 'fl-multi-subject-calendar';
 const paths = {
   js: {
     src: './src/main.js',
-    dest: './dist',
+    dest: './dist/',
   },
   sass: {
     src: './src/sass',
-    dest: './dist',
+    dest: `./dist/${moduleName}.css`,
   },
   demo: {
     src: './demo',
@@ -37,6 +39,7 @@ gulp.task('build:src', () => {
       }),
     ],
   }))
+  .pipe(rename({ basename: moduleName }))
   .pipe(sourcemaps.write('.'))
   .pipe(gulp.dest(paths.js.dest));
 });
@@ -65,4 +68,4 @@ gulp.task('watch', [
 ]);
 
 gulp.task('build-watch', ['build', 'watch']);
-gulp.demo('build-watch', ['copy-dependencies', 'build-watch']);
+gulp.task('demo', ['copy-dependencies', 'build-watch']);

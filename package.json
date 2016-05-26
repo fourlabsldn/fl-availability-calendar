@@ -4,7 +4,9 @@
   "description": "A simplified calendar for multiple subjects",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "gulp demo",
+    "demo": "gulp demo",
+    "dev": "gulp build-watch"
   },
   "keywords": [
     "four",
@@ -18,6 +20,7 @@
     "babel-preset-es2015-rollup": "^1.1.1",
     "dep-linker": "^0.1.21",
     "gulp": "^3.9.1",
+    "gulp-rename": "^1.2.2",
     "gulp-rollup": "^1.9.0",
     "gulp-sass": "^2.3.1",
     "gulp-sourcemaps": "^1.6.0",
@@ -25,6 +28,8 @@
     "rollup-plugin-babel": "^2.4.0"
   },
   "dependencies": {
+    "moment": "^2.13.0",
+    "moment-range": "^2.2.0",
     "x-div": "^1.0.43"
   }
 }

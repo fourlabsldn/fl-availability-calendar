@@ -1,0 +1,1 @@
+{"version":3,"names":[],"mappings":"","sources":["main.js"],"sourcesContent":["/* globals xController */\nimport Calendar from './calendar/calendar';\n\nxController((xdiv) => {\n  return new Calendar(xdiv);\n});\n"],"file":"fl-multi-subject-calendar.js","sourceRoot":"/source/"}

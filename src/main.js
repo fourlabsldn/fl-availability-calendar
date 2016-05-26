@@ -1,4 +1,6 @@
 /* globals xController */
+import Calendar from './calendar/calendar';
+
 xController((xdiv) => {
-  return xdiv;
+  return new Calendar(xdiv);
 });
