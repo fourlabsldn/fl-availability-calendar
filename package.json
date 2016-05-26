@@ -1,0 +1,30 @@
+{
+  "name": "fl-multi-subject-calendar",
+  "version": "0.1.0",
+  "description": "A simplified calendar for multiple subjects",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "four",
+    "labs",
+    "multi-subject",
+    "calendar"
+  ],
+  "author": "Lazamar @ FourLabs",
+  "license": "ISC",
+  "devDependencies": {
+    "babel-preset-es2015-rollup": "^1.1.1",
+    "dep-linker": "^0.1.21",
+    "gulp": "^3.9.1",
+    "gulp-rollup": "^1.9.0",
+    "gulp-sass": "^2.3.1",
+    "gulp-sourcemaps": "^1.6.0",
+    "gulp-watch": "^4.3.6",
+    "rollup-plugin-babel": "^2.4.0"
+  },
+  "dependencies": {
+    "x-div": "^1.0.43"
+  }
+}
