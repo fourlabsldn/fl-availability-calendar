@@ -1,4 +1,4 @@
-export default function PopUp() {
+export default function PopUp(xDivEl) {
 
   //Make sure it is called as a constructor
   if (!(this instanceof PopUp)) {

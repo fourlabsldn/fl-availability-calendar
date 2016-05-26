@@ -422,7 +422,7 @@ export default function Calendar(el) {
 
     tableEl = document.createElement('table');
     headings = new TableHeadings('Properties', tableEl);
-    popUp = new PopUp();
+    popUp = new PopUp(el);
     rowsWrapper = document.createElement('tbody');
 
     tableEl.setAttribute('draggable', true);

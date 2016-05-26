@@ -33,7 +33,7 @@ function debounce(callback, FuncDelay) {
   };
 }
 
-function PopUp() {
+function PopUp(xDivEl) {
 
   //Make sure it is called as a constructor
   if (!(this instanceof PopUp)) {
@@ -810,7 +810,7 @@ function Calendar(el) {
 
     tableEl = document.createElement('table');
     headings = new TableHeadings('Properties', tableEl);
-    popUp = new PopUp();
+    popUp = new PopUp(el);
     rowsWrapper = document.createElement('tbody');
 
     tableEl.setAttribute('draggable', true);

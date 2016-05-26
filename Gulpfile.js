@@ -11,12 +11,14 @@ const rename = require('gulp-rename');
 const moduleName = 'fl-multi-subject-calendar';
 const paths = {
   js: {
-    src: './src/main.js',
+    src: './src/**/*',
+    main: './src/main.js',
     dest: './dist/',
   },
   sass: {
-    src: './src/sass/main.scss',
-    dest: `./dist/`,
+    src: './src/sass/**/*',
+    main: './sass/main.scss',
+    dest: 'dist/',
   },
   demo: {
     src: './demo',
@@ -29,7 +31,7 @@ gulp.task('copy-dependencies', () => {
 });
 
 gulp.task('build:src', () => {
-  gulp.src(paths.js.src)
+  gulp.src(paths.js.main)
   .pipe(sourcemaps.init())
   .pipe(rollup({
     plugins: [
@@ -45,12 +47,12 @@ gulp.task('build:src', () => {
 });
 
 gulp.task('watch:build:src', () => {
-  gulp.watch(paths.js.src, ['build:src']);
+  gulp.watch(paths.js.src, ['build']);
 });
 
 
 gulp.task('build:sass', () => {
-  return gulp.src(paths.sass.src)
+  return gulp.src(paths.sass.main)
   .pipe(sourcemaps.init())
   .pipe(sass().on('error', sass.logError))
   .pipe(rename({ basename: moduleName }))
@@ -59,7 +61,7 @@ gulp.task('build:sass', () => {
 });
 
 gulp.task('watch:build:sass', () => {
-  gulp.watch(paths.sass.dest, ['build:sass']);
+  gulp.watch(paths.sass.src, ['build']);
 });
 
 gulp.task('build', [
