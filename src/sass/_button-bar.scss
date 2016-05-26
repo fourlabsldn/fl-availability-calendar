@@ -1,0 +1,44 @@
+.fl-msc-btn-bar {
+  display: inline-block;
+  background-color:  lighten($blue, 20%);
+}
+
+.fl-msc-btn-bar-btn {
+  background-color:  lighten($blue, 20%);
+  border: none;
+  text-align: center;
+  vertical-align: bottom;
+}
+.fl-msc-btn-bar-btn:hover{
+  background-color:  lighten($blue, 25%);
+}
+
+.cal-datepicker {
+  display: inline;
+  position: relative;
+  min-width: 24px;
+  min-height: 24px;
+  padding: 0px 5px;
+  margin: 0px;
+  font-size: 18px;
+
+  &::-webkit-datetime-edit,
+  &::-webkit-inner-spin-button,
+  &::-webkit-clear-button{
+    display:none;
+  }
+  &::-webkit-calendar-picker-indicator,
+  &::-webkit-calendar-picker-indicator:hover{
+    background-color: $blue;
+    opacity: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    margin: auto;
+    width: 100%;
+    height: 100%;
+    // background-color: red;
+  }
+}

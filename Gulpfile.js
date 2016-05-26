@@ -17,8 +17,8 @@ const paths = {
   },
   sass: {
     src: './src/sass/**/*',
-    main: './sass/main.scss',
-    dest: 'dist/',
+    main: './src/sass/main.scss',
+    dest: './dist/',
   },
   demo: {
     src: './demo',

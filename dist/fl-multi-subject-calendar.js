@@ -424,6 +424,8 @@ function createCalendarContent() {
   };
 }
 
+var CSS_PREFIX = 'fl-msc';
+
 // Some weid problem with moment-range.js is not creating the
 // right object. this if statement will fix it.
 if (!moment.range) {
@@ -467,8 +469,8 @@ function Calendar(el) {
 
     btn1.innerText = '<';
     btn2.innerText = '>';
-    btn1.classList.add('cal-btn');
-    btn2.classList.add('cal-btn');
+    btn1.classList.add(CSS_PREFIX + '-btn-bar-btn');
+    btn2.classList.add(CSS_PREFIX + '-btn-bar-btn');
 
     btn1.addEventListener('mousedown', function () {
       var addLeft = setInterval(function () {
@@ -532,7 +534,7 @@ function Calendar(el) {
       _this.setStartDate(moment(e.target.value));
     });
 
-    container.classList.add('cal-button-bar');
+    container.classList.add(CSS_PREFIX + '-btn-bar');
     container.appendChild(btn1);
     container.appendChild(btn2);
     container.appendChild(btn3);

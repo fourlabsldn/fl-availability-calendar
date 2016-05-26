@@ -1,3 +1,14 @@
+.cal-rows-wrapper {
+  max-height: 100px;
+  overflow: scroll; }
+
+.multi-sub-cal-container {
+  display: block;
+  width: 100%; }
+  .multi-sub-cal-container .cal-phantom-el {
+    display: block;
+    min-height: 100px; }
+
 .multi-sub-calendar {
   position: absolute;
   padding: 10px;
@@ -58,16 +69,18 @@
   transition: all 0.2s ease;
   pointer-events: none; }
 
-.cal-button-bar {
+.fl-msc-btn-bar {
   display: inline-block;
   background-color: #bddaf7; }
-  .cal-button-bar .cal-btn {
-    background-color: #bddaf7;
-    border: none;
-    text-align: center;
-    vertical-align: bottom; }
-  .cal-button-bar .cal-btn:hover {
-    background-color: #d4e7f9; }
+
+.fl-msc-btn-bar-btn {
+  background-color: #bddaf7;
+  border: none;
+  text-align: center;
+  vertical-align: bottom; }
+
+.fl-msc-btn-bar-btn:hover {
+  background-color: #d4e7f9; }
 
 .cal-datepicker {
   display: inline;
@@ -90,16 +103,5 @@
     margin: auto;
     width: 100%;
     height: 100%; }
-
-.cal-rows-wrapper {
-  max-height: 100px;
-  overflow: scroll; }
-
-.multi-sub-cal-container {
-  display: block;
-  width: 100%; }
-  .multi-sub-cal-container .cal-phantom-el {
-    display: block;
-    min-height: 100px; }
 
 /*# sourceMappingURL=fl-multi-subject-calendar.css.map */

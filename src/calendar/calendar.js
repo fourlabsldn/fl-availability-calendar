@@ -4,6 +4,8 @@ import PopUp from './PopUp';
 import TableHeadings from './TableHeadings';
 import createCalendarContent from './createSampleData';
 
+const CSS_PREFIX = 'fl-msc';
+
 // // Calendar object example
 // calendar = {
 //   properties: [
@@ -76,8 +78,8 @@ export default function Calendar(el) {
 
     btn1.innerText = '<';
     btn2.innerText = '>';
-    btn1.classList.add('cal-btn');
-    btn2.classList.add('cal-btn');
+    btn1.classList.add(`${CSS_PREFIX}-btn-bar-btn`);
+    btn2.classList.add(`${CSS_PREFIX}-btn-bar-btn`);
 
     btn1.addEventListener('mousedown', function () {
       var addLeft = setInterval(function () {
@@ -141,7 +143,7 @@ export default function Calendar(el) {
       _this.setStartDate(moment(e.target.value));
     });
 
-    container.classList.add('cal-button-bar');
+    container.classList.add(`${CSS_PREFIX}-btn-bar`);
     container.appendChild(btn1);
     container.appendChild(btn2);
     container.appendChild(btn3);
