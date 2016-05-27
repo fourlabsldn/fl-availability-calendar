@@ -42,13 +42,16 @@ th {
   background-color: white;
   max-width: none; }
 
-.fl-msc-day {
-  border: 5px solid transparent;
-  background-color: #88d3b2;
+.fl-msc-day,
+.fl-msc-header-date {
   min-width: 1em;
   max-width: 1em;
   min-height: 1em;
   max-height: 1em; }
+
+.fl-msc-day {
+  border: 5px solid transparent;
+  background-color: #88d3b2; }
   .fl-msc-day:hover {
     -webkit-filter: brightness(130%);
     filter: brightness(130%); }

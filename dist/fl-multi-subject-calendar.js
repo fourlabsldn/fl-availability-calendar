@@ -192,6 +192,7 @@ function TableHeadings(title, tableEl) {
         lastCell.setAttribute('colspan', colspan + 1);
       } else {
         var newCell = document.createElement('th');
+        newCell.classList.add('fl-msc-header-date');
 
         newCell.to = newDate;
         newCell.from = newDate.clone();
@@ -240,6 +241,7 @@ function TableHeadings(title, tableEl) {
 
       el = document.createElement('tr');
       el.classList.add('th');
+      el.classList.add('fl-msc-header-date');
 
       firstCell.innerText = title;
       firstCell.setAttribute('rowspan', '2');
@@ -280,6 +282,7 @@ function TableHeadings(title, tableEl) {
 
     function addColumn(side, date) {
       var newCell = document.createElement('th');
+      newCell.classList.add('fl-msc-header-date');
       var lastDate = lastDateOnSide(side) || moment();
       var dateShift = side === 'left' ? -1 : 1;
       var newDate = moment(lastDate).add(dateShift, 'days');
@@ -326,6 +329,7 @@ function TableHeadings(title, tableEl) {
     function createAt(table, date) {
       el = document.createElement('tr');
       el.classList.add('th');
+      el.classList.add('fl-msc-header-date');
 
       if (table.children[1]) {
         table.insertBefore(el, table.children[1]);
