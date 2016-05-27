@@ -193,6 +193,7 @@ export default function Calendar(el) {
   function createCell(subj, date) {
     var event = subj.eventOnDate(date);
     var slot = document.createElement('td');
+    slot.classList.add(`${CSS_PREFIX}-day`);
 
     //Add event data to table cell
     if (event) {
@@ -236,8 +237,10 @@ export default function Calendar(el) {
 
     //Create a row for the subject and insert its name in it.
     var row = document.createElement('tr');
+    row.classList.add(`${CSS_PREFIX}-subject`);
     var rowName = document.createElement('td');
     rowName.innerText = subjData.title;
+    rowName.classList.add(`${CSS_PREFIX}-subject-name`);
     row.subj = subjData;
     row.appendChild(rowName);
 
@@ -428,9 +431,9 @@ export default function Calendar(el) {
     rowsWrapper = document.createElement('tbody');
 
     tableEl.setAttribute('draggable', true);
-    el.classList.add('multi-sub-cal-container');
-    tableEl.classList.add('multi-sub-calendar');
-    rowsWrapper.classList.add('cal-rows-wrapper');
+    el.classList.add(`${CSS_PREFIX}`);
+    tableEl.classList.add(`${CSS_PREFIX}-table`);
+    rowsWrapper.classList.add(`${CSS_PREFIX}-subjects`);
 
     for (i = 0; i < ROWSNUMBER; i++) {
       this.addSubject('bottom');

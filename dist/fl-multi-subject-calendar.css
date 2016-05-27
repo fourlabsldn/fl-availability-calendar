@@ -1,59 +1,72 @@
-.cal-rows-wrapper {
+.fl-msc {
+  display: block;
+  width: 100%;
+  font-size: 12px;
+  font-family: 'Helvetica', 'sans-serif'; }
+
+.fl-msc-subjects {
   max-height: 100px;
   overflow: scroll; }
 
-.multi-sub-cal-container {
+.cal-phantom-el {
   display: block;
-  width: 100%; }
-  .multi-sub-cal-container .cal-phantom-el {
-    display: block;
-    min-height: 100px; }
+  min-height: 100px; }
 
-.multi-sub-calendar {
+.fl-msc-table {
   position: absolute;
   -webkit-user-select: none;
   /* Chrome/Safari/Opera */
   -moz-user-select: none;
    -ms-user-select: none;
        user-select: none; }
-  .multi-sub-calendar tr:not(.th):hover {
-    -webkit-filter: brightness(90%);
-    filter: brightness(90%); }
-  .multi-sub-calendar td, .multi-sub-calendar th {
-    padding: 0;
-    margin: 5px;
-    text-align: center;
-    white-space: nowrap;
-    position: relative;
-    max-width: 30px; }
-  .multi-sub-calendar th {
-    background-color: #bddaf7;
-    padding: 0 5px;
-    overflow: hidden; }
-  .multi-sub-calendar td:first-of-type {
-    background-color: white;
-    max-width: none; }
-  .multi-sub-calendar td {
-    border: 5px solid transparent;
-    background-color: #88d3b2;
-    padding: 5px;
-    min-width: 30px;
-    min-height: 30px;
-    max-width: 30px;
-    max-height: 30px; }
-    .multi-sub-calendar td:not(:first-child):hover {
-      -webkit-filter: brightness(130%);
-      filter: brightness(130%); }
-  .multi-sub-calendar .half-busy {
-    background-color: #ffdd77 !important; }
-  .multi-sub-calendar .busy {
-    background-color: #f5b2b4 !important; }
-  .multi-sub-calendar .month0 {
-    background-color: #f5b2b4 !important; }
-  .multi-sub-calendar .month1 {
-    background-color: #ade1ca !important; }
-  .multi-sub-calendar .month2 {
-    background-color: #90c1f1 !important; }
+
+.fl-msc-subject:hover {
+  -webkit-filter: brightness(90%);
+  filter: brightness(90%); }
+
+.fl-msc-day,
+.fl-msc-subject-name,
+th {
+  margin: 5px;
+  text-align: center;
+  white-space: nowrap;
+  position: relative;
+  font-size: inherit; }
+
+th {
+  background-color: #bddaf7;
+  padding: 0 5px;
+  overflow: hidden; }
+
+.fl-msc-subject-name {
+  background-color: white;
+  max-width: none; }
+
+.fl-msc-day {
+  border: 5px solid transparent;
+  background-color: #88d3b2;
+  min-width: 1em;
+  max-width: 1em;
+  min-height: 1em;
+  max-height: 1em; }
+  .fl-msc-day:hover {
+    -webkit-filter: brightness(130%);
+    filter: brightness(130%); }
+
+.half-busy {
+  background-color: #ffdd77; }
+
+.busy {
+  background-color: #f5b2b4; }
+
+.month0 {
+  background-color: #f5b2b4; }
+
+.month1 {
+  background-color: #ade1ca; }
+
+.month2 {
+  background-color: #90c1f1; }
 
 .cal-popup {
   top: 0px;

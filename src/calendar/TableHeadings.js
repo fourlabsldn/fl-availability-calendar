@@ -223,7 +223,7 @@ export default function TableHeadings(title, tableEl) {
 
   this._init = function _init() {
     headingWrapper = document.createElement('thead');
-    headingWrapper.classList.add('cal-heading-wrapper');
+    headingWrapper.classList.add('fl-msc-header');
 
     monthRow.createAt(headingWrapper);
     dayRow.createAt(headingWrapper);
