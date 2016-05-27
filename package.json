@@ -20,6 +20,7 @@
     "autoprefixer": "^6.3.6",
     "babel-preset-es2015-rollup": "^1.1.1",
     "dep-linker": "^0.1.21",
+    "fl-assert": "^1.0.10",
     "gulp": "^3.9.1",
     "gulp-postcss": "^6.1.1",
     "gulp-rename": "^1.2.2",
@@ -27,6 +28,7 @@
     "gulp-sass": "^2.3.1",
     "gulp-sourcemaps": "^1.6.0",
     "gulp-watch": "^4.3.6",
+    "momentjs": "^1.1.7",
     "rollup-plugin-babel": "^2.4.0"
   },
   "dependencies": {
