@@ -7717,6 +7717,7 @@ var Subject = function (_ViewController) {
 
       this.html.nameContainer = document.createElement('div');
       this.html.nameContainer.classList.add(this.cssPrefix + '-name');
+      this.html.nameContainer.innerHTML = this.name;
       this.html.container.appendChild(this.html.nameContainer);
 
       this.html.daysContainer = document.createElement('div');
@@ -8192,7 +8193,6 @@ var DataLoader = function () {
       var topBottom = arguments[4];
       var method = arguments.length <= 5 || arguments[5] === undefined ? 'GET' : arguments[5];
 
-      console.log('Loading');
       assert(method); // To be removed
       // return fetch(this.loadUrl, {
       //   method,
@@ -8279,8 +8279,6 @@ var DataLoader = function () {
           }
         }
       }
-
-      console.log('Added everything to cache');
     }
 
     /**
@@ -8353,7 +8351,7 @@ var DataLoader = function () {
 
       var properties = [];
       var propNo = amount;
-      var lastId = startingIds[startingIds.length - 1] || 2;
+      var lastId = startingIds[startingIds.length - 1] || 1;
       var eventNo = void 0;
       var lastDate = void 0;
 
@@ -8417,6 +8415,8 @@ var SubjectsContainer = function (_ViewController) {
     _this.endDate = new CustomDate();
     _this.subjects = [];
 
+    _this.modulePrefix = modulePrefix;
+
     Object.preventExtensions(_this);
     _this.html.container.classList.add(modulePrefix + '-' + CLASS_PREFIX$3);
     return _this;
@@ -8450,7 +8450,7 @@ var SubjectsContainer = function (_ViewController) {
 
               case 2:
                 if (!(i < amount)) {
-                  _context.next = 14;
+                  _context.next = 13;
                   break;
                 }
 
@@ -8460,23 +8460,22 @@ var SubjectsContainer = function (_ViewController) {
               case 5:
                 newSubjectConfigObject = _context.sent;
 
-                console.log(newSubjectConfigObject);
                 if (!newSubjectConfigObject) {
                   assert(false, 'No new subject found.');
                 }
 
                 //  Create subject form object found.
-                newSubject = new Subject(newSubjectConfigObject);
+                newSubject = new Subject(newSubjectConfigObject, this.modulePrefix);
 
                 this.subjects.push(newSubject);
                 this.html.container.appendChild(newSubject.html.container);
 
-              case 11:
+              case 10:
                 i++;
                 _context.next = 2;
                 break;
 
-              case 14:
+              case 13:
               case 'end':
                 return _context.stop();
             }

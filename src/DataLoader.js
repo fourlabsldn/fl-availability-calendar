@@ -204,7 +204,6 @@ export default class DataLoader {
    * @return {Promise<Object>}
    */
   load(fromDate, toDate, ids, idCountToLoad = 0, topBottom, method = 'GET') {
-    console.log('Loading');
     assert(method); // To be removed
     // return fetch(this.loadUrl, {
     //   method,
@@ -247,7 +246,6 @@ export default class DataLoader {
         this.insertOrderedToCache(subject);
       }
     }
-    console.log('Added everything to cache');
   }
 
   /**
@@ -311,7 +309,7 @@ export default class DataLoader {
 
     const properties = [];
     const propNo = amount;
-    const lastId = startingIds[startingIds.length - 1] || 2;
+    const lastId = startingIds[startingIds.length - 1] || 1;
     let eventNo;
     let lastDate;
 

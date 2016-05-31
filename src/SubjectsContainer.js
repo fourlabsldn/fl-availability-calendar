@@ -21,6 +21,8 @@ export default class SubjectsContainer extends ViewController {
     this.endDate = new CustomDate();
     this.subjects = [];
 
+    this.modulePrefix = modulePrefix;
+
     Object.preventExtensions(this);
     this.html.container.classList.add(`${modulePrefix}-${CLASS_PREFIX}`);
   }
@@ -38,11 +40,10 @@ export default class SubjectsContainer extends ViewController {
 
     for (let i = 0; i < amount; i++) {
       const newSubjectConfigObject = await this.getNewSubjectConfig();
-      console.log(newSubjectConfigObject);
       if (!newSubjectConfigObject) { assert(false, 'No new subject found.'); }
 
       //  Create subject form object found.
-      const newSubject = new Subject(newSubjectConfigObject);
+      const newSubject = new Subject(newSubjectConfigObject, this.modulePrefix);
       this.subjects.push(newSubject);
       this.html.container.appendChild(newSubject.html.container);
     }
