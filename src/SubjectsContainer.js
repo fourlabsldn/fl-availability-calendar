@@ -17,15 +17,12 @@ export default class SubjectsContainer extends ViewController {
   constructor(loadUrl, modulePrefix) {
     super();
     this.dataLoader = new DataLoader(loadUrl);
-    this.startDate = null;
-    this.endDate = null;
+    this.startDate = new CustomDate();
+    this.endDate = new CustomDate();
     this.subjects = [];
-    this.cache = [];
 
     Object.preventExtensions(this);
     this.html.container.classList.add(`${modulePrefix}-${CLASS_PREFIX}`);
-
-    this.loadData();
   }
 
   /**
@@ -34,12 +31,14 @@ export default class SubjectsContainer extends ViewController {
    * @method addSubjects
    * @param  {String} topBottom - Accepts 'top' or 'bottom'
    * @param  {Int} amount
+   * @return {Promise} - The promise will be resolved when the subject has been added.
    */
-  addSubjects(topBottom, amount = 1) {
+  async addSubjects(topBottom, amount = 1) {
     if (topBottom !== 'bottom') { console.log('Not implemented'); }
 
     for (let i = 0; i < amount; i++) {
-      const newSubjectConfigObject = this.getNewSubjectConfig();
+      const newSubjectConfigObject = await this.getNewSubjectConfig();
+      console.log(newSubjectConfigObject);
       if (!newSubjectConfigObject) { assert(false, 'No new subject found.'); }
 
       //  Create subject form object found.
@@ -49,23 +48,25 @@ export default class SubjectsContainer extends ViewController {
     }
   }
 
-  getNewSubjectConfig() {
-    // Get object to create subject
-    const lastSubjectInView = this.subjects[this.subjects.length - 1];
-    if (!lastSubjectInView) {
-      return this.cache[0];
+  /**
+   * @method getNewSubjectConfig
+   * @param  {String} topBottom
+   * @return {Promise<Object>} Will be resolved into an object able to create a Subject instance
+   */
+  getNewSubjectConfig(topBottom = 'bottom') {
+    let fetchPromise;
+    if (topBottom === 'top') {
+      const topId = this.subjects[0] ? this.subjects[0].getId() : null;
+      fetchPromise = this.dataLoader.getUntilId(topId, 1, this.startDate, this.endDate);
+    } else if (topBottom === 'bottom') {
+      const bottomElement = this.subjects[this.subjects.length - 1];
+      const bottomId = bottomElement ? bottomElement.getId() : null;
+      fetchPromise = this.dataLoader.getUntilId(bottomId, 1, this.startDate, this.endDate);
+    } else {
+      assert(false, `Invalid topBottom option: ${topBottom}`);
     }
 
-    const indexLastSubjectInView = this.cache.findIndex(sub => {
-      return sub.id === lastSubjectInView.getId();
-    });
-
-    if (indexLastSubjectInView < 0) {
-      assert(false, 'Error finding cached version of the last subject in view');
-    }
-
-    const newSubjectConfigObject = this.cache[indexLastSubjectInView + 1];
-    return newSubjectConfigObject;
+    return fetchPromise.then(arr => arr[0]);
   }
 
   /**
@@ -136,47 +137,57 @@ export default class SubjectsContainer extends ViewController {
   scrollRight() {
     this.subjects.forEach(subject => subject.scrollRight());
   }
+
+  /**
+   * @method scrollUp
+   * @return {Promise}
+   */
   scrollUp() {
-    this.addSubjects('top', 1);
     this.removeSubjects('bottom', 1);
-  }
-  scrollDown() {
-    this.addSubjects('down', 1);
-    this.removeSubjects('bottom', 1);
+    return this.addSubjects('top', 1);
   }
 
   /**
-   * @method loadData
-   * @param  {CustomDate} startDate
-   * @param  {CustomDate} endDate
-   * @param  {Array<Int>} ids - All ids whose events should be fetched
-   * @param  {Int} extraIdsToLoad - Amount of extra ids to load
-   * @param  {String} topBottom - Whether to load from 'top' or from 'bottom'
-   * @return {Promise<Object>}
+   * @method scrollDown
+   * @return {Promise}
    */
-  loadData(startDate, endDate, ids, extraIdsToLoad, topBottom) {
-    // do we have at least 10 ids above?z
-    // do we have at least 10 ids bellow?
-    // do all of these ids have data loaded from two months before start date?
-    // do all of these ids have data loaded from two months after start date?
-    // load whatever is needed.
-    return this.dataLoader.load(startDate, endDate, ids, extraIdsToLoad, topBottom)
-    .then((res) => {
-      const subjects = res.subjects;
-      for (const subject of subjects) {
-        // Add events to cached subject if it exists
-        const subjViewController = this.cache.find(sub => sub.id === subject.id);
-        if (subjViewController) {
-          for (const event of subject.events) {
-            subjViewController.events.add(event);
-          }
-
-        // If the subject is not cached, then add it to cache.
-        } else {
-          this.cache[this.cache.length] = subject;
-        }
-      }
-      console.log('Added subjects');
-    });
+  scrollDown() {
+    this.removeSubjects('bottom', 1);
+    return this.addSubjects('down', 1);
   }
+
+  // /**
+  //  * @method loadData
+  //  * @param  {CustomDate} startDate
+  //  * @param  {CustomDate} endDate
+  //  * @param  {Array<Int>} ids - All ids whose events should be fetched
+  //  * @param  {Int} extraIdsToLoad - Amount of extra ids to load
+  //  * @param  {String} topBottom - Whether to load from 'top' or from 'bottom'
+  //  * @return {Promise<Object>}
+  //  */
+  // loadData(startDate, endDate, ids, extraIdsToLoad, topBottom) {
+  //   // do we have at least 10 ids above?z
+  //   // do we have at least 10 ids bellow?
+  //   // do all of these ids have data loaded from two months before start date?
+  //   // do all of these ids have data loaded from two months after start date?
+  //   // load whatever is needed.
+  //   return this.dataLoader.load(startDate, endDate, ids, extraIdsToLoad, topBottom)
+  //   .then((res) => {
+  //     const subjects = res.subjects;
+  //     for (const subject of subjects) {
+  //       // Add events to cached subject if it exists
+  //       const subjViewController = this.cache.find(sub => sub.id === subject.id);
+  //       if (subjViewController) {
+  //         for (const event of subject.events) {
+  //           subjViewController.events.add(event);
+  //         }
+  //
+  //       // If the subject is not cached, then add it to cache.
+  //       } else {
+  //         this.cache[this.cache.length] = subject;
+  //       }
+  //     }
+  //     console.log('Added subjects');
+  //   });
+  // }
 }

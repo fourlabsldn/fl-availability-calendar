@@ -85,8 +85,11 @@ export default class DataLoader {
    * @return {Promise<Array>}
    */
   getFromId(id, amount, fromDate, toDate) {
-    const targetIndex = this.cache.findInder(subj => subj.id === id);
-    assert(targetIndex >= 0, 'Invalid target Index');
+    let targetIndex = this.cache.findIndex(subj => subj.id === id);
+    if (this.cache.length === 0) {
+      targetIndex = 0;
+    }
+    assert(targetIndex >= 0, `Invalid target Index: ${targetIndex}`);
 
     const toIndex = targetIndex + amount - 1;
     const fromIndex = targetIndex;
@@ -104,8 +107,11 @@ export default class DataLoader {
    * @return {Promise<Array>}
    */
   getUntilId(id, amount, fromDate, toDate) {
-    const targetIndex = this.cache.findInder(subj => subj.id === id);
-    assert(targetIndex >= 0, 'Invalid target Index');
+    let targetIndex = this.cache.findIndex(subj => subj.id === id);
+    if (this.cache.length === 0) {
+      targetIndex = 0;
+    }
+    assert(targetIndex >= 0, `Invalid target Index: ${targetIndex}`);
 
     const fromIndex = targetIndex - amount + 1;
     const toIndex = targetIndex;
@@ -144,18 +150,17 @@ export default class DataLoader {
     if (needsLoadingFromServer) {
       const loadFrom = new CustomDate(fromDate).add(-30, 'days');
       const loadTo = new CustomDate(toDate).add(30, 'days');
-      const loadAmount = toIndex - fromIndex + 30;
+      const amountRequested = Math.max(toIndex - fromIndex, 1);
+      const loadAmount = amountRequested + 30;
 
       return this.load(loadFrom, loadTo, [loadReferenceId], loadAmount, loadTopBottom)
-        .then(() => this.getCacheSection(fromIndex, toIndex, fromDate, toDate));
+        .then((data) => {
+          return (data && data.subjects) ? data.subjects.slice(0, amountRequested) : [];
+        });
     }
 
     return new Promise((resolve) => {
-      const response = [];
-      for (let index = fromIndex; index <= toIndex; index++) {
-        response.push(this.cache[index]);
-      }
-      resolve(response);
+      resolve(this.cache.slice(fromIndex, toIndex));
     });
   }
 
@@ -171,15 +176,16 @@ export default class DataLoader {
    * @return {[type]} [description]
    */
   cacheSectionCoversPeriod(fromIndex, toIndex, fromDate, toDate) {
-    assert(fromIndex < toIndex, `Invalid indexes passed: ${fromIndex}, ${toIndex}`);
-    assert(fromDate.diff(toDate) < 0,
+    assert(fromIndex <= toIndex, `Invalid indexes passed: ${fromIndex}, ${toIndex}`);
+    assert(fromDate.diff(toDate) <= 0,
       `fromDate cannot be greater than toDate: ${fromDate.toString()}, ${toDate.toString()}`);
 
+    if (fromIndex < 0 || toIndex >= this.cache.length) { return false; }
     let allCoverFromToPeriod = true;
     let index = fromIndex;
     while (index <= toIndex && allCoverFromToPeriod) {
-      const coversFromDate = this.cache[index].diff(fromDate) >= 0;
-      const coversToDate = this.cache[index].diff(toDate) <= 0;
+      const coversFromDate = this.cache[index].eventsFromDate.diff(fromDate) >= 0;
+      const coversToDate = this.cache[index].eventsToDate.diff(toDate) <= 0;
       allCoverFromToPeriod = allCoverFromToPeriod && coversFromDate && coversToDate;
       index++;
     }
@@ -189,13 +195,14 @@ export default class DataLoader {
    * Fetches data from the server
    * @method load
    * @param  {CustomDate} fromDate
-   * @param  {CustomDate} endDate
+   * @param  {CustomDate} toDate
    * @param  {Array<String>} ids - Subject ids
    * @param  {Int} [idCountToLoad] - How many new ids to be loaded
    * @param  {String} [Method]
    * @return {Promise<Object>}
    */
-  load(fromDate, endDate, ids, idCountToLoad = 0, topBottom, method = 'GET') {
+  load(fromDate, toDate, ids, idCountToLoad = 0, topBottom, method = 'GET') {
+    console.log('Loading');
     assert(method); // To be removed
     // return fetch(this.loadUrl, {
     //   method,
@@ -203,7 +210,7 @@ export default class DataLoader {
     // })
     // .then((res) => res.json())
     return new Promise((resolve) => {
-      const newData = this.createCalendarContent();
+      const newData = this.createCalendarContent(ids, idCountToLoad, fromDate, toDate);
       this.addToCache(newData);
       this.moreToLoadAbove = newData.moreToLoadAbove;
       this.moreToLoadBelow = newData.moreToLoadBelow;
@@ -224,10 +231,10 @@ export default class DataLoader {
     for (const subject of data.subjects) {
       const cachedVersion = this.getCachedVersion(subject);
       if (cachedVersion) {
-        subject.eventsFromDate =
-          CustomDate.getEarliest(subject.eventsFromDate, data.fromDate);
-        subject.eventsToDate =
-          CustomDate.getLatest(subject.eventsToDate, data.toDate);
+        cachedVersion.eventsFromDate =
+          CustomDate.getEarliest(cachedVersion.eventsFromDate, data.fromDate);
+        cachedVersion.eventsToDate =
+          CustomDate.getLatest(cachedVersion.eventsToDate, data.toDate);
 
         for (const event of subject.events) {
           cachedVersion.events.add(event);
@@ -238,6 +245,7 @@ export default class DataLoader {
         this.insertOrderedToCache(subject);
       }
     }
+    console.log('Added everything to cache');
   }
 
   /**
@@ -289,7 +297,7 @@ export default class DataLoader {
    * @method createCalendarContent
    * @return {Object}
    */
-  createCalendarContent() {
+  createCalendarContent(startingIds, amount, fromDate, toDate) {
     function daysFromNow(days) {
       return new Date(Date.now() + (days * 86400000));
     }
@@ -300,14 +308,15 @@ export default class DataLoader {
     }
 
     const properties = [];
-    const propNo = 10000;
+    const propNo = amount;
+    const lastId = startingIds[startingIds.length - 1] || 2;
     let eventNo;
     let lastDate;
 
     for (let i = 0; i < propNo; i++) {
       properties[i] = {};
       properties[i].name = `Property - asdf asd fasdf asdfasd ${i + 1}`;
-      properties[i].id = i;
+      properties[i].id = startingIds[i] || lastId + i - startingIds.length;
       properties[i].events = new Set();
       eventNo = rand() * 5;
       lastDate = rand();
@@ -330,8 +339,8 @@ export default class DataLoader {
     return {
       moreToLoadAbove: false,
       moreToLoadBelow: false,
-      fromDate: new CustomDate().add(-1, 'days'),
-      toDate: new CustomDate().add(365, 'days'),
+      fromDate,
+      toDate,
       subjects: properties,
     };
   }

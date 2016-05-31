@@ -23,6 +23,16 @@ export default class CustomDate {
   }
 
   /**
+   * @method diff
+   * @param  {CustomDate} date2
+   * @param  {Int} unit
+   * @return {Int}
+   */
+  diff(date2, unit) {
+    return this.date.diff(unit);
+  }
+
+  /**
    * @method format
    * @param  {String} formatting - A moment.js format
    * @return {String}
