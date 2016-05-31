@@ -26,6 +26,7 @@ export default class Subject extends ViewController {
     this.days = [];
     // It must be ordered chronologically
     this.events = [];
+    this.eventLoadedRange = { from: null, to: null };
     this.destroyed = false;
     Object.preventExtensions(this);
 
@@ -200,5 +201,37 @@ export default class Subject extends ViewController {
   scrollRight() {
     this.removeDay('back');
     this.addDay('front');
+  }
+
+  getEventLoadedRange() {
+    return this.eventLoadedRange;
+  }
+
+  setEventLoadedFrom(date) {
+    if (this.events[0]) {
+      const firstBusyDate = this.events[this.events.length - 1];
+      const dateIsAfterFirstBusyDate = (date.diff(firstBusyDate) > 0);
+      if (dateIsAfterFirstBusyDate) {
+        assert(
+          false,
+          'Invalid date provided for EventLoadedFrom. Date is after first busy date.'
+        );
+      }
+    }
+    this.eventLoadedRange.from = date;
+  }
+
+  setEventLoadedTo(date) {
+    if (this.events[0]) {
+      const lastBusyDate = this.events[0];
+      const dateIsBeforeLastBusyDate = (date.diff(lastBusyDate) < 0);
+      if (dateIsBeforeLastBusyDate) {
+        assert(
+          false,
+          'Invalid date provided for EventLoadedTo. Date is before last busy date.'
+        );
+      }
+    }
+    this.eventLoadedRange.to = date;
   }
 }

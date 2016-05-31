@@ -121,5 +121,4 @@ export default class ControlBar extends ViewController {
   scrollDown() {
     this.subjectsContainer.scrollDown();
   }
-
 }

@@ -20,6 +20,7 @@ export default class SubjectsContainer extends ViewController {
     this.startDate = null;
     this.endDate = null;
     this.subjects = [];
+    this.cache = [];
 
     Object.preventExtensions(this);
     this.html.container.classList.add(`${modulePrefix}-${CLASS_PREFIX}`);
@@ -117,5 +118,13 @@ export default class SubjectsContainer extends ViewController {
   scrollDown() {
     this.addSubjects('down', 1);
     this.removeSubjects('bottom', 1);
+  }
+
+  loadData(startDate, endDate, topId, bottomId) {
+    // do we have at least 10 ids above?z
+    // do we have at least 10 ids bellow?
+    // do all of these ids have data loaded from two months before start date?
+    // do all of these ids have data loaded from two months after start date?
+    // load whatever is needed.
   }
 }
