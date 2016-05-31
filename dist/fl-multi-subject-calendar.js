@@ -8023,8 +8023,8 @@ var DataLoader = function () {
 
     this.loadUrl = loadUrl;
     this.cache = [];
-    this.moreToLoadAbove = false;
-    this.moreToLoadBelow = false;
+    this.moreToLoadAbove = true;
+    this.moreToLoadBelow = true;
     Object.preventExtensions(this);
   }
 
@@ -8101,31 +8101,33 @@ var DataLoader = function () {
       // eslint-disable-line complexity
       var needsLoadingFromServer = false;
       var loadTopBottom = void 0;
-      var loadReferenceId = void 0;
-
+      var loadReferenceIds = [];
       if (fromIndex < 0 && this.moreToLoadAbove) {
         needsLoadingFromServer = true;
         loadTopBottom = 'top';
-        loadReferenceId = this.cache[toIndex] ? this.cache[toIndex].id : null;
+        loadReferenceIds.push(this.cache[toIndex] ? this.cache[toIndex].id : null);
       } else if (toIndex > this.cache.length && this.moreToLoadBelow) {
         needsLoadingFromServer = true;
         loadTopBottom = 'bottom';
-        loadReferenceId = this.cache[toIndex] ? this.cache[toIndex].id : null;
+        loadReferenceIds.push(this.cache[fromIndex] ? this.cache[fromIndex].id : null);
       } else {
         fromIndex = Math.min(fromIndex, this.cache.length); // eslint-disable-line no-param-reassign
         toIndex = Math.max(toIndex, 0); // eslint-disable-line no-param-reassign
         needsLoadingFromServer = !this.cacheSectionCoversPeriod(fromIndex, toIndex, fromDate, toDate);
+        for (var index = fromIndex; index <= toIndex; index++) {
+          loadReferenceIds.push(this.cache[index].id);
+        }
       }
 
       if (needsLoadingFromServer) {
         var _ret = function () {
           var loadFrom = new CustomDate(fromDate).add(-30, 'days');
           var loadTo = new CustomDate(toDate).add(30, 'days');
-          var amountRequested = Math.max(toIndex - fromIndex, 1);
+          var amountRequested = toIndex - fromIndex + 1;
           var loadAmount = amountRequested + 30;
 
           return {
-            v: _this.load(loadFrom, loadTo, [loadReferenceId], loadAmount, loadTopBottom).then(function (data) {
+            v: _this.load(loadFrom, loadTo, loadReferenceIds, loadAmount, loadTopBottom).then(function (data) {
               return data && data.subjects ? data.subjects.slice(0, amountRequested) : [];
             })
           };
@@ -8357,8 +8359,8 @@ var DataLoader = function () {
 
       for (var i = 0; i < propNo; i++) {
         properties[i] = {};
-        properties[i].name = 'Property - asdf asd fasdf asdfasd ' + (i + 1);
         properties[i].id = startingIds[i] || lastId + i - startingIds.length;
+        properties[i].name = 'Property - asdf asd fasdf asdfasd ' + properties[i].id;
         properties[i].events = new Set();
         eventNo = rand() * 5;
         lastDate = rand();
@@ -8503,18 +8505,20 @@ var SubjectsContainer = function (_ViewController) {
       var fetchPromise = void 0;
       if (topBottom === 'top') {
         var topId = this.subjects[0] ? this.subjects[0].getId() : null;
-        fetchPromise = this.dataLoader.getUntilId(topId, 1, this.startDate, this.endDate);
+        fetchPromise = this.dataLoader.getUntilId(topId, 2, this.startDate, this.endDate).then(function (arr) {
+          return arr[0];
+        });
       } else if (topBottom === 'bottom') {
         var bottomElement = this.subjects[this.subjects.length - 1];
         var bottomId = bottomElement ? bottomElement.getId() : null;
-        fetchPromise = this.dataLoader.getUntilId(bottomId, 1, this.startDate, this.endDate);
+        fetchPromise = this.dataLoader.getFromId(bottomId, 2, this.startDate, this.endDate).then(function (arr) {
+          return arr[1] || arr[0];
+        });
       } else {
         assert(false, 'Invalid topBottom option: ' + topBottom);
       }
 
-      return fetchPromise.then(function (arr) {
-        return arr[0];
-      });
+      return fetchPromise;
     }
 
     /**

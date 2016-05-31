@@ -57,16 +57,18 @@ export default class SubjectsContainer extends ViewController {
     let fetchPromise;
     if (topBottom === 'top') {
       const topId = this.subjects[0] ? this.subjects[0].getId() : null;
-      fetchPromise = this.dataLoader.getUntilId(topId, 1, this.startDate, this.endDate);
+      fetchPromise = this.dataLoader.getUntilId(topId, 2, this.startDate, this.endDate)
+        .then(arr => arr[0]);
     } else if (topBottom === 'bottom') {
       const bottomElement = this.subjects[this.subjects.length - 1];
       const bottomId = bottomElement ? bottomElement.getId() : null;
-      fetchPromise = this.dataLoader.getUntilId(bottomId, 1, this.startDate, this.endDate);
+      fetchPromise = this.dataLoader.getFromId(bottomId, 2, this.startDate, this.endDate)
+        .then(arr => arr[1] || arr[0]);
     } else {
       assert(false, `Invalid topBottom option: ${topBottom}`);
     }
 
-    return fetchPromise.then(arr => arr[0]);
+    return fetchPromise
   }
 
   /**

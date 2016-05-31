@@ -69,8 +69,8 @@ export default class DataLoader {
   constructor(loadUrl) {
     this.loadUrl = loadUrl;
     this.cache = [];
-    this.moreToLoadAbove = false;
-    this.moreToLoadBelow = false;
+    this.moreToLoadAbove = true;
+    this.moreToLoadBelow = true;
     Object.preventExtensions(this);
   }
 
@@ -130,30 +130,32 @@ export default class DataLoader {
   getCacheSection(fromIndex, toIndex, fromDate, toDate) { // eslint-disable-line complexity
     let needsLoadingFromServer = false;
     let loadTopBottom;
-    let loadReferenceId;
-
+    const loadReferenceIds = [];
     if (fromIndex < 0 && this.moreToLoadAbove) {
       needsLoadingFromServer = true;
       loadTopBottom = 'top';
-      loadReferenceId = this.cache[toIndex] ? this.cache[toIndex].id : null;
+      loadReferenceIds.push(this.cache[toIndex] ? this.cache[toIndex].id : null);
     } else if (toIndex > this.cache.length && this.moreToLoadBelow) {
       needsLoadingFromServer = true;
       loadTopBottom = 'bottom';
-      loadReferenceId = this.cache[toIndex] ? this.cache[toIndex].id : null;
+      loadReferenceIds.push(this.cache[fromIndex] ? this.cache[fromIndex].id : null);
     } else {
       fromIndex = Math.min(fromIndex, this.cache.length); // eslint-disable-line no-param-reassign
       toIndex = Math.max(toIndex, 0); // eslint-disable-line no-param-reassign
       needsLoadingFromServer =
         !this.cacheSectionCoversPeriod(fromIndex, toIndex, fromDate, toDate);
+      for (let index = fromIndex; index <= toIndex; index++) {
+        loadReferenceIds.push(this.cache[index].id);
+      }
     }
 
     if (needsLoadingFromServer) {
       const loadFrom = new CustomDate(fromDate).add(-30, 'days');
       const loadTo = new CustomDate(toDate).add(30, 'days');
-      const amountRequested = Math.max(toIndex - fromIndex, 1);
+      const amountRequested = toIndex - fromIndex + 1;
       const loadAmount = amountRequested + 30;
 
-      return this.load(loadFrom, loadTo, [loadReferenceId], loadAmount, loadTopBottom)
+      return this.load(loadFrom, loadTo, loadReferenceIds, loadAmount, loadTopBottom)
         .then((data) => {
           return (data && data.subjects) ? data.subjects.slice(0, amountRequested) : [];
         });
@@ -315,8 +317,8 @@ export default class DataLoader {
 
     for (let i = 0; i < propNo; i++) {
       properties[i] = {};
-      properties[i].name = `Property - asdf asd fasdf asdfasd ${i + 1}`;
       properties[i].id = startingIds[i] || lastId + i - startingIds.length;
+      properties[i].name = `Property - asdf asd fasdf asdfasd ${properties[i].id}`;
       properties[i].events = new Set();
       eventNo = rand() * 5;
       lastDate = rand();
