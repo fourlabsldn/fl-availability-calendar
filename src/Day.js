@@ -1,6 +1,7 @@
 import assert from 'fl-assert';
+import ViewController from './ViewController';
 
-export default class Day {
+export default class Day extends ViewController {
   /**
    * @method constructor
    * @param  {CustomDate} date

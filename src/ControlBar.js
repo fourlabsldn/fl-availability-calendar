@@ -32,11 +32,14 @@ export default class ControlBar extends ViewController {
     this.setButtonListeners();
     Object.preventExtensions(this);
 
-    this.setStartDate(startDate);
-    this.setDayCount(COLUMN_COUNT);
+    this.subjectsContainer.loadData()
+    .then(() => {
+      this.setStartDate(startDate);
+      this.setDayCount(COLUMN_COUNT);
 
-    // TODO: This should be dynamic.
-    this.subjectsContainer.addSubjects('bottom', SUBJECT_COUNT);
+      // TODO: This should be dynamic.
+      this.subjectsContainer.addSubjects('bottom', SUBJECT_COUNT);
+    });
   }
 
   /**
@@ -101,7 +104,7 @@ export default class ControlBar extends ViewController {
 
   setDayCount(count) {
     this.subjectsContainer.setDayCount(count);
-    this.dateBar.setDaycount(count);
+    this.dateBar.setDayCount(count);
   }
 
   scrollLeft() {

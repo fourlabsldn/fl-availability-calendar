@@ -39,12 +39,7 @@ export default class SubjectsContainer extends ViewController {
     if (topBottom !== 'bottom') { console.log('Not implemented'); }
 
     for (let i = 0; i < amount; i++) {
-      // Get object to create subject
-      const lastSubjectInView = this.subjects[this.subject.length - 1];
-      const indexLastSubjectInView = this.cached.findIndex(sub => {
-        return sub.id === lastSubjectInView.getId();
-      });
-      const newSubjectConfigObject = this.cache[indexLastSubjectInView + 1];
+      const newSubjectConfigObject = this.getNewSubjectConfig();
       if (!newSubjectConfigObject) { assert(false, 'No new subject found.'); }
 
       //  Create subject form object found.
@@ -52,6 +47,25 @@ export default class SubjectsContainer extends ViewController {
       this.subjects.push(newSubject);
       this.html.container.appendChild(newSubject.html.container);
     }
+  }
+
+  getNewSubjectConfig() {
+    // Get object to create subject
+    const lastSubjectInView = this.subjects[this.subjects.length - 1];
+    if (!lastSubjectInView) {
+      return this.cache[0];
+    }
+
+    const indexLastSubjectInView = this.cache.findIndex(sub => {
+      return sub.id === lastSubjectInView.getId();
+    });
+
+    if (indexLastSubjectInView < 0) {
+      assert(false, 'Error finding cached version of the last subject in view');
+    }
+
+    const newSubjectConfigObject = this.cache[indexLastSubjectInView + 1];
+    return newSubjectConfigObject;
   }
 
   /**
@@ -146,8 +160,9 @@ export default class SubjectsContainer extends ViewController {
     // do all of these ids have data loaded from two months before start date?
     // do all of these ids have data loaded from two months after start date?
     // load whatever is needed.
-    this.dataLoader.load(startDate, endDate, ids, extraIdsToLoad, topBottom)
-    .then((subjects) => {
+    return this.dataLoader.load(startDate, endDate, ids, extraIdsToLoad, topBottom)
+    .then((res) => {
+      const subjects = res.subjects;
       for (const subject of subjects) {
         // Add events to cached subject if it exists
         const subjViewController = this.cache.find(sub => sub.id === subject.id);
@@ -161,6 +176,7 @@ export default class SubjectsContainer extends ViewController {
           this.cache[this.cache.length] = subject;
         }
       }
+      console.log('Added subjects');
     });
   }
 }

@@ -114,7 +114,7 @@ export default class DateBar extends ViewController {
     }
     monthEl.className = '';
     monthEl.classList.add(`${this.cssPrefix}-month`);
-    monthEl.classList.add(`${this.cssPrefix}-month-${lastMonthElement.span}`);
+    monthEl.classList.add(`${this.cssPrefix}-month-${monthEl.span}`);
   }
 
   /**
@@ -161,7 +161,7 @@ export default class DateBar extends ViewController {
       monthEl.span--;
       monthEl.className = '';
       monthEl.classList.add(`${this.cssPrefix}-month`);
-      monthEl.classList.add(`${this.cssPrefix}-month-${lastMonthElement.span}`);
+      monthEl.classList.add(`${this.cssPrefix}-month-${monthEl.span}`);
     } else {
       monthEl.remove();
     }

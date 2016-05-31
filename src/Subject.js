@@ -15,12 +15,12 @@ export default class Subject extends ViewController {
    * @return {Subject}
    */
   constructor(config, modulePrefix) {
+    super();
     assert(typeof config.name === 'string', `Invalid subject name: ${config.name}`);
     this.name = config.name;
     this.id = config.id;
 
     this.cssPrefix = `${modulePrefix}-${CLASS_PREFIX}`;
-    super();
 
     this.startDate = null;
     this.days = [];

@@ -21,4 +21,32 @@ export default class CustomDate {
   add(date, amount, unit = 'days') {
     return this.date.add(amount, unit);
   }
+
+  /**
+   * @method format
+   * @param  {String} formatting - A moment.js format
+   * @return {String}
+   */
+  format(formatting) {
+    return this.date.format(formatting);
+  }
+
+  isWithinRange(dateFrom, dateTo) {
+    const afterDateFrom = this.diff(dateFrom) >= 0;
+    const beforeDateTo = this.diff(dateTo) <= 0;
+    return afterDateFrom && beforeDateTo;
+  }
+
+  toString() {
+    return this.date.toString();
+  }
+
+  static getLatest(date1, date2) {
+    return (date1.diff(date2) > 0) ? date1 : date2;
+  }
+
+  static getEarliest(date1, date2) {
+    return (date1.diff(date2) > 0) ? date2 : date1;
+  }
+
 }

@@ -3,6 +3,8 @@
 const gulp = require('gulp');
 const sourcemaps = require('gulp-sourcemaps');
 const babel = require('rollup-plugin-babel');
+const nodeResolve = require('rollup-plugin-node-resolve');
+const commonjs = require('rollup-plugin-commonjs');
 const rollup = require('gulp-rollup');
 const sass = require('gulp-sass');
 const DepLinker = require('dep-linker');
@@ -37,6 +39,8 @@ gulp.task('build:src', () => {
   .pipe(sourcemaps.init())
   .pipe(rollup({
     plugins: [
+      nodeResolve({ jsnext: true, main: true }),
+      commonjs(),
       babel({
         exclude: 'node_modules/**',
         presets: ['es2015-rollup'],

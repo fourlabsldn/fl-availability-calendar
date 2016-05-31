@@ -2,5 +2,5 @@
 import Calendar from './Calendar';
 
 xController((xdiv) => {
-  return new Calendar(xdiv);
+  return new Calendar('/', xdiv);
 });
