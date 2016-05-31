@@ -45,6 +45,10 @@ export default class Subject extends ViewController {
     this.html.container.appendChild(this.html.daysContainer);
   }
 
+  getId() {
+    return this.id;
+  }
+
   checkIfdestroyed() {
     assert(!this.destroyed, 'Tried to invoke a method of a destroyed Subject object');
   }
@@ -64,8 +68,8 @@ export default class Subject extends ViewController {
     this.checkIfdestroyed();
 
     this.days.forEach(day => {
-      const dayEvents = this.getDayEvents(day.date);
-      day.setEvent(dayEvents);
+      const dayEvents = this.getDateEvents(day.date);
+      day.setEvents(dayEvents);
     });
   }
 

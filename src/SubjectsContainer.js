@@ -24,6 +24,8 @@ export default class SubjectsContainer extends ViewController {
 
     Object.preventExtensions(this);
     this.html.container.classList.add(`${modulePrefix}-${CLASS_PREFIX}`);
+
+    this.loadData();
   }
 
   /**
@@ -37,7 +39,16 @@ export default class SubjectsContainer extends ViewController {
     if (topBottom !== 'bottom') { console.log('Not implemented'); }
 
     for (let i = 0; i < amount; i++) {
-      const newSubject = new Subject({ name: 'test', id: 123 });
+      // Get object to create subject
+      const lastSubjectInView = this.subjects[this.subject.length - 1];
+      const indexLastSubjectInView = this.cached.findIndex(sub => {
+        return sub.id === lastSubjectInView.getId();
+      });
+      const newSubjectConfigObject = this.cache[indexLastSubjectInView + 1];
+      if (!newSubjectConfigObject) { assert(false, 'No new subject found.'); }
+
+      //  Create subject form object found.
+      const newSubject = new Subject(newSubjectConfigObject);
       this.subjects.push(newSubject);
       this.html.container.appendChild(newSubject.html.container);
     }
@@ -120,11 +131,36 @@ export default class SubjectsContainer extends ViewController {
     this.removeSubjects('bottom', 1);
   }
 
-  loadData(startDate, endDate, topId, bottomId) {
+  /**
+   * @method loadData
+   * @param  {CustomDate} startDate
+   * @param  {CustomDate} endDate
+   * @param  {Array<Int>} ids - All ids whose events should be fetched
+   * @param  {Int} extraIdsToLoad - Amount of extra ids to load
+   * @param  {String} topBottom - Whether to load from 'top' or from 'bottom'
+   * @return {Promise<Object>}
+   */
+  loadData(startDate, endDate, ids, extraIdsToLoad, topBottom) {
     // do we have at least 10 ids above?z
     // do we have at least 10 ids bellow?
     // do all of these ids have data loaded from two months before start date?
     // do all of these ids have data loaded from two months after start date?
     // load whatever is needed.
+    this.dataLoader.load(startDate, endDate, ids, extraIdsToLoad, topBottom)
+    .then((subjects) => {
+      for (const subject of subjects) {
+        // Add events to cached subject if it exists
+        const subjViewController = this.cache.find(sub => sub.id === subject.id);
+        if (subjViewController) {
+          for (const event of subject.events) {
+            subjViewController.events.add(event);
+          }
+
+        // If the subject is not cached, then add it to cache.
+        } else {
+          this.cache[this.cache.length] = subject;
+        }
+      }
+    });
   }
 }
