@@ -34,7 +34,10 @@ export default class CustomDate {
    * @return {Int}
    */
   diff(date2, unit) {
-    return this.date.diff(unit);
+    if (date2 instanceof CustomDate) {
+      return this.date.diff(date2.date, unit);
+    }
+    return this.date.diff(date2, unit);
   }
 
   /**

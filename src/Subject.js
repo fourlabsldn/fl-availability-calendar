@@ -24,12 +24,19 @@ export default class Subject extends ViewController {
 
     this.startDate = startDate;
     this.days = [];
+
     // It must be ordered chronologically
-    this.events = [];
-    this.eventLoadedRange = { from: null, to: null };
+    this.events = new Set();
+    this.orderedeEvents = [];
+
+    this.eventsLoadedRange = {
+      from: config.eventsFromDate,
+      to: config.eventsToDate,
+    };
     this.destroyed = false;
     Object.preventExtensions(this);
 
+    this.setEvents(config.events);
     this.buildHtml();
   }
 
@@ -47,14 +54,9 @@ export default class Subject extends ViewController {
     this.html.container.appendChild(this.html.daysContainer);
   }
 
-  getId() {
-    return this.id;
-  }
-
-  checkIfdestroyed() {
-    assert(!this.destroyed, 'Tried to invoke a method of a destroyed Subject object');
-  }
-
+  // ---------------------------------------------------------------------------
+  // Setters
+  // ---------------------------------------------------------------------------
   /**
    * @method setEvents
    * @param  {Array<Object>} events
@@ -62,8 +64,123 @@ export default class Subject extends ViewController {
   setEvents(events) {
     this.checkIfdestroyed();
 
-    this.events = events;
+    for (const event of events) {
+      this.events.add(event);
+    }
+    this.updateOrderedEvents();
     this.refreshDayEvents();
+  }
+
+  /**
+   * @method setStartDate
+   * @param  {CustomDate} date
+   */
+  setStartDate(date) {
+    this.checkIfdestroyed();
+
+    this.startDate = date;
+    const dayCount = this.getDayCount();
+    this.setDayCount(0);
+    this.setDayCount(dayCount);
+  }
+
+  setEventsLoadedFrom(date) {
+    if (this.orderedeEvents[0]) {
+      const firstBusyDate = this.orderedeEvents[0].start;
+      const dateIsAfterFirstBusyDate = (date.diff(firstBusyDate) > 0);
+      if (dateIsAfterFirstBusyDate) {
+        assert(
+          false,
+          'Invalid date provided for EventLoadedFrom. Date is after first busy date.'
+        );
+      }
+    }
+    this.eventsLoadedRange.from = date;
+  }
+
+  setEventsLoadedTo(date) {
+    if (this.orderedeEvents[0]) {
+      const lastBusyDate = this.orderedeEvents[this.orderedeEvents.length - 1];
+      const dateIsBeforeLastBusyDate = (date.diff(lastBusyDate) < 0);
+      if (dateIsBeforeLastBusyDate) {
+        assert(
+          false,
+          'Invalid date provided for EventLoadedTo. Date is before last busy date.'
+        );
+      }
+    }
+    this.eventsLoadedRange.to = date;
+  }
+  // ---------------------------------------------------------------------------
+  // Getters
+  // ---------------------------------------------------------------------------
+  getId() {
+    return this.id;
+  }
+
+  getDayCount() {
+    return this.days.length;
+  }
+
+  getEventsLoadedRange() {
+    assert(
+      (this.eventsLoadedRange.from instanceof CustomDate &&
+        this.eventsLoadedRange.to instanceof CustomDate),
+      'Uninitialised eventsLoadedRange');
+    return this.eventsLoadedRange;
+  }
+
+  checkIfdestroyed() {
+    assert(!this.destroyed, 'Tried to invoke a method of a destroyed Subject object');
+  }
+
+  /**
+   * @method getDateEvents
+   * @param  {CustomDate} date [description]
+   * @return {Array<Object>}
+   */
+  getDateEvents(date) {
+    this.checkIfdestroyed();
+
+    const events = this.orderedeEvents;
+
+    if (!events.length) { return []; }
+
+    let eventIndex = 0;
+    let event = events[eventIndex];
+    const dayEvents = [];
+
+    // While events are starting before or at the date we are evaluating
+    while (event && date.diff(event.start) >= 0) {
+      // Add to dayEvents if it finishes on or after the date in question.
+      if (date.diff(event.end) <= 0) {
+        dayEvents.add(event);
+      }
+
+      eventIndex++;
+      event = events[eventIndex];
+    }
+    return dayEvents;
+  }
+
+  // ---------------------------------------------------------------------------
+  // Modifiers
+  // ---------------------------------------------------------------------------
+
+  updateOrderedEvents() {
+    const ordered = [];
+    for (const event of this.events) {
+      insertInOrder(event, ordered);
+    }
+    this.orderedeEvents = ordered;
+
+    function insertInOrder(event, arr) {
+      let i = 0;
+      while (arr[i] && arr[i].start.diff(event.start) > 0) {
+        i++;
+      }
+      arr.splice(i, 0, event);
+    }
   }
 
   refreshDayEvents() {
@@ -76,41 +193,14 @@ export default class Subject extends ViewController {
   }
 
   /**
-   * @method getDateEvents
-   * @param  {CustomDate} date [description]
-   * @return {Array<Object>}
-   */
-  getDateEvents(date) {
-    this.checkIfdestroyed();
-
-    if (!this.events) { return []; }
-
-    let eventIndex = 0;
-    let event = this.events[eventIndex];
-    const dayEvents = [];
-
-    // While events are starting before the date we are evaluating
-    while (event && date.diff(event.startDate) > 0) {
-      // Add to dayEvents if it finishes on or after the date in question.
-      if (date.diff(event.endDate) <= 0) {
-        dayEvents.add(event);
-      }
-
-      eventIndex++;
-      event = this.events[eventIndex];
-    }
-
-    return dayEvents;
-  }
-  /**
    * @method addDay
    * @param  {String} position - Accepts 'front' or 'back'
    */
-  addDay(position) {
+  addDay(position = 'front') {
     this.checkIfdestroyed();
 
     if (position === 'front') {
-      const newDate = new CustomDate(this.startDate).add(this.days.length, 'days');
+      const newDate = new CustomDate(this.startDate).add(this.getDayCount() + 1, 'days');
       const dateEvents = this.getDateEvents(newDate);
       const newDay = new Day(newDate, dateEvents, this.cssPrefix);
 
@@ -147,7 +237,7 @@ export default class Subject extends ViewController {
       const dayRemoved = this.days.push();
       dayRemoved.destroy();
     } else if (position === 'back') {
-      if (this.days.length === 0) { return; }
+      if (this.getDayCount() === 0) { return; }
 
       const [dayRemoved] = this.days.splice(0, 1);
       dayRemoved.destroy();
@@ -164,80 +254,5 @@ export default class Subject extends ViewController {
     this.destroyed = true;
   }
 
-  /**
-   * @method setDayCount
-   * @param  {Int} count
-   */
-  setDayCount(count) {
-    this.checkIfdestroyed();
 
-    const countDiff = count - this.days.length;
-    let dayFunction;
-
-    if (countDiff > 0) {
-      dayFunction = 'addDay';
-    } else if (count < this.days.length) {
-      dayFunction = 'removeDay';
-    }
-
-    const position = 'front';
-    for (let i = 0; i < Math.abs(countDiff); i++) {
-      this[dayFunction](position);
-    }
-  }
-
-  /**
-   * @method setStartDate
-   * @param  {CustomDate} date
-   */
-  setStartDate(date) {
-    this.checkIfdestroyed();
-
-    this.startDate = date;
-    const dayCount = this.days.length;
-    this.setDayCount(0);
-    this.setDayCount(dayCount);
-  }
-
-  scrollLeft() {
-    this.removeDay('front');
-    this.addDay('back');
-  }
-
-  scrollRight() {
-    this.removeDay('back');
-    this.addDay('front');
-  }
-
-  getEventLoadedRange() {
-    return this.eventLoadedRange;
-  }
-
-  setEventLoadedFrom(date) {
-    if (this.events[0]) {
-      const firstBusyDate = this.events[this.events.length - 1];
-      const dateIsAfterFirstBusyDate = (date.diff(firstBusyDate) > 0);
-      if (dateIsAfterFirstBusyDate) {
-        assert(
-          false,
-          'Invalid date provided for EventLoadedFrom. Date is after first busy date.'
-        );
-      }
-    }
-    this.eventLoadedRange.from = date;
-  }
-
-  setEventLoadedTo(date) {
-    if (this.events[0]) {
-      const lastBusyDate = this.events[0];
-      const dateIsBeforeLastBusyDate = (date.diff(lastBusyDate) < 0);
-      if (dateIsBeforeLastBusyDate) {
-        assert(
-          false,
-          'Invalid date provided for EventLoadedTo. Date is before last busy date.'
-        );
-      }
-    }
-    this.eventLoadedRange.to = date;
-  }
 }

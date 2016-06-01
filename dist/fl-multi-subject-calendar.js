@@ -5553,7 +5553,10 @@ var CustomDate = function () {
   }, {
     key: 'diff',
     value: function diff(date2, unit) {
-      return this.date.diff(unit);
+      if (date2 instanceof CustomDate) {
+        return this.date.diff(date2.date, unit);
+      }
+      return this.date.diff(date2, unit);
     }
 
     /**
@@ -7717,12 +7720,19 @@ var Subject = function (_ViewController) {
 
     _this.startDate = startDate;
     _this.days = [];
+
     // It must be ordered chronologically
-    _this.events = [];
-    _this.eventLoadedRange = { from: null, to: null };
+    _this.events = new Set();
+    _this.orderedeEvents = [];
+
+    _this.eventsLoadedRange = {
+      from: config.eventsFromDate,
+      to: config.eventsToDate
+    };
     _this.destroyed = false;
     Object.preventExtensions(_this);
 
+    _this.setEvents(config.events);
     _this.buildHtml();
     return _this;
   }
@@ -7742,17 +7752,10 @@ var Subject = function (_ViewController) {
       this.html.daysContainer.classList.add(this.cssPrefix + '-days');
       this.html.container.appendChild(this.html.daysContainer);
     }
-  }, {
-    key: 'getId',
-    value: function getId() {
-      return this.id;
-    }
-  }, {
-    key: 'checkIfdestroyed',
-    value: function checkIfdestroyed() {
-      assert(!this.destroyed, 'Tried to invoke a method of a destroyed Subject object');
-    }
 
+    // ---------------------------------------------------------------------------
+    // Setters
+    // ---------------------------------------------------------------------------
     /**
      * @method setEvents
      * @param  {Array<Object>} events
@@ -7763,8 +7766,176 @@ var Subject = function (_ViewController) {
     value: function setEvents(events) {
       this.checkIfdestroyed();
 
-      this.events = events;
+      var _iteratorNormalCompletion = true;
+      var _didIteratorError = false;
+      var _iteratorError = undefined;
+
+      try {
+        for (var _iterator = events[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+          var event = _step.value;
+
+          this.events.add(event);
+        }
+      } catch (err) {
+        _didIteratorError = true;
+        _iteratorError = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion && _iterator.return) {
+            _iterator.return();
+          }
+        } finally {
+          if (_didIteratorError) {
+            throw _iteratorError;
+          }
+        }
+      }
+
+      this.updateOrderedEvents();
       this.refreshDayEvents();
+    }
+
+    /**
+     * @method setStartDate
+     * @param  {CustomDate} date
+     */
+
+  }, {
+    key: 'setStartDate',
+    value: function setStartDate(date) {
+      this.checkIfdestroyed();
+
+      this.startDate = date;
+      var dayCount = this.getDayCount();
+      this.setDayCount(0);
+      this.setDayCount(dayCount);
+    }
+  }, {
+    key: 'setEventsLoadedFrom',
+    value: function setEventsLoadedFrom(date) {
+      if (this.orderedeEvents[0]) {
+        var firstBusyDate = this.orderedeEvents[0].start;
+        var dateIsAfterFirstBusyDate = date.diff(firstBusyDate) > 0;
+        if (dateIsAfterFirstBusyDate) {
+          assert(false, 'Invalid date provided for EventLoadedFrom. Date is after first busy date.');
+        }
+      }
+      this.eventsLoadedRange.from = date;
+    }
+  }, {
+    key: 'setEventsLoadedTo',
+    value: function setEventsLoadedTo(date) {
+      if (this.orderedeEvents[0]) {
+        var lastBusyDate = this.orderedeEvents[this.orderedeEvents.length - 1];
+        var dateIsBeforeLastBusyDate = date.diff(lastBusyDate) < 0;
+        if (dateIsBeforeLastBusyDate) {
+          assert(false, 'Invalid date provided for EventLoadedTo. Date is before last busy date.');
+        }
+      }
+      this.eventsLoadedRange.to = date;
+    }
+    // ---------------------------------------------------------------------------
+    // Getters
+    // ---------------------------------------------------------------------------
+
+  }, {
+    key: 'getId',
+    value: function getId() {
+      return this.id;
+    }
+  }, {
+    key: 'getDayCount',
+    value: function getDayCount() {
+      return this.days.length;
+    }
+  }, {
+    key: 'getEventsLoadedRange',
+    value: function getEventsLoadedRange() {
+      assert(this.eventsLoadedRange.from instanceof CustomDate && this.eventsLoadedRange.to instanceof CustomDate, 'Uninitialised eventsLoadedRange');
+      return this.eventsLoadedRange;
+    }
+  }, {
+    key: 'checkIfdestroyed',
+    value: function checkIfdestroyed() {
+      assert(!this.destroyed, 'Tried to invoke a method of a destroyed Subject object');
+    }
+
+    /**
+     * @method getDateEvents
+     * @param  {CustomDate} date [description]
+     * @return {Array<Object>}
+     */
+
+  }, {
+    key: 'getDateEvents',
+    value: function getDateEvents(date) {
+      this.checkIfdestroyed();
+
+      var events = this.orderedeEvents;
+
+      if (!events.length) {
+        return [];
+      }
+
+      var eventIndex = 0;
+      var event = events[eventIndex];
+      var dayEvents = [];
+
+      // While events are starting before or at the date we are evaluating
+      while (event && date.diff(event.start) >= 0) {
+        // Add to dayEvents if it finishes on or after the date in question.
+        if (date.diff(event.end) <= 0) {
+          dayEvents.add(event);
+        }
+
+        eventIndex++;
+        event = events[eventIndex];
+      }
+      return dayEvents;
+    }
+
+    // ---------------------------------------------------------------------------
+    // Modifiers
+    // ---------------------------------------------------------------------------
+
+  }, {
+    key: 'updateOrderedEvents',
+    value: function updateOrderedEvents() {
+      var ordered = [];
+      var _iteratorNormalCompletion2 = true;
+      var _didIteratorError2 = false;
+      var _iteratorError2 = undefined;
+
+      try {
+        for (var _iterator2 = this.events[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+          var event = _step2.value;
+
+          insertInOrder(event, ordered);
+        }
+      } catch (err) {
+        _didIteratorError2 = true;
+        _iteratorError2 = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion2 && _iterator2.return) {
+            _iterator2.return();
+          }
+        } finally {
+          if (_didIteratorError2) {
+            throw _iteratorError2;
+          }
+        }
+      }
+
+      this.orderedeEvents = ordered;
+
+      function insertInOrder(event, arr) {
+        var i = 0;
+        while (arr[i] && arr[i].start.diff(event.start) > 0) {
+          i++;
+        }
+        arr.splice(i, 0, event);
+      }
     }
   }, {
     key: 'refreshDayEvents',
@@ -7780,49 +7951,19 @@ var Subject = function (_ViewController) {
     }
 
     /**
-     * @method getDateEvents
-     * @param  {CustomDate} date [description]
-     * @return {Array<Object>}
-     */
-
-  }, {
-    key: 'getDateEvents',
-    value: function getDateEvents(date) {
-      this.checkIfdestroyed();
-
-      if (!this.events) {
-        return [];
-      }
-
-      var eventIndex = 0;
-      var event = this.events[eventIndex];
-      var dayEvents = [];
-
-      // While events are starting before the date we are evaluating
-      while (event && date.diff(event.startDate) > 0) {
-        // Add to dayEvents if it finishes on or after the date in question.
-        if (date.diff(event.endDate) <= 0) {
-          dayEvents.add(event);
-        }
-
-        eventIndex++;
-        event = this.events[eventIndex];
-      }
-
-      return dayEvents;
-    }
-    /**
      * @method addDay
      * @param  {String} position - Accepts 'front' or 'back'
      */
 
   }, {
     key: 'addDay',
-    value: function addDay(position) {
+    value: function addDay() {
+      var position = arguments.length <= 0 || arguments[0] === undefined ? 'front' : arguments[0];
+
       this.checkIfdestroyed();
 
       if (position === 'front') {
-        var newDate = new CustomDate(this.startDate).add(this.days.length, 'days');
+        var newDate = new CustomDate(this.startDate).add(this.getDayCount() + 1, 'days');
         var dateEvents = this.getDateEvents(newDate);
         var newDay = new Day(newDate, dateEvents, this.cssPrefix);
 
@@ -7859,7 +8000,7 @@ var Subject = function (_ViewController) {
         var dayRemoved = this.days.push();
         dayRemoved.destroy();
       } else if (position === 'back') {
-        if (this.days.length === 0) {
+        if (this.getDayCount() === 0) {
           return;
         }
 
@@ -7882,88 +8023,6 @@ var Subject = function (_ViewController) {
       this.days = null;
       this.html.container.remove();
       this.destroyed = true;
-    }
-
-    /**
-     * @method setDayCount
-     * @param  {Int} count
-     */
-
-  }, {
-    key: 'setDayCount',
-    value: function setDayCount(count) {
-      this.checkIfdestroyed();
-
-      var countDiff = count - this.days.length;
-      var dayFunction = void 0;
-
-      if (countDiff > 0) {
-        dayFunction = 'addDay';
-      } else if (count < this.days.length) {
-        dayFunction = 'removeDay';
-      }
-
-      var position = 'front';
-      for (var i = 0; i < Math.abs(countDiff); i++) {
-        this[dayFunction](position);
-      }
-    }
-
-    /**
-     * @method setStartDate
-     * @param  {CustomDate} date
-     */
-
-  }, {
-    key: 'setStartDate',
-    value: function setStartDate(date) {
-      this.checkIfdestroyed();
-
-      this.startDate = date;
-      var dayCount = this.days.length;
-      this.setDayCount(0);
-      this.setDayCount(dayCount);
-    }
-  }, {
-    key: 'scrollLeft',
-    value: function scrollLeft() {
-      this.removeDay('front');
-      this.addDay('back');
-    }
-  }, {
-    key: 'scrollRight',
-    value: function scrollRight() {
-      this.removeDay('back');
-      this.addDay('front');
-    }
-  }, {
-    key: 'getEventLoadedRange',
-    value: function getEventLoadedRange() {
-      return this.eventLoadedRange;
-    }
-  }, {
-    key: 'setEventLoadedFrom',
-    value: function setEventLoadedFrom(date) {
-      if (this.events[0]) {
-        var firstBusyDate = this.events[this.events.length - 1];
-        var dateIsAfterFirstBusyDate = date.diff(firstBusyDate) > 0;
-        if (dateIsAfterFirstBusyDate) {
-          assert(false, 'Invalid date provided for EventLoadedFrom. Date is after first busy date.');
-        }
-      }
-      this.eventLoadedRange.from = date;
-    }
-  }, {
-    key: 'setEventLoadedTo',
-    value: function setEventLoadedTo(date) {
-      if (this.events[0]) {
-        var lastBusyDate = this.events[0];
-        var dateIsBeforeLastBusyDate = date.diff(lastBusyDate) < 0;
-        if (dateIsBeforeLastBusyDate) {
-          assert(false, 'Invalid date provided for EventLoadedTo. Date is before last busy date.');
-        }
-      }
-      this.eventLoadedRange.to = date;
     }
   }]);
 
@@ -8038,6 +8097,8 @@ var DataLoader = function () {
    */
 
   function DataLoader(loadUrl) {
+    var _this = this;
+
     _classCallCheck(this, DataLoader);
 
     this.loadUrl = loadUrl;
@@ -8045,60 +8106,63 @@ var DataLoader = function () {
     this.moreToLoadAbove = true;
     this.moreToLoadBelow = true;
     Object.preventExtensions(this);
+
+    this.cache.lastElementId = function () {
+      return _this.cache.length ? _this.cache[_this.cache.length - 1].id : null;
+    };
+    this.cache.firstElementId = function () {
+      return _this.cache.length ? _this.cache[0].id : null;
+    };
+    this.cache.findIndexWithId = function (id) {
+      return _this.cache.findIndex(function (subj) {
+        return subj.id === id;
+      });
+    };
   }
 
   /**
-   * Returns promise to resolve into subjects, either from cache or loaded
-   * from the server.
-   * @method getFromId
-   * @param  {Int} id
-   * @param  {Int} amount
+   * @method getEventsForIds
+   * @param  {Array} ids
    * @param  {CustomDate} fromDate
    * @param  {CustomDate} toDate
    * @return {Promise<Array>}
    */
+  // TODO: Implement this on its own
 
 
   _createClass(DataLoader, [{
-    key: 'getFromId',
-    value: function getFromId(id, amount, fromDate, toDate) {
-      var targetIndex = this.cache.findIndex(function (subj) {
-        return subj.id === id;
-      });
-      if (this.cache.length === 0) {
-        targetIndex = 0;
-      }
-      assert(targetIndex >= 0, 'Invalid target Index: ' + targetIndex);
-
-      var toIndex = targetIndex + amount - 1;
-      var fromIndex = targetIndex;
-      return this.getCacheSection(fromIndex, toIndex, fromDate, toDate);
+    key: 'getEventsForIds',
+    value: function getEventsForIds(ids, fromDate, toDate) {
+      return this.getSubjects(ids.length, 'after', ids[0].id, fromDate, toDate);
     }
 
-    /**
-     * Returns promise to resolve into subjects, either from cache or loaded
-     * from the server.
-     * @method getFromId
-     * @param  {Int} id
-     * @param  {Int} amount
-     * @param  {CustomDate} fromDate
-     * @param  {CustomDate} toDate
-     * @return {Promise<Array>}
-     */
+    // TODO: Use config object with {before: 5, after: 6, ids: [1,2,3]}
 
   }, {
-    key: 'getUntilId',
-    value: function getUntilId(id, amount, fromDate, toDate) {
-      var targetIndex = this.cache.findIndex(function (subj) {
-        return subj.id === id;
-      });
-      if (this.cache.length === 0) {
-        targetIndex = 0;
-      }
+    key: 'getSubjects',
+    value: function getSubjects(amount) {
+      var beforeAfter = arguments.length <= 1 || arguments[1] === undefined ? 'after' : arguments[1];
+      var referenceId = arguments[2];
+      var fromDate = arguments.length <= 3 || arguments[3] === undefined ? new CustomDate() : arguments[3];
+      var toDate = arguments.length <= 4 || arguments[4] === undefined ? new CustomDate() : arguments[4];
+
+      assert(beforeAfter === 'before' || beforeAfter === 'after', 'Invalid value for beforeAfter: ' + beforeAfter);
+
+      var targetIndex = this.cache.length > 0 ? this.cache.findIndexWithId(referenceId) : 0;
       assert(targetIndex >= 0, 'Invalid target Index: ' + targetIndex);
 
-      var fromIndex = targetIndex - amount + 1;
-      var toIndex = targetIndex;
+      var fromIndex = void 0;
+      var toIndex = void 0;
+      var normalisedAmount = Math.max(amount, 1);
+
+      if (beforeAfter === 'before') {
+        fromIndex = targetIndex - normalisedAmount + 1;
+        toIndex = targetIndex;
+      } else {
+        fromIndex = targetIndex;
+        toIndex = targetIndex + normalisedAmount - 1;
+      }
+
       return this.getCacheSection(fromIndex, toIndex, fromDate, toDate);
     }
 
@@ -8114,72 +8178,110 @@ var DataLoader = function () {
 
   }, {
     key: 'getCacheSection',
-    value: function getCacheSection(fromIndex, toIndex, fromDate, toDate) {
-      var _this = this;
+    value: function () {
+      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee(fromIndex, toIndex, fromDate, toDate) {
+        var needsIndexesAbove, needsIndexesBelow, hasAllIndexes, coversEntirePeriod, cachedFrom, cachedTo, cachedSubjects, ids, serverRequests, amount, referenceId, _amount, _referenceId, _ref, _ref2, indexesAbove, indexesBelow;
 
-      // eslint-disable-line complexity
-      var needsLoadingFromServer = false;
-      var loadTopBottom = void 0;
-      var loadReferenceIds = [];
-      if (fromIndex < 0 && this.moreToLoadAbove) {
-        needsLoadingFromServer = true;
-        loadTopBottom = 'top';
-        loadReferenceIds.push(this.cache[toIndex] ? this.cache[toIndex].id : null);
-      } else if (toIndex > this.cache.length && this.moreToLoadBelow) {
-        needsLoadingFromServer = true;
-        loadTopBottom = 'bottom';
-        loadReferenceIds.push(this.cache[fromIndex] ? this.cache[fromIndex].id : null);
-      } else {
-        fromIndex = Math.min(fromIndex, this.cache.length); // eslint-disable-line no-param-reassign
-        toIndex = Math.max(toIndex, 0); // eslint-disable-line no-param-reassign
-        needsLoadingFromServer = !this.cacheSectionCoversPeriod(fromIndex, toIndex, fromDate, toDate);
-        for (var index = fromIndex; index <= toIndex; index++) {
-          loadReferenceIds.push(this.cache[index].id);
-        }
+        return _regeneratorRuntime.wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                needsIndexesAbove = fromIndex < 0;
+                needsIndexesBelow = toIndex >= this.cache.length;
+                hasAllIndexes = !needsIndexesAbove && !needsIndexesBelow;
+                coversEntirePeriod = this.cacheCoversPeriod(fromIndex, toIndex, fromDate, toDate);
+                cachedFrom = Math.max(0, fromIndex);
+                cachedTo = Math.max(0, Math.min(toIndex, this.cache.length - 1));
+
+                // We add one because the slice method does not include the 'to' index.
+
+                cachedSubjects = this.cache.slice(cachedFrom, cachedTo + 1);
+
+                if (!(hasAllIndexes && coversEntirePeriod)) {
+                  _context.next = 9;
+                  break;
+                }
+
+                return _context.abrupt('return', cachedSubjects);
+
+              case 9:
+                if (!hasAllIndexes) {
+                  _context.next = 12;
+                  break;
+                }
+
+                ids = this.cache.slice(fromIndex, toIndex).map(function (subj) {
+                  return subj.id;
+                });
+                return _context.abrupt('return', this.loadEvents(ids, fromDate, toDate));
+
+              case 12:
+                serverRequests = [];
+
+                if (needsIndexesAbove && this.moreToLoadAbove) {
+                  amount = Math.abs(fromIndex);
+                  referenceId = this.cache.firstElementId();
+
+                  serverRequests.push(this.loadSubjects(amount, 'before', referenceId, fromDate, toDate));
+                } else {
+                  serverRequests.push([]);
+                }
+
+                if (needsIndexesBelow && this.moreToLoadBelow) {
+                  _amount = Math.max(toIndex - this.cache.length + 1, 1);
+                  _referenceId = this.cache.lastElementId();
+
+                  serverRequests.push(this.loadSubjects(_amount, 'after', _referenceId, fromDate, toDate));
+                } else {
+                  serverRequests.push([]);
+                }
+
+                _context.next = 17;
+                return Promise.all(serverRequests);
+
+              case 17:
+                _ref = _context.sent;
+                _ref2 = _slicedToArray(_ref, 2);
+                indexesAbove = _ref2[0];
+                indexesBelow = _ref2[1];
+                return _context.abrupt('return', indexesAbove.concat(cachedSubjects, indexesBelow));
+
+              case 22:
+              case 'end':
+                return _context.stop();
+            }
+          }
+        }, _callee, this);
+      }));
+
+      function getCacheSection(_x4, _x5, _x6, _x7) {
+        return ref.apply(this, arguments);
       }
 
-      if (needsLoadingFromServer) {
-        var _ret = function () {
-          var loadFrom = new CustomDate(fromDate).add(-30, 'days');
-          var loadTo = new CustomDate(toDate).add(30, 'days');
-          var amountRequested = toIndex - fromIndex + 1;
-          var loadAmount = amountRequested + 30;
-
-          return {
-            v: _this.load(loadFrom, loadTo, loadReferenceIds, loadAmount, loadTopBottom).then(function (data) {
-              return data && data.subjects ? data.subjects.slice(0, amountRequested) : [];
-            })
-          };
-        }();
-
-        if ((typeof _ret === 'undefined' ? 'undefined' : _typeof$1(_ret)) === "object") return _ret.v;
-      }
-
-      return new Promise(function (resolve) {
-        resolve(_this.cache.slice(fromIndex, toIndex));
-      });
-    }
+      return getCacheSection;
+    }()
 
     /**
      * Checks whether in a portion of the cache all subjects have event
      * data for the totality of a period.
-     * @method cacheSectionCoversPeriod
-     * @param  {[type]} fromIndex [description]
-     * @param  {[type]} toIndex [description]
-     * @param  {[type]} fromDate [description]
-     * @param  {[type]} toDate [description]
-     * @return {[type]} [description]
+     * @method cacheCoversPeriod
+     * @param  {Int} fromIndex
+     * @param  {Int} toIndex
+     * @param  {CustomDate} fromDate
+     * @param  {CustomDate} toDate
+     * @return {Boolean}
      */
 
   }, {
-    key: 'cacheSectionCoversPeriod',
-    value: function cacheSectionCoversPeriod(fromIndex, toIndex, fromDate, toDate) {
+    key: 'cacheCoversPeriod',
+    value: function cacheCoversPeriod(fromIndex, toIndex, fromDate, toDate) {
       assert(fromIndex <= toIndex, 'Invalid indexes passed: ' + fromIndex + ', ' + toIndex);
       assert(fromDate.diff(toDate) <= 0, 'fromDate cannot be greater than toDate: ' + fromDate.toString() + ', ' + toDate.toString());
 
       if (fromIndex < 0 || toIndex >= this.cache.length) {
         return false;
       }
+
       var allCoverFromToPeriod = true;
       var index = fromIndex;
       while (index <= toIndex && allCoverFromToPeriod) {
@@ -8190,69 +8292,153 @@ var DataLoader = function () {
       }
       return allCoverFromToPeriod;
     }
+
+    // TODO: Add padding to loading amount and loading range in load functions
     /**
-     * Fetches data from the server
-     * @method load
+     * Loads subjects from the server. These subjects will be either
+     * before or after loadSubjects.
+     * @method loadSubjects
+     * @param  {Int} amount
+     * @param  {String} beforeAfter
+     * @param  {Int} referenceId
      * @param  {CustomDate} fromDate
      * @param  {CustomDate} toDate
-     * @param  {Array<String>} ids - Subject ids
-     * @param  {Int} [idCountToLoad] - How many new ids to be loaded
-     * @param  {String} [Method]
-     * @return {Promise<Object>}
+     * @return {Promise<Array<Object>>} - Array with subjects
      */
 
   }, {
-    key: 'load',
-    value: function load(fromDate, toDate, ids) {
-      var idCountToLoad = arguments.length <= 3 || arguments[3] === undefined ? 0 : arguments[3];
+    key: 'loadSubjects',
+    value: function () {
+      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee2(amount, beforeAfter, referenceId, fromDate, toDate) {
+        var loadedContent;
+        return _regeneratorRuntime.wrap(function _callee2$(_context2) {
+          while (1) {
+            switch (_context2.prev = _context2.next) {
+              case 0:
+                assert(beforeAfter === 'before' || beforeAfter === 'after', 'Invalid value for beforeAfter: ' + beforeAfter);
 
-      var _this2 = this;
+                loadedContent = void 0;
 
-      var topBottom = arguments[4];
-      var method = arguments.length <= 5 || arguments[5] === undefined ? 'GET' : arguments[5];
+                if (!(beforeAfter === 'before')) {
+                  _context2.next = 9;
+                  break;
+                }
 
-      assert(method); // To be removed
-      console.log('Loaded');
-      // return fetch(this.loadUrl, {
-      //   method,
-      //   credentials: 'include',
-      // })
-      // .then((res) => res.json())
-      return new Promise(function (resolve) {
-        var newData = _this2.createCalendarContent(ids, idCountToLoad, fromDate, toDate);
-        _this2.addToCache(newData);
-        _this2.moreToLoadAbove = newData.moreToLoadAbove;
-        _this2.moreToLoadBelow = newData.moreToLoadBelow;
-        resolve(newData);
-      }).catch(function (err) {
-        return assert(false, err);
-      });
+                console.warn('loadSubjects before not Implemented');
+                _context2.next = 6;
+                return this.createCalendarContent([referenceId], amount, fromDate, toDate);
+
+              case 6:
+                loadedContent = _context2.sent;
+                _context2.next = 12;
+                break;
+
+              case 9:
+                _context2.next = 11;
+                return this.createCalendarContent([referenceId], amount, fromDate, toDate);
+
+              case 11:
+                loadedContent = _context2.sent;
+
+              case 12:
+
+                this.processServerResponse(loadedContent);
+                return _context2.abrupt('return', loadedContent.subjects);
+
+              case 14:
+              case 'end':
+                return _context2.stop();
+            }
+          }
+        }, _callee2, this);
+      }));
+
+      function loadSubjects(_x8, _x9, _x10, _x11, _x12) {
+        return ref.apply(this, arguments);
+      }
+
+      return loadSubjects;
+    }()
+
+    /**
+     * Loads subject events from the server. For a particular set of subjects
+     * specified by their ids.
+     * @method loadEvents
+     * @param  {Array<Int>} ids
+     * @param  {CustomDate} fromDate
+     * @param  {CustomDate} toDate
+     * @return {Promise<Array<Object>>} - Resolves into an array of subject objects
+     */
+
+  }, {
+    key: 'loadEvents',
+    value: function () {
+      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee3(ids, fromDate, toDate) {
+        var loadedContent;
+        return _regeneratorRuntime.wrap(function _callee3$(_context3) {
+          while (1) {
+            switch (_context3.prev = _context3.next) {
+              case 0:
+                _context3.next = 2;
+                return this.createCalendarContent(ids, ids.length, fromDate, toDate);
+
+              case 2:
+                loadedContent = _context3.sent;
+
+                this.processServerResponse(loadedContent);
+                return _context3.abrupt('return', loadedContent.subjects);
+
+              case 5:
+              case 'end':
+                return _context3.stop();
+            }
+          }
+        }, _callee3, this);
+      }));
+
+      function loadEvents(_x13, _x14, _x15) {
+        return ref.apply(this, arguments);
+      }
+
+      return loadEvents;
+    }()
+
+    /**
+     * @method processServerResponse
+     * @param  {Object} responseObj - A typical server response
+     * @return {Void}
+     */
+
+  }, {
+    key: 'processServerResponse',
+    value: function processServerResponse(responseObj) {
+      this.moreToLoadAbove = responseObj.moreToLoadAbove;
+      this.moreToLoadBelow = responseObj.moreToLoadBelow;
+      this.addToCache(responseObj.subjects, responseObj.fromDate, responseObj.toDate);
     }
-
     /**
      * Adds loaded data to existing cache.
      * @method addToCache
-     * @param  {Object} data
-     * @param  {CustomDate} data.fromDate
-     * @param  {CustomDate} data.toDate
-     * @param  {Array} data.subjects
+     * @param  {Array} subjects
+     * @param  {CustomDate} fromDate - Date where event data period coverage starts.
+     * @param  {CustomDate} toDate - Date where event data period coverage ends.
      */
 
   }, {
     key: 'addToCache',
-    value: function addToCache(data) {
+    value: function addToCache(subjects, fromDate, toDate) {
       var _iteratorNormalCompletion = true;
       var _didIteratorError = false;
       var _iteratorError = undefined;
 
       try {
-        for (var _iterator = data.subjects[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+        for (var _iterator = subjects[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
           var subject = _step.value;
 
-          var cachedVersion = this.getCachedVersion(subject);
-          if (cachedVersion) {
-            cachedVersion.eventsFromDate = CustomDate.getEarliest(cachedVersion.eventsFromDate, data.fromDate);
-            cachedVersion.eventsToDate = CustomDate.getLatest(cachedVersion.eventsToDate, data.toDate);
+          var cached = this.getCachedVersion(subject);
+          if (cached) {
+            cached.eventsFromDate = CustomDate.getEarliest(cached.eventsFromDate, fromDate);
+            cached.eventsToDate = CustomDate.getLatest(cached.eventsToDate, toDate);
 
             var _iteratorNormalCompletion2 = true;
             var _didIteratorError2 = false;
@@ -8262,7 +8448,7 @@ var DataLoader = function () {
               for (var _iterator2 = subject.events[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
                 var event = _step2.value;
 
-                cachedVersion.events.add(event);
+                cached.events.add(event);
               }
             } catch (err) {
               _didIteratorError2 = true;
@@ -8279,8 +8465,8 @@ var DataLoader = function () {
               }
             }
           } else {
-            subject.eventsFromDate = data.fromDate;
-            subject.eventsToDate = data.toDate;
+            subject.eventsFromDate = fromDate;
+            subject.eventsToDate = toDate;
             this.insertOrderedToCache(subject);
           }
         }
@@ -8311,8 +8497,8 @@ var DataLoader = function () {
   }, {
     key: 'getCachedVersion',
     value: function getCachedVersion(subject) {
-      var cachedVersion = this.cache.find(function (cachedSubject) {
-        return cachedSubject.id === subject.id;
+      var cachedVersion = this.cache.find(function (cached) {
+        return cached.id === subject.id;
       });
       return cachedVersion;
     }
@@ -8353,58 +8539,83 @@ var DataLoader = function () {
     /**
      * Creates random data
      * @method createCalendarContent
-     * @return {Object}
+     * @return {Promise}
      */
 
   }, {
     key: 'createCalendarContent',
-    value: function createCalendarContent(startingIds, amount, fromDate, toDate) {
-      function daysFromNow(days) {
-        return new Date(Date.now() + days * 86400000);
+    value: function () {
+      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee4(startingIds, amount, fromDate, toDate) {
+        var daysFromNow, rand, properties, propNo, lastId, eventNo, lastDate, i, j, newEvent;
+        return _regeneratorRuntime.wrap(function _callee4$(_context4) {
+          while (1) {
+            switch (_context4.prev = _context4.next) {
+              case 0:
+                rand = function rand() {
+                  return parseInt(Math.random() * 10, 10);
+                };
+
+                daysFromNow = function daysFromNow(days) {
+                  var date = new CustomDate();
+                  return date.add(days, 'days');
+                };
+
+                // Random number from 1 to 10
+
+
+                properties = [];
+                propNo = amount;
+                lastId = startingIds[startingIds.length - 1] || 1;
+                eventNo = void 0;
+                lastDate = void 0;
+
+
+                for (i = 0; i < propNo; i++) {
+                  properties[i] = {};
+                  properties[i].id = startingIds[i] || lastId + i - startingIds.length;
+                  properties[i].name = 'Property - asdf asd fasdf asdfasd ' + properties[i].id;
+                  properties[i].events = new Set();
+                  eventNo = rand() * 5;
+                  lastDate = rand();
+
+                  for (j = 0; j < eventNo; j++) {
+                    newEvent = {};
+
+                    newEvent.desc = 'Event ' + (i + j);
+
+                    // Random true or false
+                    newEvent.visitable = !!rand();
+
+                    lastDate += rand();
+                    newEvent.start = daysFromNow(lastDate);
+                    lastDate += rand();
+                    newEvent.end = daysFromNow(lastDate);
+                    properties[i].events.add(newEvent);
+                  }
+                }
+
+                return _context4.abrupt('return', {
+                  moreToLoadAbove: true,
+                  moreToLoadBelow: true,
+                  fromDate: fromDate,
+                  toDate: toDate,
+                  subjects: properties
+                });
+
+              case 9:
+              case 'end':
+                return _context4.stop();
+            }
+          }
+        }, _callee4, this);
+      }));
+
+      function createCalendarContent(_x16, _x17, _x18, _x19) {
+        return ref.apply(this, arguments);
       }
 
-      // Random number from 1 to 10
-      function rand() {
-        return parseInt(Math.random() * 10, 10);
-      }
-
-      var properties = [];
-      var propNo = amount;
-      var lastId = startingIds[startingIds.length - 1] || 1;
-      var eventNo = void 0;
-      var lastDate = void 0;
-
-      for (var i = 0; i < propNo; i++) {
-        properties[i] = {};
-        properties[i].id = startingIds[i] || lastId + i - startingIds.length;
-        properties[i].name = 'Property - asdf asd fasdf asdfasd ' + properties[i].id;
-        properties[i].events = new Set();
-        eventNo = rand() * 5;
-        lastDate = rand();
-
-        for (var j = 0; j < eventNo; j++) {
-          var newEvent = {};
-          newEvent.desc = 'Event ' + (i + j);
-
-          // Random true or false
-          newEvent.visitable = !!rand();
-
-          lastDate += rand();
-          newEvent.start = daysFromNow(lastDate).getTime();
-          lastDate += rand();
-          newEvent.end = daysFromNow(lastDate).getTime();
-          properties[i].events.add(newEvent);
-        }
-      }
-
-      return {
-        moreToLoadAbove: false,
-        moreToLoadBelow: false,
-        fromDate: fromDate,
-        toDate: toDate,
-        subjects: properties
-      };
-    }
+      return createCalendarContent;
+    }()
   }]);
 
   return DataLoader;
@@ -8431,7 +8642,6 @@ var SubjectsContainer = function (_ViewController) {
 
     _this.dataLoader = new DataLoader(loadUrl);
     _this.startDate = new CustomDate();
-    _this.endDate = new CustomDate();
     _this.subjects = [];
 
     _this.modulePrefix = modulePrefix;
@@ -8441,152 +8651,12 @@ var SubjectsContainer = function (_ViewController) {
     return _this;
   }
 
-  /**
-   * TODO: Make this work and make it an async function
-   * Add subject rows to the container
-   * @method addSubjects
-   * @param  {String} topBottom - Accepts 'top' or 'bottom'
-   * @param  {Int} amount
-   * @return {Promise} - The promise will be resolved when the subject has been added.
-   */
+  // ---------------------------------------------------------------------------
+  // Setters
+  // ---------------------------------------------------------------------------
 
 
   _createClass(SubjectsContainer, [{
-    key: 'addSubjects',
-    value: function () {
-      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee(topBottom) {
-        var amount = arguments.length <= 1 || arguments[1] === undefined ? 1 : arguments[1];
-        var i, newSubjectConfigObject, newSubject;
-        return _regeneratorRuntime.wrap(function _callee$(_context) {
-          while (1) {
-            switch (_context.prev = _context.next) {
-              case 0:
-                if (topBottom !== 'bottom') {
-                  console.log('Not implemented');
-                }
-
-                i = 0;
-
-              case 2:
-                if (!(i < amount)) {
-                  _context.next = 13;
-                  break;
-                }
-
-                _context.next = 5;
-                return this.getNewSubjectConfig();
-
-              case 5:
-                newSubjectConfigObject = _context.sent;
-
-                if (!newSubjectConfigObject) {
-                  assert(false, 'No new subject found.');
-                }
-
-                //  Create subject form object found.
-                newSubject = new Subject(newSubjectConfigObject, this.startDate, this.modulePrefix);
-
-                this.subjects.push(newSubject);
-                this.html.container.appendChild(newSubject.html.container);
-
-              case 10:
-                i++;
-                _context.next = 2;
-                break;
-
-              case 13:
-              case 'end':
-                return _context.stop();
-            }
-          }
-        }, _callee, this);
-      }));
-
-      function addSubjects(_x, _x2) {
-        return ref.apply(this, arguments);
-      }
-
-      return addSubjects;
-    }()
-
-    /**
-     * @method getNewSubjectConfig
-     * @param  {String} topBottom
-     * @return {Promise<Object>} Will be resolved into an object able to create a Subject instance
-     */
-
-  }, {
-    key: 'getNewSubjectConfig',
-    value: function getNewSubjectConfig() {
-      var topBottom = arguments.length <= 0 || arguments[0] === undefined ? 'bottom' : arguments[0];
-
-      var fetchPromise = void 0;
-      if (topBottom === 'top') {
-        var topId = this.subjects[0] ? this.subjects[0].getId() : null;
-        fetchPromise = this.dataLoader.getUntilId(topId, 2, this.startDate, this.endDate).then(function (arr) {
-          return arr[0];
-        });
-      } else if (topBottom === 'bottom') {
-        var bottomElement = this.subjects[this.subjects.length - 1];
-        var bottomId = bottomElement ? bottomElement.getId() : null;
-        fetchPromise = this.dataLoader.getFromId(bottomId, 2, this.startDate, this.endDate).then(function (arr) {
-          return arr[1] || arr[0];
-        });
-      } else {
-        assert(false, 'Invalid topBottom option: ' + topBottom);
-      }
-
-      return fetchPromise;
-    }
-
-    /**
-     * @method removeSubjects
-     * @param  {String} topBottom - Accepts 'top' or 'bottom'
-     * @param  {Int} amount
-     */
-
-  }, {
-    key: 'removeSubjects',
-    value: function removeSubjects(topBottom, amount) {
-      assert(typeof topBottom === 'string', 'TypeError: invalid value for topBottom. Expected String and got ${typeof topBottom}');
-      var start = void 0;
-      var end = void 0;
-
-      if (topBottom === 'bottom') {
-        end = this.subjects.length;
-        start = end - amount;
-      } else if (topBottom === 'top') {
-        end = amount;
-        start = 0;
-      } else {
-        assert(false, 'Invalid value for topBottom: ${topBottom}');
-      }
-
-      for (var subjIndex = start; subjIndex < end; subjIndex++) {
-        var _subjects$splice = this.subjects.splice(subjIndex, 1);
-
-        var _subjects$splice2 = _slicedToArray(_subjects$splice, 1);
-
-        var erasedSubject = _subjects$splice2[0];
-
-        erasedSubject.destroy();
-      }
-    }
-
-    /**
-     * Sets the amount of days being shown in each subject row.
-     * @method setDayCount
-     * @param  {Int} count
-     */
-
-  }, {
-    key: 'setDayCount',
-    value: function setDayCount(count) {
-      this.subjects.forEach(function (subject) {
-        return subject.setDayCount(count);
-      });
-    }
-  }, {
     key: 'setStartDate',
     value: function setStartDate(startDate) {
       assert(startDate instanceof CustomDate, 'TypeError: startDate is not an instance of CustomDate');
@@ -8595,6 +8665,65 @@ var SubjectsContainer = function (_ViewController) {
         subject.setStartDate(startDate);
       });
     }
+
+    /**
+     * Sets the amount of days being shown in each subject row.
+     * @method setDayCount
+     * @param  {Int} count
+     * @return {Promise}
+     */
+
+  }, {
+    key: 'setDayCount',
+    value: function () {
+      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee(count) {
+        var countDiff, dayFunction, position, absDiff, i;
+        return _regeneratorRuntime.wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                countDiff = count - this.getDayCount();
+                dayFunction = void 0;
+
+
+                if (countDiff > 0) {
+                  dayFunction = 'addDay';
+                } else if (count < this.getDayCount()) {
+                  dayFunction = 'removeDay';
+                }
+
+                position = 'front';
+                absDiff = Math.abs(countDiff);
+                i = 0;
+
+              case 6:
+                if (!(i < absDiff)) {
+                  _context.next = 12;
+                  break;
+                }
+
+                _context.next = 9;
+                return this[dayFunction](position);
+
+              case 9:
+                i++;
+                _context.next = 6;
+                break;
+
+              case 12:
+              case 'end':
+                return _context.stop();
+            }
+          }
+        }, _callee, this);
+      }));
+
+      function setDayCount(_x) {
+        return ref.apply(this, arguments);
+      }
+
+      return setDayCount;
+    }()
 
     /**
      * @method setEvents
@@ -8642,18 +8771,354 @@ var SubjectsContainer = function (_ViewController) {
         }
       }
     }
+
+    // ---------------------------------------------------------------------------
+    // Getters
+    // ---------------------------------------------------------------------------
+    /**
+     * Returns an object with the date 'from' and 'to'
+     * @method getSubjectsEventRange
+     * @return {Object} - {to: CustomDate, from: Custom Date}
+     */
+
+  }, {
+    key: 'getSubjectsEventRange',
+    value: function getSubjectsEventRange() {
+      var fromDate = this.startDate;
+      var toDate = this.startDate;
+      var _iteratorNormalCompletion2 = true;
+      var _didIteratorError2 = false;
+      var _iteratorError2 = undefined;
+
+      try {
+        for (var _iterator2 = this.subjects[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+          var subject = _step2.value;
+
+          var range = subject.getEventsLoadedRange();
+          if (range.from.diff(fromDate) < 0) {
+            fromDate = range.from;
+          }
+          if (range.to.diff(toDate) > 0) {
+            toDate = range.to;
+          }
+        }
+      } catch (err) {
+        _didIteratorError2 = true;
+        _iteratorError2 = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion2 && _iterator2.return) {
+            _iterator2.return();
+          }
+        } finally {
+          if (_didIteratorError2) {
+            throw _iteratorError2;
+          }
+        }
+      }
+
+      return {
+        from: fromDate,
+        to: toDate
+      };
+    }
+
+    /**
+     * [getDayCount description]
+     * @method getDayCount
+     * @return {Int} Amount of days in each subject
+     */
+
+  }, {
+    key: 'getDayCount',
+    value: function getDayCount() {
+      return this.subjects[0] ? this.subjects[0].getDayCount() : 1;
+    }
+  }, {
+    key: 'getEndDate',
+    value: function getEndDate() {
+      var startDate = new CustomDate(this.startDate);
+      var dayCount = this.getDayCount();
+      var endDate = startDate.add(dayCount, 'days');
+      return endDate;
+    }
+
+    /**
+     * Checks that all subjects have event information for a date range.
+     * @method subjectsCoverRange
+     * @param  {CustomDate} fromDate
+     * @param  {CustomDate} toDate
+     * @return {Boolean}
+     */
+
+  }, {
+    key: 'subjectsCoverRange',
+    value: function subjectsCoverRange(fromDate, toDate) {
+      var range = this.getSubjectsEventRange();
+      var coverFromDate = range.from.diff(fromDate) <= 0;
+      var coverToDate = range.to.diff(toDate) >= 0;
+      return coverFromDate && coverToDate;
+    }
+    // ---------------------------------------------------------------------------
+    // Modifiers
+    // ---------------------------------------------------------------------------
+
+    /**
+     * @method removeSubjects
+     * @param  {String} topBottom - Accepts 'top' or 'bottom'
+     * @param  {Int} amount
+     */
+
+  }, {
+    key: 'removeSubjects',
+    value: function removeSubjects(topBottom, amount) {
+      assert(typeof topBottom === 'string', 'TypeError: invalid value for topBottom. Expected String and got ${typeof topBottom}');
+      var start = void 0;
+      var end = void 0;
+
+      if (topBottom === 'bottom') {
+        end = this.subjects.length;
+        start = end - amount;
+      } else if (topBottom === 'top') {
+        end = amount;
+        start = 0;
+      } else {
+        assert(false, 'Invalid value for topBottom: ${topBottom}');
+      }
+
+      for (var subjIndex = start; subjIndex < end; subjIndex++) {
+        var _subjects$splice = this.subjects.splice(subjIndex, 1);
+
+        var _subjects$splice2 = _slicedToArray(_subjects$splice, 1);
+
+        var erasedSubject = _subjects$splice2[0];
+
+        erasedSubject.destroy();
+      }
+    }
+
+    /**
+     * Add subject rows to the container
+     * @method addSubjects
+     * @param  {String} topBottom - Accepts 'top' or 'bottom'
+     * @param  {Int} amount
+     * @return {Promise} - The promise will be resolved when the subject has been added.
+     */
+
+  }, {
+    key: 'addSubjects',
+    value: function () {
+      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee2(topBottom) {
+        var amount = arguments.length <= 1 || arguments[1] === undefined ? 1 : arguments[1];
+        var startDate, dayCount, i, subjConfig, newSubject, counter;
+        return _regeneratorRuntime.wrap(function _callee2$(_context2) {
+          while (1) {
+            switch (_context2.prev = _context2.next) {
+              case 0:
+                if (topBottom !== 'bottom') {
+                  console.log('Not implemented');
+                }
+
+                startDate = this.startDate;
+                dayCount = this.getDayCount();
+                i = 0;
+
+              case 4:
+                if (!(i < amount)) {
+                  _context2.next = 16;
+                  break;
+                }
+
+                _context2.next = 7;
+                return this.getNewSubjectConfig();
+
+              case 7:
+                subjConfig = _context2.sent;
+
+                // TODO: Handle case when there are no more subjects to load.
+                if (!subjConfig) {
+                  assert(false, 'No new subject found.');
+                }
+
+                //  Create subject form object found.
+                //  NOTE: This object already contains events for the date range of
+                //  the container.
+                newSubject = new Subject(subjConfig, startDate, this.modulePrefix);
+
+                // set correct dayCount
+
+                for (counter = 0; counter < dayCount; counter++) {
+                  newSubject.addDay();
+                }
+
+                this.subjects.push(newSubject);
+                this.html.container.appendChild(newSubject.html.container);
+
+              case 13:
+                i++;
+                _context2.next = 4;
+                break;
+
+              case 16:
+              case 'end':
+                return _context2.stop();
+            }
+          }
+        }, _callee2, this);
+      }));
+
+      function addSubjects(_x2, _x3) {
+        return ref.apply(this, arguments);
+      }
+
+      return addSubjects;
+    }()
+
+    /**
+     * @method getNewSubjectConfig
+     * @param  {String} topBottom
+     * @return {Promise<Object>} Will be resolved into an object able to create a Subject instance
+     */
+
+  }, {
+    key: 'getNewSubjectConfig',
+    value: function () {
+      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee3() {
+        var topBottom = arguments.length <= 0 || arguments[0] === undefined ? 'bottom' : arguments[0];
+        var fromDate = arguments.length <= 1 || arguments[1] === undefined ? this.startDate : arguments[1];
+        var toDate = arguments.length <= 2 || arguments[2] === undefined ? this.getEndDate() : arguments[2];
+        var beforeAfter, referenceElement, referenceId, subjArray;
+        return _regeneratorRuntime.wrap(function _callee3$(_context3) {
+          while (1) {
+            switch (_context3.prev = _context3.next) {
+              case 0:
+                beforeAfter = void 0;
+                referenceElement = void 0;
+
+                if (topBottom === 'top') {
+                  referenceElement = this.subjects[0];
+                  beforeAfter = 'before';
+                } else if (topBottom === 'bottom') {
+                  referenceElement = this.subjects[this.subjects.length - 1];
+                  beforeAfter = 'after';
+                } else {
+                  assert(false, 'Invalid topBottom option: ' + topBottom);
+                }
+
+                referenceId = this.subjects.length > 0 ? referenceElement.getId() : null;
+                _context3.next = 6;
+                return this.dataLoader.getSubjects(2, beforeAfter, referenceId, fromDate, toDate);
+
+              case 6:
+                subjArray = _context3.sent;
+                return _context3.abrupt('return', subjArray[1]);
+
+              case 8:
+              case 'end':
+                return _context3.stop();
+            }
+          }
+        }, _callee3, this);
+      }));
+
+      function getNewSubjectConfig(_x5, _x6, _x7) {
+        return ref.apply(this, arguments);
+      }
+
+      return getNewSubjectConfig;
+    }()
+
+    /**
+     * Add a day to each subject
+     * @method addDay
+     * @param  {String} frontBack - 'front' or 'back'.
+     * @return {Promise}
+     */
+
+  }, {
+    key: 'addDay',
+    value: function () {
+      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee4(frontBack) {
+        var fromDate, toDate, subjectIds, eventData;
+        return _regeneratorRuntime.wrap(function _callee4$(_context4) {
+          while (1) {
+            switch (_context4.prev = _context4.next) {
+              case 0:
+                fromDate = void 0;
+                toDate = void 0;
+
+                if (frontBack === 'front') {
+                  fromDate = this.startDate;
+                  toDate = this.getEndDate().add(1, 'days');
+                } else if (frontBack === 'back') {
+                  fromDate = new CustomDate(this.startDate).add(-1, 'days');
+                  toDate = this.getEndDate();
+                } else {
+                  assert(false, 'Invalid addDay direction option: ' + frontBack);
+                }
+
+                if (this.subjectsCoverRange(fromDate, toDate)) {
+                  _context4.next = 11;
+                  break;
+                }
+
+                console.log('Async route');
+                // Fetch more data if subjects currently don't have it.
+                subjectIds = this.subjects.map(function (subj) {
+                  return subj.getId();
+                });
+                _context4.next = 8;
+                return this.dataLoader.getEventsForIds(subjectIds, fromDate, toDate);
+
+              case 8:
+                eventData = _context4.sent;
+
+                this.setEvents(eventData);
+                console.log('Finished async work');
+
+              case 11:
+                console.log('Finished adding days');
+                this.subjects.forEach(function (subject) {
+                  return subject.addDay(frontBack);
+                });
+
+              case 13:
+              case 'end':
+                return _context4.stop();
+            }
+          }
+        }, _callee4, this);
+      }));
+
+      function addDay(_x11) {
+        return ref.apply(this, arguments);
+      }
+
+      return addDay;
+    }()
+  }, {
+    key: 'removeDay',
+    value: function removeDay(frontBack) {
+      this.subjects.forEach(function (subject) {
+        return subject.removeDay(frontBack);
+      });
+    }
   }, {
     key: 'scrollLeft',
     value: function scrollLeft() {
-      this.subjects.forEach(function (subject) {
-        return subject.scrollLeft();
+      var _this3 = this;
+
+      this.addDay('back').then(function () {
+        return _this3.removeDay('front');
       });
     }
   }, {
     key: 'scrollRight',
     value: function scrollRight() {
-      this.subjects.forEach(function (subject) {
-        return subject.scrollRight();
+      var _this4 = this;
+
+      this.addDay('front').then(function () {
+        return _this4.removeDay('back');
       });
     }
 
@@ -8680,42 +9145,6 @@ var SubjectsContainer = function (_ViewController) {
       this.removeSubjects('bottom', 1);
       return this.addSubjects('down', 1);
     }
-
-    // /**
-    //  * @method loadData
-    //  * @param  {CustomDate} startDate
-    //  * @param  {CustomDate} endDate
-    //  * @param  {Array<Int>} ids - All ids whose events should be fetched
-    //  * @param  {Int} extraIdsToLoad - Amount of extra ids to load
-    //  * @param  {String} topBottom - Whether to load from 'top' or from 'bottom'
-    //  * @return {Promise<Object>}
-    //  */
-    // loadData(startDate, endDate, ids, extraIdsToLoad, topBottom) {
-    //   // do we have at least 10 ids above?z
-    //   // do we have at least 10 ids bellow?
-    //   // do all of these ids have data loaded from two months before start date?
-    //   // do all of these ids have data loaded from two months after start date?
-    //   // load whatever is needed.
-    //   return this.dataLoader.load(startDate, endDate, ids, extraIdsToLoad, topBottom)
-    //   .then((res) => {
-    //     const subjects = res.subjects;
-    //     for (const subject of subjects) {
-    //       // Add events to cached subject if it exists
-    //       const subjViewController = this.cache.find(sub => sub.id === subject.id);
-    //       if (subjViewController) {
-    //         for (const event of subject.events) {
-    //           subjViewController.events.add(event);
-    //         }
-    //
-    //       // If the subject is not cached, then add it to cache.
-    //       } else {
-    //         this.cache[this.cache.length] = subject;
-    //       }
-    //     }
-    //     console.log('Added subjects');
-    //   });
-    // }
-
   }]);
 
   return SubjectsContainer;
