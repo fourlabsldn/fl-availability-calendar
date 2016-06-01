@@ -1,41 +1,31 @@
-//Colors
-$green: #42b382;
-$dark-green: darken($green, 10%);
+// Colors
+$c-text: #303030;
+$c-plain-background: #f9f9f9;
 
-$red: #E9585B;
+$c-button-background: darken($c-plain-background, 10%) ;
+$c-button-text: $c-text;
 
-$red-orange: #e53935;
-$dark-red-orange: #ce3330;
+$c-main: #2e9498;
+$c-main-text: $c-plain-background;
 
-$blue: #63A8EB;
+$c-border: darken($c-plain-background, 10.9804);
 
-$light-blue: lighten($blue, 10%);
-$dark-blue: darken($blue, 10%);
+$c-busy: #c43232;
+$c-busy-text: $c-plain-background;
 
-$yellow: #ffc107;
-$dark-yellow: #e4ad06;
+$c-free: #39ac6f;
+$c-free-text:$c-plain-background;
 
-$indigo: #3f51b5;
-$dark-indigo: #324090;
+$c-partially-free: #d4ad40;
+$c-partially-text: $c-plain-background;
 
-$orange: #ff5722;
-$dark-orange: #d94a1d;
 
-$gray: #273238;
-$dark-gray: #313131;
+// Measures
+$first-column-width: 10em;
 
-$light-gray: #E7EBEC;
-
-$gray-sidebar: #969696;
-
-$grayish-blue: #37474f;
-
-$dark-grayish-blue: #2a363c;
-$grayish-blue-text: #78909c;
-
-$white: #fff;
-
-$bg-color: #F1F4F5;
-
-$text-color: #76828E;
-$dark-text: #424242;
+// Mixins
+@mixin inherit-font() {
+  color: inherit;
+  font-size: inherit;
+  font-family: inherit;
+}

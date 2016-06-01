@@ -1,0 +1,40 @@
+.fl-msc-header {
+  display: flex;
+  flex-flow: row nowrap;
+  align-content: flex;
+
+  text-align: center;
+}
+
+.fl-msc-subjectsTitle {
+  display: inline-block;
+  width: $first-column-width;
+}
+
+.fl-msc-dateBar {
+  display: inline-block;
+}
+
+.fl-msc-dateBar-monthRow,
+.fl-msc-dateBar-day {
+  display: inline-flex;
+  align-content: stretch;
+  flex-flow: row nowrap;
+}
+
+$day-width: 2em;
+
+.fl-msc-dateBar-month {
+  display: inline-block;
+
+  @for $i from 1 through 32 {
+    &-#{$i} {
+      width: ($day-width * $i);
+    }
+  }
+}
+
+.fl-msc-dateBar-day {
+  width: $day-width;
+  display: inline-block;
+}

@@ -1,124 +1,142 @@
 .fl-msc {
+  color: #303030;
+  background-color: #f9f9f9;
   display: block;
-  width: 100%;
-  font-size: 12px;
-  font-family: 'Helvetica', 'sans-serif'; }
+  font-family: 'Helvetica', 'sans-serif';
+  font-size: 12px; }
 
-.fl-msc-subjects {
-  max-height: 100px;
-  overflow: scroll; }
+.fl-msc-btnBar,
+.fl-msc-btnBar-btn,
+.fl-msc-btnBar-datepicker {
+  color: inherit;
+  font-size: inherit;
+  font-family: inherit;
+  text-align: center; }
 
-.cal-phantom-el {
-  display: block;
-  min-height: 100px; }
+.fl-msc-btnBar {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-flow: row nowrap;
+      -ms-flex-flow: row nowrap;
+          flex-flow: row nowrap;
+  -webkit-align-content: stretch;
+      -ms-flex-line-pack: stretch;
+          align-content: stretch;
+  border: 1px solid #dddddd; }
 
-.fl-msc-table {
-  position: absolute;
-  -webkit-user-select: none;
-  /* Chrome/Safari/Opera */
-  -moz-user-select: none;
-   -ms-user-select: none;
-       user-select: none; }
+.fl-msc-btnBar-btn {
+  background-color: #e0e0e0;
+  color: #303030;
+  border: 1px solid #f9f9f9;
+  cursor: pointer; }
+  .fl-msc-btnBar-btn:hover {
+    -webkit-filter: brightness(115%);
+            filter: brightness(115%); }
 
-.fl-msc-subject:hover {
-  -webkit-filter: brightness(90%);
-  filter: brightness(90%); }
+.fl-msc-header {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-flow: row nowrap;
+      -ms-flex-flow: row nowrap;
+          flex-flow: row nowrap;
+  -webkit-align-content: flex;
+      -ms-flex-line-pack: flex;
+          align-content: flex;
+  text-align: center; }
 
-.fl-msc-day,
-.fl-msc-subject-name,
-th {
-  margin: 5px;
-  text-align: center;
-  white-space: nowrap;
-  position: relative;
-  font-size: inherit; }
+.fl-msc-subjectsTitle {
+  display: inline-block;
+  width: 10em; }
 
-th {
-  background-color: #bddaf7;
-  padding: 0 5px;
-  overflow: hidden; }
+.fl-msc-dateBar {
+  display: inline-block; }
 
-.fl-msc-subject-name {
-  background-color: white;
-  max-width: none; }
-
-.fl-msc-day,
-.fl-msc-header-date {
-  min-width: 1em;
-  max-width: 1em;
-  min-height: 1em;
-  max-height: 1em; }
-
-.fl-msc-day {
-  border: 5px solid transparent;
-  background-color: #88d3b2; }
-  .fl-msc-day:hover {
-    -webkit-filter: brightness(130%);
-    filter: brightness(130%); }
-
-.half-busy {
-  background-color: #ffdd77; }
-
-.busy {
-  background-color: #f5b2b4; }
-
-.month0 {
-  background-color: #f5b2b4; }
-
-.month1 {
-  background-color: #ade1ca; }
-
-.month2 {
-  background-color: #90c1f1; }
-
-.cal-popup {
-  top: 0px;
-  left: 0px;
-  display: block;
-  position: absolute;
-  z-index: 5;
-  min-width: 200px;
-  background-color: #273238;
-  color: white;
-  -webkit-border-radius: 5px;
-          border-radius: 5px;
-  padding: 2px 5px;
-  text-align: center;
-  -webkit-transition: all 0.2s ease;
-  transition: all 0.2s ease;
-  pointer-events: none; }
-
-.fl-msc-btn-bar {
+.fl-msc-dateBar-monthRow,
+.fl-msc-dateBar-day {
   display: -webkit-inline-box;
   display: -webkit-inline-flex;
   display: -ms-inline-flexbox;
   display: inline-flex;
+  -webkit-align-content: stretch;
+      -ms-flex-line-pack: stretch;
+          align-content: stretch;
   -webkit-flex-flow: row nowrap;
       -ms-flex-flow: row nowrap;
-          flex-flow: row nowrap;
-  background-color: #bddaf7;
-  text-align: center; }
+          flex-flow: row nowrap; }
 
-.fl-msc-btn-bar-btn {
-  -webkit-box-flex: 1;
-  -webkit-flex: 1 1 2em;
-      -ms-flex: 1 1 2em;
-          flex: 1 1 2em;
-  border: none;
-  white-space: nowrap;
-  vertical-align: bottom;
-  background-color: inherit; }
-  .fl-msc-btn-bar-btn:hover {
-    -webkit-filter: brightness(105%);
-            filter: brightness(105%); }
+.fl-msc-dateBar-month {
+  display: inline-block; }
+  .fl-msc-dateBar-month-1 {
+    width: 2em; }
+  .fl-msc-dateBar-month-2 {
+    width: 4em; }
+  .fl-msc-dateBar-month-3 {
+    width: 6em; }
+  .fl-msc-dateBar-month-4 {
+    width: 8em; }
+  .fl-msc-dateBar-month-5 {
+    width: 10em; }
+  .fl-msc-dateBar-month-6 {
+    width: 12em; }
+  .fl-msc-dateBar-month-7 {
+    width: 14em; }
+  .fl-msc-dateBar-month-8 {
+    width: 16em; }
+  .fl-msc-dateBar-month-9 {
+    width: 18em; }
+  .fl-msc-dateBar-month-10 {
+    width: 20em; }
+  .fl-msc-dateBar-month-11 {
+    width: 22em; }
+  .fl-msc-dateBar-month-12 {
+    width: 24em; }
+  .fl-msc-dateBar-month-13 {
+    width: 26em; }
+  .fl-msc-dateBar-month-14 {
+    width: 28em; }
+  .fl-msc-dateBar-month-15 {
+    width: 30em; }
+  .fl-msc-dateBar-month-16 {
+    width: 32em; }
+  .fl-msc-dateBar-month-17 {
+    width: 34em; }
+  .fl-msc-dateBar-month-18 {
+    width: 36em; }
+  .fl-msc-dateBar-month-19 {
+    width: 38em; }
+  .fl-msc-dateBar-month-20 {
+    width: 40em; }
+  .fl-msc-dateBar-month-21 {
+    width: 42em; }
+  .fl-msc-dateBar-month-22 {
+    width: 44em; }
+  .fl-msc-dateBar-month-23 {
+    width: 46em; }
+  .fl-msc-dateBar-month-24 {
+    width: 48em; }
+  .fl-msc-dateBar-month-25 {
+    width: 50em; }
+  .fl-msc-dateBar-month-26 {
+    width: 52em; }
+  .fl-msc-dateBar-month-27 {
+    width: 54em; }
+  .fl-msc-dateBar-month-28 {
+    width: 56em; }
+  .fl-msc-dateBar-month-29 {
+    width: 58em; }
+  .fl-msc-dateBar-month-30 {
+    width: 60em; }
+  .fl-msc-dateBar-month-31 {
+    width: 62em; }
+  .fl-msc-dateBar-month-32 {
+    width: 64em; }
 
-.fl-msc-btn-bar-datepicker {
-  display: inline;
-  position: relative;
-  -webkit-box-flex: 2;
-  -webkit-flex: 2 0 10em;
-      -ms-flex: 2 0 10em;
-          flex: 2 0 10em;
-  font-size: inherit; }
+.fl-msc-dateBar-day {
+  width: 2em;
+  display: inline-block; }
 
 /*# sourceMappingURL=fl-multi-subject-calendar.css.map */
