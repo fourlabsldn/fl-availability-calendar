@@ -10,6 +10,11 @@
 
 .fl-msc-subjectsTitle {
   box-sizing: inherit;
+  background-color: $c-button-background;
+  color: $c-button-text;
+  border-color: $c-plain-background;
+  border-style: solid;
+  border-width: 2px 2px 2px 0;
 
   flex: 0 0 $first-column-width;
   display: inline-flex;

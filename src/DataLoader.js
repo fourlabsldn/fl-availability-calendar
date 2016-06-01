@@ -186,8 +186,8 @@ export default class DataLoader {
     let allCoverFromToPeriod = true;
     let index = fromIndex;
     while (index <= toIndex && allCoverFromToPeriod) {
-      const coversFromDate = this.cache[index].eventsFromDate.diff(fromDate) >= 0;
-      const coversToDate = this.cache[index].eventsToDate.diff(toDate) <= 0;
+      const coversFromDate = this.cache[index].eventsFromDate.diff(fromDate) <= 0;
+      const coversToDate = this.cache[index].eventsToDate.diff(toDate) >= 0;
       allCoverFromToPeriod = allCoverFromToPeriod && coversFromDate && coversToDate;
       index++;
     }
@@ -205,6 +205,7 @@ export default class DataLoader {
    */
   load(fromDate, toDate, ids, idCountToLoad = 0, topBottom, method = 'GET') {
     assert(method); // To be removed
+    console.log('Loaded');
     // return fetch(this.loadUrl, {
     //   method,
     //   credentials: 'include',

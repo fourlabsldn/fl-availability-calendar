@@ -58,6 +58,11 @@
 .fl-msc-subjectsTitle {
   -webkit-box-sizing: inherit;
           box-sizing: inherit;
+  background-color: #e0e0e0;
+  color: #303030;
+  border-color: #f9f9f9;
+  border-style: solid;
+  border-width: 2px 2px 2px 0;
   -webkit-box-flex: 0;
   -webkit-flex: 0 0 17em;
       -ms-flex: 0 0 17em;

@@ -8183,8 +8183,8 @@ var DataLoader = function () {
       var allCoverFromToPeriod = true;
       var index = fromIndex;
       while (index <= toIndex && allCoverFromToPeriod) {
-        var coversFromDate = this.cache[index].eventsFromDate.diff(fromDate) >= 0;
-        var coversToDate = this.cache[index].eventsToDate.diff(toDate) <= 0;
+        var coversFromDate = this.cache[index].eventsFromDate.diff(fromDate) <= 0;
+        var coversToDate = this.cache[index].eventsToDate.diff(toDate) >= 0;
         allCoverFromToPeriod = allCoverFromToPeriod && coversFromDate && coversToDate;
         index++;
       }
@@ -8212,6 +8212,7 @@ var DataLoader = function () {
       var method = arguments.length <= 5 || arguments[5] === undefined ? 'GET' : arguments[5];
 
       assert(method); // To be removed
+      console.log('Loaded');
       // return fetch(this.loadUrl, {
       //   method,
       //   credentials: 'include',
