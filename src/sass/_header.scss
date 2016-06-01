@@ -1,4 +1,6 @@
 .fl-msc-header {
+  box-sizing: inherit;
+
   display: inline-flex;
   flex-flow: row nowrap;
   align-items: flex;
@@ -7,6 +9,8 @@
 }
 
 .fl-msc-subjectsTitle {
+  box-sizing: inherit;
+
   flex: 0 0 $first-column-width;
   display: inline-flex;
 }
@@ -14,33 +18,47 @@
 .fl-msc-subjectsTitle-text {
   @include inherit-font();
   @include elipsis-overflow();
+  box-sizing: inherit;
+
   margin: auto;
   width: 100%;
 }
 
 .fl-msc-dateBar {
+  box-sizing: inherit;
+
   flex: 0 0;
   display: inline-block;
 }
 
 .fl-msc-dateBar-monthRow,
 .fl-msc-dateBar-dayRow {
+  box-sizing: inherit;
+
   display: inline-flex;
   align-content: stretch;
   flex-flow: row nowrap;
 }
 
 .fl-msc-dateBar-month {
+  box-sizing: inherit;
+
   display: inline-block;
+  background-color: $c-button-background;
+  color: $c-button-text;
+
+  border: 2px solid $c-plain-background;
 
   @for $i from 1 through 32 {
     &-#{$i} {
-      width: ($day-width * $i);
+      width: calc(#{$day-width} * #{$i});
     }
   }
 }
 
 .fl-msc-dateBar-day {
+  box-sizing: border-box;
+
   width: $day-width;
   display: inline-block;
   border: $day-border-width solid transparent;

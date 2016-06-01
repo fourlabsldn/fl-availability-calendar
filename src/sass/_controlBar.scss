@@ -2,6 +2,8 @@
 .fl-msc-btnBar-btn,
 .fl-msc-btnBar-datepicker {
   @include inherit-font();
+  box-sizing: inherit;
+
   text-align: center;
 }
 

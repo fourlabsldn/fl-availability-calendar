@@ -1,28 +1,41 @@
 .fl-msc-subjects {
+  box-sizing: inherit;
+
   display: block;
 }
 
 .fl-msc-subject {
+  box-sizing: inherit;
+
   display: block;
   white-space: nowrap;
 }
 
 .fl-msc-subject-name {
   @include elipsis-overflow();
+  box-sizing: inherit;
+
   display: inline-block;
   width: $first-column-width;
   max-width: $first-column-width;
 }
 
 .fl-msc-subject-days {
+  box-sizing: inherit;
+
   display: inline-flex;
   flex-flow: row nowrap;
   align-items: stretch;
 }
 
 .fl-msc-subject-day {
+  box-sizing: inherit;
+
   width: $day-width;
-  height: 1.5em;
+  height: 1.6em;
   border: $day-border-width solid $c-border;
   border-width: (2 * $day-border-width) $day-border-width;
+
+
+  background-color: $c-free;
 }

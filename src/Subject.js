@@ -39,6 +39,7 @@ export default class Subject extends ViewController {
     this.html.nameContainer = document.createElement('div');
     this.html.nameContainer.classList.add(`${this.cssPrefix}-name`);
     this.html.nameContainer.innerHTML = this.name;
+    this.html.nameContainer.setAttribute('title', this.name);
     this.html.container.appendChild(this.html.nameContainer);
 
     this.html.daysContainer = document.createElement('div');
