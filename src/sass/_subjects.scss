@@ -1,0 +1,28 @@
+.fl-msc-subjects {
+  display: block;
+}
+
+.fl-msc-subject {
+  display: block;
+  white-space: nowrap;
+}
+
+.fl-msc-subject-name {
+  @include elipsis-overflow();
+  display: inline-block;
+  width: $first-column-width;
+  max-width: $first-column-width;
+}
+
+.fl-msc-subject-days {
+  display: inline-flex;
+  flex-flow: row nowrap;
+  align-items: stretch;
+}
+
+.fl-msc-subject-day {
+  width: $day-width;
+  height: 1.5em;
+  border: $day-border-width solid $c-border;
+  border-width: (2 * $day-border-width) $day-border-width;
+}

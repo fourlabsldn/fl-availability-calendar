@@ -58,7 +58,11 @@ export default class Calendar extends ViewController {
 
     const subjectsTitle = document.createElement('div');
     subjectsTitle.classList.add(`${CLASS_PREFIX}-subjectsTitle`);
-    subjectsTitle.innerHTML = subjectsHeader;
+
+    const subjectsTitleText = document.createElement('p');
+    subjectsTitleText.classList.add(`${CLASS_PREFIX}-subjectsTitle-text`);
+    subjectsTitleText.innerHTML = subjectsHeader;
+    subjectsTitle.appendChild(subjectsTitleText);
 
     header.appendChild(subjectsTitle);
     header.appendChild(dateBar.html.container);

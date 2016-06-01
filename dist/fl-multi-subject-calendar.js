@@ -8768,7 +8768,11 @@ var Calendar = function (_ViewController) {
 
       var subjectsTitle = document.createElement('div');
       subjectsTitle.classList.add(CLASS_PREFIX + '-subjectsTitle');
-      subjectsTitle.innerHTML = subjectsHeader;
+
+      var subjectsTitleText = document.createElement('p');
+      subjectsTitleText.classList.add(CLASS_PREFIX + '-subjectsTitle-text');
+      subjectsTitleText.innerHTML = subjectsHeader;
+      subjectsTitle.appendChild(subjectsTitleText);
 
       header.appendChild(subjectsTitle);
       header.appendChild(dateBar.html.container);

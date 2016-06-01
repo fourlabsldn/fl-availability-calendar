@@ -1,7 +1,7 @@
 .fl-msc {
   color: #303030;
   background-color: #f9f9f9;
-  display: block;
+  display: inline-block;
   font-family: 'Helvetica', 'sans-serif';
   font-size: 12px; }
 
@@ -36,27 +36,47 @@
             filter: brightness(115%); }
 
 .fl-msc-header {
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: -ms-flexbox;
-  display: flex;
+  display: -webkit-inline-box;
+  display: -webkit-inline-flex;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
   -webkit-flex-flow: row nowrap;
       -ms-flex-flow: row nowrap;
           flex-flow: row nowrap;
-  -webkit-align-content: flex;
-      -ms-flex-line-pack: flex;
-          align-content: flex;
+  -webkit-box-align: flex;
+  -webkit-align-items: flex;
+      -ms-flex-align: flex;
+          align-items: flex;
   text-align: center; }
 
 .fl-msc-subjectsTitle {
-  display: inline-block;
-  width: 10em; }
+  -webkit-box-flex: 0;
+  -webkit-flex: 0 0 10em;
+      -ms-flex: 0 0 10em;
+          flex: 0 0 10em;
+  display: -webkit-inline-box;
+  display: -webkit-inline-flex;
+  display: -ms-inline-flexbox;
+  display: inline-flex; }
+
+.fl-msc-subjectsTitle-text {
+  color: inherit;
+  font-size: inherit;
+  font-family: inherit;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin: auto;
+  width: 100%; }
 
 .fl-msc-dateBar {
+  -webkit-box-flex: 0;
+  -webkit-flex: 0 0;
+      -ms-flex: 0 0;
+          flex: 0 0;
   display: inline-block; }
 
 .fl-msc-dateBar-monthRow,
-.fl-msc-dateBar-day {
+.fl-msc-dateBar-dayRow {
   display: -webkit-inline-box;
   display: -webkit-inline-flex;
   display: -ms-inline-flexbox;
@@ -137,6 +157,40 @@
 
 .fl-msc-dateBar-day {
   width: 2em;
-  display: inline-block; }
+  display: inline-block;
+  border: 1px solid transparent; }
+
+.fl-msc-subjects {
+  display: block; }
+
+.fl-msc-subject {
+  display: block;
+  white-space: nowrap; }
+
+.fl-msc-subject-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: inline-block;
+  width: 10em;
+  max-width: 10em; }
+
+.fl-msc-subject-days {
+  display: -webkit-inline-box;
+  display: -webkit-inline-flex;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  -webkit-flex-flow: row nowrap;
+      -ms-flex-flow: row nowrap;
+          flex-flow: row nowrap;
+  -webkit-box-align: stretch;
+  -webkit-align-items: stretch;
+      -ms-flex-align: stretch;
+          align-items: stretch; }
+
+.fl-msc-subject-day {
+  width: 2em;
+  height: 1.5em;
+  border: 1px solid #dddddd;
+  border-width: 2px 1px; }
 
 /*# sourceMappingURL=fl-multi-subject-calendar.css.map */
