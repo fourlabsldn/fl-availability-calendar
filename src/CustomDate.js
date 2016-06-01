@@ -7,7 +7,11 @@ export default class CustomDate {
    * @return {CustomDate}
    */
   constructor(info) {
-    this.date = moment(info);
+    if (info instanceof CustomDate) {
+      this.date = moment(info.date);
+    } else {
+      this.date = moment(info);
+    }
     Object.preventExtensions(this);
   }
 
@@ -18,8 +22,9 @@ export default class CustomDate {
    * @param  {String} unit - Unit as string
    * @return {CustomDate}
    */
-  add(date, amount, unit = 'days') {
-    return this.date.add(amount, unit);
+  add(amount, unit = 'days') {
+    this.date.add(amount, unit);
+    return this;
   }
 
   /**

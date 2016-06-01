@@ -9,7 +9,6 @@ export default class DateBar extends ViewController {
     super();
     this.cssPrefix = `${modulePrefix}-${CLASS_PREFIX}`;
     this.startDate = new CustomDate();
-    this.dayCount = 0;
     Object.preventExtensions(this);
 
     this.buildHtml();
@@ -34,7 +33,7 @@ export default class DateBar extends ViewController {
   setStartDate(date) {
     assert(date instanceof CustomDate, 'Invalid startDate.');
 
-    const dayCount = this.dayCount;
+    const dayCount = this.getDayCount();
     this.setDayCount(0);
     this.startDate = date;
     this.setDayCount(dayCount);
@@ -42,10 +41,10 @@ export default class DateBar extends ViewController {
 
   setDayCount(dayCount) {
     assert(typeof dayCount === 'number', `Invalid dayCount value: ${dayCount}`);
-    while (this.dayCount > dayCount) {
+    while (this.getDayCount() > dayCount) {
       this.removeDay();
     }
-    while (dayCount > this.dayCount) {
+    while (dayCount > this.getDayCount()) {
       this.addDay();
     }
   }
@@ -67,7 +66,6 @@ export default class DateBar extends ViewController {
     const dayDate = this.getEndDate().add(daysToAdd, 'days');
     this.addToDayRow(dayDate, leftRight);
     this.addToMonthRow(dayDate, leftRight);
-    this.dayCount++;
   }
 
   /**
@@ -96,7 +94,7 @@ export default class DateBar extends ViewController {
    * @param  {String} leftRight
    */
   addToMonthRow(date, leftRight = 'right') {
-    const monthName = date.format('MM');
+    const monthName = date.format('MMM');
     const months = this.html.monthRow.children;
 
     const firstMonthElement = months[0];
@@ -111,6 +109,11 @@ export default class DateBar extends ViewController {
       monthEl = document.createElement('div');
       monthEl.innerHTML = monthName;
       monthEl.span = 1;
+      if (leftRight === 'right' || months.length === 0) {
+        this.html.monthRow.appendChild(monthEl);
+      } else {
+        this.html.monthRow.insertBefore(monthEl, firstMonthElement);
+      }
     }
     monthEl.className = '';
     monthEl.classList.add(`${this.cssPrefix}-month`);
@@ -124,7 +127,6 @@ export default class DateBar extends ViewController {
   removeDay(leftRight = 'right') {
     this.removeFromDayRow(leftRight);
     this.removeFromMonthRow(leftRight);
-    this.dayCount--;
   }
 
  /**
@@ -177,7 +179,14 @@ export default class DateBar extends ViewController {
   }
 
   getEndDate() {
-    return new CustomDate(this.startDate).add(this.dayCount);
+    const startDate = new CustomDate(this.startDate);
+    const dayCount = this.getDayCount();
+    const endDate = startDate.add(dayCount, 'days');
+    return endDate;
+  }
+
+  getDayCount() {
+    return this.html.dayRow.children.length;
   }
 
 }

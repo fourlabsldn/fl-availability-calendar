@@ -2,5 +2,7 @@
 import Calendar from './Calendar';
 
 xController((xdiv) => {
-  return new Calendar('/', xdiv);
+  const subjectsTitle = 'Properties';
+  const loadUrl = '/';
+  return new Calendar(subjectsTitle, loadUrl, xdiv);
 });

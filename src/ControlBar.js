@@ -33,10 +33,12 @@ export default class ControlBar extends ViewController {
     Object.preventExtensions(this);
 
     this.setStartDate(startDate);
-    this.setDayCount(COLUMN_COUNT);
 
     // TODO: This should be dynamic.
-    this.subjectsContainer.addSubjects('bottom', SUBJECT_COUNT);
+    this.subjectsContainer.addSubjects('bottom', SUBJECT_COUNT)
+    .then(() => {
+      this.setDayCount(COLUMN_COUNT);
+    });
   }
 
   /**

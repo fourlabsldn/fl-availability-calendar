@@ -43,7 +43,7 @@ export default class SubjectsContainer extends ViewController {
       if (!newSubjectConfigObject) { assert(false, 'No new subject found.'); }
 
       //  Create subject form object found.
-      const newSubject = new Subject(newSubjectConfigObject, this.modulePrefix);
+      const newSubject = new Subject(newSubjectConfigObject, this.startDate, this.modulePrefix);
       this.subjects.push(newSubject);
       this.html.container.appendChild(newSubject.html.container);
     }

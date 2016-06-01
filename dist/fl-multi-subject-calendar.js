@@ -5517,7 +5517,11 @@ var CustomDate = function () {
   function CustomDate(info) {
     _classCallCheck(this, CustomDate);
 
-    this.date = moment$1(info);
+    if (info instanceof CustomDate) {
+      this.date = moment$1(info.date);
+    } else {
+      this.date = moment$1(info);
+    }
     Object.preventExtensions(this);
   }
 
@@ -5532,10 +5536,11 @@ var CustomDate = function () {
 
   _createClass(CustomDate, [{
     key: 'add',
-    value: function add(date, amount) {
-      var unit = arguments.length <= 2 || arguments[2] === undefined ? 'days' : arguments[2];
+    value: function add(amount) {
+      var unit = arguments.length <= 1 || arguments[1] === undefined ? 'days' : arguments[1];
 
-      return this.date.add(amount, unit);
+      this.date.add(amount, unit);
+      return this;
     }
 
     /**
@@ -5626,10 +5631,11 @@ var ControlBar = function (_ViewController) {
     Object.preventExtensions(_this);
 
     _this.setStartDate(startDate);
-    _this.setDayCount(COLUMN_COUNT);
 
     // TODO: This should be dynamic.
-    _this.subjectsContainer.addSubjects('bottom', SUBJECT_COUNT);
+    _this.subjectsContainer.addSubjects('bottom', SUBJECT_COUNT).then(function () {
+      _this.setDayCount(COLUMN_COUNT);
+    });
     return _this;
   }
 
@@ -5829,7 +5835,6 @@ var DateBar = function (_ViewController) {
 
     _this.cssPrefix = modulePrefix + '-' + CLASS_PREFIX$2;
     _this.startDate = new CustomDate();
-    _this.dayCount = 0;
     Object.preventExtensions(_this);
 
     _this.buildHtml();
@@ -5860,7 +5865,7 @@ var DateBar = function (_ViewController) {
     value: function setStartDate(date) {
       assert(date instanceof CustomDate, 'Invalid startDate.');
 
-      var dayCount = this.dayCount;
+      var dayCount = this.getDayCount();
       this.setDayCount(0);
       this.startDate = date;
       this.setDayCount(dayCount);
@@ -5869,10 +5874,10 @@ var DateBar = function (_ViewController) {
     key: 'setDayCount',
     value: function setDayCount(dayCount) {
       assert(typeof dayCount === 'number', 'Invalid dayCount value: ' + dayCount);
-      while (this.dayCount > dayCount) {
+      while (this.getDayCount() > dayCount) {
         this.removeDay();
       }
-      while (dayCount > this.dayCount) {
+      while (dayCount > this.getDayCount()) {
         this.addDay();
       }
     }
@@ -5899,7 +5904,6 @@ var DateBar = function (_ViewController) {
       var dayDate = this.getEndDate().add(daysToAdd, 'days');
       this.addToDayRow(dayDate, leftRight);
       this.addToMonthRow(dayDate, leftRight);
-      this.dayCount++;
     }
 
     /**
@@ -5936,7 +5940,7 @@ var DateBar = function (_ViewController) {
     value: function addToMonthRow(date) {
       var leftRight = arguments.length <= 1 || arguments[1] === undefined ? 'right' : arguments[1];
 
-      var monthName = date.format('MM');
+      var monthName = date.format('MMM');
       var months = this.html.monthRow.children;
 
       var firstMonthElement = months[0];
@@ -5951,6 +5955,11 @@ var DateBar = function (_ViewController) {
         monthEl = document.createElement('div');
         monthEl.innerHTML = monthName;
         monthEl.span = 1;
+        if (leftRight === 'right' || months.length === 0) {
+          this.html.monthRow.appendChild(monthEl);
+        } else {
+          this.html.monthRow.insertBefore(monthEl, firstMonthElement);
+        }
       }
       monthEl.className = '';
       monthEl.classList.add(this.cssPrefix + '-month');
@@ -5969,7 +5978,6 @@ var DateBar = function (_ViewController) {
 
       this.removeFromDayRow(leftRight);
       this.removeFromMonthRow(leftRight);
-      this.dayCount--;
     }
 
     /**
@@ -6036,7 +6044,15 @@ var DateBar = function (_ViewController) {
   }, {
     key: 'getEndDate',
     value: function getEndDate() {
-      return new CustomDate(this.startDate).add(this.dayCount);
+      var startDate = new CustomDate(this.startDate);
+      var dayCount = this.getDayCount();
+      var endDate = startDate.add(dayCount, 'days');
+      return endDate;
+    }
+  }, {
+    key: 'getDayCount',
+    value: function getDayCount() {
+      return this.html.dayRow.children.length;
     }
   }]);
 
@@ -7687,7 +7703,7 @@ var Subject = function (_ViewController) {
    * @return {Subject}
    */
 
-  function Subject(config, modulePrefix) {
+  function Subject(config, startDate, modulePrefix) {
     _classCallCheck(this, Subject);
 
     var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Subject).call(this));
@@ -7698,7 +7714,7 @@ var Subject = function (_ViewController) {
 
     _this.cssPrefix = modulePrefix + '-' + CLASS_PREFIX$4;
 
-    _this.startDate = null;
+    _this.startDate = startDate;
     _this.days = [];
     // It must be ordered chronologically
     _this.events = [];
@@ -7781,7 +7797,7 @@ var Subject = function (_ViewController) {
       var dayEvents = [];
 
       // While events are starting before the date we are evaluating
-      while (date.diff(event.startDate) > 0) {
+      while (event && date.diff(event.startDate) > 0) {
         // Add to dayEvents if it finishes on or after the date in question.
         if (date.diff(event.endDate) <= 0) {
           dayEvents.add(event);
@@ -8465,7 +8481,7 @@ var SubjectsContainer = function (_ViewController) {
                 }
 
                 //  Create subject form object found.
-                newSubject = new Subject(newSubjectConfigObject, this.modulePrefix);
+                newSubject = new Subject(newSubjectConfigObject, this.startDate, this.modulePrefix);
 
                 this.subjects.push(newSubject);
                 this.html.container.appendChild(newSubject.html.container);
@@ -8707,7 +8723,7 @@ var CLASS_PREFIX = 'fl-msc';
 var Calendar = function (_ViewController) {
   _inherits(Calendar, _ViewController);
 
-  function Calendar(loadUrl, xdiv) {
+  function Calendar(subjectsHeader, loadUrl, xdiv) {
     _classCallCheck(this, Calendar);
 
     var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Calendar).call(this));
@@ -8718,7 +8734,7 @@ var Calendar = function (_ViewController) {
     _this.subjectsContainer = new SubjectsContainer(loadUrl, CLASS_PREFIX);
     _this.controlBar = new ControlBar(_this.startDate, _this.dateBar, _this.subjectsContainer, CLASS_PREFIX);
 
-    _this.buildHtml(xdiv, _this.controlBar, _this.dateBar, _this.subjectsContainer);
+    _this.buildHtml(subjectsHeader, xdiv, _this.controlBar, _this.dateBar, _this.subjectsContainer);
 
     Object.preventExtensions(_this);
     return _this;
@@ -8727,6 +8743,7 @@ var Calendar = function (_ViewController) {
   /**
    * Creates the HTML structure for the Calendar
    * @method buildHtml
+   * @param {String} subjectsHeader - Header of the subject name column
    * @param  {HTMLElement} xdiv - Container Element
    * @param  {controlBar} controlBar
    * @param  {dateBar} dateBar
@@ -8737,15 +8754,26 @@ var Calendar = function (_ViewController) {
 
   _createClass(Calendar, [{
     key: 'buildHtml',
-    value: function buildHtml(xdiv) {
-      var controlBar = arguments.length <= 1 || arguments[1] === undefined ? this.controlBar : arguments[1];
-      var dateBar = arguments.length <= 2 || arguments[2] === undefined ? this.dateBar : arguments[2];
-      var subjectsContainer = arguments.length <= 3 || arguments[3] === undefined ? this.subjectsContainer : arguments[3];
+    value: function buildHtml(subjectsHeader, xdiv) {
+      var controlBar = arguments.length <= 2 || arguments[2] === undefined ? this.controlBar : arguments[2];
+      var dateBar = arguments.length <= 3 || arguments[3] === undefined ? this.dateBar : arguments[3];
+      var subjectsContainer = arguments.length <= 4 || arguments[4] === undefined ? this.subjectsContainer : arguments[4];
 
       var container = this.html.container;
       container.classList.add(CLASS_PREFIX);
       container.appendChild(controlBar.html.container);
-      container.appendChild(dateBar.html.container);
+
+      var header = document.createElement('div');
+      header.classList.add(CLASS_PREFIX + '-header');
+
+      var subjectsTitle = document.createElement('div');
+      subjectsTitle.classList.add(CLASS_PREFIX + '-subjectsTitle');
+      subjectsTitle.innerHTML = subjectsHeader;
+
+      header.appendChild(subjectsTitle);
+      header.appendChild(dateBar.html.container);
+
+      container.appendChild(header);
       container.appendChild(subjectsContainer.html.container);
 
       this.html.container = container;
@@ -8757,6 +8785,8 @@ var Calendar = function (_ViewController) {
 }(ViewController);
 
 xController(function (xdiv) {
-  return new Calendar('/', xdiv);
+  var subjectsTitle = 'Properties';
+  var loadUrl = '/';
+  return new Calendar(subjectsTitle, loadUrl, xdiv);
 });
 //# sourceMappingURL=fl-multi-subject-calendar.js.map

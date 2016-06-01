@@ -7,7 +7,7 @@ import ViewController from './ViewController';
 const CLASS_PREFIX = 'fl-msc';
 
 export default class Calendar extends ViewController {
-  constructor(loadUrl, xdiv) {
+  constructor(subjectsHeader, loadUrl, xdiv) {
     super();
 
     this.startDate = new CustomDate();
@@ -22,6 +22,7 @@ export default class Calendar extends ViewController {
     );
 
     this.buildHtml(
+      subjectsHeader,
       xdiv,
       this.controlBar,
       this.dateBar,
@@ -34,6 +35,7 @@ export default class Calendar extends ViewController {
   /**
    * Creates the HTML structure for the Calendar
    * @method buildHtml
+   * @param {String} subjectsHeader - Header of the subject name column
    * @param  {HTMLElement} xdiv - Container Element
    * @param  {controlBar} controlBar
    * @param  {dateBar} dateBar
@@ -41,6 +43,7 @@ export default class Calendar extends ViewController {
    * @return {void}
    */
   buildHtml(
+    subjectsHeader,
     xdiv,
     controlBar = this.controlBar,
     dateBar = this.dateBar,
@@ -49,7 +52,18 @@ export default class Calendar extends ViewController {
     const container = this.html.container;
     container.classList.add(CLASS_PREFIX);
     container.appendChild(controlBar.html.container);
-    container.appendChild(dateBar.html.container);
+
+    const header = document.createElement('div');
+    header.classList.add(`${CLASS_PREFIX}-header`);
+
+    const subjectsTitle = document.createElement('div');
+    subjectsTitle.classList.add(`${CLASS_PREFIX}-subjectsTitle`);
+    subjectsTitle.innerHTML = subjectsHeader;
+
+    header.appendChild(subjectsTitle);
+    header.appendChild(dateBar.html.container);
+
+    container.appendChild(header);
     container.appendChild(subjectsContainer.html.container);
 
     this.html.container = container;

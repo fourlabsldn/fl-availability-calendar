@@ -14,7 +14,7 @@ export default class Subject extends ViewController {
    * @param  {String} modulePrefix
    * @return {Subject}
    */
-  constructor(config, modulePrefix) {
+  constructor(config, startDate, modulePrefix) {
     super();
     assert(typeof config.name === 'string', `Invalid subject name: ${config.name}`);
     this.name = config.name;
@@ -22,7 +22,7 @@ export default class Subject extends ViewController {
 
     this.cssPrefix = `${modulePrefix}-${CLASS_PREFIX}`;
 
-    this.startDate = null;
+    this.startDate = startDate;
     this.days = [];
     // It must be ordered chronologically
     this.events = [];
@@ -89,7 +89,7 @@ export default class Subject extends ViewController {
     const dayEvents = [];
 
     // While events are starting before the date we are evaluating
-    while (date.diff(event.startDate) > 0) {
+    while (event && date.diff(event.startDate) > 0) {
       // Add to dayEvents if it finishes on or after the date in question.
       if (date.diff(event.endDate) <= 0) {
         dayEvents.add(event);
