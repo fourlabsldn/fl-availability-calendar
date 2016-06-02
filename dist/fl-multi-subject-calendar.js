@@ -7621,8 +7621,10 @@ var Day = function (_ViewController) {
 
     _this.destroyed = false;
     _this.modulePrefix = modulePrefix;
+    _this.date = date;
     Object.preventExtensions(_this);
 
+    _this.html.container.setAttribute('title', date.toString());
     if (events) {
       _this.setEvents(events);
     }
@@ -7966,27 +7968,28 @@ var Subject = function (_ViewController) {
 
       this.checkIfdestroyed();
 
-      if (position === 'front') {
-        var newDate = new CustomDate(this.startDate).add(this.getDayCount() + 1, 'days');
-        var dateEvents = this.getDateEvents(newDate);
-        var newDay = new Day(newDate, dateEvents, this.cssPrefix);
+      var addToFront = position === 'front';
+      var firstDayToBeAdded = this.days.length === 0;
+      assert(addToFront || position === 'back', 'Invalid position value. Expected \'front\' or \'back\', gor \'' + position + '\'');
 
+      var newDate = void 0;
+      if (firstDayToBeAdded) {
+        newDate = new CustomDate(this.startDate);
+      } else if (addToFront) {
+        newDate = new CustomDate(this.startDate).add(this.getDayCount() + 1, 'days');
+      } else {
+        newDate = new CustomDate(this.startDate).add(-1, 'days');
+      }
+
+      var dateEvents = this.getDateEvents(newDate);
+      var newDay = new Day(newDate, dateEvents, this.cssPrefix);
+
+      if (addToFront || firstDayToBeAdded) {
         this.days.push(newDay);
         this.html.daysContainer.appendChild(newDay.html.container);
-      } else if (position === 'back') {
-        var _newDate = new CustomDate(this.startDate).add(-1, 'days');
-        var _dateEvents = this.getDateEvents(_newDate);
-        var _newDay = new Day(_newDate, _dateEvents, this.cssPrefix);
-
-        this.days = [_newDay].concat(this.days);
-        var firstDay = this.days[0];
-        if (firstDay) {
-          this.html.daysContainer.insertBefore(_newDay.html.container, firstDay.html.container);
-        } else {
-          this.html.daysContainer.appendChild(_newDay.html.container);
-        }
       } else {
-        assert(false, 'Invalid position value. Expected \'front\' or \'back\', gor \'' + position + '\'');
+        this.days = [newDay].concat(this.days);
+        this.html.daysContainer.insertBefore(newDay.html.container, this.html.daysContainer[0]);
       }
     }
 

@@ -13,8 +13,10 @@ export default class Day extends ViewController {
     super();
     this.destroyed = false;
     this.modulePrefix = modulePrefix;
+    this.date = date;
     Object.preventExtensions(this);
 
+    this.html.container.setAttribute('title', date.toString());
     if (events) {
       this.setEvents(events);
     }

@@ -198,30 +198,32 @@ export default class Subject extends ViewController {
   addDay(position = 'front') {
     this.checkIfdestroyed();
 
-    if (position === 'front') {
-      const newDate = new CustomDate(this.startDate).add(this.getDayCount() + 1, 'days');
-      const dateEvents = this.getDateEvents(newDate);
-      const newDay = new Day(newDate, dateEvents, this.cssPrefix);
+    const addToFront = position === 'front';
+    const firstDayToBeAdded = this.days.length === 0;
+    assert(addToFront || position === 'back',
+      `Invalid position value. Expected 'front' or 'back', gor '${position}'`);
 
+    let newDate;
+    if (firstDayToBeAdded) {
+      newDate = new CustomDate(this.startDate);
+    } else if (addToFront) {
+      newDate = new CustomDate(this.startDate).add(this.getDayCount() + 1, 'days');
+    } else {
+      newDate = new CustomDate(this.startDate).add(-1, 'days');
+    }
+
+    const dateEvents = this.getDateEvents(newDate);
+    const newDay = new Day(newDate, dateEvents, this.cssPrefix);
+
+    if (addToFront || firstDayToBeAdded) {
       this.days.push(newDay);
       this.html.daysContainer.appendChild(newDay.html.container);
-    } else if (position === 'back') {
-      const newDate = new CustomDate(this.startDate).add(-1, 'days');
-      const dateEvents = this.getDateEvents(newDate);
-      const newDay = new Day(newDate, dateEvents, this.cssPrefix);
-
-      this.days = [newDay].concat(this.days);
-      const firstDay = this.days[0];
-      if (firstDay) {
-        this.html.daysContainer.insertBefore(
-          newDay.html.container,
-          firstDay.html.container
-        );
-      } else {
-        this.html.daysContainer.appendChild(newDay.html.container);
-      }
     } else {
-      assert(false, `Invalid position value. Expected 'front' or 'back', gor '${position}'`);
+      this.days = [newDay].concat(this.days);
+      this.html.daysContainer.insertBefore(
+        newDay.html.container,
+        this.html.daysContainer[0]
+      );
     }
   }
 
