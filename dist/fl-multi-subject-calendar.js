@@ -5601,7 +5601,7 @@ var CLASS_PREFIX$1 = 'btnBar';
 var DATEPICKER_FORMAT = 'YYYY-MM';
 
 // TODO: Make static constants dynamic;
-var SUBJECT_COUNT = 100;
+var SUBJECT_COUNT = 20;
 var COLUMN_COUNT = 30;
 
 var ControlBar = function (_ViewController) {
@@ -7661,9 +7661,13 @@ var Day = function (_ViewController) {
   _createClass(Day, [{
     key: 'destroy',
     value: function destroy() {
-      this.html.container.remove();
-      this.html = null;
-      this.destroyed = true;
+      var _this2 = this;
+
+      requestAnimationFrame(function () {
+        _this2.html.container.remove();
+        _this2.html = null;
+        _this2.destroyed = true;
+      });
     }
   }, {
     key: 'checkIfdestroyed',

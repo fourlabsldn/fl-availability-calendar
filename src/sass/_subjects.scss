@@ -33,9 +33,9 @@
 
   width: $day-width;
   height: 1.6em;
-  border: $day-border-width solid $c-border;
-  border-width: (2 * $day-border-width) $day-border-width;
-  border-radius: 4px;
+  // border: $day-border-width solid $c-plain-background;
+  // border-width: (2 * $day-border-width) $day-border-width;
+  // border-radius: 4px;
 
   background-color: $c-free;
 }

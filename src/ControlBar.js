@@ -6,7 +6,7 @@ const DATEPICKER_FORMAT = 'YYYY-MM';
 
 
 // TODO: Make static constants dynamic;
-const SUBJECT_COUNT = 100;
+const SUBJECT_COUNT = 20;
 const COLUMN_COUNT = 30;
 
 export default class ControlBar extends ViewController {
