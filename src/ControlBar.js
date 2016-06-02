@@ -89,8 +89,14 @@ export default class ControlBar extends ViewController {
       holdButton(this.scrollRight.bind(this));
     });
 
-    this.html.scrollUpBtn.addEventListener('click', () => this.scrollUp());
-    this.html.scrollDownBtn.addEventListener('click', () => this.scrollDown());
+    this.html.scrollUpBtn.addEventListener('mousedown', () => {
+      holdButton(this.scrollUp.bind(this));
+    });
+
+    this.html.scrollDownBtn.addEventListener('mousedown', () => {
+      holdButton(this.scrollDown.bind(this));
+    });
+
     this.html.datePicker.addEventListener('change', () => {
       const datepickerDate = new CustomDate(this.html.datePicker.value);
       this.setStartDate(datepickerDate);

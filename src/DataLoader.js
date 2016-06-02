@@ -165,8 +165,6 @@ export default class DataLoader {
       const referenceId = this.cache.firstElementId();
       serverRequests.push(
         this.loadSubjects(amount, 'before', referenceId, fromDate, toDate)
-        // remove reference object
-        .then(arr => arr.slice(0, arr.length - 1))
       );
     } else {
       serverRequests.push([]);
@@ -178,14 +176,20 @@ export default class DataLoader {
       const referenceId = this.cache.lastElementId();
       serverRequests.push(
         this.loadSubjects(amount, 'after', referenceId, fromDate, toDate)
-        // remove reference object
-        .then(arr => arr.slice(1, arr.length))
       );
     } else {
       serverRequests.push([]);
     }
 
-    const [indexesAbove, indexesBelow] = await Promise.all(serverRequests);
+    let [indexesAbove, indexesBelow] = await Promise.all(serverRequests);
+    indexesAbove = Array.isArray(indexesAbove)
+      ? indexesAbove.slice(0, indexesAbove.length - 1)
+      : [];
+
+    indexesBelow = Array.isArray(indexesBelow)
+      ? indexesBelow.slice(1, indexesBelow.length)
+      : [];
+
     return indexesAbove.concat(cachedSubjects, indexesBelow);
   }
 
@@ -239,7 +243,13 @@ export default class DataLoader {
     const requestTo = (new CustomDate(toDate)).add(dayPadding, 'days');
 
     if (beforeAfter === 'before') {
-      console.warn('loadSubjects before not Implemented');
+      return {
+        moreToLoadAbove: false,
+        moreToLoadBelow: true,
+        fromDate,
+        toDate,
+        subjects: [],
+      };
     }
     const loadedContent = await this.createCalendarContent(
       [referenceId],

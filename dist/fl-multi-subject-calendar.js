@@ -5699,12 +5699,14 @@ var ControlBar = function (_ViewController) {
         holdButton(_this2.scrollRight.bind(_this2));
       });
 
-      this.html.scrollUpBtn.addEventListener('click', function () {
-        return _this2.scrollUp();
+      this.html.scrollUpBtn.addEventListener('mousedown', function () {
+        holdButton(_this2.scrollUp.bind(_this2));
       });
-      this.html.scrollDownBtn.addEventListener('click', function () {
-        return _this2.scrollDown();
+
+      this.html.scrollDownBtn.addEventListener('mousedown', function () {
+        holdButton(_this2.scrollDown.bind(_this2));
       });
+
       this.html.datePicker.addEventListener('change', function () {
         var datepickerDate = new CustomDate(_this2.html.datePicker.value);
         _this2.setStartDate(datepickerDate);
@@ -7663,10 +7665,10 @@ var Day = function (_ViewController) {
     value: function destroy() {
       var _this2 = this;
 
+      this.destroyed = true;
       requestAnimationFrame(function () {
         _this2.html.container.remove();
         _this2.html = null;
-        _this2.destroyed = true;
       });
     }
   }, {
@@ -8072,11 +8074,15 @@ var Subject = function (_ViewController) {
   }, {
     key: 'destroy',
     value: function destroy() {
+      var _this4 = this;
+
       this.checkIfdestroyed();
 
       this.days = null;
-      this.html.container.remove();
       this.destroyed = true;
+      requestAnimationFrame(function () {
+        _this4.html.container.remove();
+      });
     }
   }]);
 
@@ -8278,11 +8284,7 @@ var DataLoader = function () {
                   amount = Math.abs(fromIndex) + 1;
                   referenceId = this.cache.firstElementId();
 
-                  serverRequests.push(this.loadSubjects(amount, 'before', referenceId, fromDate, toDate)
-                  // remove reference object
-                  .then(function (arr) {
-                    return arr.slice(0, arr.length - 1);
-                  }));
+                  serverRequests.push(this.loadSubjects(amount, 'before', referenceId, fromDate, toDate));
                 } else {
                   serverRequests.push([]);
                 }
@@ -8292,11 +8294,7 @@ var DataLoader = function () {
                   _amount = Math.max(toIndex - this.cache.length + 2, 2);
                   _referenceId = this.cache.lastElementId();
 
-                  serverRequests.push(this.loadSubjects(_amount, 'after', _referenceId, fromDate, toDate)
-                  // remove reference object
-                  .then(function (arr) {
-                    return arr.slice(1, arr.length);
-                  }));
+                  serverRequests.push(this.loadSubjects(_amount, 'after', _referenceId, fromDate, toDate));
                 } else {
                   serverRequests.push([]);
                 }
@@ -8309,9 +8307,14 @@ var DataLoader = function () {
                 _ref2 = _slicedToArray(_ref, 2);
                 indexesAbove = _ref2[0];
                 indexesBelow = _ref2[1];
+
+                indexesAbove = Array.isArray(indexesAbove) ? indexesAbove.slice(0, indexesAbove.length - 1) : [];
+
+                indexesBelow = Array.isArray(indexesBelow) ? indexesBelow.slice(1, indexesBelow.length) : [];
+
                 return _context.abrupt('return', indexesAbove.concat(cachedSubjects, indexesBelow));
 
-              case 22:
+              case 24:
               case 'end':
                 return _context.stop();
             }
@@ -8386,21 +8389,31 @@ var DataLoader = function () {
                 requestFrom = new CustomDate(fromDate).add(-dayPadding, 'days');
                 requestTo = new CustomDate(toDate).add(dayPadding, 'days');
 
-
-                if (beforeAfter === 'before') {
-                  console.warn('loadSubjects before not Implemented');
+                if (!(beforeAfter === 'before')) {
+                  _context2.next = 6;
+                  break;
                 }
-                _context2.next = 7;
+
+                return _context2.abrupt('return', {
+                  moreToLoadAbove: false,
+                  moreToLoadBelow: true,
+                  fromDate: fromDate,
+                  toDate: toDate,
+                  subjects: []
+                });
+
+              case 6:
+                _context2.next = 8;
                 return this.createCalendarContent([referenceId], amount, requestFrom, requestTo);
 
-              case 7:
+              case 8:
                 loadedContent = _context2.sent;
 
 
                 this.processServerResponse(loadedContent);
                 return _context2.abrupt('return', loadedContent.subjects);
 
-              case 10:
+              case 11:
               case 'end':
                 return _context2.stop();
             }
@@ -8989,14 +9002,15 @@ var SubjectsContainer = function (_ViewController) {
                           noMoreSubjectsToLoad = !subjConfig;
 
                           if (!noMoreSubjectsToLoad) {
-                            _context2.next = 7;
+                            _context2.next = 6;
                             break;
                           }
 
-                          console.log('Reached end of subjects.');
-                          return _context2.abrupt('return', 'break');
+                          return _context2.abrupt('return', {
+                            v: false
+                          });
 
-                        case 7:
+                        case 6:
 
                           //  NOTE: This object already contains events for the date range of
                           //  the container.
@@ -9024,7 +9038,7 @@ var SubjectsContainer = function (_ViewController) {
                             });
                           }
 
-                        case 11:
+                        case 10:
                         case 'end':
                           return _context2.stop();
                       }
@@ -9044,12 +9058,12 @@ var SubjectsContainer = function (_ViewController) {
               case 6:
                 _ret2 = _context3.t0;
 
-                if (!(_ret2 === 'break')) {
+                if (!((typeof _ret2 === 'undefined' ? 'undefined' : _typeof$1(_ret2)) === "object")) {
                   _context3.next = 9;
                   break;
                 }
 
-                return _context3.abrupt('break', 12);
+                return _context3.abrupt('return', _ret2.v);
 
               case 9:
                 i++;
@@ -9057,6 +9071,9 @@ var SubjectsContainer = function (_ViewController) {
                 break;
 
               case 12:
+                return _context3.abrupt('return', true);
+
+              case 13:
               case 'end':
                 return _context3.stop();
             }
@@ -9110,10 +9127,19 @@ var SubjectsContainer = function (_ViewController) {
 
               case 9:
                 subjArray = _context4.sent;
+
+                if (!(subjArray.length < 2)) {
+                  _context4.next = 12;
+                  break;
+                }
+
+                return _context4.abrupt('return', null);
+
+              case 12:
                 newSubjectConfig = isFirstSubject || fromTop ? subjArray[0] : subjArray[1];
                 return _context4.abrupt('return', newSubjectConfig);
 
-              case 12:
+              case 14:
               case 'end':
                 return _context4.stop();
             }
@@ -9202,22 +9228,70 @@ var SubjectsContainer = function (_ViewController) {
     }
   }, {
     key: 'scrollLeft',
-    value: function scrollLeft() {
-      var _this4 = this;
+    value: function () {
+      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee5() {
+        var dayAdded;
+        return _regeneratorRuntime.wrap(function _callee5$(_context6) {
+          while (1) {
+            switch (_context6.prev = _context6.next) {
+              case 0:
+                _context6.next = 2;
+                return this.addDay('back');
 
-      this.addDay('back').then(function () {
-        return _this4.removeDay('front');
-      });
-    }
+              case 2:
+                dayAdded = _context6.sent;
+
+                if (dayAdded) {
+                  this.removeDay('front');
+                }
+
+              case 4:
+              case 'end':
+                return _context6.stop();
+            }
+          }
+        }, _callee5, this);
+      }));
+
+      function scrollLeft() {
+        return ref.apply(this, arguments);
+      }
+
+      return scrollLeft;
+    }()
   }, {
     key: 'scrollRight',
-    value: function scrollRight() {
-      var _this5 = this;
+    value: function () {
+      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee6() {
+        var dayAdded;
+        return _regeneratorRuntime.wrap(function _callee6$(_context7) {
+          while (1) {
+            switch (_context7.prev = _context7.next) {
+              case 0:
+                _context7.next = 2;
+                return this.addDay('front');
 
-      this.addDay('front').then(function () {
-        return _this5.removeDay('back');
-      });
-    }
+              case 2:
+                dayAdded = _context7.sent;
+
+                if (dayAdded) {
+                  this.removeDay('back');
+                }
+
+              case 4:
+              case 'end':
+                return _context7.stop();
+            }
+          }
+        }, _callee6, this);
+      }));
+
+      function scrollRight() {
+        return ref.apply(this, arguments);
+      }
+
+      return scrollRight;
+    }()
 
     /**
      * @method scrollUp
@@ -9226,13 +9300,37 @@ var SubjectsContainer = function (_ViewController) {
 
   }, {
     key: 'scrollUp',
-    value: function scrollUp() {
-      var _this6 = this;
+    value: function () {
+      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee7() {
+        var subjectAdded;
+        return _regeneratorRuntime.wrap(function _callee7$(_context8) {
+          while (1) {
+            switch (_context8.prev = _context8.next) {
+              case 0:
+                _context8.next = 2;
+                return this.addSubjects('top', 1);
 
-      return this.addSubjects('top', 1).then(function () {
-        _this6.removeSubjects('bottom', 1);
-      });
-    }
+              case 2:
+                subjectAdded = _context8.sent;
+
+                if (subjectAdded) {
+                  this.removeSubjects('bottom', 1);
+                }
+
+              case 4:
+              case 'end':
+                return _context8.stop();
+            }
+          }
+        }, _callee7, this);
+      }));
+
+      function scrollUp() {
+        return ref.apply(this, arguments);
+      }
+
+      return scrollUp;
+    }()
 
     /**
      * @method scrollDown
@@ -9241,13 +9339,37 @@ var SubjectsContainer = function (_ViewController) {
 
   }, {
     key: 'scrollDown',
-    value: function scrollDown() {
-      var _this7 = this;
+    value: function () {
+      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee8() {
+        var subjectAdded;
+        return _regeneratorRuntime.wrap(function _callee8$(_context9) {
+          while (1) {
+            switch (_context9.prev = _context9.next) {
+              case 0:
+                _context9.next = 2;
+                return this.addSubjects('bottom', 1);
 
-      this.addSubjects('bottom', 1).then(function () {
-        return _this7.removeSubjects('top', 1);
-      });
-    }
+              case 2:
+                subjectAdded = _context9.sent;
+
+                if (subjectAdded) {
+                  this.removeSubjects('top', 1);
+                }
+
+              case 4:
+              case 'end':
+                return _context9.stop();
+            }
+          }
+        }, _callee8, this);
+      }));
+
+      function scrollDown() {
+        return ref.apply(this, arguments);
+      }
+
+      return scrollDown;
+    }()
   }]);
 
   return SubjectsContainer;

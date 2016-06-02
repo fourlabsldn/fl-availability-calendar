@@ -265,8 +265,10 @@ export default class Subject extends ViewController {
     this.checkIfdestroyed();
 
     this.days = null;
-    this.html.container.remove();
     this.destroyed = true;
+    requestAnimationFrame(() => {
+      this.html.container.remove();
+    });
   }
 
 

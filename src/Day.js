@@ -23,10 +23,10 @@ export default class Day extends ViewController {
   }
 
   destroy() {
+    this.destroyed = true;
     requestAnimationFrame(() => {
       this.html.container.remove();
       this.html = null;
-      this.destroyed = true;
     });
   }
 

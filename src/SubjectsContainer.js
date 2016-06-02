@@ -167,8 +167,7 @@ export default class SubjectsContainer extends ViewController {
       const subjConfig = await this.getNewSubjectConfig(topBottom);
       const noMoreSubjectsToLoad = !subjConfig;
       if (noMoreSubjectsToLoad) {
-        console.log('Reached end of subjects.');
-        break;
+        return false;
       }
 
       //  NOTE: This object already contains events for the date range of
@@ -198,6 +197,7 @@ export default class SubjectsContainer extends ViewController {
         });
       }
     }
+    return true;
   }
 
   /**
@@ -229,6 +229,9 @@ export default class SubjectsContainer extends ViewController {
 
     const subjArray = await this.dataLoader
       .getSubjects(2, beforeAfter, referenceId, fromDate, toDate);
+
+    // Only the reference element returned.
+    if (subjArray.length < 2) { return null; }
 
     const newSubjectConfig = isFirstSubject || fromTop ? subjArray[0] : subjArray[1];
     return newSubjectConfig;
@@ -266,35 +269,39 @@ export default class SubjectsContainer extends ViewController {
     this.subjects.forEach(subject => subject.removeDay(frontBack));
   }
 
-  scrollLeft() {
-    this.addDay('back')
-    .then(() => this.removeDay('front'));
+  async scrollLeft() {
+    const dayAdded = await this.addDay('back');
+    if (dayAdded) {
+      this.removeDay('front');
+    }
   }
 
-  scrollRight() {
-    this.addDay('front')
-    .then(() => this.removeDay('back'));
+  async scrollRight() {
+    const dayAdded = await this.addDay('front');
+    if (dayAdded) {
+      this.removeDay('back');
+    }
   }
 
   /**
    * @method scrollUp
    * @return {Promise}
    */
-  scrollUp() {
-    return this.addSubjects('top', 1)
-    .then(() => {
+  async scrollUp() {
+    const subjectAdded = await this.addSubjects('top', 1);
+    if (subjectAdded) {
       this.removeSubjects('bottom', 1);
-    });
+    }
   }
 
   /**
    * @method scrollDown
    * @return {Promise}
    */
-  scrollDown() {
-    this.addSubjects('bottom', 1)
-    .then(() => {
-      return this.removeSubjects('top', 1);
-    });
+  async scrollDown() {
+    const subjectAdded = await this.addSubjects('bottom', 1);
+    if (subjectAdded) {
+      this.removeSubjects('top', 1);
+    }
   }
 }
