@@ -5,19 +5,19 @@ $c-plain-background: #f9f9f9;
 $c-button-background: darken($c-plain-background, 10%) ;
 $c-button-text: $c-text;
 
-$c-main: #2e9498;
+$c-main: #009ddc;
 $c-main-text: $c-plain-background;
 
 $c-border: darken($c-plain-background, 10.9804);
 
-$c-busy: #c43232;
+$c-busy: #e4585b;
 $c-busy-text: $c-plain-background;
 
-$c-free: #39ac6f;
+$c-free: #42b382;
 $c-free-text:$c-plain-background;
 
-$c-partially-free: #d4ad40;
-$c-partially-text: $c-plain-background;
+$c-half-busy: #fcb827;
+$c-half-busy-text: $c-plain-background;
 
 
 // Measures

@@ -143,8 +143,9 @@ export default class Subject extends ViewController {
     this.checkIfdestroyed();
 
     const events = this.orderedeEvents;
-
     if (!events.length) { return []; }
+    console.log(`Start ${events[0].start.toString()}`);
+    console.log(`End ${events[0].end.toString()}`);
 
     let eventIndex = 0;
     let event = events[eventIndex];
@@ -154,7 +155,7 @@ export default class Subject extends ViewController {
     while (event && date.diff(event.start) >= 0) {
       // Add to dayEvents if it finishes on or after the date in question.
       if (date.diff(event.end) <= 0) {
-        dayEvents.add(event);
+        dayEvents.push(event);
       }
 
       eventIndex++;

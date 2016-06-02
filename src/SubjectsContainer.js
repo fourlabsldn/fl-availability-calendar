@@ -180,7 +180,7 @@ export default class SubjectsContainer extends ViewController {
     for (let i = 0; i < amount; i++) {
       const subjConfig = await this.getNewSubjectConfig();
       // TODO: Handle case when there are no more subjects to load.
-      if (!subjConfig) { assert(false, 'No new subject found.'); }
+      assert(subjConfig, 'No new subject found.');
 
       //  Create subject form object found.
       //  NOTE: This object already contains events for the date range of
@@ -207,22 +207,27 @@ export default class SubjectsContainer extends ViewController {
     fromDate = this.startDate,
     toDate = this.getEndDate()
   ) {
+    assert(topBottom === 'top' || topBottom === 'bottom',
+      `Invalid topBottom option: ${topBottom}`);
+
     let beforeAfter;
     let referenceElement;
     if (topBottom === 'top') {
       referenceElement = this.subjects[0];
       beforeAfter = 'before';
-    } else if (topBottom === 'bottom') {
+    } else {
       referenceElement = this.subjects[this.subjects.length - 1];
       beforeAfter = 'after';
-    } else {
-      assert(false, `Invalid topBottom option: ${topBottom}`);
     }
 
-    const referenceId = this.subjects.length > 0 ? referenceElement.getId() : null;
+    const isFirstSubject = this.subjects.length === 0;
+    const referenceId = isFirstSubject ? null : referenceElement.getId();
+
     const subjArray = await this.dataLoader
       .getSubjects(2, beforeAfter, referenceId, fromDate, toDate);
-    return subjArray[1];
+
+    const newSubjectConfig = isFirstSubject ? subjArray[0] : subjArray[1];
+    return newSubjectConfig;
   }
 
   /**
@@ -245,14 +250,11 @@ export default class SubjectsContainer extends ViewController {
     }
 
     if (!this.subjectsCoverRange(fromDate, toDate)) {
-      console.log('Async route');
       // Fetch more data if subjects currently don't have it.
       const subjectIds = this.subjects.map(subj => subj.getId());
       const eventData = await this.dataLoader.getEventsForIds(subjectIds, fromDate, toDate);
       this.setEvents(eventData);
-      console.log('Finished async work');
     }
-    console.log('Finished adding days');
     this.subjects.forEach(subject => subject.addDay(frontBack));
   }
 

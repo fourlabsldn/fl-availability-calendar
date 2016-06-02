@@ -260,6 +260,14 @@
   height: 1.6em;
   border: 1px solid #dddddd;
   border-width: 2px 1px;
-  background-color: #39ac6f; }
+  -webkit-border-radius: 4px;
+          border-radius: 4px;
+  background-color: #42b382; }
+
+.fl-msc-subject-day--busy {
+  background-color: #e4585b; }
+
+.fl-msc-subject-day--half-busy {
+  background-color: #fcb827; }
 
 /*# sourceMappingURL=fl-multi-subject-calendar.css.map */

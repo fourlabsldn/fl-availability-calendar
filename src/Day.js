@@ -51,7 +51,7 @@ export default class Day extends ViewController {
     });
 
     for (const status of statuses) {
-      classesToAdd += ` ${this.modulePrefix}-day-${status}`;
+      classesToAdd += ` ${this.modulePrefix}-day--${status}`;
     }
 
     if (classesToAdd !== this.html.container.className) {

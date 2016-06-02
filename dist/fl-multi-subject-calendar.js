@@ -7667,7 +7667,7 @@ var Day = function (_ViewController) {
         for (var _iterator = statuses[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
           var status = _step.value;
 
-          classesToAdd += ' ' + this.modulePrefix + '-day-' + status;
+          classesToAdd += ' ' + this.modulePrefix + '-day--' + status;
         }
       } catch (err) {
         _didIteratorError = true;
@@ -7872,10 +7872,11 @@ var Subject = function (_ViewController) {
       this.checkIfdestroyed();
 
       var events = this.orderedeEvents;
-
       if (!events.length) {
         return [];
       }
+      console.log('Start ' + events[0].start.toString());
+      console.log('End ' + events[0].end.toString());
 
       var eventIndex = 0;
       var event = events[eventIndex];
@@ -7885,7 +7886,7 @@ var Subject = function (_ViewController) {
       while (event && date.diff(event.start) >= 0) {
         // Add to dayEvents if it finishes on or after the date in question.
         if (date.diff(event.end) <= 0) {
-          dayEvents.add(event);
+          dayEvents.push(event);
         }
 
         eventIndex++;
@@ -8105,6 +8106,7 @@ var DataLoader = function () {
     this.cache = [];
     this.moreToLoadAbove = true;
     this.moreToLoadBelow = true;
+    this.requestPadding = 30;
     Object.preventExtensions(this);
 
     this.cache.lastElementId = function () {
@@ -8133,7 +8135,7 @@ var DataLoader = function () {
   _createClass(DataLoader, [{
     key: 'getEventsForIds',
     value: function getEventsForIds(ids, fromDate, toDate) {
-      return this.getSubjects(ids.length, 'after', ids[0].id, fromDate, toDate);
+      return this.getSubjects(ids.length, 'after', ids[0], fromDate, toDate);
     }
 
     // TODO: Use config object with {before: 5, after: 6, ids: [1,2,3]}
@@ -8210,7 +8212,7 @@ var DataLoader = function () {
                   break;
                 }
 
-                ids = this.cache.slice(fromIndex, toIndex).map(function (subj) {
+                ids = cachedSubjects.map(function (subj) {
                   return subj.id;
                 });
                 return _context.abrupt('return', this.loadEvents(ids, fromDate, toDate));
@@ -8219,19 +8221,29 @@ var DataLoader = function () {
                 serverRequests = [];
 
                 if (needsIndexesAbove && this.moreToLoadAbove) {
-                  amount = Math.abs(fromIndex);
+                  // Plus one because the reference object is also returned
+                  amount = Math.abs(fromIndex) + 1;
                   referenceId = this.cache.firstElementId();
 
-                  serverRequests.push(this.loadSubjects(amount, 'before', referenceId, fromDate, toDate));
+                  serverRequests.push(this.loadSubjects(amount, 'before', referenceId, fromDate, toDate)
+                  // remove reference object
+                  .then(function (arr) {
+                    return arr.slice(0, arr.length - 1);
+                  }));
                 } else {
                   serverRequests.push([]);
                 }
 
                 if (needsIndexesBelow && this.moreToLoadBelow) {
-                  _amount = Math.max(toIndex - this.cache.length + 1, 1);
+                  // Minimum two because reference object is also returned
+                  _amount = Math.max(toIndex - this.cache.length + 2, 2);
                   _referenceId = this.cache.lastElementId();
 
-                  serverRequests.push(this.loadSubjects(_amount, 'after', _referenceId, fromDate, toDate));
+                  serverRequests.push(this.loadSubjects(_amount, 'after', _referenceId, fromDate, toDate)
+                  // remove reference object
+                  .then(function (arr) {
+                    return arr.slice(1, arr.length);
+                  }));
                 } else {
                   serverRequests.push([]);
                 }
@@ -8310,42 +8322,32 @@ var DataLoader = function () {
     key: 'loadSubjects',
     value: function () {
       var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee2(amount, beforeAfter, referenceId, fromDate, toDate) {
-        var loadedContent;
+        var dayPadding, requestFrom, requestTo, loadedContent;
         return _regeneratorRuntime.wrap(function _callee2$(_context2) {
           while (1) {
             switch (_context2.prev = _context2.next) {
               case 0:
                 assert(beforeAfter === 'before' || beforeAfter === 'after', 'Invalid value for beforeAfter: ' + beforeAfter);
 
-                loadedContent = void 0;
+                dayPadding = this.requestPadding;
+                requestFrom = new CustomDate(fromDate).add(-dayPadding, 'days');
+                requestTo = new CustomDate(toDate).add(dayPadding, 'days');
 
-                if (!(beforeAfter === 'before')) {
-                  _context2.next = 9;
-                  break;
+
+                if (beforeAfter === 'before') {
+                  console.warn('loadSubjects before not Implemented');
                 }
+                _context2.next = 7;
+                return this.createCalendarContent([referenceId], amount, requestFrom, requestTo);
 
-                console.warn('loadSubjects before not Implemented');
-                _context2.next = 6;
-                return this.createCalendarContent([referenceId], amount, fromDate, toDate);
-
-              case 6:
-                loadedContent = _context2.sent;
-                _context2.next = 12;
-                break;
-
-              case 9:
-                _context2.next = 11;
-                return this.createCalendarContent([referenceId], amount, fromDate, toDate);
-
-              case 11:
+              case 7:
                 loadedContent = _context2.sent;
 
-              case 12:
 
                 this.processServerResponse(loadedContent);
                 return _context2.abrupt('return', loadedContent.subjects);
 
-              case 14:
+              case 10:
               case 'end':
                 return _context2.stop();
             }
@@ -8374,21 +8376,24 @@ var DataLoader = function () {
     key: 'loadEvents',
     value: function () {
       var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee3(ids, fromDate, toDate) {
-        var loadedContent;
+        var dayPadding, requestFrom, requestTo, loadedContent;
         return _regeneratorRuntime.wrap(function _callee3$(_context3) {
           while (1) {
             switch (_context3.prev = _context3.next) {
               case 0:
-                _context3.next = 2;
-                return this.createCalendarContent(ids, ids.length, fromDate, toDate);
+                dayPadding = this.requestPadding;
+                requestFrom = new CustomDate(fromDate).add(-dayPadding, 'days');
+                requestTo = new CustomDate(toDate).add(dayPadding, 'days');
+                _context3.next = 5;
+                return this.createCalendarContent(ids, ids.length, requestFrom, requestTo);
 
-              case 2:
+              case 5:
                 loadedContent = _context3.sent;
 
                 this.processServerResponse(loadedContent);
                 return _context3.abrupt('return', loadedContent.subjects);
 
-              case 5:
+              case 8:
               case 'end':
                 return _context3.stop();
             }
@@ -8546,13 +8551,15 @@ var DataLoader = function () {
     key: 'createCalendarContent',
     value: function () {
       var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee4(startingIds, amount, fromDate, toDate) {
-        var daysFromNow, rand, properties, propNo, lastId, eventNo, lastDate, i, j, newEvent;
+        var daysFromNow, rand, dateVariation, maxEventLength, maxEventSpacing, properties, propNo, lastId, eventCount, i, lastDate, eventsCoverWholePeriod, newEvent;
         return _regeneratorRuntime.wrap(function _callee4$(_context4) {
           while (1) {
             switch (_context4.prev = _context4.next) {
               case 0:
                 rand = function rand() {
-                  return parseInt(Math.random() * 10, 10);
+                  var max = arguments.length <= 0 || arguments[0] === undefined ? 10 : arguments[0];
+
+                  return parseInt(Math.random() * max, 10);
                 };
 
                 daysFromNow = function daysFromNow(days) {
@@ -8560,38 +8567,45 @@ var DataLoader = function () {
                   return date.add(days, 'days');
                 };
 
+                console.log('CREATED CONTENT FOR: ' + JSON.stringify(startingIds));
+
                 // Random number from 1 to 10
 
-
+                dateVariation = toDate.diff(fromDate, 'days');
+                maxEventLength = 10;
+                maxEventSpacing = 7;
                 properties = [];
                 propNo = amount;
-                lastId = startingIds[startingIds.length - 1] || 1;
-                eventNo = void 0;
-                lastDate = void 0;
+                lastId = startingIds[startingIds.length - 1] || 0;
+                eventCount = 0;
 
 
                 for (i = 0; i < propNo; i++) {
                   properties[i] = {};
-                  properties[i].id = startingIds[i] || lastId + i - startingIds.length;
+                  properties[i].id = startingIds[i] || lastId + i - startingIds.length + 1;
                   properties[i].name = 'Property - asdf asd fasdf asdfasd ' + properties[i].id;
                   properties[i].events = new Set();
-                  eventNo = rand() * 5;
-                  lastDate = rand();
 
-                  for (j = 0; j < eventNo; j++) {
+                  lastDate = new CustomDate().add(rand(0), 'days');
+                  eventsCoverWholePeriod = void 0;
+
+
+                  do {
                     newEvent = {};
 
-                    newEvent.desc = 'Event ' + (i + j);
+                    newEvent.desc = 'Event ' + eventCount;
+                    newEvent.status = !!rand() ? 'busy' : 'half-busy';
 
-                    // Random true or false
-                    newEvent.visitable = !!rand();
+                    lastDate.add(rand(maxEventSpacing), 'days');
+                    newEvent.start = new CustomDate(lastDate);
 
-                    lastDate += rand();
-                    newEvent.start = daysFromNow(lastDate);
-                    lastDate += rand();
-                    newEvent.end = daysFromNow(lastDate);
+                    lastDate.add(rand(maxEventLength), 'days');
+                    newEvent.end = new CustomDate(lastDate);
+
                     properties[i].events.add(newEvent);
-                  }
+                    eventCount++;
+                    eventsCoverWholePeriod = toDate.diff(lastDate) > 0;
+                  } while (eventsCoverWholePeriod);
                 }
 
                 return _context4.abrupt('return', {
@@ -8602,7 +8616,7 @@ var DataLoader = function () {
                   subjects: properties
                 });
 
-              case 9:
+              case 12:
               case 'end':
                 return _context4.stop();
             }
@@ -8936,9 +8950,7 @@ var SubjectsContainer = function (_ViewController) {
                 subjConfig = _context2.sent;
 
                 // TODO: Handle case when there are no more subjects to load.
-                if (!subjConfig) {
-                  assert(false, 'No new subject found.');
-                }
+                assert(subjConfig, 'No new subject found.');
 
                 //  Create subject form object found.
                 //  NOTE: This object already contains events for the date range of
@@ -8987,33 +8999,35 @@ var SubjectsContainer = function (_ViewController) {
         var topBottom = arguments.length <= 0 || arguments[0] === undefined ? 'bottom' : arguments[0];
         var fromDate = arguments.length <= 1 || arguments[1] === undefined ? this.startDate : arguments[1];
         var toDate = arguments.length <= 2 || arguments[2] === undefined ? this.getEndDate() : arguments[2];
-        var beforeAfter, referenceElement, referenceId, subjArray;
+        var beforeAfter, referenceElement, isFirstSubject, referenceId, subjArray, newSubjectConfig;
         return _regeneratorRuntime.wrap(function _callee3$(_context3) {
           while (1) {
             switch (_context3.prev = _context3.next) {
               case 0:
+                assert(topBottom === 'top' || topBottom === 'bottom', 'Invalid topBottom option: ' + topBottom);
+
                 beforeAfter = void 0;
                 referenceElement = void 0;
 
                 if (topBottom === 'top') {
                   referenceElement = this.subjects[0];
                   beforeAfter = 'before';
-                } else if (topBottom === 'bottom') {
+                } else {
                   referenceElement = this.subjects[this.subjects.length - 1];
                   beforeAfter = 'after';
-                } else {
-                  assert(false, 'Invalid topBottom option: ' + topBottom);
                 }
 
-                referenceId = this.subjects.length > 0 ? referenceElement.getId() : null;
-                _context3.next = 6;
+                isFirstSubject = this.subjects.length === 0;
+                referenceId = isFirstSubject ? null : referenceElement.getId();
+                _context3.next = 8;
                 return this.dataLoader.getSubjects(2, beforeAfter, referenceId, fromDate, toDate);
 
-              case 6:
-                subjArray = _context3.sent;
-                return _context3.abrupt('return', subjArray[1]);
-
               case 8:
+                subjArray = _context3.sent;
+                newSubjectConfig = isFirstSubject ? subjArray[0] : subjArray[1];
+                return _context3.abrupt('return', newSubjectConfig);
+
+              case 11:
               case 'end':
                 return _context3.stop();
             }
@@ -9058,31 +9072,28 @@ var SubjectsContainer = function (_ViewController) {
                 }
 
                 if (this.subjectsCoverRange(fromDate, toDate)) {
-                  _context4.next = 11;
+                  _context4.next = 9;
                   break;
                 }
 
-                console.log('Async route');
                 // Fetch more data if subjects currently don't have it.
                 subjectIds = this.subjects.map(function (subj) {
                   return subj.getId();
                 });
-                _context4.next = 8;
+                _context4.next = 7;
                 return this.dataLoader.getEventsForIds(subjectIds, fromDate, toDate);
 
-              case 8:
+              case 7:
                 eventData = _context4.sent;
 
                 this.setEvents(eventData);
-                console.log('Finished async work');
 
-              case 11:
-                console.log('Finished adding days');
+              case 9:
                 this.subjects.forEach(function (subject) {
                   return subject.addDay(frontBack);
                 });
 
-              case 13:
+              case 10:
               case 'end':
                 return _context4.stop();
             }

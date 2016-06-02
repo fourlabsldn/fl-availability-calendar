@@ -35,7 +35,15 @@
   height: 1.6em;
   border: $day-border-width solid $c-border;
   border-width: (2 * $day-border-width) $day-border-width;
-
+  border-radius: 4px;
 
   background-color: $c-free;
+}
+
+.fl-msc-subject-day--busy {
+  background-color: $c-busy;
+}
+
+.fl-msc-subject-day--half-busy {
+  background-color: $c-half-busy;
 }

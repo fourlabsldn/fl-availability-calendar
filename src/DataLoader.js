@@ -71,6 +71,7 @@ export default class DataLoader {
     this.cache = [];
     this.moreToLoadAbove = true;
     this.moreToLoadBelow = true;
+    this.requestPadding = 30;
     Object.preventExtensions(this);
 
     this.cache.lastElementId = () => {
@@ -93,7 +94,7 @@ export default class DataLoader {
    */
    // TODO: Implement this on its own
   getEventsForIds(ids, fromDate, toDate) {
-    return this.getSubjects(ids.length, 'after', ids[0].id, fromDate, toDate);
+    return this.getSubjects(ids.length, 'after', ids[0], fromDate, toDate);
   }
 
   // TODO: Use config object with {before: 5, after: 6, ids: [1,2,3]}
@@ -153,26 +154,32 @@ export default class DataLoader {
     }
 
     if (hasAllIndexes) {
-      const ids = this.cache.slice(fromIndex, toIndex).map(subj => subj.id);
+      const ids = cachedSubjects.map(subj => subj.id);
       return this.loadEvents(ids, fromDate, toDate);
     }
 
     const serverRequests = [];
     if (needsIndexesAbove && this.moreToLoadAbove) {
-      const amount = Math.abs(fromIndex);
+      // Plus one because the reference object is also returned
+      const amount = Math.abs(fromIndex) + 1;
       const referenceId = this.cache.firstElementId();
       serverRequests.push(
         this.loadSubjects(amount, 'before', referenceId, fromDate, toDate)
+        // remove reference object
+        .then(arr => arr.slice(0, arr.length - 1))
       );
     } else {
       serverRequests.push([]);
     }
 
     if (needsIndexesBelow && this.moreToLoadBelow) {
-      const amount = Math.max(toIndex - this.cache.length + 1, 1);
+      // Minimum two because reference object is also returned
+      const amount = Math.max(toIndex - this.cache.length + 2, 2);
       const referenceId = this.cache.lastElementId();
       serverRequests.push(
         this.loadSubjects(amount, 'after', referenceId, fromDate, toDate)
+        // remove reference object
+        .then(arr => arr.slice(1, arr.length))
       );
     } else {
       serverRequests.push([]);
@@ -227,13 +234,19 @@ export default class DataLoader {
     assert((beforeAfter === 'before' || beforeAfter === 'after'),
       `Invalid value for beforeAfter: ${beforeAfter}`);
 
-    let loadedContent;
+    const dayPadding = this.requestPadding;
+    const requestFrom = (new CustomDate(fromDate)).add(-dayPadding, 'days');
+    const requestTo = (new CustomDate(toDate)).add(dayPadding, 'days');
+
     if (beforeAfter === 'before') {
       console.warn('loadSubjects before not Implemented');
-      loadedContent = await this.createCalendarContent([referenceId], amount, fromDate, toDate);
-    } else {
-      loadedContent = await this.createCalendarContent([referenceId], amount, fromDate, toDate);
     }
+    const loadedContent = await this.createCalendarContent(
+      [referenceId],
+      amount,
+      requestFrom,
+      requestTo
+    );
 
     this.processServerResponse(loadedContent);
     return loadedContent.subjects;
@@ -249,7 +262,10 @@ export default class DataLoader {
    * @return {Promise<Array<Object>>} - Resolves into an array of subject objects
    */
   async loadEvents(ids, fromDate, toDate) {
-    const loadedContent = await this.createCalendarContent(ids, ids.length, fromDate, toDate);
+    const dayPadding = this.requestPadding;
+    const requestFrom = (new CustomDate(fromDate)).add(-dayPadding, 'days');
+    const requestTo = (new CustomDate(toDate)).add(dayPadding, 'days');
+    const loadedContent = await this.createCalendarContent(ids, ids.length, requestFrom, requestTo);
     this.processServerResponse(loadedContent);
     return loadedContent.subjects;
   }
@@ -337,43 +353,49 @@ export default class DataLoader {
    * @return {Promise}
    */
   async createCalendarContent(startingIds, amount, fromDate, toDate) {
+    console.log(`CREATED CONTENT FOR: ${JSON.stringify(startingIds)}`);
     function daysFromNow(days) {
       const date = new CustomDate();
       return date.add(days, 'days');
     }
 
     // Random number from 1 to 10
-    function rand() {
-      return parseInt(Math.random() * 10, 10);
+    function rand(max = 10) {
+      return parseInt(Math.random() * max, 10);
     }
 
+    const dateVariation = toDate.diff(fromDate, 'days');
+    const maxEventLength = 10;
+    const maxEventSpacing = 7;
     const properties = [];
     const propNo = amount;
-    const lastId = startingIds[startingIds.length - 1] || 1;
-    let eventNo;
-    let lastDate;
+    const lastId = startingIds[startingIds.length - 1] || 0;
+    let eventCount = 0;
 
     for (let i = 0; i < propNo; i++) {
       properties[i] = {};
-      properties[i].id = startingIds[i] || lastId + i - startingIds.length;
+      properties[i].id = startingIds[i] || lastId + i - startingIds.length + 1;
       properties[i].name = `Property - asdf asd fasdf asdfasd ${properties[i].id}`;
       properties[i].events = new Set();
-      eventNo = rand() * 5;
-      lastDate = rand();
 
-      for (let j = 0; j < eventNo; j++) {
+      const lastDate = (new CustomDate).add(rand(0), 'days');
+      let eventsCoverWholePeriod;
+
+      do {
         const newEvent = {};
-        newEvent.desc = `Event ${i + j}`;
+        newEvent.desc = `Event ${eventCount}`;
+        newEvent.status = !!rand() ? 'busy' : 'half-busy';
 
-        // Random true or false
-        newEvent.visitable = !!rand();
+        lastDate.add(rand(maxEventSpacing), 'days');
+        newEvent.start = new CustomDate(lastDate);
 
-        lastDate += rand();
-        newEvent.start = daysFromNow(lastDate);
-        lastDate += rand();
-        newEvent.end = daysFromNow(lastDate);
+        lastDate.add(rand(maxEventLength), 'days');
+        newEvent.end = new CustomDate(lastDate);
+
         properties[i].events.add(newEvent);
-      }
+        eventCount++;
+        eventsCoverWholePeriod = toDate.diff(lastDate) > 0;
+      } while (eventsCoverWholePeriod);
     }
 
     return {
