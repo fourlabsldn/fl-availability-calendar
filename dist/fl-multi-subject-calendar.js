@@ -8053,14 +8053,14 @@ var Subject = function (_ViewController) {
       var fromFront = position === 'front';
       assert(fromFront || position === 'back', 'Invalid position value. Expected \'front\' or \'back\', gor \'' + position + '\'');
 
+      if (this.getDayCount() === 0) {
+        return;
+      }
+
       if (fromFront) {
         var dayToBeRemoved = this.days.pop();
         dayToBeRemoved.destroy();
       } else {
-        if (this.getDayCount() === 0) {
-          return;
-        }
-
         var _days$splice = this.days.splice(0, 1);
 
         var _days$splice2 = _slicedToArray(_days$splice, 1);
@@ -9204,8 +9204,9 @@ var SubjectsContainer = function (_ViewController) {
                 this.subjects.forEach(function (subject) {
                   return subject.addDay(frontBack);
                 });
+                return _context5.abrupt('return', true);
 
-              case 10:
+              case 11:
               case 'end':
                 return _context5.stop();
             }

@@ -263,6 +263,7 @@ export default class SubjectsContainer extends ViewController {
       this.setEvents(eventData);
     }
     this.subjects.forEach(subject => subject.addDay(frontBack));
+    return true;
   }
 
   removeDay(frontBack) {

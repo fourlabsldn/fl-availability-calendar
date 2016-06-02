@@ -249,12 +249,12 @@ export default class Subject extends ViewController {
     assert(fromFront || position === 'back',
       `Invalid position value. Expected 'front' or 'back', gor '${position}'`);
 
+    if (this.getDayCount() === 0) { return; }
+
     if (fromFront) {
       const dayToBeRemoved = this.days.pop();
       dayToBeRemoved.destroy();
     } else {
-      if (this.getDayCount() === 0) { return; }
-
       const [dayToBeRemoved] = this.days.splice(0, 1);
       dayToBeRemoved.destroy();
       this.startDate.add(1, 'days');
