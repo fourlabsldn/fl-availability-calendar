@@ -5737,7 +5737,7 @@ var ControlBar = function (_ViewController) {
     key: 'scrollRight',
     value: function scrollRight() {
       this.subjectsContainer.scrollRight();
-      this.dateBar.scrollLeft();
+      this.dateBar.scrollRight();
     }
   }, {
     key: 'scrollUp',
@@ -5895,53 +5895,52 @@ var DateBar = function (_ViewController) {
     value: function addDay() {
       var leftRight = arguments.length <= 0 || arguments[0] === undefined ? 'right' : arguments[0];
 
-      var daysToAdd = void 0;
-      if (leftRight === 'right') {
-        daysToAdd = 1;
-      } else if (leftRight === 'left') {
-        daysToAdd = -1;
-      } else {
-        assert(false, 'Invalid leftRight value: ' + leftRight);
-      }
+      var toTheRight = leftRight === 'right';
+      assert(toTheRight || leftRight === 'left', 'Invalid leftRight value: ' + leftRight);
 
-      var dayDate = this.getEndDate().add(daysToAdd, 'days');
-      this.addToDayRow(dayDate, leftRight);
-      this.addToMonthRow(dayDate, leftRight);
+      var newDate = toTheRight ? this.getEndDate().add(1, 'days') : new CustomDate(this.startDate).add(-1, 'days');
+
+      this.addToDayRow(newDate, toTheRight);
+      this.addToMonthRow(newDate, toTheRight);
+
+      if (!toTheRight) {
+        this.startDate = newDate;
+      }
     }
 
     /**
      * @method addToDayRow
      * @param  {CustomDate} date
-     * @param  {String} leftRight
+     * @param  {Boolean} toTheRight
      */
 
   }, {
     key: 'addToDayRow',
-    value: function addToDayRow(date, leftRight) {
+    value: function addToDayRow(date) {
+      var toTheRight = arguments.length <= 1 || arguments[1] === undefined ? true : arguments[1];
+
       var newDay = document.createElement('div');
       newDay.classList.add(this.cssPrefix + '-day');
       newDay.innerHTML = date.format('DD');
 
-      if (leftRight === 'right' || this.html.dayRow.length === 0) {
+      if (toTheRight || this.html.dayRow.length === 0) {
         this.html.dayRow.appendChild(newDay);
-      } else if (leftRight === 'left') {
+      } else {
         var firstDayElement = this.html.dayRow.children[0];
         this.html.dayRow.insertBefore(newDay, firstDayElement);
-      } else {
-        assert(false, 'Invalid leftRight value: ' + leftRight);
       }
     }
 
     /**
      * @method addToMonthRow
      * @param  {CustomDate} date
-     * @param  {String} leftRight
+     * @param  {Boolean} toTheRight
      */
 
   }, {
     key: 'addToMonthRow',
     value: function addToMonthRow(date) {
-      var leftRight = arguments.length <= 1 || arguments[1] === undefined ? 'right' : arguments[1];
+      var toTheRight = arguments.length <= 1 || arguments[1] === undefined ? true : arguments[1];
 
       var monthName = date.format('MMM');
       var months = this.html.monthRow.children;
@@ -5949,8 +5948,9 @@ var DateBar = function (_ViewController) {
       var firstMonthElement = months[0];
       var lastMonthElement = months[months.length - 1];
 
-      var existingMonth = leftRight === 'left' ? firstMonthElement : lastMonthElement;
+      var existingMonth = toTheRight ? lastMonthElement : firstMonthElement;
       var monthEl = void 0;
+
       if (existingMonth && existingMonth.innerHTML === monthName) {
         monthEl = existingMonth;
         existingMonth.span = existingMonth.span + 1;
@@ -5958,7 +5958,7 @@ var DateBar = function (_ViewController) {
         monthEl = document.createElement('div');
         monthEl.innerHTML = monthName;
         monthEl.span = 1;
-        if (leftRight === 'right' || months.length === 0) {
+        if (toTheRight || months.length === 0) {
           this.html.monthRow.appendChild(monthEl);
         } else {
           this.html.monthRow.insertBefore(monthEl, firstMonthElement);
@@ -5979,25 +5979,30 @@ var DateBar = function (_ViewController) {
     value: function removeDay() {
       var leftRight = arguments.length <= 0 || arguments[0] === undefined ? 'right' : arguments[0];
 
-      this.removeFromDayRow(leftRight);
-      this.removeFromMonthRow(leftRight);
+      var toTheRight = leftRight === 'right';
+
+      this.removeFromDayRow(toTheRight);
+      this.removeFromMonthRow(toTheRight);
+      if (!toTheRight) {
+        this.startDate.add(1, 'days');
+      }
     }
 
     /**
      * @method removeFromDayRow
-     * @param  {String} leftRight
+     * @param  {Boolean} toTheRight
      */
 
   }, {
     key: 'removeFromDayRow',
     value: function removeFromDayRow() {
-      var leftRight = arguments.length <= 0 || arguments[0] === undefined ? 'right' : arguments[0];
+      var toTheRight = arguments.length <= 0 || arguments[0] === undefined ? true : arguments[0];
 
       // remove from day row
-      if (leftRight === 'right') {
+      if (toTheRight) {
         var lastDay = this.html.dayRow.children[this.html.dayRow.children.length - 1];
         lastDay.remove();
-      } else if (leftRight === 'left') {
+      } else {
         var firstDay = this.html.dayRow.children[0];
         firstDay.remove();
       }
@@ -6005,21 +6010,22 @@ var DateBar = function (_ViewController) {
 
     /**
      * @method removeFromMonthRow
-     * @param  {String} leftRight
+     * @param  {Boolean} toTheRight
      */
 
   }, {
     key: 'removeFromMonthRow',
     value: function removeFromMonthRow() {
-      var leftRight = arguments.length <= 0 || arguments[0] === undefined ? 'right' : arguments[0];
+      var toTheRight = arguments.length <= 0 || arguments[0] === undefined ? true : arguments[0];
 
       var months = this.html.monthRow.children;
       var firstMonthElement = months[0];
       var lastMonthElement = months[months.length - 1];
+
       var monthEl = void 0;
-      if (leftRight === 'right') {
+      if (toTheRight) {
         monthEl = lastMonthElement;
-      } else if (leftRight === 'left') {
+      } else {
         monthEl = firstMonthElement;
       }
 

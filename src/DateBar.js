@@ -54,54 +54,54 @@ export default class DateBar extends ViewController {
    * @param  {String} leftRight
    */
   addDay(leftRight = 'right') {
-    let daysToAdd;
-    if (leftRight === 'right') {
-      daysToAdd = 1;
-    } else if (leftRight === 'left') {
-      daysToAdd = - 1;
-    } else {
-      assert(false, `Invalid leftRight value: ${leftRight}`);
-    }
+    const toTheRight = leftRight === 'right';
+    assert(toTheRight || leftRight === 'left', `Invalid leftRight value: ${leftRight}`);
 
-    const dayDate = this.getEndDate().add(daysToAdd, 'days');
-    this.addToDayRow(dayDate, leftRight);
-    this.addToMonthRow(dayDate, leftRight);
+    const newDate = toTheRight
+      ? this.getEndDate().add(1, 'days')
+      : (new CustomDate(this.startDate)).add(-1, 'days');
+
+    this.addToDayRow(newDate, toTheRight);
+    this.addToMonthRow(newDate, toTheRight);
+
+    if (!toTheRight) {
+      this.startDate = newDate;
+    }
   }
 
   /**
    * @method addToDayRow
    * @param  {CustomDate} date
-   * @param  {String} leftRight
+   * @param  {Boolean} toTheRight
    */
-  addToDayRow(date, leftRight) {
+  addToDayRow(date, toTheRight = true) {
     const newDay = document.createElement('div');
     newDay.classList.add(`${this.cssPrefix}-day`);
     newDay.innerHTML = date.format('DD');
 
-    if (leftRight === 'right' || this.html.dayRow.length === 0) {
+    if (toTheRight || this.html.dayRow.length === 0) {
       this.html.dayRow.appendChild(newDay);
-    } else if (leftRight === 'left') {
+    } else {
       const firstDayElement = this.html.dayRow.children[0];
       this.html.dayRow.insertBefore(newDay, firstDayElement);
-    } else {
-      assert(false, `Invalid leftRight value: ${leftRight}`);
     }
   }
 
   /**
    * @method addToMonthRow
    * @param  {CustomDate} date
-   * @param  {String} leftRight
+   * @param  {Boolean} toTheRight
    */
-  addToMonthRow(date, leftRight = 'right') {
+  addToMonthRow(date, toTheRight = true) {
     const monthName = date.format('MMM');
     const months = this.html.monthRow.children;
 
     const firstMonthElement = months[0];
     const lastMonthElement = months[months.length - 1];
 
-    const existingMonth = leftRight === 'left' ? firstMonthElement : lastMonthElement;
+    const existingMonth = toTheRight ? lastMonthElement : firstMonthElement;
     let monthEl;
+
     if (existingMonth && existingMonth.innerHTML === monthName) {
       monthEl = existingMonth;
       existingMonth.span = existingMonth.span + 1;
@@ -109,7 +109,7 @@ export default class DateBar extends ViewController {
       monthEl = document.createElement('div');
       monthEl.innerHTML = monthName;
       monthEl.span = 1;
-      if (leftRight === 'right' || months.length === 0) {
+      if (toTheRight || months.length === 0) {
         this.html.monthRow.appendChild(monthEl);
       } else {
         this.html.monthRow.insertBefore(monthEl, firstMonthElement);
@@ -125,20 +125,25 @@ export default class DateBar extends ViewController {
    * @param  {String} leftRight
    */
   removeDay(leftRight = 'right') {
-    this.removeFromDayRow(leftRight);
-    this.removeFromMonthRow(leftRight);
+    const toTheRight = leftRight === 'right';
+
+    this.removeFromDayRow(toTheRight);
+    this.removeFromMonthRow(toTheRight);
+    if (!toTheRight) {
+      this.startDate.add(1, 'days');
+    }
   }
 
  /**
   * @method removeFromDayRow
-  * @param  {String} leftRight
+  * @param  {Boolean} toTheRight
   */
-  removeFromDayRow(leftRight = 'right') {
+  removeFromDayRow(toTheRight = true) {
     // remove from day row
-    if (leftRight === 'right') {
+    if (toTheRight) {
       const lastDay = this.html.dayRow.children[this.html.dayRow.children.length - 1];
       lastDay.remove();
-    } else if (leftRight === 'left') {
+    } else {
       const firstDay = this.html.dayRow.children[0];
       firstDay.remove();
     }
@@ -146,16 +151,17 @@ export default class DateBar extends ViewController {
 
   /**
    * @method removeFromMonthRow
-   * @param  {String} leftRight
+   * @param  {Boolean} toTheRight
    */
-  removeFromMonthRow(leftRight = 'right') {
+  removeFromMonthRow(toTheRight = true) {
     const months = this.html.monthRow.children;
     const firstMonthElement = months[0];
     const lastMonthElement = months[months.length - 1];
+
     let monthEl;
-    if (leftRight === 'right') {
+    if (toTheRight) {
       monthEl = lastMonthElement;
-    } else if (leftRight === 'left') {
+    } else {
       monthEl = firstMonthElement;
     }
 
