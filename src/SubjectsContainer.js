@@ -142,26 +142,14 @@ export default class SubjectsContainer extends ViewController {
    * @param  {String} topBottom - Accepts 'top' or 'bottom'
    * @param  {Int} amount
    */
-  removeSubjects(topBottom, amount) {
-    assert(typeof topBottom === 'string',
-      'TypeError: invalid value for topBottom. Expected String and got ${typeof topBottom}');
-    let start;
-    let end;
+  removeSubjects(topBottom, amount = 1) {
+    const fromTop = topBottom === 'top';
+    assert(fromTop || topBottom === 'bottom', `Invalid value for topBottom: ${topBottom}`);
 
-    if (topBottom === 'bottom') {
-      end = this.subjects.length;
-      start = end - amount;
-    } else if (topBottom === 'top') {
-      end = amount;
-      start = 0;
-    } else {
-      assert(false, 'Invalid value for topBottom: ${topBottom}');
-    }
+    const start = fromTop ? 0 : this.subjects.length - amount;
 
-    for (let subjIndex = start; subjIndex < end; subjIndex++) {
-      const [erasedSubject] = this.subjects.splice(subjIndex, 1);
-      erasedSubject.destroy();
-    }
+    const subjectsToErase = this.subjects.splice(start, amount);
+    subjectsToErase.forEach(subj => subj.destroy());
   }
 
   /**
@@ -172,17 +160,17 @@ export default class SubjectsContainer extends ViewController {
    * @return {Promise} - The promise will be resolved when the subject has been added.
    */
   async addSubjects(topBottom, amount = 1) {
-    if (topBottom !== 'bottom') { console.log('Not implemented'); }
-
     const startDate = this.startDate;
     const dayCount = this.getDayCount();
 
     for (let i = 0; i < amount; i++) {
-      const subjConfig = await this.getNewSubjectConfig();
-      // TODO: Handle case when there are no more subjects to load.
-      assert(subjConfig, 'No new subject found.');
+      const subjConfig = await this.getNewSubjectConfig(topBottom);
+      const noMoreSubjectsToLoad = !subjConfig;
+      if (noMoreSubjectsToLoad) {
+        console.log('Reached end of subjects.');
+        break;
+      }
 
-      //  Create subject form object found.
       //  NOTE: This object already contains events for the date range of
       //  the container.
       const newSubject = new Subject(subjConfig, startDate, this.modulePrefix);
@@ -192,8 +180,23 @@ export default class SubjectsContainer extends ViewController {
         newSubject.addDay();
       }
 
-      this.subjects.push(newSubject);
-      this.html.container.appendChild(newSubject.html.container);
+      const firstSubjectToBeAdded = this.subjects.length === 0;
+
+      if (topBottom === 'bottom' || firstSubjectToBeAdded) {
+        this.subjects.push(newSubject);
+        requestAnimationFrame(() => {
+          this.html.container.appendChild(newSubject.html.container);
+        });
+      } else {
+        // Add subject to the beginning of the subjects array.
+        this.subjects.splice(0, 0, newSubject);
+        requestAnimationFrame(() => {
+          this.html.container.insertBefore(
+            newSubject.html.container,
+            this.html.container.children[0]
+          );
+        });
+      }
     }
   }
 
@@ -210,9 +213,10 @@ export default class SubjectsContainer extends ViewController {
     assert(topBottom === 'top' || topBottom === 'bottom',
       `Invalid topBottom option: ${topBottom}`);
 
+    const fromTop = topBottom === 'top';
     let beforeAfter;
     let referenceElement;
-    if (topBottom === 'top') {
+    if (fromTop) {
       referenceElement = this.subjects[0];
       beforeAfter = 'before';
     } else {
@@ -226,7 +230,7 @@ export default class SubjectsContainer extends ViewController {
     const subjArray = await this.dataLoader
       .getSubjects(2, beforeAfter, referenceId, fromDate, toDate);
 
-    const newSubjectConfig = isFirstSubject ? subjArray[0] : subjArray[1];
+    const newSubjectConfig = isFirstSubject || fromTop ? subjArray[0] : subjArray[1];
     return newSubjectConfig;
   }
 
@@ -277,8 +281,10 @@ export default class SubjectsContainer extends ViewController {
    * @return {Promise}
    */
   scrollUp() {
-    this.removeSubjects('bottom', 1);
-    return this.addSubjects('top', 1);
+    return this.addSubjects('top', 1)
+    .then(() => {
+      this.removeSubjects('bottom', 1);
+    });
   }
 
   /**
@@ -286,7 +292,9 @@ export default class SubjectsContainer extends ViewController {
    * @return {Promise}
    */
   scrollDown() {
-    this.removeSubjects('bottom', 1);
-    return this.addSubjects('down', 1);
+    this.addSubjects('bottom', 1)
+    .then(() => {
+      return this.removeSubjects('top', 1);
+    });
   }
 }

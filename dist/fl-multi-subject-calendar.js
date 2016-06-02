@@ -20,7 +20,7 @@ var core = module.exports = {version: '2.4.0'};
 if(typeof __e == 'number')__e = core; // eslint-disable-line no-undef
 });
 
-var require$$3 = (_core && typeof _core === 'object' && 'default' in _core ? _core['default'] : _core);
+var require$$0$2 = (_core && typeof _core === 'object' && 'default' in _core ? _core['default'] : _core);
 
 var _fails = __commonjs(function (module) {
 module.exports = function(exec){
@@ -32,11 +32,11 @@ module.exports = function(exec){
 };
 });
 
-var require$$0$2 = (_fails && typeof _fails === 'object' && 'default' in _fails ? _fails['default'] : _fails);
+var require$$0$3 = (_fails && typeof _fails === 'object' && 'default' in _fails ? _fails['default'] : _fails);
 
 var _descriptors = __commonjs(function (module) {
 // Thank's IE8 for his funny defineProperty
-module.exports = !require$$0$2(function(){
+module.exports = !require$$0$3(function(){
   return Object.defineProperty({}, 'a', {get: function(){ return 7; }}).a != 7;
 });
 });
@@ -66,7 +66,7 @@ module.exports = function(it, S){
 };
 });
 
-var require$$3$1 = (_toPrimitive && typeof _toPrimitive === 'object' && 'default' in _toPrimitive ? _toPrimitive['default'] : _toPrimitive);
+var require$$3 = (_toPrimitive && typeof _toPrimitive === 'object' && 'default' in _toPrimitive ? _toPrimitive['default'] : _toPrimitive);
 
 var _global = __commonjs(function (module) {
 // https://github.com/zloirock/core-js/issues/86#issuecomment-115759028
@@ -90,7 +90,7 @@ module.exports = function(it){
 var require$$2$1 = (_domCreate && typeof _domCreate === 'object' && 'default' in _domCreate ? _domCreate['default'] : _domCreate);
 
 var _ie8DomDefine = __commonjs(function (module) {
-module.exports = !require$$1 && !require$$0$2(function(){
+module.exports = !require$$1 && !require$$0$3(function(){
   return Object.defineProperty(require$$2$1('div'), 'a', {get: function(){ return 7; }}).a != 7;
 });
 });
@@ -105,12 +105,12 @@ module.exports = function(it){
 };
 });
 
-var require$$0$3 = (_anObject && typeof _anObject === 'object' && 'default' in _anObject ? _anObject['default'] : _anObject);
+var require$$2$2 = (_anObject && typeof _anObject === 'object' && 'default' in _anObject ? _anObject['default'] : _anObject);
 
 var _objectDp = __commonjs(function (module, exports) {
-var anObject       = require$$0$3
+var anObject       = require$$2$2
   , IE8_DOM_DEFINE = require$$1$1
-  , toPrimitive    = require$$3$1
+  , toPrimitive    = require$$3
   , dP             = Object.defineProperty;
 
 exports.f = require$$1 ? Object.defineProperty : function defineProperty(O, P, Attributes){
@@ -139,11 +139,11 @@ module.exports = function(bitmap, value){
 };
 });
 
-var require$$3$2 = (_propertyDesc && typeof _propertyDesc === 'object' && 'default' in _propertyDesc ? _propertyDesc['default'] : _propertyDesc);
+var require$$3$1 = (_propertyDesc && typeof _propertyDesc === 'object' && 'default' in _propertyDesc ? _propertyDesc['default'] : _propertyDesc);
 
 var _hide = __commonjs(function (module) {
 var dP         = require$$2
-  , createDesc = require$$3$2;
+  , createDesc = require$$3$1;
 module.exports = require$$1 ? function(object, key, value){
   return dP.f(object, key, createDesc(1, value));
 } : function(object, key, value){
@@ -190,7 +190,7 @@ var require$$5 = (_ctx && typeof _ctx === 'object' && 'default' in _ctx ? _ctx['
 
 var _export = __commonjs(function (module, exports) {
 var global    = require$$1$2
-  , core      = require$$3
+  , core      = require$$0$2
   , ctx       = require$$5
   , hide      = require$$0$4
   , PROTOTYPE = 'prototype';
@@ -261,7 +261,7 @@ $export($export.S + $export.F * !require$$1, 'Object', {defineProperty: require$
 });
 
 var defineProperty$1 = __commonjs(function (module) {
-var $Object = require$$3.Object;
+var $Object = require$$0$2.Object;
 module.exports = function defineProperty(it, key, desc){
   return $Object.defineProperty(it, key, desc);
 };
@@ -342,10 +342,10 @@ var $exports = module.exports = function(name){
 $exports.store = store;
 });
 
-var require$$0$8 = (_wks && typeof _wks === 'object' && 'default' in _wks ? _wks['default'] : _wks);
+var require$$2$3 = (_wks && typeof _wks === 'object' && 'default' in _wks ? _wks['default'] : _wks);
 
 var _wksExt = __commonjs(function (module, exports) {
-exports.f = require$$0$8;
+exports.f = require$$2$3;
 });
 
 var require$$0$7 = (_wksExt && typeof _wksExt === 'object' && 'default' in _wksExt ? _wksExt['default'] : _wksExt);
@@ -358,7 +358,7 @@ var require$$19 = (_library && typeof _library === 'object' && 'default' in _lib
 
 var _wksDefine = __commonjs(function (module) {
 var global         = require$$1$2
-  , core           = require$$3
+  , core           = require$$0$2
   , LIBRARY        = require$$19
   , wksExt         = require$$0$7
   , defineProperty = require$$2.f;
@@ -388,7 +388,7 @@ var _objectPie = __commonjs(function (module, exports) {
 exports.f = {}.propertyIsEnumerable;
 });
 
-var require$$0$9 = (_objectPie && typeof _objectPie === 'object' && 'default' in _objectPie ? _objectPie['default'] : _objectPie);
+var require$$0$8 = (_objectPie && typeof _objectPie === 'object' && 'default' in _objectPie ? _objectPie['default'] : _objectPie);
 
 var _enumBugKeys = __commonjs(function (module) {
 // IE 8- don't enum bug keys
@@ -397,7 +397,7 @@ module.exports = (
 ).split(',');
 });
 
-var require$$3$3 = (_enumBugKeys && typeof _enumBugKeys === 'object' && 'default' in _enumBugKeys ? _enumBugKeys['default'] : _enumBugKeys);
+var require$$3$2 = (_enumBugKeys && typeof _enumBugKeys === 'object' && 'default' in _enumBugKeys ? _enumBugKeys['default'] : _enumBugKeys);
 
 var _sharedKey = __commonjs(function (module) {
 var shared = require$$1$4('keys')
@@ -407,7 +407,7 @@ module.exports = function(key){
 };
 });
 
-var require$$0$11 = (_sharedKey && typeof _sharedKey === 'object' && 'default' in _sharedKey ? _sharedKey['default'] : _sharedKey);
+var require$$0$10 = (_sharedKey && typeof _sharedKey === 'object' && 'default' in _sharedKey ? _sharedKey['default'] : _sharedKey);
 
 var _toInteger = __commonjs(function (module) {
 // 7.1.4 ToInteger
@@ -430,7 +430,7 @@ module.exports = function(index, length){
 };
 });
 
-var require$$0$12 = (_toIndex && typeof _toIndex === 'object' && 'default' in _toIndex ? _toIndex['default'] : _toIndex);
+var require$$0$11 = (_toIndex && typeof _toIndex === 'object' && 'default' in _toIndex ? _toIndex['default'] : _toIndex);
 
 var _toLength = __commonjs(function (module) {
 // 7.1.15 ToLength
@@ -451,7 +451,7 @@ module.exports = function(it){
 };
 });
 
-var require$$0$13 = (_defined && typeof _defined === 'object' && 'default' in _defined ? _defined['default'] : _defined);
+var require$$0$12 = (_defined && typeof _defined === 'object' && 'default' in _defined ? _defined['default'] : _defined);
 
 var _cof = __commonjs(function (module) {
 var toString = {}.toString;
@@ -461,11 +461,11 @@ module.exports = function(it){
 };
 });
 
-var require$$0$14 = (_cof && typeof _cof === 'object' && 'default' in _cof ? _cof['default'] : _cof);
+var require$$1$12 = (_cof && typeof _cof === 'object' && 'default' in _cof ? _cof['default'] : _cof);
 
 var _iobject = __commonjs(function (module) {
 // fallback for non-array-like ES3 and non-enumerable old V8 strings
-var cof = require$$0$14;
+var cof = require$$1$12;
 module.exports = Object('z').propertyIsEnumerable(0) ? Object : function(it){
   return cof(it) == 'String' ? it.split('') : Object(it);
 };
@@ -476,7 +476,7 @@ var require$$1$11 = (_iobject && typeof _iobject === 'object' && 'default' in _i
 var _toIobject = __commonjs(function (module) {
 // to indexed object, toObject with fallback for non-array-like ES3 strings
 var IObject = require$$1$11
-  , defined = require$$0$13;
+  , defined = require$$0$12;
 module.exports = function(it){
   return IObject(defined(it));
 };
@@ -489,7 +489,7 @@ var _arrayIncludes = __commonjs(function (module) {
 // true  -> Array#includes
 var toIObject = require$$1$10
   , toLength  = require$$1$9
-  , toIndex   = require$$0$12;
+  , toIndex   = require$$0$11;
 module.exports = function(IS_INCLUDES){
   return function($this, el, fromIndex){
     var O      = toIObject($this)
@@ -517,13 +517,13 @@ module.exports = function(it, key){
 };
 });
 
-var require$$2$2 = (_has && typeof _has === 'object' && 'default' in _has ? _has['default'] : _has);
+var require$$2$4 = (_has && typeof _has === 'object' && 'default' in _has ? _has['default'] : _has);
 
 var _objectKeysInternal = __commonjs(function (module) {
-var has          = require$$2$2
+var has          = require$$2$4
   , toIObject    = require$$1$10
   , arrayIndexOf = require$$1$7(false)
-  , IE_PROTO     = require$$0$11('IE_PROTO');
+  , IE_PROTO     = require$$0$10('IE_PROTO');
 
 module.exports = function(object, names){
   var O      = toIObject(object)
@@ -544,33 +544,33 @@ var require$$1$6 = (_objectKeysInternal && typeof _objectKeysInternal === 'objec
 var _objectGopn = __commonjs(function (module, exports) {
 // 19.1.2.7 / 15.2.3.4 Object.getOwnPropertyNames(O)
 var $keys      = require$$1$6
-  , hiddenKeys = require$$3$3.concat('length', 'prototype');
+  , hiddenKeys = require$$3$2.concat('length', 'prototype');
 
 exports.f = Object.getOwnPropertyNames || function getOwnPropertyNames(O){
   return $keys(O, hiddenKeys);
 };
 });
 
-var require$$0$10 = (_objectGopn && typeof _objectGopn === 'object' && 'default' in _objectGopn ? _objectGopn['default'] : _objectGopn);
+var require$$0$9 = (_objectGopn && typeof _objectGopn === 'object' && 'default' in _objectGopn ? _objectGopn['default'] : _objectGopn);
 
 var _objectKeys = __commonjs(function (module) {
 // 19.1.2.14 / 15.2.3.14 Object.keys(O)
 var $keys       = require$$1$6
-  , enumBugKeys = require$$3$3;
+  , enumBugKeys = require$$3$2;
 
 module.exports = Object.keys || function keys(O){
   return $keys(O, enumBugKeys);
 };
 });
 
-var require$$1$12 = (_objectKeys && typeof _objectKeys === 'object' && 'default' in _objectKeys ? _objectKeys['default'] : _objectKeys);
+var require$$1$13 = (_objectKeys && typeof _objectKeys === 'object' && 'default' in _objectKeys ? _objectKeys['default'] : _objectKeys);
 
 var _objectGopd = __commonjs(function (module, exports) {
-var pIE            = require$$0$9
-  , createDesc     = require$$3$2
+var pIE            = require$$0$8
+  , createDesc     = require$$3$1
   , toIObject      = require$$1$10
-  , toPrimitive    = require$$3$1
-  , has            = require$$2$2
+  , toPrimitive    = require$$3
+  , has            = require$$2$4
   , IE8_DOM_DEFINE = require$$1$1
   , gOPD           = Object.getOwnPropertyDescriptor;
 
@@ -584,12 +584,12 @@ exports.f = require$$1 ? gOPD : function getOwnPropertyDescriptor(O, P){
 };
 });
 
-var require$$0$15 = (_objectGopd && typeof _objectGopd === 'object' && 'default' in _objectGopd ? _objectGopd['default'] : _objectGopd);
+var require$$0$13 = (_objectGopd && typeof _objectGopd === 'object' && 'default' in _objectGopd ? _objectGopd['default'] : _objectGopd);
 
 var _objectGopnExt = __commonjs(function (module) {
 // fallback for IE11 buggy Object.getOwnPropertyNames with iframe and window
 var toIObject = require$$1$10
-  , gOPN      = require$$0$10.f
+  , gOPN      = require$$0$9.f
   , toString  = {}.toString;
 
 var windowNames = typeof window == 'object' && window && Object.getOwnPropertyNames
@@ -614,12 +614,12 @@ var _html = __commonjs(function (module) {
 module.exports = require$$1$2.document && document.documentElement;
 });
 
-var require$$3$4 = (_html && typeof _html === 'object' && 'default' in _html ? _html['default'] : _html);
+var require$$3$3 = (_html && typeof _html === 'object' && 'default' in _html ? _html['default'] : _html);
 
 var _objectDps = __commonjs(function (module) {
 var dP       = require$$2
-  , anObject = require$$0$3
-  , getKeys  = require$$1$12;
+  , anObject = require$$2$2
+  , getKeys  = require$$1$13;
 
 module.exports = require$$1 ? Object.defineProperties : function defineProperties(O, Properties){
   anObject(O);
@@ -636,10 +636,10 @@ var require$$4$1 = (_objectDps && typeof _objectDps === 'object' && 'default' in
 
 var _objectCreate = __commonjs(function (module) {
 // 19.1.2.2 / 15.2.3.5 Object.create(O [, Properties])
-var anObject    = require$$0$3
+var anObject    = require$$2$2
   , dPs         = require$$4$1
-  , enumBugKeys = require$$3$3
-  , IE_PROTO    = require$$0$11('IE_PROTO')
+  , enumBugKeys = require$$3$2
+  , IE_PROTO    = require$$0$10('IE_PROTO')
   , Empty       = function(){ /* empty */ }
   , PROTOTYPE   = 'prototype';
 
@@ -651,7 +651,7 @@ var createDict = function(){
     , gt     = '>'
     , iframeDocument;
   iframe.style.display = 'none';
-  require$$3$4.appendChild(iframe);
+  require$$3$3.appendChild(iframe);
   iframe.src = 'javascript:'; // eslint-disable-line no-script-url
   // createDict = iframe.contentWindow.Object;
   // html.removeChild(iframe);
@@ -677,11 +677,11 @@ module.exports = Object.create || function create(O, Properties){
 };
 });
 
-var require$$0$16 = (_objectCreate && typeof _objectCreate === 'object' && 'default' in _objectCreate ? _objectCreate['default'] : _objectCreate);
+var require$$0$14 = (_objectCreate && typeof _objectCreate === 'object' && 'default' in _objectCreate ? _objectCreate['default'] : _objectCreate);
 
 var _isArray = __commonjs(function (module) {
 // 7.2.2 IsArray(argument)
-var cof = require$$0$14;
+var cof = require$$1$12;
 module.exports = Array.isArray || function isArray(arg){
   return cof(arg) == 'Array';
 };
@@ -691,9 +691,9 @@ var require$$14$1 = (_isArray && typeof _isArray === 'object' && 'default' in _i
 
 var _enumKeys = __commonjs(function (module) {
 // all enumerable object keys, includes symbols
-var getKeys = require$$1$12
+var getKeys = require$$1$13
   , gOPS    = require$$1$5
-  , pIE     = require$$0$9;
+  , pIE     = require$$0$8;
 module.exports = function(it){
   var result     = getKeys(it)
     , getSymbols = gOPS.f;
@@ -710,7 +710,7 @@ module.exports = function(it){
 var require$$15$1 = (_enumKeys && typeof _enumKeys === 'object' && 'default' in _enumKeys ? _enumKeys['default'] : _enumKeys);
 
 var _keyof = __commonjs(function (module) {
-var getKeys   = require$$1$12
+var getKeys   = require$$1$13
   , toIObject = require$$1$10;
 module.exports = function(object, el){
   var O      = toIObject(object)
@@ -726,26 +726,26 @@ var require$$16 = (_keyof && typeof _keyof === 'object' && 'default' in _keyof ?
 
 var _setToStringTag = __commonjs(function (module) {
 var def = require$$2.f
-  , has = require$$2$2
-  , TAG = require$$0$8('toStringTag');
+  , has = require$$2$4
+  , TAG = require$$2$3('toStringTag');
 
 module.exports = function(it, tag, stat){
   if(it && !has(it = stat ? it : it.prototype, TAG))def(it, TAG, {configurable: true, value: tag});
 };
 });
 
-var require$$3$5 = (_setToStringTag && typeof _setToStringTag === 'object' && 'default' in _setToStringTag ? _setToStringTag['default'] : _setToStringTag);
+var require$$3$4 = (_setToStringTag && typeof _setToStringTag === 'object' && 'default' in _setToStringTag ? _setToStringTag['default'] : _setToStringTag);
 
 var _meta = __commonjs(function (module) {
 var META     = require$$4('meta')
   , isObject = require$$14
-  , has      = require$$2$2
+  , has      = require$$2$4
   , setDesc  = require$$2.f
   , id       = 0;
 var isExtensible = Object.isExtensible || function(){
   return true;
 };
-var FREEZE = !require$$0$2(function(){
+var FREEZE = !require$$0$3(function(){
   return isExtensible(Object.preventExtensions({}));
 });
 var setMeta = function(it){
@@ -804,30 +804,30 @@ var es6_symbol = __commonjs(function (module) {
 'use strict';
 // ECMAScript 6 symbols shim
 var global         = require$$1$2
-  , has            = require$$2$2
+  , has            = require$$2$4
   , DESCRIPTORS    = require$$1
   , $export        = require$$15
   , redefine       = require$$7
   , META           = require$$24.KEY
-  , $fails         = require$$0$2
+  , $fails         = require$$0$3
   , shared         = require$$1$4
-  , setToStringTag = require$$3$5
+  , setToStringTag = require$$3$4
   , uid            = require$$4
-  , wks            = require$$0$8
+  , wks            = require$$2$3
   , wksExt         = require$$0$7
   , wksDefine      = require$$17
   , keyOf          = require$$16
   , enumKeys       = require$$15$1
   , isArray        = require$$14$1
-  , anObject       = require$$0$3
+  , anObject       = require$$2$2
   , toIObject      = require$$1$10
-  , toPrimitive    = require$$3$1
-  , createDesc     = require$$3$2
-  , _create        = require$$0$16
+  , toPrimitive    = require$$3
+  , createDesc     = require$$3$1
+  , _create        = require$$0$14
   , gOPNExt        = require$$8
-  , $GOPD          = require$$0$15
+  , $GOPD          = require$$0$13
   , $DP            = require$$2
-  , $keys          = require$$1$12
+  , $keys          = require$$1$13
   , gOPD           = $GOPD.f
   , dP             = $DP.f
   , gOPN           = gOPNExt.f
@@ -950,8 +950,8 @@ if(!USE_NATIVE){
 
   $GOPD.f = $getOwnPropertyDescriptor;
   $DP.f   = $defineProperty;
-  require$$0$10.f = gOPNExt.f = $getOwnPropertyNames;
-  require$$0$9.f  = $propertyIsEnumerable;
+  require$$0$9.f = gOPNExt.f = $getOwnPropertyNames;
+  require$$0$8.f  = $propertyIsEnumerable;
   require$$1$5.f = $getOwnPropertySymbols;
 
   if(DESCRIPTORS && !require$$19){
@@ -1039,7 +1039,7 @@ setToStringTag(global.JSON, 'JSON', true);
 });
 
 var index = __commonjs(function (module) {
-module.exports = require$$3.Symbol;
+module.exports = require$$0$2.Symbol;
 });
 
 var require$$0$6 = (index && typeof index === 'object' && 'default' in index ? index['default'] : index);
@@ -1054,23 +1054,23 @@ var _iterators = __commonjs(function (module) {
 module.exports = {};
 });
 
-var require$$1$14 = (_iterators && typeof _iterators === 'object' && 'default' in _iterators ? _iterators['default'] : _iterators);
+var require$$1$15 = (_iterators && typeof _iterators === 'object' && 'default' in _iterators ? _iterators['default'] : _iterators);
 
 var _toObject = __commonjs(function (module) {
 // 7.1.13 ToObject(argument)
-var defined = require$$0$13;
+var defined = require$$0$12;
 module.exports = function(it){
   return Object(defined(it));
 };
 });
 
-var require$$1$16 = (_toObject && typeof _toObject === 'object' && 'default' in _toObject ? _toObject['default'] : _toObject);
+var require$$1$17 = (_toObject && typeof _toObject === 'object' && 'default' in _toObject ? _toObject['default'] : _toObject);
 
 var _objectGpo = __commonjs(function (module) {
 // 19.1.2.9 / 15.2.3.2 Object.getPrototypeOf(O)
-var has         = require$$2$2
-  , toObject    = require$$1$16
-  , IE_PROTO    = require$$0$11('IE_PROTO')
+var has         = require$$2$4
+  , toObject    = require$$1$17
+  , IE_PROTO    = require$$0$10('IE_PROTO')
   , ObjectProto = Object.prototype;
 
 module.exports = Object.getPrototypeOf || function(O){
@@ -1082,17 +1082,17 @@ module.exports = Object.getPrototypeOf || function(O){
 };
 });
 
-var require$$1$15 = (_objectGpo && typeof _objectGpo === 'object' && 'default' in _objectGpo ? _objectGpo['default'] : _objectGpo);
+var require$$1$16 = (_objectGpo && typeof _objectGpo === 'object' && 'default' in _objectGpo ? _objectGpo['default'] : _objectGpo);
 
 var _iterCreate = __commonjs(function (module) {
 'use strict';
-var create         = require$$0$16
-  , descriptor     = require$$3$2
-  , setToStringTag = require$$3$5
+var create         = require$$0$14
+  , descriptor     = require$$3$1
+  , setToStringTag = require$$3$4
   , IteratorPrototype = {};
 
 // 25.1.2.1.1 %IteratorPrototype%[@@iterator]()
-require$$0$4(IteratorPrototype, require$$0$8('iterator'), function(){ return this; });
+require$$0$4(IteratorPrototype, require$$2$3('iterator'), function(){ return this; });
 
 module.exports = function(Constructor, NAME, next){
   Constructor.prototype = create(IteratorPrototype, {next: descriptor(1, next)});
@@ -1100,7 +1100,7 @@ module.exports = function(Constructor, NAME, next){
 };
 });
 
-var require$$3$6 = (_iterCreate && typeof _iterCreate === 'object' && 'default' in _iterCreate ? _iterCreate['default'] : _iterCreate);
+var require$$3$5 = (_iterCreate && typeof _iterCreate === 'object' && 'default' in _iterCreate ? _iterCreate['default'] : _iterCreate);
 
 var _iterDefine = __commonjs(function (module) {
 'use strict';
@@ -1108,12 +1108,12 @@ var LIBRARY        = require$$19
   , $export        = require$$15
   , redefine       = require$$7
   , hide           = require$$0$4
-  , has            = require$$2$2
-  , Iterators      = require$$1$14
-  , $iterCreate    = require$$3$6
-  , setToStringTag = require$$3$5
-  , getPrototypeOf = require$$1$15
-  , ITERATOR       = require$$0$8('iterator')
+  , has            = require$$2$4
+  , Iterators      = require$$1$15
+  , $iterCreate    = require$$3$5
+  , setToStringTag = require$$3$4
+  , getPrototypeOf = require$$1$16
+  , ITERATOR       = require$$2$3('iterator')
   , BUGGY          = !([].keys && 'next' in [].keys()) // Safari has buggy iterators w/o `next`
   , FF_ITERATOR    = '@@iterator'
   , KEYS           = 'keys'
@@ -1175,7 +1175,7 @@ module.exports = function(Base, NAME, Constructor, next, DEFAULT, IS_SET, FORCED
 };
 });
 
-var require$$0$18 = (_iterDefine && typeof _iterDefine === 'object' && 'default' in _iterDefine ? _iterDefine['default'] : _iterDefine);
+var require$$0$16 = (_iterDefine && typeof _iterDefine === 'object' && 'default' in _iterDefine ? _iterDefine['default'] : _iterDefine);
 
 var _iterStep = __commonjs(function (module) {
 module.exports = function(done, value){
@@ -1183,7 +1183,7 @@ module.exports = function(done, value){
 };
 });
 
-var require$$3$7 = (_iterStep && typeof _iterStep === 'object' && 'default' in _iterStep ? _iterStep['default'] : _iterStep);
+var require$$3$6 = (_iterStep && typeof _iterStep === 'object' && 'default' in _iterStep ? _iterStep['default'] : _iterStep);
 
 var _addToUnscopables = __commonjs(function (module) {
 module.exports = function(){ /* empty */ };
@@ -1194,15 +1194,15 @@ var require$$4$2 = (_addToUnscopables && typeof _addToUnscopables === 'object' &
 var es6_array_iterator = __commonjs(function (module) {
 'use strict';
 var addToUnscopables = require$$4$2
-  , step             = require$$3$7
-  , Iterators        = require$$1$14
+  , step             = require$$3$6
+  , Iterators        = require$$1$15
   , toIObject        = require$$1$10;
 
 // 22.1.3.4 Array.prototype.entries()
 // 22.1.3.13 Array.prototype.keys()
 // 22.1.3.29 Array.prototype.values()
 // 22.1.3.30 Array.prototype[@@iterator]()
-module.exports = require$$0$18(Array, 'Array', function(iterated, kind){
+module.exports = require$$0$16(Array, 'Array', function(iterated, kind){
   this._t = toIObject(iterated); // target
   this._i = 0;                   // next index
   this._k = kind;                // kind
@@ -1231,8 +1231,8 @@ addToUnscopables('entries');
 var web_dom_iterable = __commonjs(function (module) {
 var global        = require$$1$2
   , hide          = require$$0$4
-  , Iterators     = require$$1$14
-  , TO_STRING_TAG = require$$0$8('toStringTag');
+  , Iterators     = require$$1$15
+  , TO_STRING_TAG = require$$2$3('toStringTag');
 
 for(var collections = ['NodeList', 'DOMTokenList', 'MediaList', 'StyleSheetList', 'CSSRuleList'], i = 0; i < 5; i++){
   var NAME       = collections[i]
@@ -1245,7 +1245,7 @@ for(var collections = ['NodeList', 'DOMTokenList', 'MediaList', 'StyleSheetList'
 
 var _stringAt = __commonjs(function (module) {
 var toInteger = require$$1$8
-  , defined   = require$$0$13;
+  , defined   = require$$0$12;
 // true  -> String#at
 // false -> String#codePointAt
 module.exports = function(TO_STRING){
@@ -1263,14 +1263,14 @@ module.exports = function(TO_STRING){
 };
 });
 
-var require$$1$17 = (_stringAt && typeof _stringAt === 'object' && 'default' in _stringAt ? _stringAt['default'] : _stringAt);
+var require$$1$18 = (_stringAt && typeof _stringAt === 'object' && 'default' in _stringAt ? _stringAt['default'] : _stringAt);
 
 var es6_string_iterator = __commonjs(function (module) {
 'use strict';
-var $at  = require$$1$17(true);
+var $at  = require$$1$18(true);
 
 // 21.1.3.27 String.prototype[@@iterator]()
-require$$0$18(String, 'String', function(iterated){
+require$$0$16(String, 'String', function(iterated){
   this._t = String(iterated); // target
   this._i = 0;                // next index
 // 21.1.5.2.1 %StringIteratorPrototype%.next()
@@ -1289,20 +1289,20 @@ var iterator$1 = __commonjs(function (module) {
 module.exports = require$$0$7.f('iterator');
 });
 
-var require$$0$17 = (iterator$1 && typeof iterator$1 === 'object' && 'default' in iterator$1 ? iterator$1['default'] : iterator$1);
+var require$$0$15 = (iterator$1 && typeof iterator$1 === 'object' && 'default' in iterator$1 ? iterator$1['default'] : iterator$1);
 
 var iterator = __commonjs(function (module) {
-module.exports = { "default": require$$0$17, __esModule: true };
+module.exports = { "default": require$$0$15, __esModule: true };
 });
 
-var require$$1$13 = (iterator && typeof iterator === 'object' && 'default' in iterator ? iterator['default'] : iterator);
+var require$$1$14 = (iterator && typeof iterator === 'object' && 'default' in iterator ? iterator['default'] : iterator);
 
 var _typeof = __commonjs(function (module, exports) {
 "use strict";
 
 exports.__esModule = true;
 
-var _iterator = require$$1$13;
+var _iterator = require$$1$14;
 
 var _iterator2 = _interopRequireDefault(_iterator);
 
@@ -1348,29 +1348,29 @@ var _possibleConstructorReturn = (possibleConstructorReturn && typeof possibleCo
 var es6_object_create = __commonjs(function (module) {
 var $export = require$$15
 // 19.1.2.2 / 15.2.3.5 Object.create(O [, Properties])
-$export($export.S, 'Object', {create: require$$0$16});
+$export($export.S, 'Object', {create: require$$0$14});
 });
 
 var create$1 = __commonjs(function (module) {
-var $Object = require$$3.Object;
+var $Object = require$$0$2.Object;
 module.exports = function create(P, D){
   return $Object.create(P, D);
 };
 });
 
-var require$$0$19 = (create$1 && typeof create$1 === 'object' && 'default' in create$1 ? create$1['default'] : create$1);
+var require$$0$17 = (create$1 && typeof create$1 === 'object' && 'default' in create$1 ? create$1['default'] : create$1);
 
 var create = __commonjs(function (module) {
-module.exports = { "default": require$$0$19, __esModule: true };
+module.exports = { "default": require$$0$17, __esModule: true };
 });
 
-var require$$1$18 = (create && typeof create === 'object' && 'default' in create ? create['default'] : create);
+var require$$1$19 = (create && typeof create === 'object' && 'default' in create ? create['default'] : create);
 
 var _setProto = __commonjs(function (module) {
 // Works with __proto__ only. Old v8 can't work with null proto objects.
 /* eslint-disable no-proto */
 var isObject = require$$14
-  , anObject = require$$0$3;
+  , anObject = require$$2$2;
 var check = function(O, proto){
   anObject(O);
   if(!isObject(proto) && proto !== null)throw TypeError(proto + ": can't set as prototype!");
@@ -1379,7 +1379,7 @@ module.exports = {
   set: Object.setPrototypeOf || ('__proto__' in {} ? // eslint-disable-line
     function(test, buggy, set){
       try {
-        set = require$$5(Function.call, require$$0$15.f(Object.prototype, '__proto__').set, 2);
+        set = require$$5(Function.call, require$$0$13.f(Object.prototype, '__proto__').set, 2);
         set(test, []);
         buggy = !(test instanceof Array);
       } catch(e){ buggy = true; }
@@ -1403,27 +1403,27 @@ $export($export.S, 'Object', {setPrototypeOf: require$$9.set});
 });
 
 var setPrototypeOf$1 = __commonjs(function (module) {
-module.exports = require$$3.Object.setPrototypeOf;
+module.exports = require$$0$2.Object.setPrototypeOf;
 });
 
-var require$$0$20 = (setPrototypeOf$1 && typeof setPrototypeOf$1 === 'object' && 'default' in setPrototypeOf$1 ? setPrototypeOf$1['default'] : setPrototypeOf$1);
+var require$$0$18 = (setPrototypeOf$1 && typeof setPrototypeOf$1 === 'object' && 'default' in setPrototypeOf$1 ? setPrototypeOf$1['default'] : setPrototypeOf$1);
 
 var setPrototypeOf = __commonjs(function (module) {
-module.exports = { "default": require$$0$20, __esModule: true };
+module.exports = { "default": require$$0$18, __esModule: true };
 });
 
-var require$$2$3 = (setPrototypeOf && typeof setPrototypeOf === 'object' && 'default' in setPrototypeOf ? setPrototypeOf['default'] : setPrototypeOf);
+var require$$2$5 = (setPrototypeOf && typeof setPrototypeOf === 'object' && 'default' in setPrototypeOf ? setPrototypeOf['default'] : setPrototypeOf);
 
 var inherits = __commonjs(function (module, exports) {
 "use strict";
 
 exports.__esModule = true;
 
-var _setPrototypeOf = require$$2$3;
+var _setPrototypeOf = require$$2$5;
 
 var _setPrototypeOf2 = _interopRequireDefault(_setPrototypeOf);
 
-var _create = require$$1$18;
+var _create = require$$1$19;
 
 var _create2 = _interopRequireDefault(_create);
 
@@ -6095,153 +6095,6 @@ var DateBar = function (_ViewController) {
   return DateBar;
 }(ViewController);
 
-var _classof = __commonjs(function (module) {
-// getting tag from 19.1.3.6 Object.prototype.toString()
-var cof = require$$0$14
-  , TAG = require$$0$8('toStringTag')
-  // ES3 wrong here
-  , ARG = cof(function(){ return arguments; }()) == 'Arguments';
-
-// fallback for IE11 Script Access Denied error
-var tryGet = function(it, key){
-  try {
-    return it[key];
-  } catch(e){ /* empty */ }
-};
-
-module.exports = function(it){
-  var O, T, B;
-  return it === undefined ? 'Undefined' : it === null ? 'Null'
-    // @@toStringTag case
-    : typeof (T = tryGet(O = Object(it), TAG)) == 'string' ? T
-    // builtinTag case
-    : ARG ? cof(O)
-    // ES3 arguments fallback
-    : (B = cof(O)) == 'Object' && typeof O.callee == 'function' ? 'Arguments' : B;
-};
-});
-
-var require$$16$1 = (_classof && typeof _classof === 'object' && 'default' in _classof ? _classof['default'] : _classof);
-
-var core_getIteratorMethod = __commonjs(function (module) {
-var classof   = require$$16$1
-  , ITERATOR  = require$$0$8('iterator')
-  , Iterators = require$$1$14;
-module.exports = require$$3.getIteratorMethod = function(it){
-  if(it != undefined)return it[ITERATOR]
-    || it['@@iterator']
-    || Iterators[classof(it)];
-};
-});
-
-var require$$0$24 = (core_getIteratorMethod && typeof core_getIteratorMethod === 'object' && 'default' in core_getIteratorMethod ? core_getIteratorMethod['default'] : core_getIteratorMethod);
-
-var core_getIterator = __commonjs(function (module) {
-var anObject = require$$0$3
-  , get      = require$$0$24;
-module.exports = require$$3.getIterator = function(it){
-  var iterFn = get(it);
-  if(typeof iterFn != 'function')throw TypeError(it + ' is not iterable!');
-  return anObject(iterFn.call(it));
-};
-});
-
-var require$$0$23 = (core_getIterator && typeof core_getIterator === 'object' && 'default' in core_getIterator ? core_getIterator['default'] : core_getIterator);
-
-var getIterator$1 = __commonjs(function (module) {
-module.exports = require$$0$23;
-});
-
-var require$$0$22 = (getIterator$1 && typeof getIterator$1 === 'object' && 'default' in getIterator$1 ? getIterator$1['default'] : getIterator$1);
-
-var getIterator = __commonjs(function (module) {
-module.exports = { "default": require$$0$22, __esModule: true };
-});
-
-var require$$0$21 = (getIterator && typeof getIterator === 'object' && 'default' in getIterator ? getIterator['default'] : getIterator);
-
-var core_isIterable = __commonjs(function (module) {
-var classof   = require$$16$1
-  , ITERATOR  = require$$0$8('iterator')
-  , Iterators = require$$1$14;
-module.exports = require$$3.isIterable = function(it){
-  var O = Object(it);
-  return O[ITERATOR] !== undefined
-    || '@@iterator' in O
-    || Iterators.hasOwnProperty(classof(O));
-};
-});
-
-var require$$0$26 = (core_isIterable && typeof core_isIterable === 'object' && 'default' in core_isIterable ? core_isIterable['default'] : core_isIterable);
-
-var isIterable$1 = __commonjs(function (module) {
-module.exports = require$$0$26;
-});
-
-var require$$0$25 = (isIterable$1 && typeof isIterable$1 === 'object' && 'default' in isIterable$1 ? isIterable$1['default'] : isIterable$1);
-
-var isIterable = __commonjs(function (module) {
-module.exports = { "default": require$$0$25, __esModule: true };
-});
-
-var require$$1$19 = (isIterable && typeof isIterable === 'object' && 'default' in isIterable ? isIterable['default'] : isIterable);
-
-var slicedToArray = __commonjs(function (module, exports) {
-"use strict";
-
-exports.__esModule = true;
-
-var _isIterable2 = require$$1$19;
-
-var _isIterable3 = _interopRequireDefault(_isIterable2);
-
-var _getIterator2 = require$$0$21;
-
-var _getIterator3 = _interopRequireDefault(_getIterator2);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-exports.default = function () {
-  function sliceIterator(arr, i) {
-    var _arr = [];
-    var _n = true;
-    var _d = false;
-    var _e = undefined;
-
-    try {
-      for (var _i = (0, _getIterator3.default)(arr), _s; !(_n = (_s = _i.next()).done); _n = true) {
-        _arr.push(_s.value);
-
-        if (i && _arr.length === i) break;
-      }
-    } catch (err) {
-      _d = true;
-      _e = err;
-    } finally {
-      try {
-        if (!_n && _i["return"]) _i["return"]();
-      } finally {
-        if (_d) throw _e;
-      }
-    }
-
-    return _arr;
-  }
-
-  return function (arr, i) {
-    if (Array.isArray(arr)) {
-      return arr;
-    } else if ((0, _isIterable3.default)(Object(arr))) {
-      return sliceIterator(arr, i);
-    } else {
-      throw new TypeError("Invalid attempt to destructure non-iterable instance");
-    }
-  };
-}();
-});
-
-var _slicedToArray = (slicedToArray && typeof slicedToArray === 'object' && 'default' in slicedToArray ? slicedToArray['default'] : slicedToArray);
-
 var runtime = __commonjs(function (module, exports, global) {
 /**
  * Copyright (c) 2014, Facebook, Inc.
@@ -6913,7 +6766,7 @@ var runtime = __commonjs(function (module, exports, global) {
 );
 });
 
-var require$$0$28 = (runtime && typeof runtime === 'object' && 'default' in runtime ? runtime['default'] : runtime);
+var require$$0$20 = (runtime && typeof runtime === 'object' && 'default' in runtime ? runtime['default'] : runtime);
 
 var runtimeModule = __commonjs(function (module, exports, global) {
 // This method of obtaining a reference to the global object needs to be
@@ -6934,7 +6787,7 @@ var oldRuntime = hadRuntime && g.regeneratorRuntime;
 // Force reevalutation of runtime.js.
 g.regeneratorRuntime = undefined;
 
-module.exports = require$$0$28;
+module.exports = require$$0$20;
 
 if (hadRuntime) {
   // Restore the original runtime.
@@ -6949,16 +6802,16 @@ if (hadRuntime) {
 }
 });
 
-var require$$0$27 = (runtimeModule && typeof runtimeModule === 'object' && 'default' in runtimeModule ? runtimeModule['default'] : runtimeModule);
+var require$$0$19 = (runtimeModule && typeof runtimeModule === 'object' && 'default' in runtimeModule ? runtimeModule['default'] : runtimeModule);
 
 var index$1 = __commonjs(function (module) {
-module.exports = require$$0$27;
+module.exports = require$$0$19;
 });
 
 var _regeneratorRuntime = (index$1 && typeof index$1 === 'object' && 'default' in index$1 ? index$1['default'] : index$1);
 
 var _iterDetect = __commonjs(function (module) {
-var ITERATOR     = require$$0$8('iterator')
+var ITERATOR     = require$$2$3('iterator')
   , SAFE_CLOSING = false;
 
 try {
@@ -6981,15 +6834,15 @@ module.exports = function(exec, skipClosing){
 };
 });
 
-var require$$0$31 = (_iterDetect && typeof _iterDetect === 'object' && 'default' in _iterDetect ? _iterDetect['default'] : _iterDetect);
+var require$$0$23 = (_iterDetect && typeof _iterDetect === 'object' && 'default' in _iterDetect ? _iterDetect['default'] : _iterDetect);
 
 var _setSpecies = __commonjs(function (module) {
 'use strict';
 var global      = require$$1$2
-  , core        = require$$3
+  , core        = require$$0$2
   , dP          = require$$2
   , DESCRIPTORS = require$$1
-  , SPECIES     = require$$0$8('species');
+  , SPECIES     = require$$2$3('species');
 
 module.exports = function(KEY){
   var C = typeof core[KEY] == 'function' ? core[KEY] : global[KEY];
@@ -7000,7 +6853,7 @@ module.exports = function(KEY){
 };
 });
 
-var require$$2$4 = (_setSpecies && typeof _setSpecies === 'object' && 'default' in _setSpecies ? _setSpecies['default'] : _setSpecies);
+var require$$2$6 = (_setSpecies && typeof _setSpecies === 'object' && 'default' in _setSpecies ? _setSpecies['default'] : _setSpecies);
 
 var _redefineAll = __commonjs(function (module) {
 var hide = require$$0$4;
@@ -7038,7 +6891,7 @@ var require$$4$4 = (_invoke && typeof _invoke === 'object' && 'default' in _invo
 var _task = __commonjs(function (module, exports, global) {
 var ctx                = require$$5
   , invoke             = require$$4$4
-  , html               = require$$3$4
+  , html               = require$$3$3
   , cel                = require$$2$1
   , global             = require$$1$2
   , process            = global.process
@@ -7075,7 +6928,7 @@ if(!setTask || !clearTask){
     delete queue[id];
   };
   // Node.js 0.8-
-  if(require$$0$14(process) == 'process'){
+  if(require$$1$12(process) == 'process'){
     defer = function(id){
       process.nextTick(ctx(run, id, 1));
     };
@@ -7121,7 +6974,7 @@ var global    = require$$1$2
   , Observer  = global.MutationObserver || global.WebKitMutationObserver
   , process   = global.process
   , Promise   = global.Promise
-  , isNode    = require$$0$14(process) == 'process';
+  , isNode    = require$$1$12(process) == 'process';
 
 module.exports = function(){
   var head, last, notify;
@@ -7190,9 +7043,9 @@ var require$$6 = (_microtask && typeof _microtask === 'object' && 'default' in _
 
 var _speciesConstructor = __commonjs(function (module) {
 // 7.3.20 SpeciesConstructor(O, defaultConstructor)
-var anObject  = require$$0$3
+var anObject  = require$$2$2
   , aFunction = require$$1$3
-  , SPECIES   = require$$0$8('species');
+  , SPECIES   = require$$2$3('species');
 module.exports = function(O, D){
   var C = anObject(O).constructor, S;
   return C === undefined || (S = anObject(C)[SPECIES]) == undefined ? D : aFunction(S);
@@ -7201,10 +7054,51 @@ module.exports = function(O, D){
 
 var require$$8$1 = (_speciesConstructor && typeof _speciesConstructor === 'object' && 'default' in _speciesConstructor ? _speciesConstructor['default'] : _speciesConstructor);
 
+var _classof = __commonjs(function (module) {
+// getting tag from 19.1.3.6 Object.prototype.toString()
+var cof = require$$1$12
+  , TAG = require$$2$3('toStringTag')
+  // ES3 wrong here
+  , ARG = cof(function(){ return arguments; }()) == 'Arguments';
+
+// fallback for IE11 Script Access Denied error
+var tryGet = function(it, key){
+  try {
+    return it[key];
+  } catch(e){ /* empty */ }
+};
+
+module.exports = function(it){
+  var O, T, B;
+  return it === undefined ? 'Undefined' : it === null ? 'Null'
+    // @@toStringTag case
+    : typeof (T = tryGet(O = Object(it), TAG)) == 'string' ? T
+    // builtinTag case
+    : ARG ? cof(O)
+    // ES3 arguments fallback
+    : (B = cof(O)) == 'Object' && typeof O.callee == 'function' ? 'Arguments' : B;
+};
+});
+
+var require$$3$7 = (_classof && typeof _classof === 'object' && 'default' in _classof ? _classof['default'] : _classof);
+
+var core_getIteratorMethod = __commonjs(function (module) {
+var classof   = require$$3$7
+  , ITERATOR  = require$$2$3('iterator')
+  , Iterators = require$$1$15;
+module.exports = require$$0$2.getIteratorMethod = function(it){
+  if(it != undefined)return it[ITERATOR]
+    || it['@@iterator']
+    || Iterators[classof(it)];
+};
+});
+
+var require$$1$21 = (core_getIteratorMethod && typeof core_getIteratorMethod === 'object' && 'default' in core_getIteratorMethod ? core_getIteratorMethod['default'] : core_getIteratorMethod);
+
 var _isArrayIter = __commonjs(function (module) {
 // check on default Array iterator
-var Iterators  = require$$1$14
-  , ITERATOR   = require$$0$8('iterator')
+var Iterators  = require$$1$15
+  , ITERATOR   = require$$2$3('iterator')
   , ArrayProto = Array.prototype;
 
 module.exports = function(it){
@@ -7216,7 +7110,7 @@ var require$$3$8 = (_isArrayIter && typeof _isArrayIter === 'object' && 'default
 
 var _iterCall = __commonjs(function (module) {
 // call something on iterator step with safe closing on error
-var anObject = require$$0$3;
+var anObject = require$$2$2;
 module.exports = function(iterator, fn, value, entries){
   try {
     return entries ? fn(anObject(value)[0], value[1]) : fn(value);
@@ -7235,9 +7129,9 @@ var _forOf = __commonjs(function (module) {
 var ctx         = require$$5
   , call        = require$$4$5
   , isArrayIter = require$$3$8
-  , anObject    = require$$0$3
+  , anObject    = require$$2$2
   , toLength    = require$$1$9
-  , getIterFn   = require$$0$24
+  , getIterFn   = require$$1$21
   , BREAK       = {}
   , RETURN      = {};
 var exports = module.exports = function(iterable, entries, fn, that, ITERATOR){
@@ -7276,10 +7170,10 @@ var es6_promise = __commonjs(function (module, exports, global) {
 var LIBRARY            = require$$19
   , global             = require$$1$2
   , ctx                = require$$5
-  , classof            = require$$16$1
+  , classof            = require$$3$7
   , $export            = require$$15
   , isObject           = require$$14
-  , anObject           = require$$0$3
+  , anObject           = require$$2$2
   , aFunction          = require$$1$3
   , anInstance         = require$$11
   , forOf              = require$$10
@@ -7300,7 +7194,7 @@ var USE_NATIVE = !!function(){
   try {
     // correct subclassing with @@species support
     var promise     = $Promise.resolve(1)
-      , FakePromise = (promise.constructor = {})[require$$0$8('species')] = function(exec){ exec(empty, empty); };
+      , FakePromise = (promise.constructor = {})[require$$2$3('species')] = function(exec){ exec(empty, empty); };
     // unhandled rejections tracking support, NodeJS Promise without it fails @@species test
     return (isNode || typeof PromiseRejectionEvent == 'function') && promise.then(empty) instanceof FakePromise;
   } catch(e){ /* empty */ }
@@ -7504,9 +7398,9 @@ if(!USE_NATIVE){
 }
 
 $export($export.G + $export.W + $export.F * !USE_NATIVE, {Promise: $Promise});
-require$$3$5($Promise, PROMISE);
-require$$2$4(PROMISE);
-Wrapper = require$$3[PROMISE];
+require$$3$4($Promise, PROMISE);
+require$$2$6(PROMISE);
+Wrapper = require$$0$2[PROMISE];
 
 // statics
 $export($export.S + $export.F * !USE_NATIVE, PROMISE, {
@@ -7529,7 +7423,7 @@ $export($export.S + $export.F * (LIBRARY || !USE_NATIVE), PROMISE, {
     return capability.promise;
   }
 });
-$export($export.S + $export.F * !(USE_NATIVE && require$$0$31(function(iter){
+$export($export.S + $export.F * !(USE_NATIVE && require$$0$23(function(iter){
   $Promise.all(iter)['catch'](empty);
 })), PROMISE, {
   // 25.4.4.1 Promise.all(iterable)
@@ -7576,23 +7470,23 @@ $export($export.S + $export.F * !(USE_NATIVE && require$$0$31(function(iter){
 });
 
 var promise$1 = __commonjs(function (module) {
-module.exports = require$$3.Promise;
+module.exports = require$$0$2.Promise;
 });
 
-var require$$0$30 = (promise$1 && typeof promise$1 === 'object' && 'default' in promise$1 ? promise$1['default'] : promise$1);
+var require$$0$22 = (promise$1 && typeof promise$1 === 'object' && 'default' in promise$1 ? promise$1['default'] : promise$1);
 
 var promise = __commonjs(function (module) {
-module.exports = { "default": require$$0$30, __esModule: true };
+module.exports = { "default": require$$0$22, __esModule: true };
 });
 
-var require$$0$29 = (promise && typeof promise === 'object' && 'default' in promise ? promise['default'] : promise);
+var require$$0$21 = (promise && typeof promise === 'object' && 'default' in promise ? promise['default'] : promise);
 
 var asyncToGenerator = __commonjs(function (module, exports) {
 "use strict";
 
 exports.__esModule = true;
 
-var _promise = require$$0$29;
+var _promise = require$$0$21;
 
 var _promise2 = _interopRequireDefault(_promise);
 
@@ -7629,6 +7523,112 @@ exports.default = function (fn) {
 });
 
 var _asyncToGenerator = (asyncToGenerator && typeof asyncToGenerator === 'object' && 'default' in asyncToGenerator ? asyncToGenerator['default'] : asyncToGenerator);
+
+var core_getIterator = __commonjs(function (module) {
+var anObject = require$$2$2
+  , get      = require$$1$21;
+module.exports = require$$0$2.getIterator = function(it){
+  var iterFn = get(it);
+  if(typeof iterFn != 'function')throw TypeError(it + ' is not iterable!');
+  return anObject(iterFn.call(it));
+};
+});
+
+var require$$0$26 = (core_getIterator && typeof core_getIterator === 'object' && 'default' in core_getIterator ? core_getIterator['default'] : core_getIterator);
+
+var getIterator$1 = __commonjs(function (module) {
+module.exports = require$$0$26;
+});
+
+var require$$0$25 = (getIterator$1 && typeof getIterator$1 === 'object' && 'default' in getIterator$1 ? getIterator$1['default'] : getIterator$1);
+
+var getIterator = __commonjs(function (module) {
+module.exports = { "default": require$$0$25, __esModule: true };
+});
+
+var require$$0$24 = (getIterator && typeof getIterator === 'object' && 'default' in getIterator ? getIterator['default'] : getIterator);
+
+var core_isIterable = __commonjs(function (module) {
+var classof   = require$$3$7
+  , ITERATOR  = require$$2$3('iterator')
+  , Iterators = require$$1$15;
+module.exports = require$$0$2.isIterable = function(it){
+  var O = Object(it);
+  return O[ITERATOR] !== undefined
+    || '@@iterator' in O
+    || Iterators.hasOwnProperty(classof(O));
+};
+});
+
+var require$$0$28 = (core_isIterable && typeof core_isIterable === 'object' && 'default' in core_isIterable ? core_isIterable['default'] : core_isIterable);
+
+var isIterable$1 = __commonjs(function (module) {
+module.exports = require$$0$28;
+});
+
+var require$$0$27 = (isIterable$1 && typeof isIterable$1 === 'object' && 'default' in isIterable$1 ? isIterable$1['default'] : isIterable$1);
+
+var isIterable = __commonjs(function (module) {
+module.exports = { "default": require$$0$27, __esModule: true };
+});
+
+var require$$1$22 = (isIterable && typeof isIterable === 'object' && 'default' in isIterable ? isIterable['default'] : isIterable);
+
+var slicedToArray = __commonjs(function (module, exports) {
+"use strict";
+
+exports.__esModule = true;
+
+var _isIterable2 = require$$1$22;
+
+var _isIterable3 = _interopRequireDefault(_isIterable2);
+
+var _getIterator2 = require$$0$24;
+
+var _getIterator3 = _interopRequireDefault(_getIterator2);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = function () {
+  function sliceIterator(arr, i) {
+    var _arr = [];
+    var _n = true;
+    var _d = false;
+    var _e = undefined;
+
+    try {
+      for (var _i = (0, _getIterator3.default)(arr), _s; !(_n = (_s = _i.next()).done); _n = true) {
+        _arr.push(_s.value);
+
+        if (i && _arr.length === i) break;
+      }
+    } catch (err) {
+      _d = true;
+      _e = err;
+    } finally {
+      try {
+        if (!_n && _i["return"]) _i["return"]();
+      } finally {
+        if (_d) throw _e;
+      }
+    }
+
+    return _arr;
+  }
+
+  return function (arr, i) {
+    if (Array.isArray(arr)) {
+      return arr;
+    } else if ((0, _isIterable3.default)(Object(arr))) {
+      return sliceIterator(arr, i);
+    } else {
+      throw new TypeError("Invalid attempt to destructure non-iterable instance");
+    }
+  };
+}();
+});
+
+var _slicedToArray = (slicedToArray && typeof slicedToArray === 'object' && 'default' in slicedToArray ? slicedToArray['default'] : slicedToArray);
 
 var Day = function (_ViewController) {
   _inherits(Day, _ViewController);
@@ -8937,30 +8937,18 @@ var SubjectsContainer = function (_ViewController) {
 
   }, {
     key: 'removeSubjects',
-    value: function removeSubjects(topBottom, amount) {
-      assert(typeof topBottom === 'string', 'TypeError: invalid value for topBottom. Expected String and got ${typeof topBottom}');
-      var start = void 0;
-      var end = void 0;
+    value: function removeSubjects(topBottom) {
+      var amount = arguments.length <= 1 || arguments[1] === undefined ? 1 : arguments[1];
 
-      if (topBottom === 'bottom') {
-        end = this.subjects.length;
-        start = end - amount;
-      } else if (topBottom === 'top') {
-        end = amount;
-        start = 0;
-      } else {
-        assert(false, 'Invalid value for topBottom: ${topBottom}');
-      }
+      var fromTop = topBottom === 'top';
+      assert(fromTop || topBottom === 'bottom', 'Invalid value for topBottom: ' + topBottom);
 
-      for (var subjIndex = start; subjIndex < end; subjIndex++) {
-        var _subjects$splice = this.subjects.splice(subjIndex, 1);
+      var start = fromTop ? 0 : this.subjects.length - amount;
 
-        var _subjects$splice2 = _slicedToArray(_subjects$splice, 1);
-
-        var erasedSubject = _subjects$splice2[0];
-
-        erasedSubject.destroy();
-      }
+      var subjectsToErase = this.subjects.splice(start, amount);
+      subjectsToErase.forEach(function (subj) {
+        return subj.destroy();
+      });
     }
 
     /**
@@ -8975,63 +8963,108 @@ var SubjectsContainer = function (_ViewController) {
     key: 'addSubjects',
     value: function () {
       var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee2(topBottom) {
-        var amount = arguments.length <= 1 || arguments[1] === undefined ? 1 : arguments[1];
-        var startDate, dayCount, i, subjConfig, newSubject, counter;
-        return _regeneratorRuntime.wrap(function _callee2$(_context2) {
-          while (1) {
-            switch (_context2.prev = _context2.next) {
-              case 0:
-                if (topBottom !== 'bottom') {
-                  console.log('Not implemented');
-                }
+        var _this3 = this;
 
+        var amount = arguments.length <= 1 || arguments[1] === undefined ? 1 : arguments[1];
+
+        var startDate, dayCount, _loop2, i, _ret2;
+
+        return _regeneratorRuntime.wrap(function _callee2$(_context3) {
+          while (1) {
+            switch (_context3.prev = _context3.next) {
+              case 0:
                 startDate = this.startDate;
                 dayCount = this.getDayCount();
+                _loop2 = _regeneratorRuntime.mark(function _loop2(i) {
+                  var subjConfig, noMoreSubjectsToLoad, newSubject, counter, firstSubjectToBeAdded;
+                  return _regeneratorRuntime.wrap(function _loop2$(_context2) {
+                    while (1) {
+                      switch (_context2.prev = _context2.next) {
+                        case 0:
+                          _context2.next = 2;
+                          return _this3.getNewSubjectConfig(topBottom);
+
+                        case 2:
+                          subjConfig = _context2.sent;
+                          noMoreSubjectsToLoad = !subjConfig;
+
+                          if (!noMoreSubjectsToLoad) {
+                            _context2.next = 7;
+                            break;
+                          }
+
+                          console.log('Reached end of subjects.');
+                          return _context2.abrupt('return', 'break');
+
+                        case 7:
+
+                          //  NOTE: This object already contains events for the date range of
+                          //  the container.
+                          newSubject = new Subject(subjConfig, startDate, _this3.modulePrefix);
+
+                          // set correct dayCount
+
+                          for (counter = 0; counter < dayCount; counter++) {
+                            newSubject.addDay();
+                          }
+
+                          firstSubjectToBeAdded = _this3.subjects.length === 0;
+
+
+                          if (topBottom === 'bottom' || firstSubjectToBeAdded) {
+                            _this3.subjects.push(newSubject);
+                            requestAnimationFrame(function () {
+                              _this3.html.container.appendChild(newSubject.html.container);
+                            });
+                          } else {
+                            // Add subject to the beginning of the subjects array.
+                            _this3.subjects.splice(0, 0, newSubject);
+                            requestAnimationFrame(function () {
+                              _this3.html.container.insertBefore(newSubject.html.container, _this3.html.container.children[0]);
+                            });
+                          }
+
+                        case 11:
+                        case 'end':
+                          return _context2.stop();
+                      }
+                    }
+                  }, _loop2, _this3);
+                });
                 i = 0;
 
               case 4:
                 if (!(i < amount)) {
-                  _context2.next = 16;
+                  _context3.next = 12;
                   break;
                 }
 
-                _context2.next = 7;
-                return this.getNewSubjectConfig();
+                return _context3.delegateYield(_loop2(i), 't0', 6);
 
-              case 7:
-                subjConfig = _context2.sent;
+              case 6:
+                _ret2 = _context3.t0;
 
-                // TODO: Handle case when there are no more subjects to load.
-                assert(subjConfig, 'No new subject found.');
-
-                //  Create subject form object found.
-                //  NOTE: This object already contains events for the date range of
-                //  the container.
-                newSubject = new Subject(subjConfig, startDate, this.modulePrefix);
-
-                // set correct dayCount
-
-                for (counter = 0; counter < dayCount; counter++) {
-                  newSubject.addDay();
+                if (!(_ret2 === 'break')) {
+                  _context3.next = 9;
+                  break;
                 }
 
-                this.subjects.push(newSubject);
-                this.html.container.appendChild(newSubject.html.container);
+                return _context3.abrupt('break', 12);
 
-              case 13:
+              case 9:
                 i++;
-                _context2.next = 4;
+                _context3.next = 4;
                 break;
 
-              case 16:
+              case 12:
               case 'end':
-                return _context2.stop();
+                return _context3.stop();
             }
           }
         }, _callee2, this);
       }));
 
-      function addSubjects(_x2, _x3) {
+      function addSubjects(_x3, _x4) {
         return ref.apply(this, arguments);
       }
 
@@ -9051,17 +9084,18 @@ var SubjectsContainer = function (_ViewController) {
         var topBottom = arguments.length <= 0 || arguments[0] === undefined ? 'bottom' : arguments[0];
         var fromDate = arguments.length <= 1 || arguments[1] === undefined ? this.startDate : arguments[1];
         var toDate = arguments.length <= 2 || arguments[2] === undefined ? this.getEndDate() : arguments[2];
-        var beforeAfter, referenceElement, isFirstSubject, referenceId, subjArray, newSubjectConfig;
-        return _regeneratorRuntime.wrap(function _callee3$(_context3) {
+        var fromTop, beforeAfter, referenceElement, isFirstSubject, referenceId, subjArray, newSubjectConfig;
+        return _regeneratorRuntime.wrap(function _callee3$(_context4) {
           while (1) {
-            switch (_context3.prev = _context3.next) {
+            switch (_context4.prev = _context4.next) {
               case 0:
                 assert(topBottom === 'top' || topBottom === 'bottom', 'Invalid topBottom option: ' + topBottom);
 
+                fromTop = topBottom === 'top';
                 beforeAfter = void 0;
                 referenceElement = void 0;
 
-                if (topBottom === 'top') {
+                if (fromTop) {
                   referenceElement = this.subjects[0];
                   beforeAfter = 'before';
                 } else {
@@ -9071,23 +9105,23 @@ var SubjectsContainer = function (_ViewController) {
 
                 isFirstSubject = this.subjects.length === 0;
                 referenceId = isFirstSubject ? null : referenceElement.getId();
-                _context3.next = 8;
+                _context4.next = 9;
                 return this.dataLoader.getSubjects(2, beforeAfter, referenceId, fromDate, toDate);
 
-              case 8:
-                subjArray = _context3.sent;
-                newSubjectConfig = isFirstSubject ? subjArray[0] : subjArray[1];
-                return _context3.abrupt('return', newSubjectConfig);
+              case 9:
+                subjArray = _context4.sent;
+                newSubjectConfig = isFirstSubject || fromTop ? subjArray[0] : subjArray[1];
+                return _context4.abrupt('return', newSubjectConfig);
 
-              case 11:
+              case 12:
               case 'end':
-                return _context3.stop();
+                return _context4.stop();
             }
           }
         }, _callee3, this);
       }));
 
-      function getNewSubjectConfig(_x5, _x6, _x7) {
+      function getNewSubjectConfig(_x6, _x7, _x8) {
         return ref.apply(this, arguments);
       }
 
@@ -9106,9 +9140,9 @@ var SubjectsContainer = function (_ViewController) {
     value: function () {
       var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee4(frontBack) {
         var fromDate, toDate, subjectIds, eventData;
-        return _regeneratorRuntime.wrap(function _callee4$(_context4) {
+        return _regeneratorRuntime.wrap(function _callee4$(_context5) {
           while (1) {
-            switch (_context4.prev = _context4.next) {
+            switch (_context5.prev = _context5.next) {
               case 0:
                 fromDate = void 0;
                 toDate = void 0;
@@ -9124,7 +9158,7 @@ var SubjectsContainer = function (_ViewController) {
                 }
 
                 if (this.subjectsCoverRange(fromDate, toDate)) {
-                  _context4.next = 9;
+                  _context5.next = 9;
                   break;
                 }
 
@@ -9132,11 +9166,11 @@ var SubjectsContainer = function (_ViewController) {
                 subjectIds = this.subjects.map(function (subj) {
                   return subj.getId();
                 });
-                _context4.next = 7;
+                _context5.next = 7;
                 return this.dataLoader.getEventsForIds(subjectIds, fromDate, toDate);
 
               case 7:
-                eventData = _context4.sent;
+                eventData = _context5.sent;
 
                 this.setEvents(eventData);
 
@@ -9147,13 +9181,13 @@ var SubjectsContainer = function (_ViewController) {
 
               case 10:
               case 'end':
-                return _context4.stop();
+                return _context5.stop();
             }
           }
         }, _callee4, this);
       }));
 
-      function addDay(_x11) {
+      function addDay(_x12) {
         return ref.apply(this, arguments);
       }
 
@@ -9169,19 +9203,19 @@ var SubjectsContainer = function (_ViewController) {
   }, {
     key: 'scrollLeft',
     value: function scrollLeft() {
-      var _this3 = this;
+      var _this4 = this;
 
       this.addDay('back').then(function () {
-        return _this3.removeDay('front');
+        return _this4.removeDay('front');
       });
     }
   }, {
     key: 'scrollRight',
     value: function scrollRight() {
-      var _this4 = this;
+      var _this5 = this;
 
       this.addDay('front').then(function () {
-        return _this4.removeDay('back');
+        return _this5.removeDay('back');
       });
     }
 
@@ -9193,8 +9227,11 @@ var SubjectsContainer = function (_ViewController) {
   }, {
     key: 'scrollUp',
     value: function scrollUp() {
-      this.removeSubjects('bottom', 1);
-      return this.addSubjects('top', 1);
+      var _this6 = this;
+
+      return this.addSubjects('top', 1).then(function () {
+        _this6.removeSubjects('bottom', 1);
+      });
     }
 
     /**
@@ -9205,8 +9242,11 @@ var SubjectsContainer = function (_ViewController) {
   }, {
     key: 'scrollDown',
     value: function scrollDown() {
-      this.removeSubjects('bottom', 1);
-      return this.addSubjects('down', 1);
+      var _this7 = this;
+
+      this.addSubjects('bottom', 1).then(function () {
+        return _this7.removeSubjects('top', 1);
+      });
     }
   }]);
 
