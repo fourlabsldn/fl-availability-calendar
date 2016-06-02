@@ -7976,7 +7976,7 @@ var Subject = function (_ViewController) {
       if (firstDayToBeAdded) {
         newDate = new CustomDate(this.startDate);
       } else if (addToFront) {
-        newDate = new CustomDate(this.startDate).add(this.getDayCount() + 1, 'days');
+        newDate = new CustomDate(this.startDate).add(this.getDayCount(), 'days');
       } else {
         newDate = new CustomDate(this.startDate).add(-1, 'days');
       }
