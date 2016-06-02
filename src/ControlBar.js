@@ -6,7 +6,7 @@ const DATEPICKER_FORMAT = 'YYYY-MM';
 
 
 // TODO: Make static constants dynamic;
-const SUBJECT_COUNT = 20;
+const SUBJECT_COUNT = 100;
 const COLUMN_COUNT = 30;
 
 export default class ControlBar extends ViewController {
@@ -80,8 +80,15 @@ export default class ControlBar extends ViewController {
   }
 
   setButtonListeners() {
-    this.html.scrollLeftBtn.addEventListener('click', () => this.scrollLeft());
-    this.html.scrollRightBtn.addEventListener('click', () => this.scrollRight());
+    // this.html.scrollLeftBtn.addEventListener('click', () => this.scrollLeft());
+
+    this.html.scrollLeftBtn.addEventListener('mousedown', () => {
+      holdButton(this.scrollLeft.bind(this));
+    });
+    this.html.scrollRightBtn.addEventListener('mousedown', () => {
+      holdButton(this.scrollRight.bind(this));
+    });
+
     this.html.scrollUpBtn.addEventListener('click', () => this.scrollUp());
     this.html.scrollDownBtn.addEventListener('click', () => this.scrollDown());
     this.html.datePicker.addEventListener('change', () => {
@@ -123,4 +130,20 @@ export default class ControlBar extends ViewController {
   scrollDown() {
     this.subjectsContainer.scrollDown();
   }
+}
+
+function holdButton(fn) {
+  let functionSchedule;
+  function doFunction(f) {
+    f();
+    functionSchedule = requestAnimationFrame(() => {
+      doFunction(f);
+    });
+  }
+
+  doFunction(fn);
+  const docMouseUp = document.addEventListener('mouseup', () => {
+    cancelAnimationFrame(functionSchedule);
+    document.removeEventListener('mouseup', docMouseUp);
+  });
 }

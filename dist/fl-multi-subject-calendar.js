@@ -5601,7 +5601,7 @@ var CLASS_PREFIX$1 = 'btnBar';
 var DATEPICKER_FORMAT = 'YYYY-MM';
 
 // TODO: Make static constants dynamic;
-var SUBJECT_COUNT = 20;
+var SUBJECT_COUNT = 100;
 var COLUMN_COUNT = 30;
 
 var ControlBar = function (_ViewController) {
@@ -5690,12 +5690,15 @@ var ControlBar = function (_ViewController) {
     value: function setButtonListeners() {
       var _this2 = this;
 
-      this.html.scrollLeftBtn.addEventListener('click', function () {
-        return _this2.scrollLeft();
+      // this.html.scrollLeftBtn.addEventListener('click', () => this.scrollLeft());
+
+      this.html.scrollLeftBtn.addEventListener('mousedown', function () {
+        holdButton(_this2.scrollLeft.bind(_this2));
       });
-      this.html.scrollRightBtn.addEventListener('click', function () {
-        return _this2.scrollRight();
+      this.html.scrollRightBtn.addEventListener('mousedown', function () {
+        holdButton(_this2.scrollRight.bind(_this2));
       });
+
       this.html.scrollUpBtn.addEventListener('click', function () {
         return _this2.scrollUp();
       });
@@ -5753,6 +5756,22 @@ var ControlBar = function (_ViewController) {
 
   return ControlBar;
 }(ViewController);
+
+function holdButton(fn) {
+  var functionSchedule = void 0;
+  function doFunction(f) {
+    f();
+    functionSchedule = requestAnimationFrame(function () {
+      doFunction(f);
+    });
+  }
+
+  doFunction(fn);
+  var docMouseUp = document.addEventListener('mouseup', function () {
+    cancelAnimationFrame(functionSchedule);
+    document.removeEventListener('mouseup', docMouseUp);
+  });
+}
 
 // Bug checking function that will throw an error whenever
 // the condition sent to it is evaluated to false
