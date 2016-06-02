@@ -29,7 +29,7 @@ export default class ControlBar extends ViewController {
     this.subjectsContainer = subjectsContainer;
 
     this.createButtons();
-    this.setButtonListeners();
+    this.setListeners();
     Object.preventExtensions(this);
 
     this.setStartDate(startDate);
@@ -79,9 +79,7 @@ export default class ControlBar extends ViewController {
     this.html.container.appendChild(datePicker);
   }
 
-  setButtonListeners() {
-    // this.html.scrollLeftBtn.addEventListener('click', () => this.scrollLeft());
-
+  setListeners() {
     this.html.scrollLeftBtn.addEventListener('mousedown', () => {
       holdButton(this.scrollLeft.bind(this));
     });
@@ -119,14 +117,14 @@ export default class ControlBar extends ViewController {
     this.dateBar.setDayCount(count);
   }
 
-  scrollLeft() {
+  async scrollLeft() {
+    await this.subjectsContainer.scrollLeft();
     this.dateBar.scrollLeft();
-    this.subjectsContainer.scrollLeft();
   }
 
-  scrollRight() {
+  async scrollRight() {
+    await this.subjectsContainer.scrollRight();
     this.dateBar.scrollRight();
-    this.subjectsContainer.scrollRight();
   }
 
   scrollUp() {

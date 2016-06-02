@@ -30,8 +30,8 @@ export default class Subject extends ViewController {
     this.orderedeEvents = [];
 
     this.eventsLoadedRange = {
-      from: config.eventsFromDate,
-      to: config.eventsToDate,
+      from: new CustomDate(config.eventsFromDate),
+      to: new CustomDate(config.eventsToDate),
     };
     this.destroyed = false;
     Object.preventExtensions(this);

@@ -19,7 +19,7 @@ export default class SubjectsContainer extends ViewController {
     this.dataLoader = new DataLoader(loadUrl);
     this.startDate = new CustomDate();
     this.subjects = [];
-
+    this.dayCount = 1;
     this.modulePrefix = modulePrefix;
 
     Object.preventExtensions(this);
@@ -110,7 +110,8 @@ export default class SubjectsContainer extends ViewController {
    * @return {Int} Amount of days in each subject
    */
   getDayCount() {
-    return this.subjects[0] ? this.subjects[0].getDayCount() : 1;
+    return this.dayCount || 1;
+    // return this.subjects[0] ? this.subjects[0].getDayCount() : 1;
   }
 
   getEndDate() {
@@ -246,14 +247,16 @@ export default class SubjectsContainer extends ViewController {
   async addDay(frontBack) {
     let fromDate;
     let toDate;
-    if (frontBack === 'front') {
+    const toTheFront = frontBack === 'front';
+    assert(toTheFront || frontBack === 'back',
+      `Invalid addDay direction option: ${frontBack}`);
+
+    if (toTheFront) {
       fromDate = this.startDate;
       toDate = this.getEndDate().add(1, 'days');
-    } else if (frontBack === 'back') {
+    } else {
       fromDate = new CustomDate(this.startDate).add(-1, 'days');
       toDate = this.getEndDate();
-    } else {
-      assert(false, `Invalid addDay direction option: ${frontBack}`);
     }
 
     if (!this.subjectsCoverRange(fromDate, toDate)) {
@@ -262,11 +265,16 @@ export default class SubjectsContainer extends ViewController {
       const eventData = await this.dataLoader.getEventsForIds(subjectIds, fromDate, toDate);
       this.setEvents(eventData);
     }
+
+    this.dayCount++;
+    if (!toTheFront) { this.startDate.add(-1, 'day'); }
     this.subjects.forEach(subject => subject.addDay(frontBack));
     return true;
   }
 
   removeDay(frontBack) {
+    this.dayCount--;
+    if (frontBack === 'back') { this.startDate.add(1, 'day'); }
     this.subjects.forEach(subject => subject.removeDay(frontBack));
   }
 
