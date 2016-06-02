@@ -5730,14 +5730,14 @@ var ControlBar = function (_ViewController) {
   }, {
     key: 'scrollLeft',
     value: function scrollLeft() {
-      this.subjectsContainer.scrollLeft();
       this.dateBar.scrollLeft();
+      this.subjectsContainer.scrollLeft();
     }
   }, {
     key: 'scrollRight',
     value: function scrollRight() {
-      this.subjectsContainer.scrollRight();
       this.dateBar.scrollRight();
+      this.subjectsContainer.scrollRight();
     }
   }, {
     key: 'scrollUp',
@@ -5898,7 +5898,15 @@ var DateBar = function (_ViewController) {
       var toTheRight = leftRight === 'right';
       assert(toTheRight || leftRight === 'left', 'Invalid leftRight value: ' + leftRight);
 
-      var newDate = toTheRight ? this.getEndDate().add(1, 'days') : new CustomDate(this.startDate).add(-1, 'days');
+      var firstDayToBeAdded = this.getDayCount() === 0;
+      var newDate = void 0;
+      if (firstDayToBeAdded) {
+        newDate = new CustomDate(this.startDate);
+      } else if (toTheRight) {
+        newDate = this.getEndDate().add(1, 'days');
+      } else {
+        newDate = new CustomDate(this.startDate).add(-1, 'days');
+      }
 
       this.addToDayRow(newDate, toTheRight);
       this.addToMonthRow(newDate, toTheRight);
@@ -6054,7 +6062,7 @@ var DateBar = function (_ViewController) {
     key: 'getEndDate',
     value: function getEndDate() {
       var startDate = new CustomDate(this.startDate);
-      var dayCount = this.getDayCount();
+      var dayCount = Math.max(0, this.getDayCount() - 1);
       var endDate = startDate.add(dayCount, 'days');
       return endDate;
     }
@@ -7725,7 +7733,7 @@ var Subject = function (_ViewController) {
 
     _this.cssPrefix = modulePrefix + '-' + CLASS_PREFIX$4;
 
-    _this.startDate = startDate;
+    _this.startDate = new CustomDate(startDate);
     _this.days = [];
 
     // It must be ordered chronologically
@@ -7812,7 +7820,7 @@ var Subject = function (_ViewController) {
     value: function setStartDate(date) {
       this.checkIfdestroyed();
 
-      this.startDate = date;
+      this.startDate = new CustomDate(date);
       var dayCount = this.getDayCount();
       this.setDayCount(0);
       this.setDayCount(dayCount);
@@ -7827,7 +7835,7 @@ var Subject = function (_ViewController) {
           assert(false, 'Invalid date provided for EventLoadedFrom. Date is after first busy date.');
         }
       }
-      this.eventsLoadedRange.from = date;
+      this.eventsLoadedRange.from = new CustomDate(date);
     }
   }, {
     key: 'setEventsLoadedTo',
@@ -7839,7 +7847,7 @@ var Subject = function (_ViewController) {
           assert(false, 'Invalid date provided for EventLoadedTo. Date is before last busy date.');
         }
       }
-      this.eventsLoadedRange.to = date;
+      this.eventsLoadedRange.to = new CustomDate(date);
     }
     // ---------------------------------------------------------------------------
     // Getters
@@ -7854,6 +7862,13 @@ var Subject = function (_ViewController) {
     key: 'getDayCount',
     value: function getDayCount() {
       return this.days.length;
+    }
+  }, {
+    key: 'getEndDate',
+    value: function getEndDate() {
+      var endDate = new CustomDate(this.startDate);
+      var daysToAdd = Math.max(0, this.getDayCount() - 1);
+      return endDate.add(daysToAdd, 'days');
     }
   }, {
     key: 'getEventsLoadedRange',
@@ -7964,6 +7979,8 @@ var Subject = function (_ViewController) {
   }, {
     key: 'addDay',
     value: function addDay() {
+      var _this3 = this;
+
       var position = arguments.length <= 0 || arguments[0] === undefined ? 'front' : arguments[0];
 
       this.checkIfdestroyed();
@@ -7976,7 +7993,7 @@ var Subject = function (_ViewController) {
       if (firstDayToBeAdded) {
         newDate = new CustomDate(this.startDate);
       } else if (addToFront) {
-        newDate = new CustomDate(this.startDate).add(this.getDayCount(), 'days');
+        newDate = new CustomDate(this.getEndDate()).add(1, 'days');
       } else {
         newDate = new CustomDate(this.startDate).add(-1, 'days');
       }
@@ -7986,10 +8003,15 @@ var Subject = function (_ViewController) {
 
       if (addToFront || firstDayToBeAdded) {
         this.days.push(newDay);
-        this.html.daysContainer.appendChild(newDay.html.container);
+        requestAnimationFrame(function () {
+          _this3.html.daysContainer.appendChild(newDay.html.container);
+        });
       } else {
         this.days = [newDay].concat(this.days);
-        this.html.daysContainer.insertBefore(newDay.html.container, this.html.daysContainer[0]);
+        requestAnimationFrame(function () {
+          _this3.html.daysContainer.insertBefore(newDay.html.container, _this3.html.daysContainer.children[0]);
+        });
+        this.startDate = newDate;
       }
     }
 
@@ -8003,10 +8025,13 @@ var Subject = function (_ViewController) {
     value: function removeDay(position) {
       this.checkIfdestroyed();
 
-      if (position === 'front') {
-        var dayRemoved = this.days.push();
-        dayRemoved.destroy();
-      } else if (position === 'back') {
+      var fromFront = position === 'front';
+      assert(fromFront || position === 'back', 'Invalid position value. Expected \'front\' or \'back\', gor \'' + position + '\'');
+
+      if (fromFront) {
+        var dayToBeRemoved = this.days.pop();
+        dayToBeRemoved.destroy();
+      } else {
         if (this.getDayCount() === 0) {
           return;
         }
@@ -8015,11 +8040,10 @@ var Subject = function (_ViewController) {
 
         var _days$splice2 = _slicedToArray(_days$splice, 1);
 
-        var _dayRemoved = _days$splice2[0];
+        var _dayToBeRemoved = _days$splice2[0];
 
-        _dayRemoved.destroy();
-      } else {
-        assert(false, 'Invalid position value. Expected \'front\' or \'back\', gor \'' + position + '\'');
+        _dayToBeRemoved.destroy();
+        this.startDate.add(1, 'days');
       }
     }
   }, {
@@ -8679,7 +8703,7 @@ var SubjectsContainer = function (_ViewController) {
     key: 'setStartDate',
     value: function setStartDate(startDate) {
       assert(startDate instanceof CustomDate, 'TypeError: startDate is not an instance of CustomDate');
-      this.startDate = startDate;
+      this.startDate = new CustomDate(startDate);
       this.subjects.forEach(function (subject) {
         subject.setStartDate(startDate);
       });

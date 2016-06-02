@@ -34,7 +34,7 @@ export default class SubjectsContainer extends ViewController {
       startDate instanceof CustomDate,
       'TypeError: startDate is not an instance of CustomDate'
     );
-    this.startDate = startDate;
+    this.startDate = new CustomDate(startDate);
     this.subjects.forEach((subject) => {
       subject.setStartDate(startDate);
     });

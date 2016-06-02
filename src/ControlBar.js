@@ -107,13 +107,13 @@ export default class ControlBar extends ViewController {
   }
 
   scrollLeft() {
-    this.subjectsContainer.scrollLeft();
     this.dateBar.scrollLeft();
+    this.subjectsContainer.scrollLeft();
   }
 
   scrollRight() {
-    this.subjectsContainer.scrollRight();
     this.dateBar.scrollRight();
+    this.subjectsContainer.scrollRight();
   }
 
   scrollUp() {

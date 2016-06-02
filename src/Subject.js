@@ -22,7 +22,7 @@ export default class Subject extends ViewController {
 
     this.cssPrefix = `${modulePrefix}-${CLASS_PREFIX}`;
 
-    this.startDate = startDate;
+    this.startDate = new CustomDate(startDate);
     this.days = [];
 
     // It must be ordered chronologically
@@ -78,7 +78,7 @@ export default class Subject extends ViewController {
   setStartDate(date) {
     this.checkIfdestroyed();
 
-    this.startDate = date;
+    this.startDate = new CustomDate(date);
     const dayCount = this.getDayCount();
     this.setDayCount(0);
     this.setDayCount(dayCount);
@@ -95,7 +95,7 @@ export default class Subject extends ViewController {
         );
       }
     }
-    this.eventsLoadedRange.from = date;
+    this.eventsLoadedRange.from = new CustomDate(date);
   }
 
   setEventsLoadedTo(date) {
@@ -109,7 +109,7 @@ export default class Subject extends ViewController {
         );
       }
     }
-    this.eventsLoadedRange.to = date;
+    this.eventsLoadedRange.to = new CustomDate(date);
   }
   // ---------------------------------------------------------------------------
   // Getters
@@ -120,6 +120,12 @@ export default class Subject extends ViewController {
 
   getDayCount() {
     return this.days.length;
+  }
+
+  getEndDate() {
+    const endDate = new CustomDate(this.startDate);
+    const daysToAdd = Math.max(0, this.getDayCount() - 1);
+    return endDate.add(daysToAdd, 'days');
   }
 
   getEventsLoadedRange() {
@@ -207,9 +213,9 @@ export default class Subject extends ViewController {
     if (firstDayToBeAdded) {
       newDate = new CustomDate(this.startDate);
     } else if (addToFront) {
-      newDate = new CustomDate(this.startDate).add(this.getDayCount(), 'days');
+      newDate = new CustomDate(this.getEndDate()).add(1, 'days');
     } else {
-      newDate = new CustomDate(this.startDate).add(-1, 'days');
+      newDate = (new CustomDate(this.startDate)).add(-1, 'days');
     }
 
     const dateEvents = this.getDateEvents(newDate);
@@ -217,13 +223,18 @@ export default class Subject extends ViewController {
 
     if (addToFront || firstDayToBeAdded) {
       this.days.push(newDay);
-      this.html.daysContainer.appendChild(newDay.html.container);
+      requestAnimationFrame(() => {
+        this.html.daysContainer.appendChild(newDay.html.container);
+      });
     } else {
       this.days = [newDay].concat(this.days);
-      this.html.daysContainer.insertBefore(
-        newDay.html.container,
-        this.html.daysContainer[0]
-      );
+      requestAnimationFrame(() => {
+        this.html.daysContainer.insertBefore(
+          newDay.html.container,
+          this.html.daysContainer.children[0]
+        );
+      });
+      this.startDate = newDate;
     }
   }
 
@@ -234,16 +245,19 @@ export default class Subject extends ViewController {
   removeDay(position) {
     this.checkIfdestroyed();
 
-    if (position === 'front') {
-      const dayRemoved = this.days.push();
-      dayRemoved.destroy();
-    } else if (position === 'back') {
+    const fromFront = position === 'front';
+    assert(fromFront || position === 'back',
+      `Invalid position value. Expected 'front' or 'back', gor '${position}'`);
+
+    if (fromFront) {
+      const dayToBeRemoved = this.days.pop();
+      dayToBeRemoved.destroy();
+    } else {
       if (this.getDayCount() === 0) { return; }
 
-      const [dayRemoved] = this.days.splice(0, 1);
-      dayRemoved.destroy();
-    } else {
-      assert(false, `Invalid position value. Expected 'front' or 'back', gor '${position}'`);
+      const [dayToBeRemoved] = this.days.splice(0, 1);
+      dayToBeRemoved.destroy();
+      this.startDate.add(1, 'days');
     }
   }
 

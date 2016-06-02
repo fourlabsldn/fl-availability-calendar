@@ -57,9 +57,15 @@ export default class DateBar extends ViewController {
     const toTheRight = leftRight === 'right';
     assert(toTheRight || leftRight === 'left', `Invalid leftRight value: ${leftRight}`);
 
-    const newDate = toTheRight
-      ? this.getEndDate().add(1, 'days')
-      : (new CustomDate(this.startDate)).add(-1, 'days');
+    const firstDayToBeAdded = this.getDayCount() === 0;
+    let newDate;
+    if (firstDayToBeAdded) {
+      newDate = new CustomDate(this.startDate);
+    } else if (toTheRight) {
+      newDate = this.getEndDate().add(1, 'days');
+    } else {
+      newDate = (new CustomDate(this.startDate)).add(-1, 'days');
+    }
 
     this.addToDayRow(newDate, toTheRight);
     this.addToMonthRow(newDate, toTheRight);
@@ -186,7 +192,7 @@ export default class DateBar extends ViewController {
 
   getEndDate() {
     const startDate = new CustomDate(this.startDate);
-    const dayCount = this.getDayCount();
+    const dayCount = Math.max(0, this.getDayCount() - 1);
     const endDate = startDate.add(dayCount, 'days');
     return endDate;
   }
