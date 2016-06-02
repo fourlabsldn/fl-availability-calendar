@@ -353,7 +353,6 @@ export default class DataLoader {
    * @return {Promise}
    */
   async createCalendarContent(startingIds, amount, fromDate, toDate) {
-    console.log(`CREATED CONTENT FOR: ${JSON.stringify(startingIds)}`);
     function daysFromNow(days) {
       const date = new CustomDate();
       return date.add(days, 'days');
@@ -365,8 +364,8 @@ export default class DataLoader {
     }
 
     const dateVariation = toDate.diff(fromDate, 'days');
-    const maxEventLength = 10;
-    const maxEventSpacing = 7;
+    const maxEventLength = dateVariation / 2;
+    const maxEventSpacing = dateVariation / 4;
     const properties = [];
     const propNo = amount;
     const lastId = startingIds[startingIds.length - 1] || 0;
@@ -378,7 +377,7 @@ export default class DataLoader {
       properties[i].name = `Property - asdf asd fasdf asdfasd ${properties[i].id}`;
       properties[i].events = new Set();
 
-      const lastDate = (new CustomDate).add(rand(0), 'days');
+      const lastDate = new CustomDate(fromDate);
       let eventsCoverWholePeriod;
 
       do {

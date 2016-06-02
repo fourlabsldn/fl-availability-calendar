@@ -47,7 +47,6 @@ export default class Day extends ViewController {
       if (typeof event.status === 'string') {
         statuses.add(event.status);
       }
-      console.log('Day with events!');
     });
 
     for (const status of statuses) {

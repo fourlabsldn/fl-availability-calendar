@@ -144,8 +144,6 @@ export default class Subject extends ViewController {
 
     const events = this.orderedeEvents;
     if (!events.length) { return []; }
-    console.log(`Start ${events[0].start.toString()}`);
-    console.log(`End ${events[0].end.toString()}`);
 
     let eventIndex = 0;
     let event = events[eventIndex];
@@ -177,7 +175,7 @@ export default class Subject extends ViewController {
 
     function insertInOrder(event, arr) {
       let i = 0;
-      while (arr[i] && arr[i].start.diff(event.start) > 0) {
+      while (arr[i] && arr[i].start.diff(event.start) < 0) {
         i++;
       }
       arr.splice(i, 0, event);

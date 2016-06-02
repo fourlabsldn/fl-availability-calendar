@@ -7656,7 +7656,6 @@ var Day = function (_ViewController) {
         if (typeof event.status === 'string') {
           statuses.add(event.status);
         }
-        console.log('Day with events!');
       });
 
       var _iteratorNormalCompletion = true;
@@ -7875,8 +7874,6 @@ var Subject = function (_ViewController) {
       if (!events.length) {
         return [];
       }
-      console.log('Start ' + events[0].start.toString());
-      console.log('End ' + events[0].end.toString());
 
       var eventIndex = 0;
       var event = events[eventIndex];
@@ -7932,7 +7929,7 @@ var Subject = function (_ViewController) {
 
       function insertInOrder(event, arr) {
         var i = 0;
-        while (arr[i] && arr[i].start.diff(event.start) > 0) {
+        while (arr[i] && arr[i].start.diff(event.start) < 0) {
           i++;
         }
         arr.splice(i, 0, event);
@@ -8567,13 +8564,12 @@ var DataLoader = function () {
                   return date.add(days, 'days');
                 };
 
-                console.log('CREATED CONTENT FOR: ' + JSON.stringify(startingIds));
-
                 // Random number from 1 to 10
 
+
                 dateVariation = toDate.diff(fromDate, 'days');
-                maxEventLength = 10;
-                maxEventSpacing = 7;
+                maxEventLength = dateVariation / 2;
+                maxEventSpacing = dateVariation / 4;
                 properties = [];
                 propNo = amount;
                 lastId = startingIds[startingIds.length - 1] || 0;
@@ -8586,7 +8582,7 @@ var DataLoader = function () {
                   properties[i].name = 'Property - asdf asd fasdf asdfasd ' + properties[i].id;
                   properties[i].events = new Set();
 
-                  lastDate = new CustomDate().add(rand(0), 'days');
+                  lastDate = new CustomDate(fromDate);
                   eventsCoverWholePeriod = void 0;
 
 
@@ -8616,7 +8612,7 @@ var DataLoader = function () {
                   subjects: properties
                 });
 
-              case 12:
+              case 11:
               case 'end':
                 return _context4.stop();
             }
