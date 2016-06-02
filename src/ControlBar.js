@@ -2,7 +2,7 @@ import ViewController from './ViewController';
 import CustomDate from './CustomDate';
 
 const CLASS_PREFIX = 'btnBar';
-const DATEPICKER_FORMAT = 'YYYY-MM';
+const DATEPICKER_FORMAT = 'YYYY-[W]WW';
 
 
 // TODO: Make static constants dynamic;
@@ -74,7 +74,7 @@ export default class ControlBar extends ViewController {
     const datePicker = document.createElement('input');
     datePicker.classList.add(`${cssPrefix}-btn`);
     datePicker.classList.add(`${cssPrefix}-datepicker`);
-    datePicker.setAttribute('type', 'month');
+    datePicker.setAttribute('type', 'week');
     this.html.datePicker = datePicker;
     this.html.container.appendChild(datePicker);
   }
@@ -108,7 +108,7 @@ export default class ControlBar extends ViewController {
    * @param  {CustomDate | String | Date} date
    */
   setStartDate(date) {
-    const normalisedDate = new CustomDate(date);
+    const normalisedDate = (new CustomDate(date)).startOf('isoweek');
     this.html.datePicker.value = normalisedDate.format(DATEPICKER_FORMAT);
     this.dateBar.setStartDate(date);
     this.subjectsContainer.setStartDate(date);

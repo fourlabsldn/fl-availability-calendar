@@ -111,6 +111,19 @@ export default class Subject extends ViewController {
     }
     this.eventsLoadedRange.to = new CustomDate(date);
   }
+
+  setDayCount(unsanitisedCount) {
+    const count = parseInt(unsanitisedCount, 10);
+    let dayCount = this.getDayCount();
+    const method = dayCount < count ? 'addDay' : 'removeDay';
+    let dayDiff = dayCount - count;
+
+    while (dayDiff !== 0) {
+      this[method]('front');
+      dayCount += dayDiff > 0 ? -1 : 1;
+      dayDiff = dayCount - count;
+    }
+  }
   // ---------------------------------------------------------------------------
   // Getters
   // ---------------------------------------------------------------------------
@@ -249,7 +262,7 @@ export default class Subject extends ViewController {
     assert(fromFront || position === 'back',
       `Invalid position value. Expected 'front' or 'back', gor '${position}'`);
 
-    if (this.getDayCount() === 0) { return; }
+    if (this.getDayCount() === 0) { return true; }
 
     if (fromFront) {
       const dayToBeRemoved = this.days.pop();

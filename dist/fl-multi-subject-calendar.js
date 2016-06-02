@@ -5571,6 +5571,12 @@ var CustomDate = function () {
       return this.date.format(formatting);
     }
   }, {
+    key: 'startOf',
+    value: function startOf(unit) {
+      var answer = this.date.startOf(unit);
+      return new CustomDate(answer);
+    }
+  }, {
     key: 'isWithinRange',
     value: function isWithinRange(dateFrom, dateTo) {
       var afterDateFrom = this.diff(dateFrom) >= 0;
@@ -5598,7 +5604,7 @@ var CustomDate = function () {
 }();
 
 var CLASS_PREFIX$1 = 'btnBar';
-var DATEPICKER_FORMAT = 'YYYY-MM';
+var DATEPICKER_FORMAT = 'YYYY-[W]WW';
 
 // TODO: Make static constants dynamic;
 var SUBJECT_COUNT = 20;
@@ -5681,7 +5687,7 @@ var ControlBar = function (_ViewController) {
       var datePicker = document.createElement('input');
       datePicker.classList.add(cssPrefix + '-btn');
       datePicker.classList.add(cssPrefix + '-datepicker');
-      datePicker.setAttribute('type', 'month');
+      datePicker.setAttribute('type', 'week');
       this.html.datePicker = datePicker;
       this.html.container.appendChild(datePicker);
     }
@@ -5721,7 +5727,7 @@ var ControlBar = function (_ViewController) {
   }, {
     key: 'setStartDate',
     value: function setStartDate(date) {
-      var normalisedDate = new CustomDate(date);
+      var normalisedDate = new CustomDate(date).startOf('isoweek');
       this.html.datePicker.value = normalisedDate.format(DATEPICKER_FORMAT);
       this.dateBar.setStartDate(date);
       this.subjectsContainer.setStartDate(date);
@@ -7874,6 +7880,20 @@ var Subject = function (_ViewController) {
       }
       this.eventsLoadedRange.to = new CustomDate(date);
     }
+  }, {
+    key: 'setDayCount',
+    value: function setDayCount(unsanitisedCount) {
+      var count = parseInt(unsanitisedCount, 10);
+      var dayCount = this.getDayCount();
+      var method = dayCount < count ? 'addDay' : 'removeDay';
+      var dayDiff = dayCount - count;
+
+      while (dayDiff !== 0) {
+        this[method]('front');
+        dayCount += dayDiff > 0 ? -1 : 1;
+        dayDiff = dayCount - count;
+      }
+    }
     // ---------------------------------------------------------------------------
     // Getters
     // ---------------------------------------------------------------------------
@@ -8054,7 +8074,7 @@ var Subject = function (_ViewController) {
       assert(fromFront || position === 'back', 'Invalid position value. Expected \'front\' or \'back\', gor \'' + position + '\'');
 
       if (this.getDayCount() === 0) {
-        return;
+        return true;
       }
 
       if (fromFront) {

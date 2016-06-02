@@ -49,6 +49,11 @@ export default class CustomDate {
     return this.date.format(formatting);
   }
 
+  startOf(unit) {
+    const answer = this.date.startOf(unit);
+    return new CustomDate(answer);
+  }
+
   isWithinRange(dateFrom, dateTo) {
     const afterDateFrom = this.diff(dateFrom) >= 0;
     const beforeDateTo = this.diff(dateTo) <= 0;
@@ -66,5 +71,4 @@ export default class CustomDate {
   static getEarliest(date1, date2) {
     return (date1.diff(date2) > 0) ? date2 : date1;
   }
-
 }
