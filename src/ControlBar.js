@@ -22,7 +22,6 @@ export default class ControlBar extends ViewController {
     super();
     this.cssPrefix = `${modulePrefix}-${CLASS_PREFIX}`;
     this.html.container.classList.add(this.cssPrefix);
-    this.startDate = null;
     this.dayCount = 0;
 
     this.dateBar = dateBar;
@@ -83,6 +82,7 @@ export default class ControlBar extends ViewController {
     this.html.scrollLeftBtn.addEventListener('mousedown', () => {
       holdButton(this.scrollLeft.bind(this));
     });
+
     this.html.scrollRightBtn.addEventListener('mousedown', () => {
       holdButton(this.scrollRight.bind(this));
     });
@@ -101,13 +101,18 @@ export default class ControlBar extends ViewController {
     });
   }
 
+  setDatepickerDate(date) {
+    const normalisedDate = date.startOf('isoweek');
+    this.html.datePicker.value = normalisedDate.format(DATEPICKER_FORMAT);
+  }
+
   /**
-   * @method setDatepickerDate
+   * @method setStartDate
    * @param  {CustomDate | String | Date} date
    */
   setStartDate(date) {
-    const normalisedDate = (new CustomDate(date)).startOf('isoweek');
-    this.html.datePicker.value = normalisedDate.format(DATEPICKER_FORMAT);
+    const normalisedDate = date.startOf('isoweek');
+    this.setDatepickerDate(normalisedDate);
     this.dateBar.setStartDate(date);
     this.subjectsContainer.setStartDate(date);
   }

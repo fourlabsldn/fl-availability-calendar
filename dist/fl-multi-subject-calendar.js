@@ -7128,6 +7128,7 @@ var ControlBar = function (_ViewController) {
       this.html.scrollLeftBtn.addEventListener('mousedown', function () {
         holdButton(_this2.scrollLeft.bind(_this2));
       });
+
       this.html.scrollRightBtn.addEventListener('mousedown', function () {
         holdButton(_this2.scrollRight.bind(_this2));
       });
