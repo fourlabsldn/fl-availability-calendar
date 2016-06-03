@@ -7058,7 +7058,8 @@ var ControlBar = function (_ViewController) {
 
     _this.cssPrefix = modulePrefix + '-' + CLASS_PREFIX$1;
     _this.html.container.classList.add(_this.cssPrefix);
-    _this.startDate = null;
+
+    _this.startDate = new CustomDate(startDate);
     _this.dayCount = 0;
 
     _this.dateBar = dateBar;
@@ -7069,10 +7070,8 @@ var ControlBar = function (_ViewController) {
     Object.preventExtensions(_this);
 
     _this.setStartDate(startDate);
-
-    // TODO: This should be dynamic.
-    _this.subjectsContainer.addSubjects('bottom', SUBJECT_COUNT).then(function () {
-      _this.setDayCount(COLUMN_COUNT);
+    _this.subjectsContainer.setSubjectCount(SUBJECT_COUNT).then(function () {
+      return _this.setDayCount(COLUMN_COUNT);
     });
     return _this;
   }
@@ -7143,23 +7142,95 @@ var ControlBar = function (_ViewController) {
 
       this.html.datePicker.addEventListener('change', function () {
         var datepickerDate = new CustomDate(_this2.html.datePicker.value);
-        _this2.setStartDate(datepickerDate);
+        var normalisedDate = datepickerDate.startOf('isoweek');
+        _this2.setStartDate(normalisedDate);
       });
     }
 
     /**
      * @method setDatepickerDate
-     * @param  {CustomDate | String | Date} date
+     * @param  {CustomDate} date
+     */
+
+  }, {
+    key: 'setDatepickerDate',
+    value: function setDatepickerDate(date) {
+      this.html.datePicker.value = date.format(DATEPICKER_FORMAT);
+    }
+
+    /**
+     * @method setStartDate
+     * @param  {CustomDate} date
      */
 
   }, {
     key: 'setStartDate',
-    value: function setStartDate(date) {
-      var normalisedDate = new CustomDate(date).startOf('isoweek');
-      this.html.datePicker.value = normalisedDate.format(DATEPICKER_FORMAT);
-      this.dateBar.setStartDate(date);
-      this.subjectsContainer.setStartDate(date);
-    }
+    value: function () {
+      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee(date) {
+        var newDate;
+        return _regeneratorRuntime.wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                newDate = date ? new CustomDate(date) : this.startDate;
+
+                this.startDate = newDate;
+
+                _context.next = 4;
+                return this.subjectsContainer.setStartDate(newDate);
+
+              case 4:
+                this.setDatepickerDate(newDate);
+                this.dateBar.setStartDate(newDate);
+
+              case 6:
+              case 'end':
+                return _context.stop();
+            }
+          }
+        }, _callee, this);
+      }));
+
+      function setStartDate(_x2) {
+        return ref.apply(this, arguments);
+      }
+
+      return setStartDate;
+    }()
+
+    /**
+     * Sets the start date given an offset number from the
+     * current start date.
+     * @method addToStartDate
+     * @param  {CustomDate} val
+     */
+
+  }, {
+    key: 'addToStartDate',
+    value: function () {
+      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee2(val) {
+        return _regeneratorRuntime.wrap(function _callee2$(_context2) {
+          while (1) {
+            switch (_context2.prev = _context2.next) {
+              case 0:
+                this.startDate.add(val);
+                _context2.next = 3;
+                return this.setStartDate();
+
+              case 3:
+              case 'end':
+                return _context2.stop();
+            }
+          }
+        }, _callee2, this);
+      }));
+
+      function addToStartDate(_x3) {
+        return ref.apply(this, arguments);
+      }
+
+      return addToStartDate;
+    }()
   }, {
     key: 'setDayCount',
     value: function setDayCount(count) {
@@ -7169,23 +7240,20 @@ var ControlBar = function (_ViewController) {
   }, {
     key: 'scrollLeft',
     value: function () {
-      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee() {
-        return _regeneratorRuntime.wrap(function _callee$(_context) {
+      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee3() {
+        return _regeneratorRuntime.wrap(function _callee3$(_context3) {
           while (1) {
-            switch (_context.prev = _context.next) {
+            switch (_context3.prev = _context3.next) {
               case 0:
-                _context.next = 2;
-                return this.subjectsContainer.scrollLeft();
+                _context3.next = 2;
+                return this.addToStartDate(-1);
 
               case 2:
-                this.dateBar.scrollLeft();
-
-              case 3:
               case 'end':
-                return _context.stop();
+                return _context3.stop();
             }
           }
-        }, _callee, this);
+        }, _callee3, this);
       }));
 
       function scrollLeft() {
@@ -7197,23 +7265,20 @@ var ControlBar = function (_ViewController) {
   }, {
     key: 'scrollRight',
     value: function () {
-      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee2() {
-        return _regeneratorRuntime.wrap(function _callee2$(_context2) {
+      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee4() {
+        return _regeneratorRuntime.wrap(function _callee4$(_context4) {
           while (1) {
-            switch (_context2.prev = _context2.next) {
+            switch (_context4.prev = _context4.next) {
               case 0:
-                _context2.next = 2;
-                return this.subjectsContainer.scrollRight();
+                _context4.next = 2;
+                return this.addToStartDate(1);
 
               case 2:
-                this.dateBar.scrollRight();
-
-              case 3:
               case 'end':
-                return _context2.stop();
+                return _context4.stop();
             }
           }
-        }, _callee2, this);
+        }, _callee4, this);
       }));
 
       function scrollRight() {
@@ -8868,6 +8933,49 @@ var SubjectsContainer = function (_ViewController) {
     }()
 
     /**
+     * @method setSubjectCount
+     * @param  {Int} count
+     */
+
+  }, {
+    key: 'setSubjectCount',
+    value: function () {
+      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee2(count) {
+        var dayCount, addOrRemove;
+        return _regeneratorRuntime.wrap(function _callee2$(_context2) {
+          while (1) {
+            switch (_context2.prev = _context2.next) {
+              case 0:
+                dayCount = this.getDayCount();
+
+                if (!(dayCount === count)) {
+                  _context2.next = 3;
+                  break;
+                }
+
+                return _context2.abrupt('return');
+
+              case 3:
+                addOrRemove = dayCount > count ? 'removeSubjects' : 'addSubjects';
+                _context2.next = 6;
+                return this[addOrRemove]('bottom', count);
+
+              case 6:
+              case 'end':
+                return _context2.stop();
+            }
+          }
+        }, _callee2, this);
+      }));
+
+      function setSubjectCount(_x2) {
+        return ref.apply(this, arguments);
+      }
+
+      return setSubjectCount;
+    }()
+
+    /**
      * @method setEvents
      * @param  {Object<Array>} subjectsEvents - Object where each key is a subject
      *                                        id and each value is a subject's events.
@@ -8997,6 +9105,10 @@ var SubjectsContainer = function (_ViewController) {
   }, {
     key: 'subjectsCoverRange',
     value: function subjectsCoverRange(fromDate, toDate) {
+      if (this.subjects.length === 0) {
+        return true;
+      }
+
       var range = this.getSubjectsEventRange();
       var coverFromDate = range.from.diff(fromDate) <= 0;
       var coverToDate = range.to.diff(toDate) >= 0;
@@ -9039,38 +9151,38 @@ var SubjectsContainer = function (_ViewController) {
   }, {
     key: 'addSubjects',
     value: function () {
-      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee2(topBottom) {
+      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee3(topBottom) {
         var _this3 = this;
 
         var amount = arguments.length <= 1 || arguments[1] === undefined ? 1 : arguments[1];
 
         var startDate, dayCount, _loop2, i, _ret2;
 
-        return _regeneratorRuntime.wrap(function _callee2$(_context3) {
+        return _regeneratorRuntime.wrap(function _callee3$(_context4) {
           while (1) {
-            switch (_context3.prev = _context3.next) {
+            switch (_context4.prev = _context4.next) {
               case 0:
                 startDate = this.startDate;
                 dayCount = this.getDayCount();
                 _loop2 = _regeneratorRuntime.mark(function _loop2(i) {
                   var subjConfig, noMoreSubjectsToLoad, newSubject, counter, firstSubjectToBeAdded;
-                  return _regeneratorRuntime.wrap(function _loop2$(_context2) {
+                  return _regeneratorRuntime.wrap(function _loop2$(_context3) {
                     while (1) {
-                      switch (_context2.prev = _context2.next) {
+                      switch (_context3.prev = _context3.next) {
                         case 0:
-                          _context2.next = 2;
+                          _context3.next = 2;
                           return _this3.getNewSubjectConfig(topBottom);
 
                         case 2:
-                          subjConfig = _context2.sent;
+                          subjConfig = _context3.sent;
                           noMoreSubjectsToLoad = !subjConfig;
 
                           if (!noMoreSubjectsToLoad) {
-                            _context2.next = 6;
+                            _context3.next = 6;
                             break;
                           }
 
-                          return _context2.abrupt('return', {
+                          return _context3.abrupt('return', {
                             v: false
                           });
 
@@ -9104,7 +9216,7 @@ var SubjectsContainer = function (_ViewController) {
 
                         case 10:
                         case 'end':
-                          return _context2.stop();
+                          return _context3.stop();
                       }
                     }
                   }, _loop2, _this3);
@@ -9113,39 +9225,39 @@ var SubjectsContainer = function (_ViewController) {
 
               case 4:
                 if (!(i < amount)) {
-                  _context3.next = 12;
+                  _context4.next = 12;
                   break;
                 }
 
-                return _context3.delegateYield(_loop2(i), 't0', 6);
+                return _context4.delegateYield(_loop2(i), 't0', 6);
 
               case 6:
-                _ret2 = _context3.t0;
+                _ret2 = _context4.t0;
 
                 if (!((typeof _ret2 === 'undefined' ? 'undefined' : _typeof$1(_ret2)) === "object")) {
-                  _context3.next = 9;
+                  _context4.next = 9;
                   break;
                 }
 
-                return _context3.abrupt('return', _ret2.v);
+                return _context4.abrupt('return', _ret2.v);
 
               case 9:
                 i++;
-                _context3.next = 4;
+                _context4.next = 4;
                 break;
 
               case 12:
-                return _context3.abrupt('return', true);
+                return _context4.abrupt('return', true);
 
               case 13:
               case 'end':
-                return _context3.stop();
+                return _context4.stop();
             }
           }
-        }, _callee2, this);
+        }, _callee3, this);
       }));
 
-      function addSubjects(_x3, _x4) {
+      function addSubjects(_x4, _x5) {
         return ref.apply(this, arguments);
       }
 
@@ -9161,14 +9273,14 @@ var SubjectsContainer = function (_ViewController) {
   }, {
     key: 'getNewSubjectConfig',
     value: function () {
-      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee3() {
+      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee4() {
         var topBottom = arguments.length <= 0 || arguments[0] === undefined ? 'bottom' : arguments[0];
         var fromDate = arguments.length <= 1 || arguments[1] === undefined ? this.startDate : arguments[1];
         var toDate = arguments.length <= 2 || arguments[2] === undefined ? this.getEndDate() : arguments[2];
         var fromTop, beforeAfter, referenceElement, isFirstSubject, referenceId, subjArray, newSubjectConfig;
-        return _regeneratorRuntime.wrap(function _callee3$(_context4) {
+        return _regeneratorRuntime.wrap(function _callee4$(_context5) {
           while (1) {
-            switch (_context4.prev = _context4.next) {
+            switch (_context5.prev = _context5.next) {
               case 0:
                 assert(topBottom === 'top' || topBottom === 'bottom', 'Invalid topBottom option: ' + topBottom);
 
@@ -9186,32 +9298,32 @@ var SubjectsContainer = function (_ViewController) {
 
                 isFirstSubject = this.subjects.length === 0;
                 referenceId = isFirstSubject ? null : referenceElement.getId();
-                _context4.next = 9;
+                _context5.next = 9;
                 return this.dataLoader.getSubjects(2, beforeAfter, referenceId, fromDate, toDate);
 
               case 9:
-                subjArray = _context4.sent;
+                subjArray = _context5.sent;
 
                 if (!(subjArray.length < 2)) {
-                  _context4.next = 12;
+                  _context5.next = 12;
                   break;
                 }
 
-                return _context4.abrupt('return', null);
+                return _context5.abrupt('return', null);
 
               case 12:
                 newSubjectConfig = isFirstSubject || fromTop ? subjArray[0] : subjArray[1];
-                return _context4.abrupt('return', newSubjectConfig);
+                return _context5.abrupt('return', newSubjectConfig);
 
               case 14:
               case 'end':
-                return _context4.stop();
+                return _context5.stop();
             }
           }
-        }, _callee3, this);
+        }, _callee4, this);
       }));
 
-      function getNewSubjectConfig(_x6, _x7, _x8) {
+      function getNewSubjectConfig(_x7, _x8, _x9) {
         return ref.apply(this, arguments);
       }
 
@@ -9228,17 +9340,18 @@ var SubjectsContainer = function (_ViewController) {
   }, {
     key: 'addDay',
     value: function () {
-      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee4(frontBack) {
-        var fromDate, toDate, toTheFront, subjectIds, eventData;
-        return _regeneratorRuntime.wrap(function _callee4$(_context5) {
+      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee5(frontBack) {
+        var toTheFront, fromDate, toDate, subjectIds, eventData;
+        return _regeneratorRuntime.wrap(function _callee5$(_context6) {
           while (1) {
-            switch (_context5.prev = _context5.next) {
+            switch (_context6.prev = _context6.next) {
               case 0:
-                fromDate = void 0;
-                toDate = void 0;
                 toTheFront = frontBack === 'front';
 
                 assert(toTheFront || frontBack === 'back', 'Invalid addDay direction option: ' + frontBack);
+
+                fromDate = void 0;
+                toDate = void 0;
 
                 if (toTheFront) {
                   fromDate = this.startDate;
@@ -9249,7 +9362,7 @@ var SubjectsContainer = function (_ViewController) {
                 }
 
                 if (this.subjectsCoverRange(fromDate, toDate)) {
-                  _context5.next = 11;
+                  _context6.next = 11;
                   break;
                 }
 
@@ -9257,34 +9370,34 @@ var SubjectsContainer = function (_ViewController) {
                 subjectIds = this.subjects.map(function (subj) {
                   return subj.getId();
                 });
-                _context5.next = 9;
+                _context6.next = 9;
                 return this.dataLoader.getEventsForIds(subjectIds, fromDate, toDate);
 
               case 9:
-                eventData = _context5.sent;
+                eventData = _context6.sent;
 
                 this.setEvents(eventData);
 
               case 11:
 
-                this.dayCount++;
                 if (!toTheFront) {
                   this.startDate.add(-1, 'day');
                 }
+                this.dayCount++;
                 this.subjects.forEach(function (subject) {
                   return subject.addDay(frontBack);
                 });
-                return _context5.abrupt('return', true);
+                return _context6.abrupt('return', true);
 
               case 15:
               case 'end':
-                return _context5.stop();
+                return _context6.stop();
             }
           }
-        }, _callee4, this);
+        }, _callee5, this);
       }));
 
-      function addDay(_x12) {
+      function addDay(_x13) {
         return ref.apply(this, arguments);
       }
 
@@ -9304,17 +9417,17 @@ var SubjectsContainer = function (_ViewController) {
   }, {
     key: 'scrollLeft',
     value: function () {
-      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee5() {
+      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee6() {
         var dayAdded;
-        return _regeneratorRuntime.wrap(function _callee5$(_context6) {
+        return _regeneratorRuntime.wrap(function _callee6$(_context7) {
           while (1) {
-            switch (_context6.prev = _context6.next) {
+            switch (_context7.prev = _context7.next) {
               case 0:
-                _context6.next = 2;
+                _context7.next = 2;
                 return this.addDay('back');
 
               case 2:
-                dayAdded = _context6.sent;
+                dayAdded = _context7.sent;
 
                 if (dayAdded) {
                   this.removeDay('front');
@@ -9322,10 +9435,10 @@ var SubjectsContainer = function (_ViewController) {
 
               case 4:
               case 'end':
-                return _context6.stop();
+                return _context7.stop();
             }
           }
-        }, _callee5, this);
+        }, _callee6, this);
       }));
 
       function scrollLeft() {
@@ -9337,17 +9450,17 @@ var SubjectsContainer = function (_ViewController) {
   }, {
     key: 'scrollRight',
     value: function () {
-      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee6() {
+      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee7() {
         var dayAdded;
-        return _regeneratorRuntime.wrap(function _callee6$(_context7) {
+        return _regeneratorRuntime.wrap(function _callee7$(_context8) {
           while (1) {
-            switch (_context7.prev = _context7.next) {
+            switch (_context8.prev = _context8.next) {
               case 0:
-                _context7.next = 2;
+                _context8.next = 2;
                 return this.addDay('front');
 
               case 2:
-                dayAdded = _context7.sent;
+                dayAdded = _context8.sent;
 
                 if (dayAdded) {
                   this.removeDay('back');
@@ -9355,10 +9468,10 @@ var SubjectsContainer = function (_ViewController) {
 
               case 4:
               case 'end':
-                return _context7.stop();
+                return _context8.stop();
             }
           }
-        }, _callee6, this);
+        }, _callee7, this);
       }));
 
       function scrollRight() {
@@ -9376,17 +9489,17 @@ var SubjectsContainer = function (_ViewController) {
   }, {
     key: 'scrollUp',
     value: function () {
-      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee7() {
+      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee8() {
         var subjectAdded;
-        return _regeneratorRuntime.wrap(function _callee7$(_context8) {
+        return _regeneratorRuntime.wrap(function _callee8$(_context9) {
           while (1) {
-            switch (_context8.prev = _context8.next) {
+            switch (_context9.prev = _context9.next) {
               case 0:
-                _context8.next = 2;
+                _context9.next = 2;
                 return this.addSubjects('top', 1);
 
               case 2:
-                subjectAdded = _context8.sent;
+                subjectAdded = _context9.sent;
 
                 if (subjectAdded) {
                   this.removeSubjects('bottom', 1);
@@ -9394,10 +9507,10 @@ var SubjectsContainer = function (_ViewController) {
 
               case 4:
               case 'end':
-                return _context8.stop();
+                return _context9.stop();
             }
           }
-        }, _callee7, this);
+        }, _callee8, this);
       }));
 
       function scrollUp() {
@@ -9415,17 +9528,17 @@ var SubjectsContainer = function (_ViewController) {
   }, {
     key: 'scrollDown',
     value: function () {
-      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee8() {
+      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee9() {
         var subjectAdded;
-        return _regeneratorRuntime.wrap(function _callee8$(_context9) {
+        return _regeneratorRuntime.wrap(function _callee9$(_context10) {
           while (1) {
-            switch (_context9.prev = _context9.next) {
+            switch (_context10.prev = _context10.next) {
               case 0:
-                _context9.next = 2;
+                _context10.next = 2;
                 return this.addSubjects('bottom', 1);
 
               case 2:
-                subjectAdded = _context9.sent;
+                subjectAdded = _context10.sent;
 
                 if (subjectAdded) {
                   this.removeSubjects('top', 1);
@@ -9433,10 +9546,10 @@ var SubjectsContainer = function (_ViewController) {
 
               case 4:
               case 'end':
-                return _context9.stop();
+                return _context10.stop();
             }
           }
-        }, _callee8, this);
+        }, _callee9, this);
       }));
 
       function scrollDown() {
@@ -9460,11 +9573,9 @@ var Calendar = function (_ViewController) {
 
     var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Calendar).call(this));
 
-    _this.startDate = new CustomDate();
-
     _this.dateBar = new DateBar(CLASS_PREFIX);
     _this.subjectsContainer = new SubjectsContainer(loadUrl, CLASS_PREFIX);
-    _this.controlBar = new ControlBar(_this.startDate, _this.dateBar, _this.subjectsContainer, CLASS_PREFIX);
+    _this.controlBar = new ControlBar(new CustomDate(), _this.dateBar, _this.subjectsContainer, CLASS_PREFIX);
 
     _this.buildHtml(subjectsHeader, xdiv, _this.controlBar, _this.dateBar, _this.subjectsContainer);
 

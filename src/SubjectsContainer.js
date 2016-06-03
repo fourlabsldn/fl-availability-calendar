@@ -64,6 +64,18 @@ export default class SubjectsContainer extends ViewController {
   }
 
   /**
+   * @method setSubjectCount
+   * @param  {Int} count
+   */
+  async setSubjectCount(count) {
+    const dayCount = this.getDayCount();
+    if (dayCount === count) { return; }
+
+    const addOrRemove = dayCount > count ? 'removeSubjects' : 'addSubjects';
+    await this[addOrRemove]('bottom', count);
+  }
+
+  /**
    * @method setEvents
    * @param  {Object<Array>} subjectsEvents - Object where each key is a subject
    *                                        id and each value is a subject's events.
@@ -129,6 +141,8 @@ export default class SubjectsContainer extends ViewController {
    * @return {Boolean}
    */
   subjectsCoverRange(fromDate, toDate) {
+    if (this.subjects.length === 0) { return true; }
+
     const range = this.getSubjectsEventRange();
     const coverFromDate = range.from.diff(fromDate) <= 0;
     const coverToDate = range.to.diff(toDate) >= 0;
@@ -245,12 +259,11 @@ export default class SubjectsContainer extends ViewController {
    * @return {Promise}
    */
   async addDay(frontBack) {
+    const toTheFront = frontBack === 'front';
+    assert(toTheFront || frontBack === 'back', `Invalid addDay direction option: ${frontBack}`);
+
     let fromDate;
     let toDate;
-    const toTheFront = frontBack === 'front';
-    assert(toTheFront || frontBack === 'back',
-      `Invalid addDay direction option: ${frontBack}`);
-
     if (toTheFront) {
       fromDate = this.startDate;
       toDate = this.getEndDate().add(1, 'days');
@@ -266,8 +279,8 @@ export default class SubjectsContainer extends ViewController {
       this.setEvents(eventData);
     }
 
-    this.dayCount++;
     if (!toTheFront) { this.startDate.add(-1, 'day'); }
+    this.dayCount++;
     this.subjects.forEach(subject => subject.addDay(frontBack));
     return true;
   }

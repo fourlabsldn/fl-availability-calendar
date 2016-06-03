@@ -10,12 +10,10 @@ export default class Calendar extends ViewController {
   constructor(subjectsHeader, loadUrl, xdiv) {
     super();
 
-    this.startDate = new CustomDate();
-
     this.dateBar = new DateBar(CLASS_PREFIX);
     this.subjectsContainer = new SubjectsContainer(loadUrl, CLASS_PREFIX);
     this.controlBar = new ControlBar(
-      this.startDate,
+      new CustomDate(),
       this.dateBar,
       this.subjectsContainer,
       CLASS_PREFIX

@@ -22,6 +22,8 @@ export default class ControlBar extends ViewController {
     super();
     this.cssPrefix = `${modulePrefix}-${CLASS_PREFIX}`;
     this.html.container.classList.add(this.cssPrefix);
+
+    this.startDate = new CustomDate(startDate);
     this.dayCount = 0;
 
     this.dateBar = dateBar;
@@ -32,12 +34,8 @@ export default class ControlBar extends ViewController {
     Object.preventExtensions(this);
 
     this.setStartDate(startDate);
-
-    // TODO: This should be dynamic.
-    this.subjectsContainer.addSubjects('bottom', SUBJECT_COUNT)
-    .then(() => {
-      this.setDayCount(COLUMN_COUNT);
-    });
+    this.subjectsContainer.setSubjectCount(SUBJECT_COUNT)
+      .then(() => this.setDayCount(COLUMN_COUNT));
   }
 
   /**
@@ -97,24 +95,41 @@ export default class ControlBar extends ViewController {
 
     this.html.datePicker.addEventListener('change', () => {
       const datepickerDate = new CustomDate(this.html.datePicker.value);
-      this.setStartDate(datepickerDate);
+      const normalisedDate = datepickerDate.startOf('isoweek');
+      this.setStartDate(normalisedDate);
     });
   }
 
+  /**
+   * @method setDatepickerDate
+   * @param  {CustomDate} date
+   */
   setDatepickerDate(date) {
-    const normalisedDate = date.startOf('isoweek');
-    this.html.datePicker.value = normalisedDate.format(DATEPICKER_FORMAT);
+    this.html.datePicker.value = date.format(DATEPICKER_FORMAT);
   }
 
   /**
    * @method setStartDate
-   * @param  {CustomDate | String | Date} date
+   * @param  {CustomDate} date
    */
-  setStartDate(date) {
-    const normalisedDate = date.startOf('isoweek');
-    this.setDatepickerDate(normalisedDate);
-    this.dateBar.setStartDate(date);
-    this.subjectsContainer.setStartDate(date);
+  async setStartDate(date) {
+    const newDate = date ? new CustomDate(date) : this.startDate;
+    this.startDate = newDate;
+
+    await this.subjectsContainer.setStartDate(newDate);
+    this.setDatepickerDate(newDate);
+    this.dateBar.setStartDate(newDate);
+  }
+
+  /**
+   * Sets the start date given an offset number from the
+   * current start date.
+   * @method addToStartDate
+   * @param  {CustomDate} val
+   */
+  async addToStartDate(val) {
+    this.startDate.add(val);
+    await this.setStartDate();
   }
 
   setDayCount(count) {
@@ -123,13 +138,11 @@ export default class ControlBar extends ViewController {
   }
 
   async scrollLeft() {
-    await this.subjectsContainer.scrollLeft();
-    this.dateBar.scrollLeft();
+    await this.addToStartDate(-1);
   }
 
   async scrollRight() {
-    await this.subjectsContainer.scrollRight();
-    this.dateBar.scrollRight();
+    await this.addToStartDate(1);
   }
 
   scrollUp() {
