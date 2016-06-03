@@ -29,14 +29,24 @@ export default class SubjectsContainer extends ViewController {
   // ---------------------------------------------------------------------------
   // Setters
   // ---------------------------------------------------------------------------
-  setStartDate(startDate) {
+  /**
+   * @method setStartDate
+   * @param  {CustomDate} newstartDate
+   */
+  async setStartDate(newstartDate) {
     assert(
-      startDate instanceof CustomDate,
+      newstartDate instanceof CustomDate,
       'TypeError: startDate is not an instance of CustomDate'
     );
-    this.startDate = new CustomDate(startDate);
+
+    // NOTE: It is very important that this be the start of the day
+    // as in further comparisons there will have to be a difference
+    // of 24 hours between two dates.
+    this.startDate = new CustomDate(newstartDate).startOf('day');
+
+    // TODO FIXME: Check if we have the needed events in cache.
     this.subjects.forEach((subject) => {
-      subject.setStartDate(startDate);
+      subject.setStartDate(newstartDate);
     });
   }
 
@@ -252,11 +262,13 @@ export default class SubjectsContainer extends ViewController {
     return newSubjectConfig;
   }
 
+  // TODO: remove all day handling from here.
+
   /**
    * Add a day to each subject
    * @method addDay
    * @param  {String} frontBack - 'front' or 'back'.
-   * @return {Promise}
+   * @return {Promise<Boolean>}
    */
   async addDay(frontBack) {
     const toTheFront = frontBack === 'front';

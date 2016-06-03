@@ -33,8 +33,8 @@ export default class ControlBar extends ViewController {
     this.setListeners();
     Object.preventExtensions(this);
 
-    this.setStartDate(startDate);
-    this.subjectsContainer.setSubjectCount(SUBJECT_COUNT)
+    this.setStartDate(startDate)
+      .then(() => this.subjectsContainer.setSubjectCount(SUBJECT_COUNT))
       .then(() => this.setDayCount(COLUMN_COUNT));
   }
 

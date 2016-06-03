@@ -75,13 +75,26 @@ export default class Subject extends ViewController {
    * @method setStartDate
    * @param  {CustomDate} date
    */
-  setStartDate(date) {
+  setStartDate(newstartDate) {
     this.checkIfdestroyed();
 
-    this.startDate = new CustomDate(date);
+    const daysDiff = newstartDate.diff(this.startDate, 'days');
+    const absoluteDiff = Math.abs(daysDiff);
     const dayCount = this.getDayCount();
-    this.setDayCount(0);
-    this.setDayCount(dayCount);
+
+    if (absoluteDiff >= dayCount) {
+      this.removeMultipleDays('front', dayCount);
+      this.startDate = new CustomDate(newstartDate);
+      this.addMultipleDays('front', dayCount);
+    } else {
+      const removeFrom = (daysDiff < 0) ? 'front' : 'back';
+      const addTo = (daysDiff < 0) ? 'back' : 'front';
+
+      // In this case the startDate is changed in the add
+      // and remove methods.
+      this.removeMultipleDays(removeFrom, absoluteDiff);
+      this.addMultipleDays(addTo, absoluteDiff);
+    }
   }
 
   setEventsLoadedFrom(date) {
@@ -262,7 +275,7 @@ export default class Subject extends ViewController {
     assert(fromFront || position === 'back',
       `Invalid position value. Expected 'front' or 'back', gor '${position}'`);
 
-    if (this.getDayCount() === 0) { return true; }
+    if (this.getDayCount() === 0) { return; }
 
     if (fromFront) {
       const dayToBeRemoved = this.days.pop();
@@ -271,6 +284,30 @@ export default class Subject extends ViewController {
       const [dayToBeRemoved] = this.days.splice(0, 1);
       dayToBeRemoved.destroy();
       this.startDate.add(1, 'days');
+    }
+  }
+
+  /**
+   * @method addMultipleDays
+   * @param  {String} frontBack 'front' or 'back'
+   * @param  {Int} amount
+   * @return {Promise<Boolean>}
+   */
+  addMultipleDays(frontBack, amount) {
+    for (let i = 0; i < amount; i++) {
+      this.addDay(frontBack);
+    }
+  }
+
+  /**
+   * @method removeMultipleDays
+   * @param  {String} frontBack 'front' or 'back'
+   * @param  {Int} amount
+   * @return {void}
+   */
+  removeMultipleDays(frontBack, amount) {
+    for (let i = 0; i < amount; i++) {
+      this.removeDay(frontBack);
     }
   }
 
