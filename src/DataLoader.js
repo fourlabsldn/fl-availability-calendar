@@ -1,6 +1,8 @@
 import assert from 'fl-assert';
 import CustomDate from './CustomDate';
 
+const CONTENT_LOADING_PADDING = 40;
+
 // // Data object example
 // {
 //   moreToLoadAbove: true,
@@ -71,7 +73,14 @@ export default class DataLoader {
     this.cache = [];
     this.moreToLoadAbove = true;
     this.moreToLoadBelow = true;
+
+    // TODO: Initialise this to something that makes sense
+    this.loadedContentStart = new CustomDate();
+    this.loadedContentEnd = new CustomDate();
+
+    // How many days before and after each event range to query.
     this.requestPadding = 30;
+
     Object.preventExtensions(this);
 
     this.cache.lastElementId = () => {
@@ -85,25 +94,52 @@ export default class DataLoader {
     };
   }
 
+  // ---------------------------------------------------------------------------
+  // Setters
+  // ---------------------------------------------------------------------------
+
+  getLoadedContentStart() {
+    return this.loadedContentStart;
+  }
+
+  getLoadedContentEnd() {
+    return this.loadedContentEnd;
+  }
+
+  // ---------------------------------------------------------------------------
+  // Getters
+  // ---------------------------------------------------------------------------
+
   /**
    * @method getEventsForIds
-   * @param  {Array} ids
+   * @param  {Array<Int>} idsToLoad
    * @param  {CustomDate} fromDate
    * @param  {CustomDate} toDate
-   * @return {Promise<Array>}
+   * @return {Promise<Object>>} - Promise resolves into an object where
+   *                                     each key is a subject id and each value
+   *                                     is an array of events.
    */
-   // TODO: Implement this on its own
-  getEventsForIds(ids, fromDate, toDate) {
-    return this.getSubjects(ids.length, 'after', ids[0], fromDate, toDate);
+   // NOTE: The secret here is not loading events just for the ids requested,
+   // but for all ids, so that we always have a standard start and end
+   // date loaded from.
+  async getEventsForIds(idsToLoad, fromDate, toDate) {
+    // Load events for all ids.
+    const allIds = this.cache.map(subj => subj.id);
+    const events = await this.loadEvents(allIds, fromDate, toDate);
+
+    const responseObject = {};
+    for (const id of idsToLoad) {
+      responseObject[id] = events[id];
+    }
+
+    return responseObject;
   }
 
   // TODO: Use config object with {before: 5, after: 6, ids: [1,2,3]}
   getSubjects(
     amount,
     beforeAfter = 'after',
-    referenceId,
-    fromDate = new CustomDate(),
-    toDate = new CustomDate()
+    referenceId
   ) {
     assert((beforeAfter === 'before') || (beforeAfter === 'after'),
       `Invalid value for beforeAfter: ${beforeAfter}`);
@@ -125,7 +161,7 @@ export default class DataLoader {
       toIndex = targetIndex + normalisedAmount - 1;
     }
 
-    return this.getCacheSection(fromIndex, toIndex, fromDate, toDate);
+    return this.getCacheSection(fromIndex, toIndex);
   }
 
   /**
@@ -135,92 +171,40 @@ export default class DataLoader {
    * @param  {Int} toIndex
    * @param  {CustomDate} fromDate
    * @param  {CustomDate} toDate
-   * @return {Promise<Array>}
+   * @return {Promise<Array<Object>>} Resolves to an array of subject objects.
    */
-  async getCacheSection(fromIndex, toIndex, fromDate, toDate) {
+  async getCacheSection(fromIndex, toIndex) {
     const needsIndexesAbove = fromIndex < 0;
     const needsIndexesBelow = toIndex >= this.cache.length;
-    const hasAllIndexes = !needsIndexesAbove && !needsIndexesBelow;
-    const coversEntirePeriod = this.cacheCoversPeriod(fromIndex, toIndex, fromDate, toDate);
 
     const cachedFrom = Math.max(0, fromIndex);
     const cachedTo = Math.max(0, Math.min(toIndex, this.cache.length - 1));
-
     // We add one because the slice method does not include the 'to' index.
     const cachedSubjects = this.cache.slice(cachedFrom, cachedTo + 1);
 
-    if (hasAllIndexes && coversEntirePeriod) {
-      return cachedSubjects;
-    }
-
-    if (hasAllIndexes) {
-      const ids = cachedSubjects.map(subj => subj.id);
-      return this.loadEvents(ids, fromDate, toDate);
-    }
-
-    const serverRequests = [];
+    const serverRequests = [[], []];
     if (needsIndexesAbove && this.moreToLoadAbove) {
       // Plus one because the reference object is also returned
       const amount = Math.abs(fromIndex) + 1;
       const referenceId = this.cache.firstElementId();
-      serverRequests.push(
-        this.loadSubjects(amount, 'before', referenceId, fromDate, toDate)
-      );
-    } else {
-      serverRequests.push([]);
+      serverRequests[0] = this.loadSubjects(amount, 'before', referenceId);
     }
 
     if (needsIndexesBelow && this.moreToLoadBelow) {
       // Minimum two because reference object is also returned
-      const amount = Math.max(toIndex - this.cache.length + 2, 2);
+      // Plus one because indexes are zero indexed and lengths are one indexed.
+      const amount = Math.max(toIndex + 1 - this.cache.length, 2);
       const referenceId = this.cache.lastElementId();
-      serverRequests.push(
-        this.loadSubjects(amount, 'after', referenceId, fromDate, toDate)
-      );
-    } else {
-      serverRequests.push([]);
+      serverRequests[1] = this.loadSubjects(amount, 'after', referenceId);
     }
 
-    let [indexesAbove, indexesBelow] = await Promise.all(serverRequests);
-    indexesAbove = Array.isArray(indexesAbove)
-      ? indexesAbove.slice(0, indexesAbove.length - 1)
-      : [];
-
-    indexesBelow = Array.isArray(indexesBelow)
-      ? indexesBelow.slice(1, indexesBelow.length)
-      : [];
-
+    const [indexesAbove, indexesBelow] = await Promise.all(serverRequests);
     return indexesAbove.concat(cachedSubjects, indexesBelow);
   }
 
-
-  /**
-   * Checks whether in a portion of the cache all subjects have event
-   * data for the totality of a period.
-   * @method cacheCoversPeriod
-   * @param  {Int} fromIndex
-   * @param  {Int} toIndex
-   * @param  {CustomDate} fromDate
-   * @param  {CustomDate} toDate
-   * @return {Boolean}
-   */
-  cacheCoversPeriod(fromIndex, toIndex, fromDate, toDate) {
-    assert(fromIndex <= toIndex, `Invalid indexes passed: ${fromIndex}, ${toIndex}`);
-    assert(fromDate.diff(toDate) <= 0,
-      `fromDate cannot be greater than toDate: ${fromDate.toString()}, ${toDate.toString()}`);
-
-    if (fromIndex < 0 || toIndex >= this.cache.length) { return false; }
-
-    let allCoverFromToPeriod = true;
-    let index = fromIndex;
-    while (index <= toIndex && allCoverFromToPeriod) {
-      const coversFromDate = this.cache[index].eventsFromDate.diff(fromDate) <= 0;
-      const coversToDate = this.cache[index].eventsToDate.diff(toDate) >= 0;
-      allCoverFromToPeriod = allCoverFromToPeriod && coversFromDate && coversToDate;
-      index++;
-    }
-    return allCoverFromToPeriod;
-  }
+  // ---------------------------------------------------------------------------
+  // Modifiers
+  // ---------------------------------------------------------------------------
 
   // TODO: Add padding to loading amount and loading range in load functions
   /**
@@ -234,31 +218,37 @@ export default class DataLoader {
    * @param  {CustomDate} toDate
    * @return {Promise<Array<Object>>} - Array with subjects
    */
-  async loadSubjects(amount, beforeAfter, referenceId, fromDate, toDate) {
+  async loadSubjects(amount, beforeAfter, referenceId) {
     assert((beforeAfter === 'before' || beforeAfter === 'after'),
       `Invalid value for beforeAfter: ${beforeAfter}`);
 
-    const dayPadding = this.requestPadding;
-    const requestFrom = (new CustomDate(fromDate)).add(-dayPadding, 'days');
-    const requestTo = (new CustomDate(toDate)).add(dayPadding, 'days');
+    const requestFrom = this.loadedContentStart;
+    const requestTo = this.loadedContentEnd;
 
+    let loadedContent;
     if (beforeAfter === 'before') {
-      return {
+      loadedContent = {
         moreToLoadAbove: false,
         moreToLoadBelow: true,
-        fromDate,
-        toDate,
+        requestFrom,
+        requestTo,
         subjects: [],
       };
-    }
-    const loadedContent = await this.createCalendarContent(
-      [referenceId],
-      amount,
-      requestFrom,
-      requestTo
-    );
+    } else {
+      loadedContent = await this.createCalendarContent(
+        [referenceId],
+        amount,
+        requestFrom,
+        requestTo
+      );
 
-    this.processServerResponse(loadedContent);
+      // Remove reference object if any
+      if (referenceId) {
+        loadedContent.subjects = loadedContent.subjects.slice(1);
+      }
+    }
+
+    this.processServerResponse(loadedContent, requestFrom, requestTo);
     return loadedContent.subjects;
   }
 
@@ -269,15 +259,24 @@ export default class DataLoader {
    * @param  {Array<Int>} ids
    * @param  {CustomDate} fromDate
    * @param  {CustomDate} toDate
-   * @return {Promise<Array<Object>>} - Resolves into an array of subject objects
+   * @return {Promise<Object>} - Resolves into an object where each key is an id
+   *                             and each value an events array
    */
   async loadEvents(ids, fromDate, toDate) {
-    const dayPadding = this.requestPadding;
-    const requestFrom = (new CustomDate(fromDate)).add(-dayPadding, 'days');
-    const requestTo = (new CustomDate(toDate)).add(dayPadding, 'days');
+    const requestFrom = new CustomDate(fromDate).add(-CONTENT_LOADING_PADDING, 'days');
+    const requestTo = new CustomDate(toDate).add(CONTENT_LOADING_PADDING, 'days');
+
     const loadedContent = await this.createCalendarContent(ids, ids.length, requestFrom, requestTo);
-    this.processServerResponse(loadedContent);
-    return loadedContent.subjects;
+    this.processServerResponse(loadedContent, fromDate, toDate);
+
+    const responseObj = {};
+    for (const subject of loadedContent.subjects) {
+      responseObj[subject.id] = subject.events;
+    }
+
+    console.log(`LOAD EXECUTED
+      FROM ${fromDate.format('DD/MM')} TO ${toDate.format('DD/MM')}`);
+    return responseObj;
   }
 
   /**
@@ -285,10 +284,13 @@ export default class DataLoader {
    * @param  {Object} responseObj - A typical server response
    * @return {Void}
    */
-  processServerResponse(responseObj) {
+  processServerResponse(responseObj, loadedFrom, loadedUntil) {
+    assert(loadedFrom && loadedUntil, 'loadedFrom or loadedUntil not provided.');
     this.moreToLoadAbove = responseObj.moreToLoadAbove;
     this.moreToLoadBelow = responseObj.moreToLoadBelow;
-    this.addToCache(responseObj.subjects, responseObj.fromDate, responseObj.toDate);
+    this.loadedContentStart = loadedFrom;
+    this.loadedContentEnd = loadedUntil;
+    this.addToCache(responseObj.subjects);
   }
   /**
    * Adds loaded data to existing cache.
@@ -297,34 +299,15 @@ export default class DataLoader {
    * @param  {CustomDate} fromDate - Date where event data period coverage starts.
    * @param  {CustomDate} toDate - Date where event data period coverage ends.
    */
-  addToCache(subjects, fromDate, toDate) {
+  addToCache(subjects) {
     for (const subject of subjects) {
-      const cached = this.getCachedVersion(subject);
-      if (cached) {
-        cached.eventsFromDate = CustomDate.getEarliest(cached.eventsFromDate, fromDate);
-        cached.eventsToDate = CustomDate.getLatest(cached.eventsToDate, toDate);
-
-        for (const event of subject.events) {
-          cached.events.add(event);
-        }
+      const cacheIndex = this.cache.findIndex(s => s.id === subject.id);
+      if (cacheIndex >= 0) {
+        this.cache[cacheIndex] = subject;
       } else {
-        subject.eventsFromDate = fromDate;
-        subject.eventsToDate = toDate;
         this.insertOrderedToCache(subject);
       }
     }
-  }
-
-  /**
-   * Returns the subject object in cache, if it exists,
-   * which corresponds to the parameter given.
-   * @method getCachedVersion
-   * @param  {Object} subject - Object to create a Subject instance.
-   * @return {Object}
-   */
-  getCachedVersion(subject) {
-    const cachedVersion = this.cache.find(cached => cached.id === subject.id);
-    return cachedVersion;
   }
 
   /**
@@ -339,22 +322,18 @@ export default class DataLoader {
   insertOrderedToCache(subject) {
     let i = 0;
     let cachedSubject = this.cache[i];
-    let insertionIndex;
+    let insertionIndex = i;
     while (cachedSubject) {
       if (subject.id < cachedSubject.id) {
-        insertionIndex = i;
         break;
       }
       i++;
+      insertionIndex = i;
       cachedSubject = this.cache[i];
     }
 
-    if (insertionIndex) {
-      const deleteCount = 0;
-      this.cache.splice(insertionIndex, deleteCount, subject);
-    } else {
-      this.cache.push(subject);
-    }
+    const deleteCount = 0;
+    this.cache.splice(insertionIndex, deleteCount, subject);
   }
 
   /**
@@ -363,19 +342,14 @@ export default class DataLoader {
    * @return {Promise}
    */
   async createCalendarContent(startingIds, amount, fromDate, toDate) {
-    function daysFromNow(days) {
-      const date = new CustomDate();
-      return date.add(days, 'days');
-    }
-
     // Random number from 1 to 10
     function rand(max = 10) {
       return parseInt(Math.random() * max, 10);
     }
 
     const dateVariation = toDate.diff(fromDate, 'days');
-    const maxEventLength = dateVariation / 2;
-    const maxEventSpacing = dateVariation / 4;
+    const maxEventLength = parseInt(dateVariation / 2, 10);
+    const maxEventSpacing = parseInt(dateVariation / 4, 10);
     const properties = [];
     const propNo = amount;
     const lastId = startingIds[startingIds.length - 1] || 0;
@@ -404,7 +378,7 @@ export default class DataLoader {
         properties[i].events.add(newEvent);
         eventCount++;
         eventsCoverWholePeriod = toDate.diff(lastDate) > 0;
-      } while (eventsCoverWholePeriod);
+      } while (!eventsCoverWholePeriod);
     }
 
     return {

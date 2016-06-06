@@ -59,11 +59,12 @@ export default class Subject extends ViewController {
   // ---------------------------------------------------------------------------
   /**
    * @method setEvents
-   * @param  {Array<Object>} events
+   * @param  {Array<Object> | Set<Object>} events
+   * @param  {CustomDate} fromDate
+   * @param  {CustomDate} toDate
    */
   setEvents(events) {
     this.checkIfdestroyed();
-
     for (const event of events) {
       this.events.add(event);
     }
@@ -102,10 +103,7 @@ export default class Subject extends ViewController {
       const firstBusyDate = this.orderedeEvents[0].start;
       const dateIsAfterFirstBusyDate = (date.diff(firstBusyDate) > 0);
       if (dateIsAfterFirstBusyDate) {
-        assert(
-          false,
-          'Invalid date provided for EventLoadedFrom. Date is after first busy date.'
-        );
+        return;
       }
     }
     this.eventsLoadedRange.from = new CustomDate(date);
@@ -113,13 +111,10 @@ export default class Subject extends ViewController {
 
   setEventsLoadedTo(date) {
     if (this.orderedeEvents[0]) {
-      const lastBusyDate = this.orderedeEvents[this.orderedeEvents.length - 1];
+      const lastBusyDate = this.orderedeEvents[this.orderedeEvents.length - 1].start;
       const dateIsBeforeLastBusyDate = (date.diff(lastBusyDate) < 0);
       if (dateIsBeforeLastBusyDate) {
-        assert(
-          false,
-          'Invalid date provided for EventLoadedTo. Date is before last busy date.'
-        );
+        return;
       }
     }
     this.eventsLoadedRange.to = new CustomDate(date);

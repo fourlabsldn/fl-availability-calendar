@@ -5,6 +5,7 @@ import CustomDate from './CustomDate';
 import ViewController from './ViewController';
 
 const CLASS_PREFIX = 'subjects';
+
 export default class SubjectsContainer extends ViewController {
   /**
    * @method constructor
@@ -34,17 +35,17 @@ export default class SubjectsContainer extends ViewController {
    * @param  {CustomDate} newstartDate
    */
   async setStartDate(newstartDate) {
-    assert(
-      newstartDate instanceof CustomDate,
-      'TypeError: startDate is not an instance of CustomDate'
-    );
+    assert(newstartDate instanceof CustomDate,
+      'TypeError: startDate is not an instance of CustomDate');
 
     // NOTE: It is very important that this be the start of the day
     // as in further comparisons there will have to be a difference
     // of 24 hours between two dates.
     this.startDate = new CustomDate(newstartDate).startOf('day');
 
-    // TODO FIXME: Check if we have the needed events in cache.
+    const endDate = this.getEndDate();
+    await this.loadSubjectsEvents(this.startDate, endDate);
+
     this.subjects.forEach((subject) => {
       subject.setStartDate(newstartDate);
     });
@@ -57,20 +58,15 @@ export default class SubjectsContainer extends ViewController {
    * @return {Promise}
    */
   async setDayCount(count) {
-    const countDiff = count - this.getDayCount();
-    let dayFunction;
+    assert(count >= 0, 'Negative amount of days not allowed');
 
-    if (countDiff > 0) {
-      dayFunction = 'addDay';
-    } else if (count < this.getDayCount()) {
-      dayFunction = 'removeDay';
-    }
+    this.dayCount = count;
+    const endDate = this.getEndDate();
+    await this.loadSubjectsEvents(this.startDate, endDate);
 
-    const position = 'front';
-    const absDiff = Math.abs(countDiff);
-    for (let i = 0; i < absDiff; i++) {
-      await this[dayFunction](position);
-    }
+    this.subjects.forEach((subject) => {
+      subject.setDayCount(count);
+    });
   }
 
   /**
@@ -90,12 +86,14 @@ export default class SubjectsContainer extends ViewController {
    * @param  {Object<Array>} subjectsEvents - Object where each key is a subject
    *                                        id and each value is a subject's events.
    */
-  setEvents(subjectsEvents) {
-    const ids = Object.keys(subjectsEvents);
+  setEvents(eventsBySubjectId) {
+    const stringIds = Object.keys(eventsBySubjectId);
+    const ids = stringIds.map(id => parseInt(id, 10));
+
     for (const id of ids) {
       const subj = this.subjects.find(sub => sub.id === id);
       if (subj) {
-        subj.setEvents(subjectsEvents[id]);
+        subj.setEvents(eventsBySubjectId[id]);
       }
     }
   }
@@ -103,28 +101,6 @@ export default class SubjectsContainer extends ViewController {
   // ---------------------------------------------------------------------------
   // Getters
   // ---------------------------------------------------------------------------
-  /**
-   * Returns an object with the date 'from' and 'to'
-   * @method getSubjectsEventRange
-   * @return {Object} - {to: CustomDate, from: Custom Date}
-   */
-  getSubjectsEventRange() {
-    let fromDate = this.startDate;
-    let toDate = this.startDate;
-    for (const subject of this.subjects) {
-      const range = subject.getEventsLoadedRange();
-      if (range.from.diff(fromDate) < 0) {
-        fromDate = range.from;
-      }
-      if (range.to.diff(toDate) > 0) {
-        toDate = range.to;
-      }
-    }
-    return {
-      from: fromDate,
-      to: toDate,
-    };
-  }
 
   /**
    * [getDayCount description]
@@ -143,21 +119,6 @@ export default class SubjectsContainer extends ViewController {
     return endDate;
   }
 
-  /**
-   * Checks that all subjects have event information for a date range.
-   * @method subjectsCoverRange
-   * @param  {CustomDate} fromDate
-   * @param  {CustomDate} toDate
-   * @return {Boolean}
-   */
-  subjectsCoverRange(fromDate, toDate) {
-    if (this.subjects.length === 0) { return true; }
-
-    const range = this.getSubjectsEventRange();
-    const coverFromDate = range.from.diff(fromDate) <= 0;
-    const coverToDate = range.to.diff(toDate) >= 0;
-    return coverFromDate && coverToDate;
-  }
   // ---------------------------------------------------------------------------
   // Modifiers
   // ---------------------------------------------------------------------------
@@ -185,33 +146,21 @@ export default class SubjectsContainer extends ViewController {
    * @return {Promise} - The promise will be resolved when the subject has been added.
    */
   async addSubjects(topBottom, amount = 1) {
-    const startDate = this.startDate;
-    const dayCount = this.getDayCount();
-
+    const fromTop = topBottom === 'top';
     for (let i = 0; i < amount; i++) {
-      const subjConfig = await this.getNewSubjectConfig(topBottom);
+      const subjConfig = await this.getNewSubjectConfig(fromTop);
       const noMoreSubjectsToLoad = !subjConfig;
       if (noMoreSubjectsToLoad) {
         return false;
       }
 
-      //  NOTE: This object already contains events for the date range of
+      //  This object already contains events for the date range of
       //  the container.
-      const newSubject = new Subject(subjConfig, startDate, this.modulePrefix);
-
-      // set correct dayCount
-      for (let counter = 0; counter < dayCount; counter++) {
-        newSubject.addDay();
-      }
+      const newSubject = new Subject(subjConfig, this.startDate, this.modulePrefix);
+      newSubject.setDayCount(this.getDayCount());
 
       const firstSubjectToBeAdded = this.subjects.length === 0;
-
-      if (topBottom === 'bottom' || firstSubjectToBeAdded) {
-        this.subjects.push(newSubject);
-        requestAnimationFrame(() => {
-          this.html.container.appendChild(newSubject.html.container);
-        });
-      } else {
+      if (fromTop && !firstSubjectToBeAdded) {
         // Add subject to the beginning of the subjects array.
         this.subjects.splice(0, 0, newSubject);
         requestAnimationFrame(() => {
@@ -220,25 +169,54 @@ export default class SubjectsContainer extends ViewController {
             this.html.container.children[0]
           );
         });
+      } else {
+        this.subjects.push(newSubject);
+        requestAnimationFrame(() => {
+          this.html.container.appendChild(newSubject.html.container);
+        });
       }
     }
     return true;
   }
 
   /**
+   * Gets events needed from dataloader and sends them to each event.
+   * @method loadSubjectsEvents
+   * @param  {CustomDate} fromDate - Date from which subjects need events.
+   * @param  {CustomDate} toDate - Date until which subjects need events.
+   * @return {Promise<void>}
+   */
+  async loadSubjectsEvents(fromDate, toDate) {
+    let needsLoading = false;
+    const loadedContentStart = this.dataLoader.getLoadedContentStart();
+    const loadedContentEnd = this.dataLoader.getLoadedContentEnd();
+
+    if (fromDate.diff(loadedContentStart) < 0) {
+      needsLoading = true;
+    }
+    if (toDate.diff(loadedContentEnd) > 0) {
+      needsLoading = true;
+    }
+    if (!needsLoading) {
+      return;
+    }
+
+    const subjectsIds = this.subjects.map(subj => subj.getId());
+    const eventData = await this.dataLoader.getEventsForIds(
+      subjectsIds,
+      fromDate,
+      toDate
+    );
+
+    this.setEvents(eventData);
+  }
+
+  /**
    * @method getNewSubjectConfig
-   * @param  {String} topBottom
+   * @param  {Boolean} fromTop
    * @return {Promise<Object>} Will be resolved into an object able to create a Subject instance
    */
-  async getNewSubjectConfig(
-    topBottom = 'bottom',
-    fromDate = this.startDate,
-    toDate = this.getEndDate()
-  ) {
-    assert(topBottom === 'top' || topBottom === 'bottom',
-      `Invalid topBottom option: ${topBottom}`);
-
-    const fromTop = topBottom === 'top';
+  async getNewSubjectConfig(fromTop) {
     let beforeAfter;
     let referenceElement;
     if (fromTop) {
@@ -251,70 +229,13 @@ export default class SubjectsContainer extends ViewController {
 
     const isFirstSubject = this.subjects.length === 0;
     const referenceId = isFirstSubject ? null : referenceElement.getId();
-
-    const subjArray = await this.dataLoader
-      .getSubjects(2, beforeAfter, referenceId, fromDate, toDate);
+    const subjArray = await this.dataLoader.getSubjects(2, beforeAfter, referenceId);
 
     // Only the reference element returned.
     if (subjArray.length < 2) { return null; }
 
     const newSubjectConfig = isFirstSubject || fromTop ? subjArray[0] : subjArray[1];
     return newSubjectConfig;
-  }
-
-  // TODO: remove all day handling from here.
-
-  /**
-   * Add a day to each subject
-   * @method addDay
-   * @param  {String} frontBack - 'front' or 'back'.
-   * @return {Promise<Boolean>}
-   */
-  async addDay(frontBack) {
-    const toTheFront = frontBack === 'front';
-    assert(toTheFront || frontBack === 'back', `Invalid addDay direction option: ${frontBack}`);
-
-    let fromDate;
-    let toDate;
-    if (toTheFront) {
-      fromDate = this.startDate;
-      toDate = this.getEndDate().add(1, 'days');
-    } else {
-      fromDate = new CustomDate(this.startDate).add(-1, 'days');
-      toDate = this.getEndDate();
-    }
-
-    if (!this.subjectsCoverRange(fromDate, toDate)) {
-      // Fetch more data if subjects currently don't have it.
-      const subjectIds = this.subjects.map(subj => subj.getId());
-      const eventData = await this.dataLoader.getEventsForIds(subjectIds, fromDate, toDate);
-      this.setEvents(eventData);
-    }
-
-    if (!toTheFront) { this.startDate.add(-1, 'day'); }
-    this.dayCount++;
-    this.subjects.forEach(subject => subject.addDay(frontBack));
-    return true;
-  }
-
-  removeDay(frontBack) {
-    this.dayCount--;
-    if (frontBack === 'back') { this.startDate.add(1, 'day'); }
-    this.subjects.forEach(subject => subject.removeDay(frontBack));
-  }
-
-  async scrollLeft() {
-    const dayAdded = await this.addDay('back');
-    if (dayAdded) {
-      this.removeDay('front');
-    }
-  }
-
-  async scrollRight() {
-    const dayAdded = await this.addDay('front');
-    if (dayAdded) {
-      this.removeDay('back');
-    }
   }
 
   /**
