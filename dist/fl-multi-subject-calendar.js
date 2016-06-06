@@ -8244,6 +8244,7 @@ var Subject = function (_ViewController) {
 }(ViewController);
 
 var CONTENT_LOADING_PADDING = 40;
+var MAX_LOADED_RANGE = 120; // in days
 
 // // Data object example
 // {
@@ -8380,33 +8381,26 @@ var DataLoader = function () {
     key: 'getEventsForIds',
     value: function () {
       var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee(idsToLoad, fromDate, toDate) {
-        var loadedContentIsBeforeFromDate, loadedContentIsAfterToDate, loadFrom, loadTo, allIds, events, responseObject, _iteratorNormalCompletion, _didIteratorError, _iteratorError, _iterator, _step, id;
+        var allIds, events, responseObject, _iteratorNormalCompletion, _didIteratorError, _iteratorError, _iterator, _step, id;
 
         return _regeneratorRuntime.wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
-                // Make sure we load from the earliest date needed to the latest date needed.
-                loadedContentIsBeforeFromDate = this.loadedContentStart.diff(fromDate) < 0;
-                loadedContentIsAfterToDate = this.loadedContentEnd.diff(toDate) > 0;
-                loadFrom = loadedContentIsBeforeFromDate ? this.loadedContentStart : fromDate;
-                loadTo = loadedContentIsAfterToDate ? this.loadedContentEnd : toDate;
-
                 // Load events for all ids.
-
                 allIds = this.cache.map(function (subj) {
                   return subj.id;
                 });
-                _context.next = 7;
-                return this.loadEvents(allIds, loadFrom, loadTo);
+                _context.next = 3;
+                return this.loadEvents(allIds, fromDate, toDate);
 
-              case 7:
+              case 3:
                 events = _context.sent;
                 responseObject = {};
                 _iteratorNormalCompletion = true;
                 _didIteratorError = false;
                 _iteratorError = undefined;
-                _context.prev = 12;
+                _context.prev = 8;
 
                 for (_iterator = idsToLoad[Symbol.iterator](); !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
                   id = _step.value;
@@ -8414,48 +8408,48 @@ var DataLoader = function () {
                   responseObject[id] = events[id];
                 }
 
-                _context.next = 20;
+                _context.next = 16;
                 break;
 
-              case 16:
-                _context.prev = 16;
-                _context.t0 = _context['catch'](12);
+              case 12:
+                _context.prev = 12;
+                _context.t0 = _context['catch'](8);
                 _didIteratorError = true;
                 _iteratorError = _context.t0;
 
-              case 20:
-                _context.prev = 20;
-                _context.prev = 21;
+              case 16:
+                _context.prev = 16;
+                _context.prev = 17;
 
                 if (!_iteratorNormalCompletion && _iterator.return) {
                   _iterator.return();
                 }
 
-              case 23:
-                _context.prev = 23;
+              case 19:
+                _context.prev = 19;
 
                 if (!_didIteratorError) {
-                  _context.next = 26;
+                  _context.next = 22;
                   break;
                 }
 
                 throw _iteratorError;
 
-              case 26:
-                return _context.finish(23);
+              case 22:
+                return _context.finish(19);
 
-              case 27:
-                return _context.finish(20);
+              case 23:
+                return _context.finish(16);
 
-              case 28:
+              case 24:
                 return _context.abrupt('return', responseObject);
 
-              case 29:
+              case 25:
               case 'end':
                 return _context.stop();
             }
           }
-        }, _callee, this, [[12, 16, 20, 28], [21,, 23, 27]]);
+        }, _callee, this, [[8, 12, 16, 24], [17,, 19, 23]]);
       }));
 
       function getEventsForIds(_x, _x2, _x3) {
@@ -8659,27 +8653,28 @@ var DataLoader = function () {
     key: 'loadEvents',
     value: function () {
       var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee4(ids, fromDate, toDate) {
-        var requestFrom, requestTo, loadedContent, responseObj, _iteratorNormalCompletion2, _didIteratorError2, _iteratorError2, _iterator2, _step2, subject;
+        var _calculateLoadingDate, loadFrom, loadTo, loadedContent, responseObj, _iteratorNormalCompletion2, _didIteratorError2, _iteratorError2, _iterator2, _step2, subject;
 
         return _regeneratorRuntime.wrap(function _callee4$(_context4) {
           while (1) {
             switch (_context4.prev = _context4.next) {
               case 0:
-                requestFrom = new CustomDate(fromDate).add(-CONTENT_LOADING_PADDING, 'days');
-                requestTo = new CustomDate(toDate).add(CONTENT_LOADING_PADDING, 'days');
-                _context4.next = 4;
-                return this.createCalendarContent(ids, ids.length, requestFrom, requestTo);
+                _calculateLoadingDate = this.calculateLoadingDate(fromDate, toDate);
+                loadFrom = _calculateLoadingDate.loadFrom;
+                loadTo = _calculateLoadingDate.loadTo;
+                _context4.next = 5;
+                return this.createCalendarContent(ids, ids.length, loadFrom, loadTo);
 
-              case 4:
+              case 5:
                 loadedContent = _context4.sent;
 
-                this.processServerResponse(loadedContent, requestFrom, requestTo);
+                this.processServerResponse(loadedContent, loadFrom, loadTo);
 
                 responseObj = {};
                 _iteratorNormalCompletion2 = true;
                 _didIteratorError2 = false;
                 _iteratorError2 = undefined;
-                _context4.prev = 10;
+                _context4.prev = 11;
 
                 for (_iterator2 = loadedContent.subjects[Symbol.iterator](); !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
                   subject = _step2.value;
@@ -8687,49 +8682,49 @@ var DataLoader = function () {
                   responseObj[subject.id] = subject.events;
                 }
 
-                _context4.next = 18;
+                _context4.next = 19;
                 break;
 
-              case 14:
-                _context4.prev = 14;
-                _context4.t0 = _context4['catch'](10);
+              case 15:
+                _context4.prev = 15;
+                _context4.t0 = _context4['catch'](11);
                 _didIteratorError2 = true;
                 _iteratorError2 = _context4.t0;
 
-              case 18:
-                _context4.prev = 18;
+              case 19:
                 _context4.prev = 19;
+                _context4.prev = 20;
 
                 if (!_iteratorNormalCompletion2 && _iterator2.return) {
                   _iterator2.return();
                 }
 
-              case 21:
-                _context4.prev = 21;
+              case 22:
+                _context4.prev = 22;
 
                 if (!_didIteratorError2) {
-                  _context4.next = 24;
+                  _context4.next = 25;
                   break;
                 }
 
                 throw _iteratorError2;
 
-              case 24:
-                return _context4.finish(21);
-
               case 25:
-                return _context4.finish(18);
+                return _context4.finish(22);
 
               case 26:
-                console.log('LOAD EXECUTED\n      FROM ' + requestFrom.format('DD/MM') + ' TO ' + requestTo.format('DD/MM'));
+                return _context4.finish(19);
+
+              case 27:
+                console.log('LOAD EXECUTED\n      FROM ' + loadFrom.format('DD/MM/YY') + ' TO ' + loadTo.format('DD/MM/YY'));
                 return _context4.abrupt('return', responseObj);
 
-              case 28:
+              case 29:
               case 'end':
                 return _context4.stop();
             }
           }
-        }, _callee4, this, [[10, 14, 18, 26], [19,, 21, 25]]);
+        }, _callee4, this, [[11, 15, 19, 27], [20,, 22, 26]]);
       }));
 
       function loadEvents(_x10, _x11, _x12) {
@@ -8738,6 +8733,36 @@ var DataLoader = function () {
 
       return loadEvents;
     }()
+  }, {
+    key: 'calculateLoadingDate',
+    value: function calculateLoadingDate(fromDate, toDate) {
+      var fromIsBeforeLoadedFrom = this.loadedContentStart.diff(fromDate) > 0;
+      var toIsAfterLoadedTo = this.loadedContentEnd.diff(toDate) < 0;
+
+      var earliestFrom = fromIsBeforeLoadedFrom ? fromDate : this.loadedContentStart;
+      var latestTo = toIsAfterLoadedTo ? toDate : this.loadedContentEnd;
+
+      var widestRangeWithinLoadLimit = latestTo.diff(earliestFrom) + CONTENT_LOADING_PADDING < MAX_LOADED_RANGE;
+
+      var loadFrom = this.loadedContentStart;
+      var loadTo = this.loadedContentEnd;
+
+      if (widestRangeWithinLoadLimit) {
+        if (fromIsBeforeLoadedFrom) {
+          loadFrom = new CustomDate(fromDate).add(-CONTENT_LOADING_PADDING, 'days');
+        } else if (toIsAfterLoadedTo) {
+          loadTo = new CustomDate(toDate).add(CONTENT_LOADING_PADDING, 'days');
+        }
+      } else {
+        loadFrom = new CustomDate(fromDate).add(-CONTENT_LOADING_PADDING, 'days');
+        loadTo = new CustomDate(toDate).add(CONTENT_LOADING_PADDING, 'days');
+      }
+
+      return {
+        loadFrom: loadFrom,
+        loadTo: loadTo
+      };
+    }
 
     /**
      * @method processServerResponse
@@ -8855,9 +8880,10 @@ var DataLoader = function () {
                   var randomNum = parseInt(Math.random() * max, 10);
                   return Math.max(1, randomNum);
                 };
+
+                // TODO: Minimise network requests.
+                console.log('NETWORK REQUEST');
                 // Random number from 1 to 10
-
-
                 dateVariation = toDate.diff(fromDate, 'days');
                 maxEventLength = Math.min(10, parseInt(dateVariation / 2, 10));
                 maxEventSpacing = Math.min(10, parseInt(dateVariation / 4, 10));
@@ -8903,7 +8929,7 @@ var DataLoader = function () {
                   subjects: properties
                 });
 
-              case 10:
+              case 11:
               case 'end':
                 return _context5.stop();
             }

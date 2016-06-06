@@ -2,6 +2,7 @@ import assert from 'fl-assert';
 import CustomDate from './CustomDate';
 
 const CONTENT_LOADING_PADDING = 40;
+const MAX_LOADED_RANGE = 120; // in days
 
 // // Data object example
 // {
@@ -123,15 +124,9 @@ export default class DataLoader {
    // but for all ids, so that we always have a standard start and end
    // date loaded from.
   async getEventsForIds(idsToLoad, fromDate, toDate) {
-    // Make sure we load from the earliest date needed to the latest date needed.
-    const loadedContentIsBeforeFromDate = this.loadedContentStart.diff(fromDate) < 0;
-    const loadedContentIsAfterToDate = this.loadedContentEnd.diff(toDate) > 0;
-    const loadFrom = loadedContentIsBeforeFromDate ? this.loadedContentStart : fromDate;
-    const loadTo = loadedContentIsAfterToDate ? this.loadedContentEnd : toDate;
-
     // Load events for all ids.
     const allIds = this.cache.map(subj => subj.id);
-    const events = await this.loadEvents(allIds, loadFrom, loadTo);
+    const events = await this.loadEvents(allIds, fromDate, toDate);
 
     const responseObject = {};
     for (const id of idsToLoad) {
@@ -269,11 +264,10 @@ export default class DataLoader {
    *                             and each value an events array
    */
   async loadEvents(ids, fromDate, toDate) {
-    const requestFrom = new CustomDate(fromDate).add(-CONTENT_LOADING_PADDING, 'days');
-    const requestTo = new CustomDate(toDate).add(CONTENT_LOADING_PADDING, 'days');
+    const { loadFrom, loadTo } = this.calculateLoadingDate(fromDate, toDate);
 
-    const loadedContent = await this.createCalendarContent(ids, ids.length, requestFrom, requestTo);
-    this.processServerResponse(loadedContent, requestFrom, requestTo);
+    const loadedContent = await this.createCalendarContent(ids, ids.length, loadFrom, loadTo);
+    this.processServerResponse(loadedContent, loadFrom, loadTo);
 
     const responseObj = {};
     for (const subject of loadedContent.subjects) {
@@ -281,8 +275,38 @@ export default class DataLoader {
     }
 
     console.log(`LOAD EXECUTED
-      FROM ${requestFrom.format('DD/MM')} TO ${requestTo.format('DD/MM')}`);
+      FROM ${loadFrom.format('DD/MM/YY')} TO ${loadTo.format('DD/MM/YY')}`);
     return responseObj;
+  }
+
+  calculateLoadingDate(fromDate, toDate) {
+    const fromIsBeforeLoadedFrom = this.loadedContentStart.diff(fromDate) > 0;
+    const toIsAfterLoadedTo = this.loadedContentEnd.diff(toDate) < 0;
+
+    const earliestFrom = fromIsBeforeLoadedFrom ? fromDate : this.loadedContentStart;
+    const latestTo = toIsAfterLoadedTo ? toDate : this.loadedContentEnd;
+
+    const widestRangeWithinLoadLimit =
+      latestTo.diff(earliestFrom) + CONTENT_LOADING_PADDING < MAX_LOADED_RANGE;
+
+    let loadFrom = this.loadedContentStart;
+    let loadTo = this.loadedContentEnd;
+
+    if (widestRangeWithinLoadLimit) {
+      if (fromIsBeforeLoadedFrom) {
+        loadFrom = new CustomDate(fromDate).add(-CONTENT_LOADING_PADDING, 'days');
+      } else if (toIsAfterLoadedTo) {
+        loadTo = new CustomDate(toDate).add(CONTENT_LOADING_PADDING, 'days');
+      }
+    } else {
+      loadFrom = new CustomDate(fromDate).add(-CONTENT_LOADING_PADDING, 'days');
+      loadTo = new CustomDate(toDate).add(CONTENT_LOADING_PADDING, 'days');
+    }
+
+    return {
+      loadFrom,
+      loadTo,
+    };
   }
 
   /**
@@ -348,6 +372,8 @@ export default class DataLoader {
    * @return {Promise}
    */
   async createCalendarContent(startingIds, amount, fromDate, toDate) {
+    // TODO: Minimise network requests.
+    console.log('NETWORK REQUEST');
     // Random number from 1 to 10
     function rand(max = 10) {
       const randomNum = parseInt(Math.random() * max, 10);
