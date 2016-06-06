@@ -65,9 +65,12 @@ export default class Subject extends ViewController {
    */
   setEvents(events) {
     this.checkIfdestroyed();
-    for (const event of events) {
-      this.events.add(event);
-    }
+
+    // Replace last events for new ones
+    this.events = events;
+    // for (const event of events) {
+    //   this.events.add(event);
+    // }
     this.updateOrderedEvents();
     this.refreshDayEvents();
   }

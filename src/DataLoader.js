@@ -123,9 +123,15 @@ export default class DataLoader {
    // but for all ids, so that we always have a standard start and end
    // date loaded from.
   async getEventsForIds(idsToLoad, fromDate, toDate) {
+    // Make sure we load from the earliest date needed to the latest date needed.
+    const loadedContentIsBeforeFromDate = this.loadedContentStart.diff(fromDate) < 0;
+    const loadedContentIsAfterToDate = this.loadedContentEnd.diff(toDate) > 0;
+    const loadFrom = loadedContentIsBeforeFromDate ? this.loadedContentStart : fromDate;
+    const loadTo = loadedContentIsAfterToDate ? this.loadedContentEnd : toDate;
+
     // Load events for all ids.
     const allIds = this.cache.map(subj => subj.id);
-    const events = await this.loadEvents(allIds, fromDate, toDate);
+    const events = await this.loadEvents(allIds, loadFrom, loadTo);
 
     const responseObject = {};
     for (const id of idsToLoad) {
@@ -267,7 +273,7 @@ export default class DataLoader {
     const requestTo = new CustomDate(toDate).add(CONTENT_LOADING_PADDING, 'days');
 
     const loadedContent = await this.createCalendarContent(ids, ids.length, requestFrom, requestTo);
-    this.processServerResponse(loadedContent, fromDate, toDate);
+    this.processServerResponse(loadedContent, requestFrom, requestTo);
 
     const responseObj = {};
     for (const subject of loadedContent.subjects) {
@@ -275,7 +281,7 @@ export default class DataLoader {
     }
 
     console.log(`LOAD EXECUTED
-      FROM ${fromDate.format('DD/MM')} TO ${toDate.format('DD/MM')}`);
+      FROM ${requestFrom.format('DD/MM')} TO ${requestTo.format('DD/MM')}`);
     return responseObj;
   }
 
@@ -344,12 +350,13 @@ export default class DataLoader {
   async createCalendarContent(startingIds, amount, fromDate, toDate) {
     // Random number from 1 to 10
     function rand(max = 10) {
-      return parseInt(Math.random() * max, 10);
+      const randomNum = parseInt(Math.random() * max, 10);
+      return Math.max(1, randomNum);
     }
 
     const dateVariation = toDate.diff(fromDate, 'days');
-    const maxEventLength = parseInt(dateVariation / 2, 10);
-    const maxEventSpacing = parseInt(dateVariation / 4, 10);
+    const maxEventLength = Math.min(10, parseInt(dateVariation / 2, 10));
+    const maxEventSpacing = Math.min(10, parseInt(dateVariation / 4, 10));
     const properties = [];
     const propNo = amount;
     const lastId = startingIds[startingIds.length - 1] || 0;
@@ -377,7 +384,7 @@ export default class DataLoader {
 
         properties[i].events.add(newEvent);
         eventCount++;
-        eventsCoverWholePeriod = toDate.diff(lastDate) > 0;
+        eventsCoverWholePeriod = toDate.diff(lastDate) < 0;
       } while (!eventsCoverWholePeriod);
     }
 

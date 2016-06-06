@@ -7922,31 +7922,12 @@ var Subject = function (_ViewController) {
     key: 'setEvents',
     value: function setEvents(events) {
       this.checkIfdestroyed();
-      var _iteratorNormalCompletion = true;
-      var _didIteratorError = false;
-      var _iteratorError = undefined;
 
-      try {
-        for (var _iterator = events[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-          var event = _step.value;
-
-          this.events.add(event);
-        }
-      } catch (err) {
-        _didIteratorError = true;
-        _iteratorError = err;
-      } finally {
-        try {
-          if (!_iteratorNormalCompletion && _iterator.return) {
-            _iterator.return();
-          }
-        } finally {
-          if (_didIteratorError) {
-            throw _iteratorError;
-          }
-        }
-      }
-
+      // Replace last events for new ones
+      this.events = events;
+      // for (const event of events) {
+      //   this.events.add(event);
+      // }
       this.updateOrderedEvents();
       this.refreshDayEvents();
     }
@@ -8091,27 +8072,27 @@ var Subject = function (_ViewController) {
     key: 'updateOrderedEvents',
     value: function updateOrderedEvents() {
       var ordered = [];
-      var _iteratorNormalCompletion2 = true;
-      var _didIteratorError2 = false;
-      var _iteratorError2 = undefined;
+      var _iteratorNormalCompletion = true;
+      var _didIteratorError = false;
+      var _iteratorError = undefined;
 
       try {
-        for (var _iterator2 = this.events[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-          var event = _step2.value;
+        for (var _iterator = this.events[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+          var event = _step.value;
 
           insertInOrder(event, ordered);
         }
       } catch (err) {
-        _didIteratorError2 = true;
-        _iteratorError2 = err;
+        _didIteratorError = true;
+        _iteratorError = err;
       } finally {
         try {
-          if (!_iteratorNormalCompletion2 && _iterator2.return) {
-            _iterator2.return();
+          if (!_iteratorNormalCompletion && _iterator.return) {
+            _iterator.return();
           }
         } finally {
-          if (_didIteratorError2) {
-            throw _iteratorError2;
+          if (_didIteratorError) {
+            throw _iteratorError;
           }
         }
       }
@@ -8399,26 +8380,33 @@ var DataLoader = function () {
     key: 'getEventsForIds',
     value: function () {
       var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee(idsToLoad, fromDate, toDate) {
-        var allIds, events, responseObject, _iteratorNormalCompletion, _didIteratorError, _iteratorError, _iterator, _step, id;
+        var loadedContentIsBeforeFromDate, loadedContentIsAfterToDate, loadFrom, loadTo, allIds, events, responseObject, _iteratorNormalCompletion, _didIteratorError, _iteratorError, _iterator, _step, id;
 
         return _regeneratorRuntime.wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
+                // Make sure we load from the earliest date needed to the latest date needed.
+                loadedContentIsBeforeFromDate = this.loadedContentStart.diff(fromDate) < 0;
+                loadedContentIsAfterToDate = this.loadedContentEnd.diff(toDate) > 0;
+                loadFrom = loadedContentIsBeforeFromDate ? this.loadedContentStart : fromDate;
+                loadTo = loadedContentIsAfterToDate ? this.loadedContentEnd : toDate;
+
                 // Load events for all ids.
+
                 allIds = this.cache.map(function (subj) {
                   return subj.id;
                 });
-                _context.next = 3;
-                return this.loadEvents(allIds, fromDate, toDate);
+                _context.next = 7;
+                return this.loadEvents(allIds, loadFrom, loadTo);
 
-              case 3:
+              case 7:
                 events = _context.sent;
                 responseObject = {};
                 _iteratorNormalCompletion = true;
                 _didIteratorError = false;
                 _iteratorError = undefined;
-                _context.prev = 8;
+                _context.prev = 12;
 
                 for (_iterator = idsToLoad[Symbol.iterator](); !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
                   id = _step.value;
@@ -8426,48 +8414,48 @@ var DataLoader = function () {
                   responseObject[id] = events[id];
                 }
 
-                _context.next = 16;
+                _context.next = 20;
                 break;
-
-              case 12:
-                _context.prev = 12;
-                _context.t0 = _context['catch'](8);
-                _didIteratorError = true;
-                _iteratorError = _context.t0;
 
               case 16:
                 _context.prev = 16;
-                _context.prev = 17;
+                _context.t0 = _context['catch'](12);
+                _didIteratorError = true;
+                _iteratorError = _context.t0;
+
+              case 20:
+                _context.prev = 20;
+                _context.prev = 21;
 
                 if (!_iteratorNormalCompletion && _iterator.return) {
                   _iterator.return();
                 }
 
-              case 19:
-                _context.prev = 19;
+              case 23:
+                _context.prev = 23;
 
                 if (!_didIteratorError) {
-                  _context.next = 22;
+                  _context.next = 26;
                   break;
                 }
 
                 throw _iteratorError;
 
-              case 22:
-                return _context.finish(19);
+              case 26:
+                return _context.finish(23);
 
-              case 23:
-                return _context.finish(16);
+              case 27:
+                return _context.finish(20);
 
-              case 24:
+              case 28:
                 return _context.abrupt('return', responseObject);
 
-              case 25:
+              case 29:
               case 'end':
                 return _context.stop();
             }
           }
-        }, _callee, this, [[8, 12, 16, 24], [17,, 19, 23]]);
+        }, _callee, this, [[12, 16, 20, 28], [21,, 23, 27]]);
       }));
 
       function getEventsForIds(_x, _x2, _x3) {
@@ -8685,7 +8673,7 @@ var DataLoader = function () {
               case 4:
                 loadedContent = _context4.sent;
 
-                this.processServerResponse(loadedContent, fromDate, toDate);
+                this.processServerResponse(loadedContent, requestFrom, requestTo);
 
                 responseObj = {};
                 _iteratorNormalCompletion2 = true;
@@ -8733,7 +8721,7 @@ var DataLoader = function () {
                 return _context4.finish(18);
 
               case 26:
-                console.log('LOAD EXECUTED\n      FROM ' + fromDate.format('DD/MM') + ' TO ' + toDate.format('DD/MM'));
+                console.log('LOAD EXECUTED\n      FROM ' + requestFrom.format('DD/MM') + ' TO ' + requestTo.format('DD/MM'));
                 return _context4.abrupt('return', responseObj);
 
               case 28:
@@ -8864,14 +8852,15 @@ var DataLoader = function () {
                 rand = function rand() {
                   var max = arguments.length <= 0 || arguments[0] === undefined ? 10 : arguments[0];
 
-                  return parseInt(Math.random() * max, 10);
+                  var randomNum = parseInt(Math.random() * max, 10);
+                  return Math.max(1, randomNum);
                 };
                 // Random number from 1 to 10
 
 
                 dateVariation = toDate.diff(fromDate, 'days');
-                maxEventLength = parseInt(dateVariation / 2, 10);
-                maxEventSpacing = parseInt(dateVariation / 4, 10);
+                maxEventLength = Math.min(10, parseInt(dateVariation / 2, 10));
+                maxEventSpacing = Math.min(10, parseInt(dateVariation / 4, 10));
                 properties = [];
                 propNo = amount;
                 lastId = startingIds[startingIds.length - 1] || 0;
@@ -8902,7 +8891,7 @@ var DataLoader = function () {
 
                     properties[i].events.add(newEvent);
                     eventCount++;
-                    eventsCoverWholePeriod = toDate.diff(lastDate) > 0;
+                    eventsCoverWholePeriod = toDate.diff(lastDate) < 0;
                   } while (!eventsCoverWholePeriod);
                 }
 
