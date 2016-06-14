@@ -90,33 +90,19 @@ export default class DataLoader {
     this.cache.firstElementId = () => {
       return this.cache.length ? this.cache[0].id : null;
     };
-    this.cache.findIndexWithId = (id) => {
-      return this.cache.findIndex(subj => subj.id === id);
-    };
   }
 
   // ---------------------------------------------------------------------------
-  // Setters
-  // ---------------------------------------------------------------------------
-
-  getLoadedContentStart() {
-    return this.loadedContentStart;
-  }
-
-  getLoadedContentEnd() {
-    return this.loadedContentEnd;
-  }
-
-  // ---------------------------------------------------------------------------
-  // Getters
+  // Public
   // ---------------------------------------------------------------------------
 
   /**
+   * @public
    * @method getEventsForIds
    * @param  {Array<Int>} idsToLoad
    * @param  {CustomDate} fromDate
    * @param  {CustomDate} toDate
-   * @return {Promise<Object>>} - Promise resolves into an object where
+   * @return {Promise<Object>} - Promise resolves into an object where
    *                                     each key is a subject id and each value
    *                                     is an array of events.
    */
@@ -137,16 +123,25 @@ export default class DataLoader {
   }
 
   // TODO: Use config object with {before: 5, after: 6, ids: [1,2,3]}
+  /**
+   * @public
+   * @method getSubjects
+   * @param  {Int} amount
+   * @param  {String} beforeAfter - 'after' or 'before'
+   * @param  {Int} referenceId
+   * @return {Promise}
+   */
   getSubjects(
     amount,
     beforeAfter = 'after',
     referenceId
   ) {
-    assert((beforeAfter === 'before') || (beforeAfter === 'after'),
+    const beforeId = beforeAfter === 'before';
+    assert(beforeId || beforeAfter === 'after',
       `Invalid value for beforeAfter: ${beforeAfter}`);
 
     const targetIndex = this.cache.length > 0
-      ? this.cache.findIndexWithId(referenceId)
+      ? this.cache.findIndex(subj => subj.id === referenceId)
       : 0;
     assert(targetIndex >= 0, `Invalid target Index: ${targetIndex}`);
 
@@ -154,7 +149,7 @@ export default class DataLoader {
     let toIndex;
     const normalisedAmount = Math.max(amount, 1);
 
-    if (beforeAfter === 'before') {
+    if (beforeId) {
       fromIndex = targetIndex - normalisedAmount + 1;
       toIndex = targetIndex;
     } else {
@@ -164,14 +159,24 @@ export default class DataLoader {
 
     return this.getCacheSection(fromIndex, toIndex);
   }
+  // ---------------------------------------------------------------------------
+  // Private
+  // ---------------------------------------------------------------------------
+
+  getLoadedContentStart() {
+    return this.loadedContentStart;
+  }
+
+  getLoadedContentEnd() {
+    return this.loadedContentEnd;
+  }
+
 
   /**
    * Returns a section from the cache or fetches it from the server
    * @method getCacheSection
    * @param  {Int} fromIndex
    * @param  {Int} toIndex
-   * @param  {CustomDate} fromDate
-   * @param  {CustomDate} toDate
    * @return {Promise<Array<Object>>} Resolves to an array of subject objects.
    */
   async getCacheSection(fromIndex, toIndex) {
@@ -220,34 +225,23 @@ export default class DataLoader {
    * @return {Promise<Array<Object>>} - Array with subjects
    */
   async loadSubjects(amount, beforeAfter, referenceId) {
-    assert((beforeAfter === 'before' || beforeAfter === 'after'),
-      `Invalid value for beforeAfter: ${beforeAfter}`);
-
     const requestFrom = this.loadedContentStart;
     const requestTo = this.loadedContentEnd;
+    const subjects = await this.fetch({
+      referenceId,
+      beforeAfter,
+      recordCount: amount,
+      fromDate: requestFrom,
+      toDate: requestTo,
+    });
 
-    let loadedContent;
-    if (beforeAfter === 'before') {
-      loadedContent = {
-        moreToLoadAbove: false,
-        moreToLoadBelow: true,
-        requestFrom,
-        requestTo,
-        subjects: [],
-      };
-    } else {
-      loadedContent = await this.createCalendarContent(
-        [referenceId],
-        amount,
-        requestFrom,
-        requestTo
-      );
-
-      // Remove reference object if any
-      if (referenceId) {
-        loadedContent.subjects = loadedContent.subjects.slice(1);
-      }
-    }
+    const loadedContent = {
+      moreToLoadAbove: true,
+      moreToLoadBelow: true,
+      requestFrom,
+      requestTo,
+      subjects,
+    };
 
     this.processServerResponse(loadedContent, requestFrom, requestTo);
     return loadedContent.subjects;
@@ -266,7 +260,20 @@ export default class DataLoader {
   async loadEvents(ids, fromDate, toDate) {
     const { loadFrom, loadTo } = this.calculateLoadingDate(fromDate, toDate);
 
-    const loadedContent = await this.createCalendarContent(ids, ids.length, loadFrom, loadTo);
+    const subjects = await this.fetch({
+      ids,
+      fromDate: loadFrom.date.valueOf(),
+      toDate: loadTo.date.valueOf(),
+    });
+
+    const loadedContent = {
+      moreToLoadAbove: true,
+      moreToLoadBelow: true,
+      requestFrom: loadFrom,
+      requestTo: loadTo,
+      subjects,
+    };
+
     this.processServerResponse(loadedContent, loadFrom, loadTo);
 
     const responseObj = {};
@@ -364,5 +371,42 @@ export default class DataLoader {
 
     const deleteCount = 0;
     this.cache.splice(insertionIndex, deleteCount, subject);
+  }
+
+
+  async fetch(params) {
+    const requestUrl = this.addParametersToUrl(params, this.loadUrl);
+    const requestConfig = {
+      method: 'GET',
+      cache: 'no-cache',
+      // credentials: 'include',
+    };
+
+    const response = await fetch(requestUrl, requestConfig);
+    const content = await response.json();
+    return content;
+  }
+
+  /**
+   * Adds parameters as GET string parameters to a prepared URL
+   * @private
+   * @method _addParametersToUrl
+   * @param  {Object} params
+   * @param  {String} loadUrl [optional]
+   * @return {String} The full URL with parameters
+   */
+  addParametersToUrl(params, loadUrl = this.loadUrl) {
+    const getParams = [];
+    const keys = Object.keys(params);
+    for (const key of keys) {
+      const value = params[key] ? params[key].toString() : '';
+      const encodedKey = encodeURIComponent(key);
+      const encodedValue = encodeURIComponent(value);
+      getParams.push(`${encodedKey}=${encodedValue}`);
+    }
+
+    const encodedGetParams = getParams.join('&');
+    const fullUrl = `${loadUrl}?${encodedGetParams}`;
+    return fullUrl;
   }
 }

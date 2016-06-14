@@ -8338,46 +8338,28 @@ var DataLoader = function () {
     this.cache.firstElementId = function () {
       return _this.cache.length ? _this.cache[0].id : null;
     };
-    this.cache.findIndexWithId = function (id) {
-      return _this.cache.findIndex(function (subj) {
-        return subj.id === id;
-      });
-    };
   }
 
   // ---------------------------------------------------------------------------
-  // Setters
+  // Public
   // ---------------------------------------------------------------------------
 
+  /**
+   * @public
+   * @method getEventsForIds
+   * @param  {Array<Int>} idsToLoad
+   * @param  {CustomDate} fromDate
+   * @param  {CustomDate} toDate
+   * @return {Promise<Object>} - Promise resolves into an object where
+   *                                     each key is a subject id and each value
+   *                                     is an array of events.
+   */
+  // NOTE: The secret here is not loading events just for the ids requested,
+  // but for all ids, so that we always have a standard start and end
+  // date loaded from.
+
+
   _createClass(DataLoader, [{
-    key: 'getLoadedContentStart',
-    value: function getLoadedContentStart() {
-      return this.loadedContentStart;
-    }
-  }, {
-    key: 'getLoadedContentEnd',
-    value: function getLoadedContentEnd() {
-      return this.loadedContentEnd;
-    }
-
-    // ---------------------------------------------------------------------------
-    // Getters
-    // ---------------------------------------------------------------------------
-
-    /**
-     * @method getEventsForIds
-     * @param  {Array<Int>} idsToLoad
-     * @param  {CustomDate} fromDate
-     * @param  {CustomDate} toDate
-     * @return {Promise<Object>>} - Promise resolves into an object where
-     *                                     each key is a subject id and each value
-     *                                     is an array of events.
-     */
-    // NOTE: The secret here is not loading events just for the ids requested,
-    // but for all ids, so that we always have a standard start and end
-    // date loaded from.
-
-  }, {
     key: 'getEventsForIds',
     value: function () {
       var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee(idsToLoad, fromDate, toDate) {
@@ -8452,7 +8434,7 @@ var DataLoader = function () {
         }, _callee, this, [[8, 12, 16, 24], [17,, 19, 23]]);
       }));
 
-      function getEventsForIds(_x, _x2, _x3) {
+      function getEventsForIds(_x2, _x3, _x4) {
         return ref.apply(this, arguments);
       }
 
@@ -8460,6 +8442,14 @@ var DataLoader = function () {
     }()
 
     // TODO: Use config object with {before: 5, after: 6, ids: [1,2,3]}
+    /**
+     * @public
+     * @method getSubjects
+     * @param  {Int} amount
+     * @param  {String} beforeAfter - 'after' or 'before'
+     * @param  {Int} referenceId
+     * @return {Promise}
+     */
 
   }, {
     key: 'getSubjects',
@@ -8467,16 +8457,19 @@ var DataLoader = function () {
       var beforeAfter = arguments.length <= 1 || arguments[1] === undefined ? 'after' : arguments[1];
       var referenceId = arguments[2];
 
-      assert(beforeAfter === 'before' || beforeAfter === 'after', 'Invalid value for beforeAfter: ' + beforeAfter);
+      var beforeId = beforeAfter === 'before';
+      assert(beforeId || beforeAfter === 'after', 'Invalid value for beforeAfter: ' + beforeAfter);
 
-      var targetIndex = this.cache.length > 0 ? this.cache.findIndexWithId(referenceId) : 0;
+      var targetIndex = this.cache.length > 0 ? this.cache.findIndex(function (subj) {
+        return subj.id === referenceId;
+      }) : 0;
       assert(targetIndex >= 0, 'Invalid target Index: ' + targetIndex);
 
       var fromIndex = void 0;
       var toIndex = void 0;
       var normalisedAmount = Math.max(amount, 1);
 
-      if (beforeAfter === 'before') {
+      if (beforeId) {
         fromIndex = targetIndex - normalisedAmount + 1;
         toIndex = targetIndex;
       } else {
@@ -8486,14 +8479,26 @@ var DataLoader = function () {
 
       return this.getCacheSection(fromIndex, toIndex);
     }
+    // ---------------------------------------------------------------------------
+    // Private
+    // ---------------------------------------------------------------------------
+
+  }, {
+    key: 'getLoadedContentStart',
+    value: function getLoadedContentStart() {
+      return this.loadedContentStart;
+    }
+  }, {
+    key: 'getLoadedContentEnd',
+    value: function getLoadedContentEnd() {
+      return this.loadedContentEnd;
+    }
 
     /**
      * Returns a section from the cache or fetches it from the server
      * @method getCacheSection
      * @param  {Int} fromIndex
      * @param  {Int} toIndex
-     * @param  {CustomDate} fromDate
-     * @param  {CustomDate} toDate
      * @return {Promise<Array<Object>>} Resolves to an array of subject objects.
      */
 
@@ -8551,7 +8556,7 @@ var DataLoader = function () {
         }, _callee2, this);
       }));
 
-      function getCacheSection(_x5, _x6) {
+      function getCacheSection(_x6, _x7) {
         return ref.apply(this, arguments);
       }
 
@@ -8579,51 +8584,37 @@ var DataLoader = function () {
     key: 'loadSubjects',
     value: function () {
       var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee3(amount, beforeAfter, referenceId) {
-        var requestFrom, requestTo, loadedContent;
+        var requestFrom, requestTo, subjects, loadedContent;
         return _regeneratorRuntime.wrap(function _callee3$(_context3) {
           while (1) {
             switch (_context3.prev = _context3.next) {
               case 0:
-                assert(beforeAfter === 'before' || beforeAfter === 'after', 'Invalid value for beforeAfter: ' + beforeAfter);
-
                 requestFrom = this.loadedContentStart;
                 requestTo = this.loadedContentEnd;
-                loadedContent = void 0;
+                _context3.next = 4;
+                return this.fetch({
+                  referenceId: referenceId,
+                  beforeAfter: beforeAfter,
+                  recordCount: amount,
+                  fromDate: requestFrom,
+                  toDate: requestTo
+                });
 
-                if (!(beforeAfter === 'before')) {
-                  _context3.next = 8;
-                  break;
-                }
-
+              case 4:
+                subjects = _context3.sent;
                 loadedContent = {
-                  moreToLoadAbove: false,
+                  moreToLoadAbove: true,
                   moreToLoadBelow: true,
                   requestFrom: requestFrom,
                   requestTo: requestTo,
-                  subjects: []
+                  subjects: subjects
                 };
-                _context3.next = 12;
-                break;
 
-              case 8:
-                _context3.next = 10;
-                return this.createCalendarContent([referenceId], amount, requestFrom, requestTo);
-
-              case 10:
-                loadedContent = _context3.sent;
-
-
-                // Remove reference object if any
-                if (referenceId) {
-                  loadedContent.subjects = loadedContent.subjects.slice(1);
-                }
-
-              case 12:
 
                 this.processServerResponse(loadedContent, requestFrom, requestTo);
                 return _context3.abrupt('return', loadedContent.subjects);
 
-              case 14:
+              case 8:
               case 'end':
                 return _context3.stop();
             }
@@ -8631,7 +8622,7 @@ var DataLoader = function () {
         }, _callee3, this);
       }));
 
-      function loadSubjects(_x7, _x8, _x9) {
+      function loadSubjects(_x8, _x9, _x10) {
         return ref.apply(this, arguments);
       }
 
@@ -8653,7 +8644,7 @@ var DataLoader = function () {
     key: 'loadEvents',
     value: function () {
       var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee4(ids, fromDate, toDate) {
-        var _calculateLoadingDate, loadFrom, loadTo, loadedContent, responseObj, _iteratorNormalCompletion2, _didIteratorError2, _iteratorError2, _iterator2, _step2, subject;
+        var _calculateLoadingDate, loadFrom, loadTo, subjects, loadedContent, responseObj, _iteratorNormalCompletion2, _didIteratorError2, _iteratorError2, _iterator2, _step2, subject;
 
         return _regeneratorRuntime.wrap(function _callee4$(_context4) {
           while (1) {
@@ -8663,10 +8654,22 @@ var DataLoader = function () {
                 loadFrom = _calculateLoadingDate.loadFrom;
                 loadTo = _calculateLoadingDate.loadTo;
                 _context4.next = 5;
-                return this.createCalendarContent(ids, ids.length, loadFrom, loadTo);
+                return this.fetch({
+                  ids: ids,
+                  fromDate: loadFrom.date.valueOf(),
+                  toDate: loadTo.date.valueOf()
+                });
 
               case 5:
-                loadedContent = _context4.sent;
+                subjects = _context4.sent;
+                loadedContent = {
+                  moreToLoadAbove: true,
+                  moreToLoadBelow: true,
+                  requestFrom: loadFrom,
+                  requestTo: loadTo,
+                  subjects: subjects
+                };
+
 
                 this.processServerResponse(loadedContent, loadFrom, loadTo);
 
@@ -8674,7 +8677,7 @@ var DataLoader = function () {
                 _iteratorNormalCompletion2 = true;
                 _didIteratorError2 = false;
                 _iteratorError2 = undefined;
-                _context4.prev = 11;
+                _context4.prev = 12;
 
                 for (_iterator2 = loadedContent.subjects[Symbol.iterator](); !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
                   subject = _step2.value;
@@ -8682,52 +8685,52 @@ var DataLoader = function () {
                   responseObj[subject.id] = subject.events;
                 }
 
-                _context4.next = 19;
+                _context4.next = 20;
                 break;
 
-              case 15:
-                _context4.prev = 15;
-                _context4.t0 = _context4['catch'](11);
+              case 16:
+                _context4.prev = 16;
+                _context4.t0 = _context4['catch'](12);
                 _didIteratorError2 = true;
                 _iteratorError2 = _context4.t0;
 
-              case 19:
-                _context4.prev = 19;
+              case 20:
                 _context4.prev = 20;
+                _context4.prev = 21;
 
                 if (!_iteratorNormalCompletion2 && _iterator2.return) {
                   _iterator2.return();
                 }
 
-              case 22:
-                _context4.prev = 22;
+              case 23:
+                _context4.prev = 23;
 
                 if (!_didIteratorError2) {
-                  _context4.next = 25;
+                  _context4.next = 26;
                   break;
                 }
 
                 throw _iteratorError2;
 
-              case 25:
-                return _context4.finish(22);
-
               case 26:
-                return _context4.finish(19);
+                return _context4.finish(23);
 
               case 27:
+                return _context4.finish(20);
+
+              case 28:
                 console.log('LOAD EXECUTED\n      FROM ' + loadFrom.format('DD/MM/YY') + ' TO ' + loadTo.format('DD/MM/YY'));
                 return _context4.abrupt('return', responseObj);
 
-              case 29:
+              case 30:
               case 'end':
                 return _context4.stop();
             }
           }
-        }, _callee4, this, [[11, 15, 19, 27], [20,, 22, 26]]);
+        }, _callee4, this, [[12, 16, 20, 28], [21,, 23, 27]]);
       }));
 
-      function loadEvents(_x10, _x11, _x12) {
+      function loadEvents(_x11, _x12, _x13) {
         return ref.apply(this, arguments);
       }
 
@@ -8858,78 +8861,43 @@ var DataLoader = function () {
       var deleteCount = 0;
       this.cache.splice(insertionIndex, deleteCount, subject);
     }
-
-    /**
-     * Creates random data
-     * @method createCalendarContent
-     * @return {Promise}
-     */
-
   }, {
-    key: 'createCalendarContent',
-    value: function () {
-      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee5(startingIds, amount, fromDate, toDate) {
-        var rand, dateVariation, maxEventLength, maxEventSpacing, properties, propNo, lastId, eventCount, i, lastDate, eventsCoverWholePeriod, newEvent;
+    key: 'fetch',
+    value: function (_fetch) {
+      function fetch(_x) {
+        return _fetch.apply(this, arguments);
+      }
+
+      fetch.toString = function () {
+        return _fetch.toString();
+      };
+
+      return fetch;
+    }(function () {
+      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee5(params) {
+        var requestUrl, requestConfig, response, content;
         return _regeneratorRuntime.wrap(function _callee5$(_context5) {
           while (1) {
             switch (_context5.prev = _context5.next) {
               case 0:
-                rand = function rand() {
-                  var max = arguments.length <= 0 || arguments[0] === undefined ? 10 : arguments[0];
-
-                  var randomNum = parseInt(Math.random() * max, 10);
-                  return Math.max(1, randomNum);
+                requestUrl = this.addParametersToUrl(params, this.loadUrl);
+                requestConfig = {
+                  method: 'GET',
+                  cache: 'no-cache'
                 };
+                _context5.next = 4;
+                return fetch(requestUrl, requestConfig);
 
-                // TODO: Minimise network requests.
-                console.log('NETWORK REQUEST');
-                // Random number from 1 to 10
-                dateVariation = toDate.diff(fromDate, 'days');
-                maxEventLength = Math.min(10, parseInt(dateVariation / 2, 10));
-                maxEventSpacing = Math.min(10, parseInt(dateVariation / 4, 10));
-                properties = [];
-                propNo = amount;
-                lastId = startingIds[startingIds.length - 1] || 0;
-                eventCount = 0;
+              case 4:
+                response = _context5.sent;
+                _context5.next = 7;
+                return response.json();
 
+              case 7:
+                content = _context5.sent;
+                return _context5.abrupt('return', content);
 
-                for (i = 0; i < propNo; i++) {
-                  properties[i] = {};
-                  properties[i].id = startingIds[i] || lastId + i - startingIds.length + 1;
-                  properties[i].name = 'Property - asdf asd fasdf asdfasd ' + properties[i].id;
-                  properties[i].events = new Set();
-
-                  lastDate = new CustomDate(fromDate);
-                  eventsCoverWholePeriod = void 0;
-
-
-                  do {
-                    newEvent = {};
-
-                    newEvent.desc = 'Event ' + eventCount;
-                    newEvent.status = !!rand() ? 'busy' : 'half-busy';
-
-                    lastDate.add(rand(maxEventSpacing), 'days');
-                    newEvent.start = new CustomDate(lastDate);
-
-                    lastDate.add(rand(maxEventLength), 'days');
-                    newEvent.end = new CustomDate(lastDate);
-
-                    properties[i].events.add(newEvent);
-                    eventCount++;
-                    eventsCoverWholePeriod = toDate.diff(lastDate) < 0;
-                  } while (!eventsCoverWholePeriod);
-                }
-
-                return _context5.abrupt('return', {
-                  moreToLoadAbove: true,
-                  moreToLoadBelow: true,
-                  fromDate: fromDate,
-                  toDate: toDate,
-                  subjects: properties
-                });
-
-              case 11:
+              case 9:
               case 'end':
                 return _context5.stop();
             }
@@ -8937,12 +8905,59 @@ var DataLoader = function () {
         }, _callee5, this);
       }));
 
-      function createCalendarContent(_x13, _x14, _x15, _x16) {
+      return function (_x14) {
         return ref.apply(this, arguments);
+      };
+    }())
+
+    /**
+     * Adds parameters as GET string parameters to a prepared URL
+     * @private
+     * @method _addParametersToUrl
+     * @param  {Object} params
+     * @param  {String} loadUrl [optional]
+     * @return {String} The full URL with parameters
+     */
+
+  }, {
+    key: 'addParametersToUrl',
+    value: function addParametersToUrl(params) {
+      var loadUrl = arguments.length <= 1 || arguments[1] === undefined ? this.loadUrl : arguments[1];
+
+      var getParams = [];
+      var keys = Object.keys(params);
+      var _iteratorNormalCompletion4 = true;
+      var _didIteratorError4 = false;
+      var _iteratorError4 = undefined;
+
+      try {
+        for (var _iterator4 = keys[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
+          var key = _step4.value;
+
+          var value = params[key] ? params[key].toString() : '';
+          var encodedKey = encodeURIComponent(key);
+          var encodedValue = encodeURIComponent(value);
+          getParams.push(encodedKey + '=' + encodedValue);
+        }
+      } catch (err) {
+        _didIteratorError4 = true;
+        _iteratorError4 = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion4 && _iterator4.return) {
+            _iterator4.return();
+          }
+        } finally {
+          if (_didIteratorError4) {
+            throw _iteratorError4;
+          }
+        }
       }
 
-      return createCalendarContent;
-    }()
+      var encodedGetParams = getParams.join('&');
+      var fullUrl = loadUrl + '?' + encodedGetParams;
+      return fullUrl;
+    }
   }]);
 
   return DataLoader;
@@ -9611,7 +9626,7 @@ var Calendar = function (_ViewController) {
 
 xController(function (xdiv) {
   var subjectsTitle = 'Properties';
-  var loadUrl = '/';
+  var loadUrl = xdiv.dataset.loadUrl;
   return new Calendar(subjectsTitle, loadUrl, xdiv);
 });
 //# sourceMappingURL=fl-multi-subject-calendar.js.map

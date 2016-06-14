@@ -39,7 +39,7 @@ module.exports = function dbCreator(totalSubjects, fromDate, toDate) {
       lastDate.add(rand(maxEventLength), 'days');
       newEvent.end = moment(lastDate);
 
-      subjects[i].events.add(newEvent);
+      subjects[i].events.push(newEvent);
       eventCount++;
       eventsCoverWholePeriod = toDate.diff(lastDate) < 0;
     } while (!eventsCoverWholePeriod);

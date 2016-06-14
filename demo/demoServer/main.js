@@ -10,19 +10,30 @@ const express = require('express');
 const app = express();
 
 app.get('/', (req, res) => {
-  const beforeAfter = req.params.beforeAfter;
-  const extraSubjects = req.params.extraSubjects;
-  const referenceId = req.params.referenceId;
+  console.dir(req.query);
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Headers', 'X-Requested-With');
 
-  let ids = req.params.ids;
+  const beforeAfter = req.query.beforeAfter;
+  const recordCount = parseInt(req.query.recordCount, 10);
+  const referenceId = req.query.referenceId;
+
+  const idStrings = req.query.ids ? req.query.ids.split(',') : [];
+  let ids = idStrings.map(num => parseInt(num, 10));
+
   if (typeof beforeAfter === 'string') {
-    const extraIds = db.getIds(beforeAfter, referenceId, extraSubjects);
+    const extraIds = db.getIds(beforeAfter, parseInt(referenceId, 10), recordCount);
     ids = ids.concat(extraIds);
   }
-  const fromDate = req.params.fromDate;
-  const toDate = req.params.toDate;
-  const events = db.get(ids, fromDate, toDate);
-  res.json(events);
+  const fromDate = req.query.fromDate;
+  const toDate = req.query.toDate;
+
+  if (fromDate && toDate && ids) {
+    const events = db.get(ids, fromDate, toDate);
+    res.json(events);
+  } else {
+    res.json({ error: 'error' });
+  }
 });
 
 app.listen(3000, () => {
