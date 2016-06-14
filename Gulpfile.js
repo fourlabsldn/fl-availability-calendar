@@ -46,8 +46,8 @@ gulp.task('build:src', () => {
         exclude: 'node_modules/**',
         plugins: ['transform-async-to-generator', [
           'transform-runtime', {
-            'polyfill': false,
-            'regenerator': true,
+            polyfill: false,
+            regenerator: true,
           }]],
         presets: ['es2015-rollup'],
       }),
@@ -87,5 +87,4 @@ gulp.task('watch', [
   'watch:build:src',
 ]);
 
-gulp.task('build-watch', ['build', 'watch']);
-gulp.task('demo', ['copy-dependencies', 'build-watch']);
+gulp.task('demo', ['copy-dependencies', 'build', 'watch']);

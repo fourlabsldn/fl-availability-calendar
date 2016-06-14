@@ -6,7 +6,7 @@
   "scripts": {
     "start": "gulp demo",
     "demo": "gulp demo",
-    "dev": "gulp build-watch"
+    "dev": "gulp build && gulp watch"
   },
   "keywords": [
     "four",
@@ -25,6 +25,7 @@
     "babel-preset-es2015-rollup": "^1.1.1",
     "babel-preset-stage-0": "^6.5.0",
     "dep-linker": "^0.1.21",
+    "express": "^4.13.4",
     "fl-assert": "^1.0.10",
     "gulp": "^3.9.1",
     "gulp-postcss": "^6.1.1",
