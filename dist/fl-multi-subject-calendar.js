@@ -8263,6 +8263,110 @@ var Subject = function (_ViewController) {
   return Subject;
 }(ViewController);
 
+var Ajax = function () {
+  function Ajax(url) {
+    _classCallCheck(this, Ajax);
+
+    assert(url, 'No URL provided on instantiation');
+    this.url = url;
+  }
+
+  _createClass(Ajax, [{
+    key: 'query',
+    value: function () {
+      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee(params) {
+        var url = arguments.length <= 1 || arguments[1] === undefined ? this.url : arguments[1];
+        var requestUrl, requestConfig, response, content;
+        return _regeneratorRuntime.wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                requestUrl = this.addParametersToUrl(params, url);
+                requestConfig = {
+                  method: 'GET',
+                  cache: 'no-cache'
+                };
+                _context.next = 4;
+                return fetch(requestUrl, requestConfig);
+
+              case 4:
+                response = _context.sent;
+                _context.next = 7;
+                return response.json();
+
+              case 7:
+                content = _context.sent;
+                return _context.abrupt('return', content);
+
+              case 9:
+              case 'end':
+                return _context.stop();
+            }
+          }
+        }, _callee, this);
+      }));
+
+      function query(_x, _x2) {
+        return ref.apply(this, arguments);
+      }
+
+      return query;
+    }()
+
+    /**
+     * Adds parameters as GET string parameters to a prepared URL
+     * @private
+     * @method _addParametersToUrl
+     * @param  {Object} params
+     * @param  {String} url
+     * @return {String} The full URL with parameters
+     */
+    // TODO: this must be more robust. What about www.asdf.com/, www.asdf.com/?, www.asdf.com
+
+  }, {
+    key: 'addParametersToUrl',
+    value: function addParametersToUrl(params) {
+      var url = arguments.length <= 1 || arguments[1] === undefined ? this.url : arguments[1];
+
+      var getParams = [];
+      var keys = Object.keys(params);
+      var _iteratorNormalCompletion = true;
+      var _didIteratorError = false;
+      var _iteratorError = undefined;
+
+      try {
+        for (var _iterator = keys[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+          var key = _step.value;
+
+          var value = params[key] ? params[key].toString() : '';
+          var encodedKey = encodeURIComponent(key);
+          var encodedValue = encodeURIComponent(value);
+          getParams.push(encodedKey + '=' + encodedValue);
+        }
+      } catch (err) {
+        _didIteratorError = true;
+        _iteratorError = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion && _iterator.return) {
+            _iterator.return();
+          }
+        } finally {
+          if (_didIteratorError) {
+            throw _iteratorError;
+          }
+        }
+      }
+
+      var encodedGetParams = getParams.join('&');
+      var fullUrl = url + '?' + encodedGetParams;
+      return fullUrl;
+    }
+  }]);
+
+  return Ajax;
+}();
+
 var CONTENT_LOADING_PADDING = 40;
 var MAX_LOADED_RANGE = 120; // in days
 
@@ -8300,7 +8404,7 @@ var DataLoader = function () {
   function DataLoader(loadUrl) {
     _classCallCheck(this, DataLoader);
 
-    this.loadUrl = loadUrl;
+    this.ajax = new Ajax(loadUrl);
     this.cacheStartDate = new CustomDate();
     this.cacheEndDate = new CustomDate();
 
@@ -8433,7 +8537,9 @@ var DataLoader = function () {
     key: 'loadSubjects',
     value: function () {
       var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee3(params) {
-        var _calculateLoadingDate, loadFrom, loadTo, subjectsLoaded;
+        var _calculateLoadingDate,
+        // Prepare dates
+        loadFrom, loadTo, response, subjects;
 
         return _regeneratorRuntime.wrap(function _callee3$(_context3) {
           while (1) {
@@ -8445,16 +8551,21 @@ var DataLoader = function () {
 
                 params.fromDate = loadFrom.valueOf(); // eslint-disable-line no-param-reassign
                 params.toDate = loadTo.valueOf(); // eslint-disable-line no-param-reassign
-                _context3.next = 7;
-                return this.queryServer(params);
 
-              case 7:
-                subjectsLoaded = _context3.sent;
+                // Prepare amount
+                if (params.recordCount) {
+                  params.recordCount += CONTENT_LOADING_PADDING; // eslint-disable-line no-param-reassign
+                }
 
-                this.processServerResponse(subjectsLoaded);
-                return _context3.abrupt('return', subjectsLoaded.subjects);
+                _context3.next = 8;
+                return this.ajax.query(params);
 
-              case 10:
+              case 8:
+                response = _context3.sent;
+                subjects = this.processServerResponse(response);
+                return _context3.abrupt('return', subjects);
+
+              case 11:
               case 'end':
                 return _context3.stop();
             }
@@ -8468,6 +8579,17 @@ var DataLoader = function () {
 
       return loadSubjects;
     }()
+
+    /**
+     * Compares from and to dates with cacheStartDate and cacheEndDate, choosing
+     * the widest possible range within the range limit and adding adequate
+     * padding
+     * @method calculateLoadingDate
+     * @param  {CustomDate} fromDate
+     * @param  {CustomDate} toDate
+     * @return {Object}
+     */
+
   }, {
     key: 'calculateLoadingDate',
     value: function calculateLoadingDate(fromDate, toDate) {
@@ -8489,99 +8611,6 @@ var DataLoader = function () {
       return { loadFrom: loadFrom, loadTo: loadTo };
     }
 
-    // responses are always arrays of subjects
-
-  }, {
-    key: 'queryServer',
-    value: function () {
-      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee4(params) {
-        var url = arguments.length <= 1 || arguments[1] === undefined ? this.loadUrl : arguments[1];
-        var requestUrl, requestConfig, response, content;
-        return _regeneratorRuntime.wrap(function _callee4$(_context4) {
-          while (1) {
-            switch (_context4.prev = _context4.next) {
-              case 0:
-                requestUrl = this.addParametersToUrl(params, url);
-                requestConfig = {
-                  method: 'GET',
-                  cache: 'no-cache'
-                };
-                _context4.next = 4;
-                return fetch(requestUrl, requestConfig);
-
-              case 4:
-                response = _context4.sent;
-                _context4.next = 7;
-                return response.json();
-
-              case 7:
-                content = _context4.sent;
-                return _context4.abrupt('return', content);
-
-              case 9:
-              case 'end':
-                return _context4.stop();
-            }
-          }
-        }, _callee4, this);
-      }));
-
-      function queryServer(_x8, _x9) {
-        return ref.apply(this, arguments);
-      }
-
-      return queryServer;
-    }()
-
-    /**
-     * Adds parameters as GET string parameters to a prepared URL
-     * @private
-     * @method _addParametersToUrl
-     * @param  {Object} params
-     * @param  {String} loadUrl [optional]
-     * @return {String} The full URL with parameters
-     */
-
-  }, {
-    key: 'addParametersToUrl',
-    value: function addParametersToUrl(params) {
-      var loadUrl = arguments.length <= 1 || arguments[1] === undefined ? this.loadUrl : arguments[1];
-
-      var getParams = [];
-      var keys = Object.keys(params);
-      var _iteratorNormalCompletion = true;
-      var _didIteratorError = false;
-      var _iteratorError = undefined;
-
-      try {
-        for (var _iterator = keys[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-          var key = _step.value;
-
-          var value = params[key] ? params[key].toString() : '';
-          var encodedKey = encodeURIComponent(key);
-          var encodedValue = encodeURIComponent(value);
-          getParams.push(encodedKey + '=' + encodedValue);
-        }
-      } catch (err) {
-        _didIteratorError = true;
-        _iteratorError = err;
-      } finally {
-        try {
-          if (!_iteratorNormalCompletion && _iterator.return) {
-            _iterator.return();
-          }
-        } finally {
-          if (_didIteratorError) {
-            throw _iteratorError;
-          }
-        }
-      }
-
-      var encodedGetParams = getParams.join('&');
-      var fullUrl = loadUrl + '?' + encodedGetParams;
-      return fullUrl;
-    }
-
     /**
      * @method processServerResponse
      * @param  {Object} responseObj - A typical server response
@@ -8591,11 +8620,15 @@ var DataLoader = function () {
   }, {
     key: 'processServerResponse',
     value: function processServerResponse(responseObj) {
+      // Convert event dates into CustomDate objects
+      responseObj.subjects.forEach(function (s) {
+        s.events.forEach(function (e) {
+          e.start = new CustomDate(e.start); // eslint-disable-line no-param-reassign
+          e.end = new CustomDate(e.end); // eslint-disable-line no-param-reassign
+        });
+      });
       var fromDate = new CustomDate(responseObj.fromDate);
       var toDate = new CustomDate(responseObj.toDate);
-
-      // TO BE REMOVED
-      if (!fromDate.isValid() || !toDate.isValid()) return;
 
       assert(!fromDate.isValid() || !toDate.isValid(), 'fromDate or fromToDate not in responseObj.');
       this.cacheStartDate = responseObj.fromDate;
@@ -8616,41 +8649,67 @@ var DataLoader = function () {
     value: function addToCache(subjects) {
       var _this = this;
 
-      var _iteratorNormalCompletion2 = true;
-      var _didIteratorError2 = false;
-      var _iteratorError2 = undefined;
+      var _iteratorNormalCompletion = true;
+      var _didIteratorError = false;
+      var _iteratorError = undefined;
 
       try {
         var _loop = function _loop() {
-          var subject = _step2.value;
+          var subject = _step.value;
 
           var cacheIndex = _this.cache.findIndex(function (s) {
             return s.id === subject.id;
           });
-          if (cacheIndex >= 0) {
+          if (cacheIndex !== -1) {
             _this.cache[cacheIndex] = subject;
           } else {
             _this.insertOrderedToCache(subject);
           }
         };
 
-        for (var _iterator2 = subjects[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+        for (var _iterator = subjects[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
           _loop();
         }
       } catch (err) {
-        _didIteratorError2 = true;
-        _iteratorError2 = err;
+        _didIteratorError = true;
+        _iteratorError = err;
       } finally {
         try {
-          if (!_iteratorNormalCompletion2 && _iterator2.return) {
-            _iterator2.return();
+          if (!_iteratorNormalCompletion && _iterator.return) {
+            _iterator.return();
           }
         } finally {
-          if (_didIteratorError2) {
-            throw _iteratorError2;
+          if (_didIteratorError) {
+            throw _iteratorError;
           }
         }
       }
+    }
+
+    /**
+     * Inserts an object to the cache according to a specific ordering
+     * algorythm.
+     * NOTE: The ordering is via id and it assumes that ids are sequential
+     * and always incremented by one.
+     * @method insertOrderedToCache
+     * @param  {Object} subject [description]
+     * @return {void}
+     */
+
+  }, {
+    key: 'insertOrderedToCache',
+    value: function insertOrderedToCache(subject) {
+      var insertionIndex = 0;
+      var cachedSubject = this.cache[insertionIndex];
+      while (cachedSubject) {
+        if (subject.id < cachedSubject.id) {
+          break;
+        }
+        insertionIndex++;
+        cachedSubject = this.cache[insertionIndex];
+      }
+      var deleteCount = 0;
+      this.cache.splice(insertionIndex, deleteCount, subject);
     }
   }]);
 

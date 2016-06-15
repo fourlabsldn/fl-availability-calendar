@@ -11,6 +11,7 @@ const DepLinker = require('dep-linker');
 const rename = require('gulp-rename');
 const autoprefixer = require('autoprefixer');
 const postcss = require('gulp-postcss');
+const demoServer = require('./demo/demoServer/main.js');
 
 const moduleName = 'fl-multi-subject-calendar';
 const paths = {
@@ -77,6 +78,10 @@ gulp.task('watch:build:sass', () => {
   gulp.watch(paths.sass.src, ['build']);
 });
 
+gulp.task('startDemoServer', () => {
+  demoServer();
+});
+
 gulp.task('build', [
   'build:src',
   'build:sass',
@@ -87,4 +92,4 @@ gulp.task('watch', [
   'watch:build:src',
 ]);
 
-gulp.task('demo', ['copy-dependencies', 'build', 'watch']);
+gulp.task('demo', ['copy-dependencies', 'build','startDemoServer', 'watch' ]);

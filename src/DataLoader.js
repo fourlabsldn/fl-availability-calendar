@@ -1,6 +1,6 @@
 import assert from 'fl-assert';
 import CustomDate from './CustomDate';
-import Ajax from './utils/Ajax'
+import Ajax from './utils/Ajax';
 
 const CONTENT_LOADING_PADDING = 40;
 const MAX_LOADED_RANGE = 120; // in days
@@ -111,9 +111,9 @@ export default class DataLoader {
       params.recordCount += CONTENT_LOADING_PADDING; // eslint-disable-line no-param-reassign
     }
 
-    const subjectsLoaded = await this.ajax.query(params);
-    this.processServerResponse(subjectsLoaded);
-    return subjectsLoaded.subjects;
+    const response = await this.ajax.query(params);
+    const subjects = this.processServerResponse(response);
+    return subjects;
   }
 
   /**
@@ -151,6 +151,13 @@ export default class DataLoader {
    * @return {Void}
    */
   processServerResponse(responseObj) {
+    // Convert event dates into CustomDate objects
+    responseObj.subjects.forEach(s => {
+      s.events.forEach(e => {
+        e.start = new CustomDate(e.start); // eslint-disable-line no-param-reassign
+        e.end = new CustomDate(e.end); // eslint-disable-line no-param-reassign
+      });
+    });
     const fromDate = new CustomDate(responseObj.fromDate);
     const toDate = new CustomDate(responseObj.toDate);
 
