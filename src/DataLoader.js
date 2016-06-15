@@ -88,7 +88,7 @@ export default class DataLoader {
     }
 
     if (haveAllSubjectsInCache) {
-      return this.cache.splice(fromIndex, toIndex);
+      return this.cache.slice(fromIndex, toIndex);
     }
 
     return await this.loadSubjects({
@@ -103,8 +103,8 @@ export default class DataLoader {
   async loadSubjects(params) {
     // Prepare dates
     const { loadFrom, loadTo } = this.calculateLoadingDate(params.fromDate, params.toDate);
-    params.fromDate = loadFrom.valueOf(); // eslint-disable-line no-param-reassign
-    params.toDate = loadTo.valueOf(); // eslint-disable-line no-param-reassign
+    params.fromDate = loadFrom.toISOString(); // eslint-disable-line no-param-reassign
+    params.toDate = loadTo.toISOString(); // eslint-disable-line no-param-reassign
 
     // Prepare amount
     if (params.recordCount) {
@@ -148,7 +148,7 @@ export default class DataLoader {
   /**
    * @method processServerResponse
    * @param  {Object} responseObj - A typical server response
-   * @return {Void}
+   * @return {Array<Object>} Array of subject objects
    */
   processServerResponse(responseObj) {
     // Convert event dates into CustomDate objects
@@ -161,10 +161,11 @@ export default class DataLoader {
     const fromDate = new CustomDate(responseObj.fromDate);
     const toDate = new CustomDate(responseObj.toDate);
 
-    assert(!fromDate.isValid() || !toDate.isValid(), 'fromDate or fromToDate not in responseObj.');
-    this.cacheStartDate = responseObj.fromDate;
-    this.cacheEndDate = responseObj.toDate;
+    assert(fromDate.isValid() && toDate.isValid(), 'fromDate or fromToDate not in responseObj.');
+    this.cacheStartDate = fromDate;
+    this.cacheEndDate = toDate;
     this.addToCache(responseObj.subjects);
+    return responseObj.subjects;
   }
 
   /**

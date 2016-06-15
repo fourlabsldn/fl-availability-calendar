@@ -72,8 +72,8 @@ export default class CustomDate {
     return this.diff(date) > 0;
   }
 
-  valueOf() {
-    return this.date.valueOf();
+  toISOString() {
+    return this.date.toISOString();
   }
 
   isValid() {

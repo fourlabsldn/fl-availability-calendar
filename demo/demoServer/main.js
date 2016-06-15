@@ -10,7 +10,6 @@ const express = require('express');
 const app = express();
 
 module.exports = () => {
-
   app.get('/', (req, res) => {
     console.dir(req.query);
     res.header('Access-Control-Allow-Origin', '*');

@@ -14,8 +14,8 @@ module.exports = class DB {
    * @return {Array<Object>} Array of event objects
    */
   get(ids, fromDateRaw, toDateRaw) {
-    const fromDateNum = moment(parseInt(fromDateRaw, 10));
-    const toDateNum = moment(parseInt(toDateRaw, 10));
+    const fromDateNum = moment(fromDateRaw);
+    const toDateNum = moment(fromDateRaw);
     const fromDate = moment(fromDateNum);
     const toDate = moment(toDateNum);
 

@@ -7028,9 +7028,9 @@ var CustomDate = function () {
       return this.diff(date) > 0;
     }
   }, {
-    key: 'valueOf',
-    value: function valueOf() {
-      return this.date.valueOf();
+    key: 'toISOString',
+    value: function toISOString() {
+      return this.date.toISOString();
     }
   }, {
     key: 'isValid',
@@ -8504,7 +8504,7 @@ var DataLoader = function () {
                   break;
                 }
 
-                return _context2.abrupt('return', this.cache.splice(fromIndex, toIndex));
+                return _context2.abrupt('return', this.cache.slice(fromIndex, toIndex));
 
               case 9:
                 _context2.next = 11;
@@ -8549,8 +8549,8 @@ var DataLoader = function () {
                 loadFrom = _calculateLoadingDate.loadFrom;
                 loadTo = _calculateLoadingDate.loadTo;
 
-                params.fromDate = loadFrom.valueOf(); // eslint-disable-line no-param-reassign
-                params.toDate = loadTo.valueOf(); // eslint-disable-line no-param-reassign
+                params.fromDate = loadFrom.toISOString(); // eslint-disable-line no-param-reassign
+                params.toDate = loadTo.toISOString(); // eslint-disable-line no-param-reassign
 
                 // Prepare amount
                 if (params.recordCount) {
@@ -8614,7 +8614,7 @@ var DataLoader = function () {
     /**
      * @method processServerResponse
      * @param  {Object} responseObj - A typical server response
-     * @return {Void}
+     * @return {Array<Object>} Array of subject objects
      */
 
   }, {
@@ -8630,10 +8630,11 @@ var DataLoader = function () {
       var fromDate = new CustomDate(responseObj.fromDate);
       var toDate = new CustomDate(responseObj.toDate);
 
-      assert(!fromDate.isValid() || !toDate.isValid(), 'fromDate or fromToDate not in responseObj.');
-      this.cacheStartDate = responseObj.fromDate;
-      this.cacheEndDate = responseObj.toDate;
+      assert(fromDate.isValid() && toDate.isValid(), 'fromDate or fromToDate not in responseObj.');
+      this.cacheStartDate = fromDate;
+      this.cacheEndDate = toDate;
       this.addToCache(responseObj.subjects);
+      return responseObj.subjects;
     }
 
     /**
@@ -8885,53 +8886,21 @@ var SubjectsContainer = function (_ViewController) {
 
     /**
      * @method setEvents
-     * @param  {Object<Array>} subjectsEvents - Object where each key is a subject
-     *                                        id and each value is a subject's events.
+     * @param  {Array<Object>} subjects - Array of objects representing a subject
+     * and having the events to be set.
      */
 
   }, {
     key: 'setEvents',
-    value: function setEvents(eventsBySubjectId) {
-      var _this2 = this;
-
-      var stringIds = Object.keys(eventsBySubjectId);
-      var ids = stringIds.map(function (id) {
-        return parseInt(id, 10);
+    value: function setEvents(newEventsSubjects) {
+      this.subjects.forEach(function (subject) {
+        var subjWithNewEvents = newEventsSubjects.find(function (s) {
+          return s.id === subject.id;
+        });
+        if (subjWithNewEvents) {
+          subject.setEvents(subjWithNewEvents.events);
+        }
       });
-
-      var _iteratorNormalCompletion = true;
-      var _didIteratorError = false;
-      var _iteratorError = undefined;
-
-      try {
-        var _loop = function _loop() {
-          var id = _step.value;
-
-          var subj = _this2.subjects.find(function (sub) {
-            return sub.id === id;
-          });
-          if (subj) {
-            subj.setEvents(eventsBySubjectId[id]);
-          }
-        };
-
-        for (var _iterator = ids[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-          _loop();
-        }
-      } catch (err) {
-        _didIteratorError = true;
-        _iteratorError = err;
-      } finally {
-        try {
-          if (!_iteratorNormalCompletion && _iterator.return) {
-            _iterator.return();
-          }
-        } finally {
-          if (_didIteratorError) {
-            throw _iteratorError;
-          }
-        }
-      }
     }
 
     // ---------------------------------------------------------------------------
@@ -8997,25 +8966,25 @@ var SubjectsContainer = function (_ViewController) {
     key: 'addSubjects',
     value: function () {
       var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee4(topBottom) {
-        var _this3 = this;
+        var _this2 = this;
 
         var amount = arguments.length <= 1 || arguments[1] === undefined ? 1 : arguments[1];
 
-        var fromTop, _loop2, i, _ret2;
+        var fromTop, _loop, i, _ret;
 
         return _regeneratorRuntime.wrap(function _callee4$(_context5) {
           while (1) {
             switch (_context5.prev = _context5.next) {
               case 0:
                 fromTop = topBottom === 'top';
-                _loop2 = _regeneratorRuntime.mark(function _loop2(i) {
-                  var subjConfig, noMoreSubjectsToLoad, newSubject, firstSubjectToBeAdded;
-                  return _regeneratorRuntime.wrap(function _loop2$(_context4) {
+                _loop = _regeneratorRuntime.mark(function _loop(i) {
+                  var subjConfig, noMoreSubjectsToLoad, newSubject, referenceElement;
+                  return _regeneratorRuntime.wrap(function _loop$(_context4) {
                     while (1) {
                       switch (_context4.prev = _context4.next) {
                         case 0:
                           _context4.next = 2;
-                          return _this3.getNewSubjectConfig(fromTop);
+                          return _this2.getNewSubjectConfig(fromTop);
 
                         case 2:
                           subjConfig = _context4.sent;
@@ -9034,31 +9003,30 @@ var SubjectsContainer = function (_ViewController) {
 
                           //  This object already contains events for the date range of
                           //  the container.
-                          newSubject = new Subject(subjConfig, _this3.startDate, _this3.modulePrefix);
+                          newSubject = new Subject(subjConfig, _this2.startDate, _this2.modulePrefix);
 
-                          newSubject.setDayCount(_this3.getDayCount());
+                          newSubject.setDayCount(_this2.getDayCount());
 
-                          firstSubjectToBeAdded = _this3.subjects.length === 0;
+                          referenceElement = void 0;
 
-                          if (fromTop && !firstSubjectToBeAdded) {
-                            // Add subject to the beginning of the subjects array.
-                            _this3.subjects.splice(0, 0, newSubject);
-                            requestAnimationFrame(function () {
-                              _this3.html.container.insertBefore(newSubject.html.container, _this3.html.container.children[0]);
-                            });
+                          if (fromTop) {
+                            _this2.subjects = [newSubject].concat(_this2.subjects);
+                            referenceElement = _this2.html.container.children[0];
                           } else {
-                            _this3.subjects.push(newSubject);
-                            requestAnimationFrame(function () {
-                              _this3.html.container.appendChild(newSubject.html.container);
-                            });
+                            _this2.subjects.push(newSubject);
+                            referenceElement = null;
                           }
 
-                        case 10:
+                          requestAnimationFrame(function () {
+                            _this2.html.container.insertBefore(newSubject.html.container, referenceElement);
+                          });
+
+                        case 11:
                         case 'end':
                           return _context4.stop();
                       }
                     }
-                  }, _loop2, _this3);
+                  }, _loop, _this2);
                 });
                 i = 0;
 
@@ -9068,17 +9036,17 @@ var SubjectsContainer = function (_ViewController) {
                   break;
                 }
 
-                return _context5.delegateYield(_loop2(i), 't0', 5);
+                return _context5.delegateYield(_loop(i), 't0', 5);
 
               case 5:
-                _ret2 = _context5.t0;
+                _ret = _context5.t0;
 
-                if (!((typeof _ret2 === 'undefined' ? 'undefined' : _typeof$1(_ret2)) === "object")) {
+                if (!((typeof _ret === 'undefined' ? 'undefined' : _typeof$1(_ret)) === "object")) {
                   _context5.next = 8;
                   break;
                 }
 
-                return _context5.abrupt('return', _ret2.v);
+                return _context5.abrupt('return', _ret.v);
 
               case 8:
                 i++;
@@ -9123,6 +9091,8 @@ var SubjectsContainer = function (_ViewController) {
                 cacheStartDate = this.dataLoader.getCacheStartDate();
                 cacheEndDate = this.dataLoader.getCacheStartDate();
                 datesAlreadyLoaded = fromDate.isAfter(cacheStartDate) && toDate.isBefore(cacheEndDate);
+
+                // no need to load from server;
 
                 if (!(datesAlreadyLoaded || this.subjects.length === 0)) {
                   _context6.next = 5;
@@ -9169,42 +9139,22 @@ var SubjectsContainer = function (_ViewController) {
     key: 'getNewSubjectConfig',
     value: function () {
       var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee6(fromTop) {
-        var beforeAfter, referenceElement, isFirstSubject, referenceId, subjArray, newSubjectConfig;
+        var beforeAfter, referenceElement, referenceId, subjArray;
         return _regeneratorRuntime.wrap(function _callee6$(_context7) {
           while (1) {
             switch (_context7.prev = _context7.next) {
               case 0:
-                beforeAfter = void 0;
-                referenceElement = void 0;
+                beforeAfter = fromTop ? 'before' : 'after';
+                referenceElement = fromTop ? this.subjects[0] : this.subjects[this.subjects.length - 1];
+                referenceId = referenceElement ? referenceElement.getId() : null;
+                _context7.next = 5;
+                return this.dataLoader.getSubjects(1, beforeAfter, referenceId);
 
-                if (fromTop) {
-                  referenceElement = this.subjects[0];
-                  beforeAfter = 'before';
-                } else {
-                  referenceElement = this.subjects[this.subjects.length - 1];
-                  beforeAfter = 'after';
-                }
-
-                isFirstSubject = this.subjects.length === 0;
-                referenceId = isFirstSubject ? null : referenceElement.getId();
-                _context7.next = 7;
-                return this.dataLoader.getSubjects(2, beforeAfter, referenceId);
+              case 5:
+                subjArray = _context7.sent;
+                return _context7.abrupt('return', subjArray[0]);
 
               case 7:
-                subjArray = _context7.sent;
-
-                if (!(subjArray.length < 2)) {
-                  _context7.next = 10;
-                  break;
-                }
-
-                return _context7.abrupt('return', null);
-
-              case 10:
-                newSubjectConfig = isFirstSubject || fromTop ? subjArray[0] : subjArray[1];
-                return _context7.abrupt('return', newSubjectConfig);
-
-              case 12:
               case 'end':
                 return _context7.stop();
             }

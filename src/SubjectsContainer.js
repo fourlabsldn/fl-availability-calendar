@@ -83,19 +83,16 @@ export default class SubjectsContainer extends ViewController {
 
   /**
    * @method setEvents
-   * @param  {Object<Array>} subjectsEvents - Object where each key is a subject
-   *                                        id and each value is a subject's events.
+   * @param  {Array<Object>} subjects - Array of objects representing a subject
+   * and having the events to be set.
    */
-  setEvents(eventsBySubjectId) {
-    const stringIds = Object.keys(eventsBySubjectId);
-    const ids = stringIds.map(id => parseInt(id, 10));
-
-    for (const id of ids) {
-      const subj = this.subjects.find(sub => sub.id === id);
-      if (subj) {
-        subj.setEvents(eventsBySubjectId[id]);
+  setEvents(newEventsSubjects) {
+    this.subjects.forEach(subject => {
+      const subjWithNewEvents = newEventsSubjects.find(s => s.id === subject.id);
+      if (subjWithNewEvents) {
+        subject.setEvents(subjWithNewEvents.events);
       }
-    }
+    });
   }
 
   // ---------------------------------------------------------------------------
@@ -159,22 +156,21 @@ export default class SubjectsContainer extends ViewController {
       const newSubject = new Subject(subjConfig, this.startDate, this.modulePrefix);
       newSubject.setDayCount(this.getDayCount());
 
-      const firstSubjectToBeAdded = this.subjects.length === 0;
-      if (fromTop && !firstSubjectToBeAdded) {
-        // Add subject to the beginning of the subjects array.
-        this.subjects.splice(0, 0, newSubject);
-        requestAnimationFrame(() => {
-          this.html.container.insertBefore(
-            newSubject.html.container,
-            this.html.container.children[0]
-          );
-        });
+      let referenceElement;
+      if (fromTop) {
+        this.subjects = [newSubject].concat(this.subjects);
+        referenceElement = this.html.container.children[0];
       } else {
         this.subjects.push(newSubject);
-        requestAnimationFrame(() => {
-          this.html.container.appendChild(newSubject.html.container);
-        });
+        referenceElement = null;
       }
+
+      requestAnimationFrame(() => {
+        this.html.container.insertBefore(
+          newSubject.html.container,
+          referenceElement
+        );
+      });
     }
     return true;
   }
@@ -190,10 +186,9 @@ export default class SubjectsContainer extends ViewController {
     const cacheStartDate = this.dataLoader.getCacheStartDate();
     const cacheEndDate = this.dataLoader.getCacheStartDate();
     const datesAlreadyLoaded = fromDate.isAfter(cacheStartDate) && toDate.isBefore(cacheEndDate);
-    if (datesAlreadyLoaded || this.subjects.length === 0) {
-      // no need to load from server;
-      return;
-    }
+
+    // no need to load from server;
+    if (datesAlreadyLoaded || this.subjects.length === 0) { return; }
 
     const subjectsIds = this.subjects.map(subj => subj.getId());
     const eventData = await this.dataLoader.getEventsForIds(
@@ -211,25 +206,11 @@ export default class SubjectsContainer extends ViewController {
    * @return {Promise<Object>} Will be resolved into an object able to create a Subject instance
    */
   async getNewSubjectConfig(fromTop) {
-    let beforeAfter;
-    let referenceElement;
-    if (fromTop) {
-      referenceElement = this.subjects[0];
-      beforeAfter = 'before';
-    } else {
-      referenceElement = this.subjects[this.subjects.length - 1];
-      beforeAfter = 'after';
-    }
-
-    const isFirstSubject = this.subjects.length === 0;
-    const referenceId = isFirstSubject ? null : referenceElement.getId();
-    const subjArray = await this.dataLoader.getSubjects(2, beforeAfter, referenceId);
-
-    // Only the reference element returned.
-    if (subjArray.length < 2) { return null; }
-
-    const newSubjectConfig = isFirstSubject || fromTop ? subjArray[0] : subjArray[1];
-    return newSubjectConfig;
+    const beforeAfter = fromTop ? 'before' : 'after';
+    const referenceElement = fromTop ? this.subjects[0] : this.subjects[this.subjects.length - 1];
+    const referenceId = referenceElement ? referenceElement.getId() : null;
+    const subjArray = await this.dataLoader.getSubjects(1, beforeAfter, referenceId);
+    return subjArray[0];
   }
 
   /**
