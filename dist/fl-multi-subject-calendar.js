@@ -8564,9 +8564,11 @@ var DataLoader = function () {
               case 8:
                 response = _context3.sent;
                 subjects = this.processServerResponse(response);
+
+                snapshot(this);
                 return _context3.abrupt('return', subjects);
 
-              case 11:
+              case 12:
               case 'end':
                 return _context3.stop();
             }
@@ -8594,21 +8596,11 @@ var DataLoader = function () {
   }, {
     key: 'calculateLoadingDate',
     value: function calculateLoadingDate(fromDate, toDate) {
-      var earliestFrom = this.cacheStartDate.isAfter(fromDate) ? fromDate : this.cacheStartDate;
-      var latestTo = this.cacheEndDate.isBefore(toDate) ? toDate : this.cacheEndDate;
-
-      var widestRangeWithinLoadLimit = latestTo.diff(earliestFrom) + CONTENT_LOADING_PADDING * 2 < MAX_LOADED_RANGE;
-
-      var loadFrom = void 0;
-      var loadTo = void 0;
-      if (widestRangeWithinLoadLimit) {
-        loadFrom = new CustomDate(earliestFrom).add(-CONTENT_LOADING_PADDING, 'days');
-        loadTo = new CustomDate(latestTo).add(CONTENT_LOADING_PADDING, 'days');
-      } else {
-        loadFrom = new CustomDate(fromDate).add(-CONTENT_LOADING_PADDING, 'days');
-        loadTo = new CustomDate(toDate).add(CONTENT_LOADING_PADDING, 'days');
-      }
-
+      var initialRange = toDate.diff(fromDate, 'days');
+      var maximumPaddding = (MAX_LOADED_RANGE - initialRange) / 2;
+      var padding = Math.min(maximumPaddding, CONTENT_LOADING_PADDING);
+      var loadFrom = new CustomDate(fromDate).add(padding, 'days');
+      var loadTo = new CustomDate(toDate).add(padding, 'days');
       return { loadFrom: loadFrom, loadTo: loadTo };
     }
 
@@ -8717,6 +8709,12 @@ var DataLoader = function () {
 
   return DataLoader;
 }();
+
+function snapshot(instance) {
+  var range = instance.cacheEndDate.diff(instance.cacheStartDate, 'days');
+  var cacheSize = instance.cache.length;
+  console.log('Cache size: ' + cacheSize + ' | date range: ' + range);
+}
 
 var CLASS_PREFIX$3 = 'subjects';
 
