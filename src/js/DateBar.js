@@ -2,21 +2,16 @@ import ViewController from './ViewController';
 import CustomDate from './CustomDate';
 import assert from 'fl-assert';
 
-const CLASS_PREFIX = 'dateBar';
+const CLASS_PREFIX = 'DateBar';
 
 export default class DateBar extends ViewController {
-  constructor(modulePrefix) {
-    super();
-    this.cssPrefix = `${modulePrefix}-${CLASS_PREFIX}`;
-    this.startDate = new CustomDate();
+  constructor(startDate, modulePrefix) {
+    super(modulePrefix, CLASS_PREFIX);
+    this.startDate = new CustomDate(startDate);
     Object.preventExtensions(this);
-
-    this.buildHtml();
   }
 
   buildHtml() {
-    this.html.container.classList.add(this.cssPrefix);
-
     this.html.monthRow = document.createElement('div');
     this.html.monthRow.classList.add(`${this.cssPrefix}-monthRow`);
     this.html.container.appendChild(this.html.monthRow);
@@ -27,6 +22,7 @@ export default class DateBar extends ViewController {
   }
 
   /**
+   * @public
    * @method setStartDate
    * @param  {CustomDate} date
    */
@@ -39,6 +35,11 @@ export default class DateBar extends ViewController {
     this.setDayCount(dayCount);
   }
 
+  /**
+   * @public
+   * @method setDayCount
+   * @param  {Int} dayCount
+   */
   setDayCount(dayCount) {
     assert(typeof dayCount === 'number', `Invalid dayCount value: ${dayCount}`);
     while (this.getDayCount() > dayCount) {
@@ -50,6 +51,7 @@ export default class DateBar extends ViewController {
   }
 
   /**
+   * @private
    * @method addDay
    * @param  {String} leftRight
    */
@@ -76,6 +78,7 @@ export default class DateBar extends ViewController {
   }
 
   /**
+   * @private
    * @method addToDayRow
    * @param  {CustomDate} date
    * @param  {Boolean} toTheRight
@@ -94,6 +97,7 @@ export default class DateBar extends ViewController {
   }
 
   /**
+   * @private
    * @method addToMonthRow
    * @param  {CustomDate} date
    * @param  {Boolean} toTheRight
@@ -127,6 +131,7 @@ export default class DateBar extends ViewController {
   }
 
   /**
+   * @private
    * @method removeDay
    * @param  {String} leftRight
    */
@@ -141,6 +146,7 @@ export default class DateBar extends ViewController {
   }
 
  /**
+  * @private
   * @method removeFromDayRow
   * @param  {Boolean} toTheRight
   */
@@ -156,6 +162,7 @@ export default class DateBar extends ViewController {
   }
 
   /**
+   * @private
    * @method removeFromMonthRow
    * @param  {Boolean} toTheRight
    */
@@ -179,15 +186,6 @@ export default class DateBar extends ViewController {
     } else {
       monthEl.remove();
     }
-  }
-
-  scrollLeft() {
-    this.addDay('left');
-    this.removeDay('right');
-  }
-  scrollRight() {
-    this.addDay('right');
-    this.removeDay('left');
   }
 
   getEndDate() {

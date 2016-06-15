@@ -95,7 +95,28 @@
   margin: auto;
   width: 100%; }
 
-.fl-msc-dateBar {
+.fl-msc-LegendsBar {
+  -webkit-box-sizing: inherit;
+          box-sizing: inherit;
+  border-style: solid;
+  border-width: 2px 2px 2px 0;
+  border-color: transparent;
+  -webkit-box-flex: 0;
+  -webkit-flex: 0 0 17em;
+      -ms-flex: 0 0 17em;
+          flex: 0 0 17em;
+  display: -webkit-inline-box;
+  display: -webkit-inline-flex;
+  display: -ms-inline-flexbox;
+  display: inline-flex; }
+
+.fl-msc-LegendsBar-header {
+  width: 100%;
+  background-color: #e0e0e0;
+  color: #303030;
+  text-align: center; }
+
+.fl-msc-DateBar {
   -webkit-box-sizing: inherit;
           box-sizing: inherit;
   -webkit-box-flex: 0;
@@ -104,8 +125,8 @@
           flex: 0 0;
   display: inline-block; }
 
-.fl-msc-dateBar-monthRow,
-.fl-msc-dateBar-dayRow {
+.fl-msc-DateBar-monthRow,
+.fl-msc-DateBar-dayRow {
   -webkit-box-sizing: inherit;
           box-sizing: inherit;
   display: -webkit-inline-box;
@@ -119,111 +140,112 @@
       -ms-flex-flow: row nowrap;
           flex-flow: row nowrap; }
 
-.fl-msc-dateBar-month {
+.fl-msc-DateBar-month {
   -webkit-box-sizing: inherit;
           box-sizing: inherit;
   display: inline-block;
   background-color: #e0e0e0;
   color: #303030;
+  text-align: center;
   border: 2px solid #f9f9f9; }
-  .fl-msc-dateBar-month-1 {
+  .fl-msc-DateBar-month-1 {
     width: -webkit-calc(2em * 1);
     width: calc(2em * 1); }
-  .fl-msc-dateBar-month-2 {
+  .fl-msc-DateBar-month-2 {
     width: -webkit-calc(2em * 2);
     width: calc(2em * 2); }
-  .fl-msc-dateBar-month-3 {
+  .fl-msc-DateBar-month-3 {
     width: -webkit-calc(2em * 3);
     width: calc(2em * 3); }
-  .fl-msc-dateBar-month-4 {
+  .fl-msc-DateBar-month-4 {
     width: -webkit-calc(2em * 4);
     width: calc(2em * 4); }
-  .fl-msc-dateBar-month-5 {
+  .fl-msc-DateBar-month-5 {
     width: -webkit-calc(2em * 5);
     width: calc(2em * 5); }
-  .fl-msc-dateBar-month-6 {
+  .fl-msc-DateBar-month-6 {
     width: -webkit-calc(2em * 6);
     width: calc(2em * 6); }
-  .fl-msc-dateBar-month-7 {
+  .fl-msc-DateBar-month-7 {
     width: -webkit-calc(2em * 7);
     width: calc(2em * 7); }
-  .fl-msc-dateBar-month-8 {
+  .fl-msc-DateBar-month-8 {
     width: -webkit-calc(2em * 8);
     width: calc(2em * 8); }
-  .fl-msc-dateBar-month-9 {
+  .fl-msc-DateBar-month-9 {
     width: -webkit-calc(2em * 9);
     width: calc(2em * 9); }
-  .fl-msc-dateBar-month-10 {
+  .fl-msc-DateBar-month-10 {
     width: -webkit-calc(2em * 10);
     width: calc(2em * 10); }
-  .fl-msc-dateBar-month-11 {
+  .fl-msc-DateBar-month-11 {
     width: -webkit-calc(2em * 11);
     width: calc(2em * 11); }
-  .fl-msc-dateBar-month-12 {
+  .fl-msc-DateBar-month-12 {
     width: -webkit-calc(2em * 12);
     width: calc(2em * 12); }
-  .fl-msc-dateBar-month-13 {
+  .fl-msc-DateBar-month-13 {
     width: -webkit-calc(2em * 13);
     width: calc(2em * 13); }
-  .fl-msc-dateBar-month-14 {
+  .fl-msc-DateBar-month-14 {
     width: -webkit-calc(2em * 14);
     width: calc(2em * 14); }
-  .fl-msc-dateBar-month-15 {
+  .fl-msc-DateBar-month-15 {
     width: -webkit-calc(2em * 15);
     width: calc(2em * 15); }
-  .fl-msc-dateBar-month-16 {
+  .fl-msc-DateBar-month-16 {
     width: -webkit-calc(2em * 16);
     width: calc(2em * 16); }
-  .fl-msc-dateBar-month-17 {
+  .fl-msc-DateBar-month-17 {
     width: -webkit-calc(2em * 17);
     width: calc(2em * 17); }
-  .fl-msc-dateBar-month-18 {
+  .fl-msc-DateBar-month-18 {
     width: -webkit-calc(2em * 18);
     width: calc(2em * 18); }
-  .fl-msc-dateBar-month-19 {
+  .fl-msc-DateBar-month-19 {
     width: -webkit-calc(2em * 19);
     width: calc(2em * 19); }
-  .fl-msc-dateBar-month-20 {
+  .fl-msc-DateBar-month-20 {
     width: -webkit-calc(2em * 20);
     width: calc(2em * 20); }
-  .fl-msc-dateBar-month-21 {
+  .fl-msc-DateBar-month-21 {
     width: -webkit-calc(2em * 21);
     width: calc(2em * 21); }
-  .fl-msc-dateBar-month-22 {
+  .fl-msc-DateBar-month-22 {
     width: -webkit-calc(2em * 22);
     width: calc(2em * 22); }
-  .fl-msc-dateBar-month-23 {
+  .fl-msc-DateBar-month-23 {
     width: -webkit-calc(2em * 23);
     width: calc(2em * 23); }
-  .fl-msc-dateBar-month-24 {
+  .fl-msc-DateBar-month-24 {
     width: -webkit-calc(2em * 24);
     width: calc(2em * 24); }
-  .fl-msc-dateBar-month-25 {
+  .fl-msc-DateBar-month-25 {
     width: -webkit-calc(2em * 25);
     width: calc(2em * 25); }
-  .fl-msc-dateBar-month-26 {
+  .fl-msc-DateBar-month-26 {
     width: -webkit-calc(2em * 26);
     width: calc(2em * 26); }
-  .fl-msc-dateBar-month-27 {
+  .fl-msc-DateBar-month-27 {
     width: -webkit-calc(2em * 27);
     width: calc(2em * 27); }
-  .fl-msc-dateBar-month-28 {
+  .fl-msc-DateBar-month-28 {
     width: -webkit-calc(2em * 28);
     width: calc(2em * 28); }
-  .fl-msc-dateBar-month-29 {
+  .fl-msc-DateBar-month-29 {
     width: -webkit-calc(2em * 29);
     width: calc(2em * 29); }
-  .fl-msc-dateBar-month-30 {
+  .fl-msc-DateBar-month-30 {
     width: -webkit-calc(2em * 30);
     width: calc(2em * 30); }
-  .fl-msc-dateBar-month-31 {
+  .fl-msc-DateBar-month-31 {
     width: -webkit-calc(2em * 31);
     width: calc(2em * 31); }
-  .fl-msc-dateBar-month-32 {
+  .fl-msc-DateBar-month-32 {
     width: -webkit-calc(2em * 32);
     width: calc(2em * 32); }
 
-.fl-msc-dateBar-day {
+.fl-msc-DateBar-day {
   -webkit-box-sizing: border-box;
           box-sizing: border-box;
   width: 2em;
@@ -277,26 +299,5 @@
 
 .fl-msc-subject-day--half-busy {
   background-color: #fcb827; }
-
-.fl-msc-LegendsBar {
-  -webkit-box-sizing: inherit;
-          box-sizing: inherit;
-  border-style: solid;
-  border-width: 2px 2px 2px 0;
-  border-color: transparent;
-  -webkit-box-flex: 0;
-  -webkit-flex: 0 0 17em;
-      -ms-flex: 0 0 17em;
-          flex: 0 0 17em;
-  display: -webkit-inline-box;
-  display: -webkit-inline-flex;
-  display: -ms-inline-flexbox;
-  display: inline-flex; }
-
-.fl-msc-LegendsBar-header {
-  width: 100%;
-  background-color: #e0e0e0;
-  color: #303030;
-  text-align: center; }
 
 /*# sourceMappingURL=fl-multi-subject-calendar.css.map */

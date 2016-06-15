@@ -6,6 +6,7 @@ import CalendarContainer from './CalendarContainer';
 import assert from 'fl-assert';
 
 const MODULE_PREFIX = 'fl-msc';
+const CUSTOM_DAYCOUNT = 80;
 
 export default class ModuleCoordinator {
   constructor(xdiv, loadUrl, subjectsHeader, initialSubjectCount) {
@@ -23,12 +24,15 @@ export default class ModuleCoordinator {
     this.calendarContainer.set('legendsBar', this.legendsBar);
 
     // create datesContainer
-    this.datesPanel = new DatesPanel(MODULE_PREFIX);
+    this.datesPanel = new DatesPanel(this.startDate, MODULE_PREFIX);
     this.calendarContainer.set('datesPanel', this.datesPanel);
 
     xdiv.appendChild(this.calendarContainer.html.container);
+
     // set start date and dayCount
     this.setStartDate(this.startDate);
+
+    this.setDayCount(CUSTOM_DAYCOUNT);
 
     // add x subjects
     // this.setSubjectCount(initialSubjectCount);
@@ -50,6 +54,8 @@ export default class ModuleCoordinator {
    */
   setStartDate(date) {
     this.startDate = new CustomDate(date);
+    this.datesPanel.setStartDate(date);
+    this.controlBar.setDatepickerDate(date);
     console.warn('setStartDate not fully implemented yet');
   }
 
@@ -72,8 +78,22 @@ export default class ModuleCoordinator {
     }
   }
 
+  /**
+   * @public
+   * @method getSubjectCount
+   * @return {Int}
+   */
   getSubjectCount() {
     return this.datesPanel.getSubjectCount();
+  }
+
+  /**
+   * @public
+   * @method setDayCount
+   * @param  {Int} count
+   */
+  setDayCount(count) {
+    this.datesPanel.setDayCount(count);
   }
 
   /**

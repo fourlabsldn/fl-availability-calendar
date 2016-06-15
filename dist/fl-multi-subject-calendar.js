@@ -7283,28 +7283,6 @@ var ControlBar = function (_ViewController) {
   return ControlBar;
 }(ViewController);
 
-var DatesPanel = function (_ViewController) {
-  _inherits(DatesPanel, _ViewController);
-
-  function DatesPanel(modulePrefix) {
-    _classCallCheck(this, DatesPanel);
-
-    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(DatesPanel).call(this, modulePrefix));
-
-    Object.preventExtensions(_this);
-    return _this;
-  }
-
-  _createClass(DatesPanel, [{
-    key: 'buildHtml',
-    value: function buildHtml() {
-      this.html.container.textContent = 'Imagine the dates';
-    }
-  }]);
-
-  return DatesPanel;
-}(ViewController);
-
 // Bug checking function that will throw an error whenever
 // the condition sent to it is evaluated to false
 /**
@@ -7377,6 +7355,308 @@ assert.warn = function warn(condition, errorMessage) {
   }
 };
 
+var CLASS_PREFIX$3 = 'DateBar';
+
+var DateBar = function (_ViewController) {
+  _inherits(DateBar, _ViewController);
+
+  function DateBar(startDate, modulePrefix) {
+    _classCallCheck(this, DateBar);
+
+    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(DateBar).call(this, modulePrefix, CLASS_PREFIX$3));
+
+    _this.startDate = new CustomDate(startDate);
+    Object.preventExtensions(_this);
+    return _this;
+  }
+
+  _createClass(DateBar, [{
+    key: 'buildHtml',
+    value: function buildHtml() {
+      this.html.monthRow = document.createElement('div');
+      this.html.monthRow.classList.add(this.cssPrefix + '-monthRow');
+      this.html.container.appendChild(this.html.monthRow);
+
+      this.html.dayRow = document.createElement('div');
+      this.html.dayRow.classList.add(this.cssPrefix + '-dayRow');
+      this.html.container.appendChild(this.html.dayRow);
+    }
+
+    /**
+     * @public
+     * @method setStartDate
+     * @param  {CustomDate} date
+     */
+
+  }, {
+    key: 'setStartDate',
+    value: function setStartDate(date) {
+      assert(date instanceof CustomDate, 'Invalid startDate.');
+
+      var dayCount = this.getDayCount();
+      this.setDayCount(0);
+      this.startDate = date;
+      this.setDayCount(dayCount);
+    }
+
+    /**
+     * @public
+     * @method setDayCount
+     * @param  {Int} dayCount
+     */
+
+  }, {
+    key: 'setDayCount',
+    value: function setDayCount(dayCount) {
+      assert(typeof dayCount === 'number', 'Invalid dayCount value: ' + dayCount);
+      while (this.getDayCount() > dayCount) {
+        this.removeDay();
+      }
+      while (dayCount > this.getDayCount()) {
+        this.addDay();
+      }
+    }
+
+    /**
+     * @private
+     * @method addDay
+     * @param  {String} leftRight
+     */
+
+  }, {
+    key: 'addDay',
+    value: function addDay() {
+      var leftRight = arguments.length <= 0 || arguments[0] === undefined ? 'right' : arguments[0];
+
+      var toTheRight = leftRight === 'right';
+      assert(toTheRight || leftRight === 'left', 'Invalid leftRight value: ' + leftRight);
+
+      var firstDayToBeAdded = this.getDayCount() === 0;
+      var newDate = void 0;
+      if (firstDayToBeAdded) {
+        newDate = new CustomDate(this.startDate);
+      } else if (toTheRight) {
+        newDate = this.getEndDate().add(1, 'days');
+      } else {
+        newDate = new CustomDate(this.startDate).add(-1, 'days');
+      }
+
+      this.addToDayRow(newDate, toTheRight);
+      this.addToMonthRow(newDate, toTheRight);
+
+      if (!toTheRight) {
+        this.startDate = newDate;
+      }
+    }
+
+    /**
+     * @private
+     * @method addToDayRow
+     * @param  {CustomDate} date
+     * @param  {Boolean} toTheRight
+     */
+
+  }, {
+    key: 'addToDayRow',
+    value: function addToDayRow(date) {
+      var toTheRight = arguments.length <= 1 || arguments[1] === undefined ? true : arguments[1];
+
+      var newDay = document.createElement('div');
+      newDay.classList.add(this.cssPrefix + '-day');
+      newDay.innerHTML = date.format('DD');
+
+      if (toTheRight || this.html.dayRow.length === 0) {
+        this.html.dayRow.appendChild(newDay);
+      } else {
+        var firstDayElement = this.html.dayRow.children[0];
+        this.html.dayRow.insertBefore(newDay, firstDayElement);
+      }
+    }
+
+    /**
+     * @private
+     * @method addToMonthRow
+     * @param  {CustomDate} date
+     * @param  {Boolean} toTheRight
+     */
+
+  }, {
+    key: 'addToMonthRow',
+    value: function addToMonthRow(date) {
+      var toTheRight = arguments.length <= 1 || arguments[1] === undefined ? true : arguments[1];
+
+      var monthName = date.format('MMM');
+      var months = this.html.monthRow.children;
+
+      var firstMonthElement = months[0];
+      var lastMonthElement = months[months.length - 1];
+
+      var existingMonth = toTheRight ? lastMonthElement : firstMonthElement;
+      var monthEl = void 0;
+
+      if (existingMonth && existingMonth.innerHTML === monthName) {
+        monthEl = existingMonth;
+        existingMonth.span = existingMonth.span + 1;
+      } else {
+        monthEl = document.createElement('div');
+        monthEl.innerHTML = monthName;
+        monthEl.span = 1;
+        if (toTheRight || months.length === 0) {
+          this.html.monthRow.appendChild(monthEl);
+        } else {
+          this.html.monthRow.insertBefore(monthEl, firstMonthElement);
+        }
+      }
+      monthEl.className = '';
+      monthEl.classList.add(this.cssPrefix + '-month');
+      monthEl.classList.add(this.cssPrefix + '-month-' + monthEl.span);
+    }
+
+    /**
+     * @private
+     * @method removeDay
+     * @param  {String} leftRight
+     */
+
+  }, {
+    key: 'removeDay',
+    value: function removeDay() {
+      var leftRight = arguments.length <= 0 || arguments[0] === undefined ? 'right' : arguments[0];
+
+      var toTheRight = leftRight === 'right';
+
+      this.removeFromDayRow(toTheRight);
+      this.removeFromMonthRow(toTheRight);
+      if (!toTheRight) {
+        this.startDate.add(1, 'days');
+      }
+    }
+
+    /**
+     * @private
+     * @method removeFromDayRow
+     * @param  {Boolean} toTheRight
+     */
+
+  }, {
+    key: 'removeFromDayRow',
+    value: function removeFromDayRow() {
+      var toTheRight = arguments.length <= 0 || arguments[0] === undefined ? true : arguments[0];
+
+      // remove from day row
+      if (toTheRight) {
+        var lastDay = this.html.dayRow.children[this.html.dayRow.children.length - 1];
+        lastDay.remove();
+      } else {
+        var firstDay = this.html.dayRow.children[0];
+        firstDay.remove();
+      }
+    }
+
+    /**
+     * @private
+     * @method removeFromMonthRow
+     * @param  {Boolean} toTheRight
+     */
+
+  }, {
+    key: 'removeFromMonthRow',
+    value: function removeFromMonthRow() {
+      var toTheRight = arguments.length <= 0 || arguments[0] === undefined ? true : arguments[0];
+
+      var months = this.html.monthRow.children;
+      var firstMonthElement = months[0];
+      var lastMonthElement = months[months.length - 1];
+
+      var monthEl = void 0;
+      if (toTheRight) {
+        monthEl = lastMonthElement;
+      } else {
+        monthEl = firstMonthElement;
+      }
+
+      if (monthEl.span > 1) {
+        monthEl.span--;
+        monthEl.className = '';
+        monthEl.classList.add(this.cssPrefix + '-month');
+        monthEl.classList.add(this.cssPrefix + '-month-' + monthEl.span);
+      } else {
+        monthEl.remove();
+      }
+    }
+  }, {
+    key: 'getEndDate',
+    value: function getEndDate() {
+      var startDate = new CustomDate(this.startDate);
+      var dayCount = Math.max(0, this.getDayCount() - 1);
+      var endDate = startDate.add(dayCount, 'days');
+      return endDate;
+    }
+  }, {
+    key: 'getDayCount',
+    value: function getDayCount() {
+      return this.html.dayRow.children.length;
+    }
+  }]);
+
+  return DateBar;
+}(ViewController);
+
+var CLASS_PREFIX$2 = 'DatesPanel';
+
+var DatesPanel = function (_ViewController) {
+  _inherits(DatesPanel, _ViewController);
+
+  function DatesPanel(startDate, modulePrefix) {
+    _classCallCheck(this, DatesPanel);
+
+    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(DatesPanel).call(this, modulePrefix, CLASS_PREFIX$2));
+
+    _this.dateBar = new DateBar(startDate, modulePrefix);
+    Object.preventExtensions(_this);
+
+    _this.html.container.insertBefore(_this.dateBar.html.container, _this.html.container.children[0]);
+    return _this;
+  }
+
+  _createClass(DatesPanel, [{
+    key: 'buildHtml',
+    value: function buildHtml() {
+      this.html.subjectsContainer = document.createElement('div');
+      this.html.subjectsContainer.classList.add(this.cssPrefix + '-subjectsContainer');
+      this.html.container.appendChild(this.html.subjectsContainer);
+    }
+
+    /**
+     * @public
+     * @method setDayCount
+     * @param  {int} count
+     */
+
+  }, {
+    key: 'setDayCount',
+    value: function setDayCount(count) {
+      this.dateBar.setDayCount(count);
+      console.warn('setDayCount not fully implemented yet.');
+    }
+
+    /**
+     * @public
+     * @method setStartDate
+     * @param  {CustomDate} date
+     */
+
+  }, {
+    key: 'setStartDate',
+    value: function setStartDate(date) {
+      this.dateBar.setStartDate(date);
+      console.warn('setStartDate not fully implemented yet.');
+    }
+  }]);
+
+  return DatesPanel;
+}(ViewController);
+
 var CalendarContainer = function (_ViewController) {
   _inherits(CalendarContainer, _ViewController);
 
@@ -7418,6 +7698,7 @@ var CalendarContainer = function (_ViewController) {
 }(ViewController);
 
 var MODULE_PREFIX = 'fl-msc';
+var CUSTOM_DAYCOUNT = 80;
 
 var ModuleCoordinator = function () {
   function ModuleCoordinator(xdiv, loadUrl, subjectsHeader, initialSubjectCount) {
@@ -7437,12 +7718,15 @@ var ModuleCoordinator = function () {
     this.calendarContainer.set('legendsBar', this.legendsBar);
 
     // create datesContainer
-    this.datesPanel = new DatesPanel(MODULE_PREFIX);
+    this.datesPanel = new DatesPanel(this.startDate, MODULE_PREFIX);
     this.calendarContainer.set('datesPanel', this.datesPanel);
 
     xdiv.appendChild(this.calendarContainer.html.container);
+
     // set start date and dayCount
     this.setStartDate(this.startDate);
+
+    this.setDayCount(CUSTOM_DAYCOUNT);
 
     // add x subjects
     // this.setSubjectCount(initialSubjectCount);
@@ -7471,6 +7755,8 @@ var ModuleCoordinator = function () {
     key: 'setStartDate',
     value: function setStartDate(date) {
       this.startDate = new CustomDate(date);
+      this.datesPanel.setStartDate(date);
+      this.controlBar.setDatepickerDate(date);
       console.warn('setStartDate not fully implemented yet');
     }
 
@@ -7540,10 +7826,29 @@ var ModuleCoordinator = function () {
 
       return setSubjectCount;
     }()
+
+    /**
+     * @public
+     * @method getSubjectCount
+     * @return {Int}
+     */
+
   }, {
     key: 'getSubjectCount',
     value: function getSubjectCount() {
       return this.datesPanel.getSubjectCount();
+    }
+
+    /**
+     * @public
+     * @method setDayCount
+     * @param  {Int} count
+     */
+
+  }, {
+    key: 'setDayCount',
+    value: function setDayCount(count) {
+      this.datesPanel.setDayCount(count);
     }
 
     /**
