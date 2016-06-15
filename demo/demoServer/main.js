@@ -29,10 +29,14 @@ app.get('/', (req, res) => {
   const toDate = req.query.toDate;
 
   if (fromDate && toDate && ids) {
-    const events = db.get(ids, fromDate, toDate);
-    res.json(events);
+    const subjects = db.get(ids, fromDate, toDate);
+    res.json({
+      subjects,
+      fromDate,
+      toDate,
+    });
   } else {
-    res.json({ error: 'error' });
+    res.json({ fromDate, toDate, error: true, subjects: [] });
   }
 });
 

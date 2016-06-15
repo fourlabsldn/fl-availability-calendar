@@ -64,6 +64,22 @@ export default class CustomDate {
     return this.date.toString();
   }
 
+  isBefore(date) {
+    return this.diff(date) < 0;
+  }
+
+  isAfter(date) {
+    return this.diff(date) > 0;
+  }
+
+  valueOf() {
+    return this.date.valueOf();
+  }
+
+  isValid() {
+    return this.date.isValid();
+  }
+
   static getLatest(date1, date2) {
     return (date1.diff(date2) > 0) ? date1 : date2;
   }

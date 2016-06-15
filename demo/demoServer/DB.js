@@ -31,7 +31,10 @@ module.exports = class DB {
         return beginAfterFromDate && endBeforeEndDate;
       });
 
-      const responseRecord = Object.create(record);
+      const responseRecord = {};
+      for (const prop of Object.keys(record)) {
+        responseRecord[prop] = record[prop];
+      }
       responseRecord.events = eventsWithinTimeframe;
       responseData.push(responseRecord);
     }

@@ -187,17 +187,11 @@ export default class SubjectsContainer extends ViewController {
    * @return {Promise<void>}
    */
   async loadSubjectsEvents(fromDate, toDate) {
-    let needsLoading = false;
-    const loadedContentStart = this.dataLoader.getLoadedContentStart();
-    const loadedContentEnd = this.dataLoader.getLoadedContentEnd();
-
-    if (fromDate.diff(loadedContentStart) < 0) {
-      needsLoading = true;
-    }
-    if (toDate.diff(loadedContentEnd) > 0) {
-      needsLoading = true;
-    }
-    if (!needsLoading) {
+    const cacheStartDate = this.dataLoader.getCacheStartDate();
+    const cacheEndDate = this.dataLoader.getCacheStartDate();
+    const datesAlreadyLoaded = fromDate.isAfter(cacheStartDate) && toDate.isBefore(cacheEndDate);
+    if (datesAlreadyLoaded || this.subjects.length === 0) {
+      // no need to load from server;
       return;
     }
 
