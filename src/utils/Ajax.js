@@ -7,6 +7,7 @@ export default class Ajax {
   }
 
   async query(params, url = this.url) {
+    console.log('LOADING FROM SERVER');
     const requestUrl = this.addParametersToUrl(params, url);
     const requestConfig = {
       method: 'GET',

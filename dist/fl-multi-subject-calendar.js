@@ -8281,24 +8281,25 @@ var Ajax = function () {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
+                console.log('LOADING FROM SERVER');
                 requestUrl = this.addParametersToUrl(params, url);
                 requestConfig = {
                   method: 'GET',
                   cache: 'no-cache'
                 };
-                _context.next = 4;
+                _context.next = 5;
                 return fetch(requestUrl, requestConfig);
 
-              case 4:
+              case 5:
                 response = _context.sent;
-                _context.next = 7;
+                _context.next = 8;
                 return response.json();
 
-              case 7:
+              case 8:
                 content = _context.sent;
                 return _context.abrupt('return', content);
 
-              case 9:
+              case 10:
               case 'end':
                 return _context.stop();
             }

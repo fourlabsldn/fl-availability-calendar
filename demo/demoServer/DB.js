@@ -9,19 +9,11 @@ module.exports = class DB {
   /**
    * @method getEventsForIds
    * @param  {Array<int>} ids
-   * @param  {String} fromDate ISO String
-   * @param  {String} toDate ISO String
+   * @param  {Moment} fromDate
+   * @param  {Moment} toDate
    * @return {Array<Object>} Array of event objects
    */
-  get(ids, fromDateRaw, toDateRaw) {
-    const fromDateNum = moment(fromDateRaw);
-    const toDateNum = moment(fromDateRaw);
-    const fromDate = moment(fromDateNum);
-    const toDate = moment(toDateNum);
-
-    if (!fromDate.isValid() || !toDate.isValid()) {
-      return [{ err: 'Invalid date' }];
-    }
+  get(ids, fromDate, toDate) {
     const filteredRecords = this.data.filter(r => ids.indexOf(r.id) !== -1);
     const responseData = [];
     for (const record of filteredRecords) {
@@ -57,12 +49,12 @@ module.exports = class DB {
       const totalElementsBefore = refIndex;
       const responseSize = Math.min(totalElementsBefore, amount);
       fromIndex = Math.max(0, responseSize - 1);
-      toIndex = refIndex;
+      toIndex = refIndex - 1;
     } else {
-      const totalElementsAfter = refIndex + 1 - this.data.length;
+      const totalElementsAfter = this.data.length - refIndex + 1;
       const responseSize = Math.min(totalElementsAfter, amount);
       fromIndex = Math.max(0, refIndex);
-      toIndex = Math.max(0, responseSize - 1 + refIndex);
+      toIndex = Math.max(0, responseSize + refIndex);
     }
 
     return this.data.slice(fromIndex, toIndex).map(s => s.id);

@@ -31,7 +31,7 @@ module.exports = function dbCreator(totalSubjects, fromDate, toDate) {
     do {
       const newEvent = {};
       newEvent.desc = `Event ${eventCount}`;
-      newEvent.status = !!rand() ? 'busy' : 'half-busy';
+      newEvent.status = (rand() % 2) === 0 ? 'busy' : 'half-busy';
 
       lastDate.add(rand(maxEventSpacing), 'days');
       newEvent.start = moment(lastDate);
