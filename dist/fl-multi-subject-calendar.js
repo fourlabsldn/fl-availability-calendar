@@ -7393,7 +7393,7 @@ var CalendarContainer = function (_ViewController) {
     key: 'set',
     value: function set(name, instance) {
       assert(this.html[name], 'Trying to set invalid property: ' + name);
-      this.html.container.replaceChild(instance.html.container, this.html[name]);
+      this.html[name].parentNode.replaceChild(instance.html.container, this.html[name]);
       this.html[name] = instance.html.container;
     }
   }, {
@@ -7402,11 +7402,15 @@ var CalendarContainer = function (_ViewController) {
       this.html.controlBar = document.createElement('div');
       this.html.container.appendChild(this.html.controlBar);
 
+      this.html.panelWrapper = document.createElement('div');
+      this.html.panelWrapper.classList.add(this.cssPrefix + '-panelWrapper');
+      this.html.container.appendChild(this.html.panelWrapper);
+
       this.html.legendsBar = document.createElement('div');
-      this.html.container.appendChild(this.html.legendsBar);
+      this.html.panelWrapper.appendChild(this.html.legendsBar);
 
       this.html.datesPanel = document.createElement('div');
-      this.html.container.appendChild(this.html.datesPanel);
+      this.html.panelWrapper.appendChild(this.html.datesPanel);
     }
   }]);
 

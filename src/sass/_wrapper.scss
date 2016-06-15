@@ -6,3 +6,9 @@
   font-size: 12px;
   box-sizing: border-box;
 }
+
+.fl-msc-panelWrapper {
+  display: flex;
+  flex-flow: row nowrap;
+  align-content: stretch;
+}

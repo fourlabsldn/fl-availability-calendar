@@ -17,7 +17,7 @@ const moduleName = 'fl-multi-subject-calendar';
 const paths = {
   js: {
     src: './src/**/*',
-    main: './src/main.js',
+    main: './src/js/main.js',
     dest: './dist/',
   },
   sass: {
