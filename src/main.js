@@ -1,8 +1,11 @@
 /* globals xController */
-import Calendar from './Calendar';
+import ModuleCoordinator from './ModuleCoordinator';
+
+const INITIAL_SUBJECT_COUNT = 50;
 
 xController((xdiv) => {
-  const subjectsTitle = 'Properties';
+  const subjectsHeader = 'Properties';
   const loadUrl = xdiv.dataset.loadUrl;
-  return new Calendar(subjectsTitle, loadUrl, xdiv);
+  // return new Calendar(subjectsTitle, loadUrl, xdiv);
+  return new ModuleCoordinator(xdiv, loadUrl, subjectsHeader, INITIAL_SUBJECT_COUNT);
 });

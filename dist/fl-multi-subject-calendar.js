@@ -1,1457 +1,6 @@
 var __commonjs_global = typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : this;
 function __commonjs(fn, module) { return module = { exports: {} }, fn(module, module.exports, __commonjs_global), module.exports; }
 
-var classCallCheck = __commonjs(function (module, exports) {
-"use strict";
-
-exports.__esModule = true;
-
-exports.default = function (instance, Constructor) {
-  if (!(instance instanceof Constructor)) {
-    throw new TypeError("Cannot call a class as a function");
-  }
-};
-});
-
-var _classCallCheck = (classCallCheck && typeof classCallCheck === 'object' && 'default' in classCallCheck ? classCallCheck['default'] : classCallCheck);
-
-var _core = __commonjs(function (module) {
-var core = module.exports = {version: '2.4.0'};
-if(typeof __e == 'number')__e = core; // eslint-disable-line no-undef
-});
-
-var require$$0$2 = (_core && typeof _core === 'object' && 'default' in _core ? _core['default'] : _core);
-
-var _fails = __commonjs(function (module) {
-module.exports = function(exec){
-  try {
-    return !!exec();
-  } catch(e){
-    return true;
-  }
-};
-});
-
-var require$$0$3 = (_fails && typeof _fails === 'object' && 'default' in _fails ? _fails['default'] : _fails);
-
-var _descriptors = __commonjs(function (module) {
-// Thank's IE8 for his funny defineProperty
-module.exports = !require$$0$3(function(){
-  return Object.defineProperty({}, 'a', {get: function(){ return 7; }}).a != 7;
-});
-});
-
-var require$$1 = (_descriptors && typeof _descriptors === 'object' && 'default' in _descriptors ? _descriptors['default'] : _descriptors);
-
-var _isObject = __commonjs(function (module) {
-module.exports = function(it){
-  return typeof it === 'object' ? it !== null : typeof it === 'function';
-};
-});
-
-var require$$14 = (_isObject && typeof _isObject === 'object' && 'default' in _isObject ? _isObject['default'] : _isObject);
-
-var _toPrimitive = __commonjs(function (module) {
-// 7.1.1 ToPrimitive(input [, PreferredType])
-var isObject = require$$14;
-// instead of the ES6 spec version, we didn't implement @@toPrimitive case
-// and the second argument - flag - preferred type is a string
-module.exports = function(it, S){
-  if(!isObject(it))return it;
-  var fn, val;
-  if(S && typeof (fn = it.toString) == 'function' && !isObject(val = fn.call(it)))return val;
-  if(typeof (fn = it.valueOf) == 'function' && !isObject(val = fn.call(it)))return val;
-  if(!S && typeof (fn = it.toString) == 'function' && !isObject(val = fn.call(it)))return val;
-  throw TypeError("Can't convert object to primitive value");
-};
-});
-
-var require$$3 = (_toPrimitive && typeof _toPrimitive === 'object' && 'default' in _toPrimitive ? _toPrimitive['default'] : _toPrimitive);
-
-var _global = __commonjs(function (module) {
-// https://github.com/zloirock/core-js/issues/86#issuecomment-115759028
-var global = module.exports = typeof window != 'undefined' && window.Math == Math
-  ? window : typeof self != 'undefined' && self.Math == Math ? self : Function('return this')();
-if(typeof __g == 'number')__g = global; // eslint-disable-line no-undef
-});
-
-var require$$1$2 = (_global && typeof _global === 'object' && 'default' in _global ? _global['default'] : _global);
-
-var _domCreate = __commonjs(function (module) {
-var isObject = require$$14
-  , document = require$$1$2.document
-  // in old IE typeof document.createElement is 'object'
-  , is = isObject(document) && isObject(document.createElement);
-module.exports = function(it){
-  return is ? document.createElement(it) : {};
-};
-});
-
-var require$$2$1 = (_domCreate && typeof _domCreate === 'object' && 'default' in _domCreate ? _domCreate['default'] : _domCreate);
-
-var _ie8DomDefine = __commonjs(function (module) {
-module.exports = !require$$1 && !require$$0$3(function(){
-  return Object.defineProperty(require$$2$1('div'), 'a', {get: function(){ return 7; }}).a != 7;
-});
-});
-
-var require$$1$1 = (_ie8DomDefine && typeof _ie8DomDefine === 'object' && 'default' in _ie8DomDefine ? _ie8DomDefine['default'] : _ie8DomDefine);
-
-var _anObject = __commonjs(function (module) {
-var isObject = require$$14;
-module.exports = function(it){
-  if(!isObject(it))throw TypeError(it + ' is not an object!');
-  return it;
-};
-});
-
-var require$$2$2 = (_anObject && typeof _anObject === 'object' && 'default' in _anObject ? _anObject['default'] : _anObject);
-
-var _objectDp = __commonjs(function (module, exports) {
-var anObject       = require$$2$2
-  , IE8_DOM_DEFINE = require$$1$1
-  , toPrimitive    = require$$3
-  , dP             = Object.defineProperty;
-
-exports.f = require$$1 ? Object.defineProperty : function defineProperty(O, P, Attributes){
-  anObject(O);
-  P = toPrimitive(P, true);
-  anObject(Attributes);
-  if(IE8_DOM_DEFINE)try {
-    return dP(O, P, Attributes);
-  } catch(e){ /* empty */ }
-  if('get' in Attributes || 'set' in Attributes)throw TypeError('Accessors not supported!');
-  if('value' in Attributes)O[P] = Attributes.value;
-  return O;
-};
-});
-
-var require$$2 = (_objectDp && typeof _objectDp === 'object' && 'default' in _objectDp ? _objectDp['default'] : _objectDp);
-
-var _propertyDesc = __commonjs(function (module) {
-module.exports = function(bitmap, value){
-  return {
-    enumerable  : !(bitmap & 1),
-    configurable: !(bitmap & 2),
-    writable    : !(bitmap & 4),
-    value       : value
-  };
-};
-});
-
-var require$$3$1 = (_propertyDesc && typeof _propertyDesc === 'object' && 'default' in _propertyDesc ? _propertyDesc['default'] : _propertyDesc);
-
-var _hide = __commonjs(function (module) {
-var dP         = require$$2
-  , createDesc = require$$3$1;
-module.exports = require$$1 ? function(object, key, value){
-  return dP.f(object, key, createDesc(1, value));
-} : function(object, key, value){
-  object[key] = value;
-  return object;
-};
-});
-
-var require$$0$4 = (_hide && typeof _hide === 'object' && 'default' in _hide ? _hide['default'] : _hide);
-
-var _aFunction = __commonjs(function (module) {
-module.exports = function(it){
-  if(typeof it != 'function')throw TypeError(it + ' is not a function!');
-  return it;
-};
-});
-
-var require$$1$3 = (_aFunction && typeof _aFunction === 'object' && 'default' in _aFunction ? _aFunction['default'] : _aFunction);
-
-var _ctx = __commonjs(function (module) {
-// optional / simple context binding
-var aFunction = require$$1$3;
-module.exports = function(fn, that, length){
-  aFunction(fn);
-  if(that === undefined)return fn;
-  switch(length){
-    case 1: return function(a){
-      return fn.call(that, a);
-    };
-    case 2: return function(a, b){
-      return fn.call(that, a, b);
-    };
-    case 3: return function(a, b, c){
-      return fn.call(that, a, b, c);
-    };
-  }
-  return function(/* ...args */){
-    return fn.apply(that, arguments);
-  };
-};
-});
-
-var require$$5 = (_ctx && typeof _ctx === 'object' && 'default' in _ctx ? _ctx['default'] : _ctx);
-
-var _export = __commonjs(function (module, exports) {
-var global    = require$$1$2
-  , core      = require$$0$2
-  , ctx       = require$$5
-  , hide      = require$$0$4
-  , PROTOTYPE = 'prototype';
-
-var $export = function(type, name, source){
-  var IS_FORCED = type & $export.F
-    , IS_GLOBAL = type & $export.G
-    , IS_STATIC = type & $export.S
-    , IS_PROTO  = type & $export.P
-    , IS_BIND   = type & $export.B
-    , IS_WRAP   = type & $export.W
-    , exports   = IS_GLOBAL ? core : core[name] || (core[name] = {})
-    , expProto  = exports[PROTOTYPE]
-    , target    = IS_GLOBAL ? global : IS_STATIC ? global[name] : (global[name] || {})[PROTOTYPE]
-    , key, own, out;
-  if(IS_GLOBAL)source = name;
-  for(key in source){
-    // contains in native
-    own = !IS_FORCED && target && target[key] !== undefined;
-    if(own && key in exports)continue;
-    // export native or passed
-    out = own ? target[key] : source[key];
-    // prevent global pollution for namespaces
-    exports[key] = IS_GLOBAL && typeof target[key] != 'function' ? source[key]
-    // bind timers to global for call from export context
-    : IS_BIND && own ? ctx(out, global)
-    // wrap global constructors for prevent change them in library
-    : IS_WRAP && target[key] == out ? (function(C){
-      var F = function(a, b, c){
-        if(this instanceof C){
-          switch(arguments.length){
-            case 0: return new C;
-            case 1: return new C(a);
-            case 2: return new C(a, b);
-          } return new C(a, b, c);
-        } return C.apply(this, arguments);
-      };
-      F[PROTOTYPE] = C[PROTOTYPE];
-      return F;
-    // make static versions for prototype methods
-    })(out) : IS_PROTO && typeof out == 'function' ? ctx(Function.call, out) : out;
-    // export proto methods to core.%CONSTRUCTOR%.methods.%NAME%
-    if(IS_PROTO){
-      (exports.virtual || (exports.virtual = {}))[key] = out;
-      // export proto methods to core.%CONSTRUCTOR%.prototype.%NAME%
-      if(type & $export.R && expProto && !expProto[key])hide(expProto, key, out);
-    }
-  }
-};
-// type bitmap
-$export.F = 1;   // forced
-$export.G = 2;   // global
-$export.S = 4;   // static
-$export.P = 8;   // proto
-$export.B = 16;  // bind
-$export.W = 32;  // wrap
-$export.U = 64;  // safe
-$export.R = 128; // real proto method for `library` 
-module.exports = $export;
-});
-
-var require$$15 = (_export && typeof _export === 'object' && 'default' in _export ? _export['default'] : _export);
-
-var es6_object_defineProperty = __commonjs(function (module) {
-var $export = require$$15;
-// 19.1.2.4 / 15.2.3.6 Object.defineProperty(O, P, Attributes)
-$export($export.S + $export.F * !require$$1, 'Object', {defineProperty: require$$2.f});
-});
-
-var defineProperty$1 = __commonjs(function (module) {
-var $Object = require$$0$2.Object;
-module.exports = function defineProperty(it, key, desc){
-  return $Object.defineProperty(it, key, desc);
-};
-});
-
-var require$$0$1 = (defineProperty$1 && typeof defineProperty$1 === 'object' && 'default' in defineProperty$1 ? defineProperty$1['default'] : defineProperty$1);
-
-var defineProperty = __commonjs(function (module) {
-module.exports = { "default": require$$0$1, __esModule: true };
-});
-
-var require$$0 = (defineProperty && typeof defineProperty === 'object' && 'default' in defineProperty ? defineProperty['default'] : defineProperty);
-
-var createClass = __commonjs(function (module, exports) {
-"use strict";
-
-exports.__esModule = true;
-
-var _defineProperty = require$$0;
-
-var _defineProperty2 = _interopRequireDefault(_defineProperty);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-exports.default = function () {
-  function defineProperties(target, props) {
-    for (var i = 0; i < props.length; i++) {
-      var descriptor = props[i];
-      descriptor.enumerable = descriptor.enumerable || false;
-      descriptor.configurable = true;
-      if ("value" in descriptor) descriptor.writable = true;
-      (0, _defineProperty2.default)(target, descriptor.key, descriptor);
-    }
-  }
-
-  return function (Constructor, protoProps, staticProps) {
-    if (protoProps) defineProperties(Constructor.prototype, protoProps);
-    if (staticProps) defineProperties(Constructor, staticProps);
-    return Constructor;
-  };
-}();
-});
-
-var _createClass = (createClass && typeof createClass === 'object' && 'default' in createClass ? createClass['default'] : createClass);
-
-var _uid = __commonjs(function (module) {
-var id = 0
-  , px = Math.random();
-module.exports = function(key){
-  return 'Symbol('.concat(key === undefined ? '' : key, ')_', (++id + px).toString(36));
-};
-});
-
-var require$$4 = (_uid && typeof _uid === 'object' && 'default' in _uid ? _uid['default'] : _uid);
-
-var _shared = __commonjs(function (module) {
-var global = require$$1$2
-  , SHARED = '__core-js_shared__'
-  , store  = global[SHARED] || (global[SHARED] = {});
-module.exports = function(key){
-  return store[key] || (store[key] = {});
-};
-});
-
-var require$$1$4 = (_shared && typeof _shared === 'object' && 'default' in _shared ? _shared['default'] : _shared);
-
-var _wks = __commonjs(function (module) {
-var store      = require$$1$4('wks')
-  , uid        = require$$4
-  , Symbol     = require$$1$2.Symbol
-  , USE_SYMBOL = typeof Symbol == 'function';
-
-var $exports = module.exports = function(name){
-  return store[name] || (store[name] =
-    USE_SYMBOL && Symbol[name] || (USE_SYMBOL ? Symbol : uid)('Symbol.' + name));
-};
-
-$exports.store = store;
-});
-
-var require$$2$3 = (_wks && typeof _wks === 'object' && 'default' in _wks ? _wks['default'] : _wks);
-
-var _wksExt = __commonjs(function (module, exports) {
-exports.f = require$$2$3;
-});
-
-var require$$0$7 = (_wksExt && typeof _wksExt === 'object' && 'default' in _wksExt ? _wksExt['default'] : _wksExt);
-
-var _library = __commonjs(function (module) {
-module.exports = true;
-});
-
-var require$$19 = (_library && typeof _library === 'object' && 'default' in _library ? _library['default'] : _library);
-
-var _wksDefine = __commonjs(function (module) {
-var global         = require$$1$2
-  , core           = require$$0$2
-  , LIBRARY        = require$$19
-  , wksExt         = require$$0$7
-  , defineProperty = require$$2.f;
-module.exports = function(name){
-  var $Symbol = core.Symbol || (core.Symbol = LIBRARY ? {} : global.Symbol || {});
-  if(name.charAt(0) != '_' && !(name in $Symbol))defineProperty($Symbol, name, {value: wksExt.f(name)});
-};
-});
-
-var require$$17 = (_wksDefine && typeof _wksDefine === 'object' && 'default' in _wksDefine ? _wksDefine['default'] : _wksDefine);
-
-var es7_symbol_observable = __commonjs(function (module) {
-require$$17('observable');
-});
-
-var es7_symbol_asyncIterator = __commonjs(function (module) {
-require$$17('asyncIterator');
-});
-
-var _objectGops = __commonjs(function (module, exports) {
-exports.f = Object.getOwnPropertySymbols;
-});
-
-var require$$1$5 = (_objectGops && typeof _objectGops === 'object' && 'default' in _objectGops ? _objectGops['default'] : _objectGops);
-
-var _objectPie = __commonjs(function (module, exports) {
-exports.f = {}.propertyIsEnumerable;
-});
-
-var require$$0$8 = (_objectPie && typeof _objectPie === 'object' && 'default' in _objectPie ? _objectPie['default'] : _objectPie);
-
-var _enumBugKeys = __commonjs(function (module) {
-// IE 8- don't enum bug keys
-module.exports = (
-  'constructor,hasOwnProperty,isPrototypeOf,propertyIsEnumerable,toLocaleString,toString,valueOf'
-).split(',');
-});
-
-var require$$3$2 = (_enumBugKeys && typeof _enumBugKeys === 'object' && 'default' in _enumBugKeys ? _enumBugKeys['default'] : _enumBugKeys);
-
-var _sharedKey = __commonjs(function (module) {
-var shared = require$$1$4('keys')
-  , uid    = require$$4;
-module.exports = function(key){
-  return shared[key] || (shared[key] = uid(key));
-};
-});
-
-var require$$0$10 = (_sharedKey && typeof _sharedKey === 'object' && 'default' in _sharedKey ? _sharedKey['default'] : _sharedKey);
-
-var _toInteger = __commonjs(function (module) {
-// 7.1.4 ToInteger
-var ceil  = Math.ceil
-  , floor = Math.floor;
-module.exports = function(it){
-  return isNaN(it = +it) ? 0 : (it > 0 ? floor : ceil)(it);
-};
-});
-
-var require$$1$8 = (_toInteger && typeof _toInteger === 'object' && 'default' in _toInteger ? _toInteger['default'] : _toInteger);
-
-var _toIndex = __commonjs(function (module) {
-var toInteger = require$$1$8
-  , max       = Math.max
-  , min       = Math.min;
-module.exports = function(index, length){
-  index = toInteger(index);
-  return index < 0 ? max(index + length, 0) : min(index, length);
-};
-});
-
-var require$$0$11 = (_toIndex && typeof _toIndex === 'object' && 'default' in _toIndex ? _toIndex['default'] : _toIndex);
-
-var _toLength = __commonjs(function (module) {
-// 7.1.15 ToLength
-var toInteger = require$$1$8
-  , min       = Math.min;
-module.exports = function(it){
-  return it > 0 ? min(toInteger(it), 0x1fffffffffffff) : 0; // pow(2, 53) - 1 == 9007199254740991
-};
-});
-
-var require$$1$9 = (_toLength && typeof _toLength === 'object' && 'default' in _toLength ? _toLength['default'] : _toLength);
-
-var _defined = __commonjs(function (module) {
-// 7.2.1 RequireObjectCoercible(argument)
-module.exports = function(it){
-  if(it == undefined)throw TypeError("Can't call method on  " + it);
-  return it;
-};
-});
-
-var require$$0$12 = (_defined && typeof _defined === 'object' && 'default' in _defined ? _defined['default'] : _defined);
-
-var _cof = __commonjs(function (module) {
-var toString = {}.toString;
-
-module.exports = function(it){
-  return toString.call(it).slice(8, -1);
-};
-});
-
-var require$$1$12 = (_cof && typeof _cof === 'object' && 'default' in _cof ? _cof['default'] : _cof);
-
-var _iobject = __commonjs(function (module) {
-// fallback for non-array-like ES3 and non-enumerable old V8 strings
-var cof = require$$1$12;
-module.exports = Object('z').propertyIsEnumerable(0) ? Object : function(it){
-  return cof(it) == 'String' ? it.split('') : Object(it);
-};
-});
-
-var require$$1$11 = (_iobject && typeof _iobject === 'object' && 'default' in _iobject ? _iobject['default'] : _iobject);
-
-var _toIobject = __commonjs(function (module) {
-// to indexed object, toObject with fallback for non-array-like ES3 strings
-var IObject = require$$1$11
-  , defined = require$$0$12;
-module.exports = function(it){
-  return IObject(defined(it));
-};
-});
-
-var require$$1$10 = (_toIobject && typeof _toIobject === 'object' && 'default' in _toIobject ? _toIobject['default'] : _toIobject);
-
-var _arrayIncludes = __commonjs(function (module) {
-// false -> Array#indexOf
-// true  -> Array#includes
-var toIObject = require$$1$10
-  , toLength  = require$$1$9
-  , toIndex   = require$$0$11;
-module.exports = function(IS_INCLUDES){
-  return function($this, el, fromIndex){
-    var O      = toIObject($this)
-      , length = toLength(O.length)
-      , index  = toIndex(fromIndex, length)
-      , value;
-    // Array#includes uses SameValueZero equality algorithm
-    if(IS_INCLUDES && el != el)while(length > index){
-      value = O[index++];
-      if(value != value)return true;
-    // Array#toIndex ignores holes, Array#includes - not
-    } else for(;length > index; index++)if(IS_INCLUDES || index in O){
-      if(O[index] === el)return IS_INCLUDES || index || 0;
-    } return !IS_INCLUDES && -1;
-  };
-};
-});
-
-var require$$1$7 = (_arrayIncludes && typeof _arrayIncludes === 'object' && 'default' in _arrayIncludes ? _arrayIncludes['default'] : _arrayIncludes);
-
-var _has = __commonjs(function (module) {
-var hasOwnProperty = {}.hasOwnProperty;
-module.exports = function(it, key){
-  return hasOwnProperty.call(it, key);
-};
-});
-
-var require$$2$4 = (_has && typeof _has === 'object' && 'default' in _has ? _has['default'] : _has);
-
-var _objectKeysInternal = __commonjs(function (module) {
-var has          = require$$2$4
-  , toIObject    = require$$1$10
-  , arrayIndexOf = require$$1$7(false)
-  , IE_PROTO     = require$$0$10('IE_PROTO');
-
-module.exports = function(object, names){
-  var O      = toIObject(object)
-    , i      = 0
-    , result = []
-    , key;
-  for(key in O)if(key != IE_PROTO)has(O, key) && result.push(key);
-  // Don't enum bug & hidden keys
-  while(names.length > i)if(has(O, key = names[i++])){
-    ~arrayIndexOf(result, key) || result.push(key);
-  }
-  return result;
-};
-});
-
-var require$$1$6 = (_objectKeysInternal && typeof _objectKeysInternal === 'object' && 'default' in _objectKeysInternal ? _objectKeysInternal['default'] : _objectKeysInternal);
-
-var _objectGopn = __commonjs(function (module, exports) {
-// 19.1.2.7 / 15.2.3.4 Object.getOwnPropertyNames(O)
-var $keys      = require$$1$6
-  , hiddenKeys = require$$3$2.concat('length', 'prototype');
-
-exports.f = Object.getOwnPropertyNames || function getOwnPropertyNames(O){
-  return $keys(O, hiddenKeys);
-};
-});
-
-var require$$0$9 = (_objectGopn && typeof _objectGopn === 'object' && 'default' in _objectGopn ? _objectGopn['default'] : _objectGopn);
-
-var _objectKeys = __commonjs(function (module) {
-// 19.1.2.14 / 15.2.3.14 Object.keys(O)
-var $keys       = require$$1$6
-  , enumBugKeys = require$$3$2;
-
-module.exports = Object.keys || function keys(O){
-  return $keys(O, enumBugKeys);
-};
-});
-
-var require$$1$13 = (_objectKeys && typeof _objectKeys === 'object' && 'default' in _objectKeys ? _objectKeys['default'] : _objectKeys);
-
-var _objectGopd = __commonjs(function (module, exports) {
-var pIE            = require$$0$8
-  , createDesc     = require$$3$1
-  , toIObject      = require$$1$10
-  , toPrimitive    = require$$3
-  , has            = require$$2$4
-  , IE8_DOM_DEFINE = require$$1$1
-  , gOPD           = Object.getOwnPropertyDescriptor;
-
-exports.f = require$$1 ? gOPD : function getOwnPropertyDescriptor(O, P){
-  O = toIObject(O);
-  P = toPrimitive(P, true);
-  if(IE8_DOM_DEFINE)try {
-    return gOPD(O, P);
-  } catch(e){ /* empty */ }
-  if(has(O, P))return createDesc(!pIE.f.call(O, P), O[P]);
-};
-});
-
-var require$$0$13 = (_objectGopd && typeof _objectGopd === 'object' && 'default' in _objectGopd ? _objectGopd['default'] : _objectGopd);
-
-var _objectGopnExt = __commonjs(function (module) {
-// fallback for IE11 buggy Object.getOwnPropertyNames with iframe and window
-var toIObject = require$$1$10
-  , gOPN      = require$$0$9.f
-  , toString  = {}.toString;
-
-var windowNames = typeof window == 'object' && window && Object.getOwnPropertyNames
-  ? Object.getOwnPropertyNames(window) : [];
-
-var getWindowNames = function(it){
-  try {
-    return gOPN(it);
-  } catch(e){
-    return windowNames.slice();
-  }
-};
-
-module.exports.f = function getOwnPropertyNames(it){
-  return windowNames && toString.call(it) == '[object Window]' ? getWindowNames(it) : gOPN(toIObject(it));
-};
-});
-
-var require$$8 = (_objectGopnExt && typeof _objectGopnExt === 'object' && 'default' in _objectGopnExt ? _objectGopnExt['default'] : _objectGopnExt);
-
-var _html = __commonjs(function (module) {
-module.exports = require$$1$2.document && document.documentElement;
-});
-
-var require$$3$3 = (_html && typeof _html === 'object' && 'default' in _html ? _html['default'] : _html);
-
-var _objectDps = __commonjs(function (module) {
-var dP       = require$$2
-  , anObject = require$$2$2
-  , getKeys  = require$$1$13;
-
-module.exports = require$$1 ? Object.defineProperties : function defineProperties(O, Properties){
-  anObject(O);
-  var keys   = getKeys(Properties)
-    , length = keys.length
-    , i = 0
-    , P;
-  while(length > i)dP.f(O, P = keys[i++], Properties[P]);
-  return O;
-};
-});
-
-var require$$4$1 = (_objectDps && typeof _objectDps === 'object' && 'default' in _objectDps ? _objectDps['default'] : _objectDps);
-
-var _objectCreate = __commonjs(function (module) {
-// 19.1.2.2 / 15.2.3.5 Object.create(O [, Properties])
-var anObject    = require$$2$2
-  , dPs         = require$$4$1
-  , enumBugKeys = require$$3$2
-  , IE_PROTO    = require$$0$10('IE_PROTO')
-  , Empty       = function(){ /* empty */ }
-  , PROTOTYPE   = 'prototype';
-
-// Create object with fake `null` prototype: use iframe Object with cleared prototype
-var createDict = function(){
-  // Thrash, waste and sodomy: IE GC bug
-  var iframe = require$$2$1('iframe')
-    , i      = enumBugKeys.length
-    , gt     = '>'
-    , iframeDocument;
-  iframe.style.display = 'none';
-  require$$3$3.appendChild(iframe);
-  iframe.src = 'javascript:'; // eslint-disable-line no-script-url
-  // createDict = iframe.contentWindow.Object;
-  // html.removeChild(iframe);
-  iframeDocument = iframe.contentWindow.document;
-  iframeDocument.open();
-  iframeDocument.write('<script>document.F=Object</script' + gt);
-  iframeDocument.close();
-  createDict = iframeDocument.F;
-  while(i--)delete createDict[PROTOTYPE][enumBugKeys[i]];
-  return createDict();
-};
-
-module.exports = Object.create || function create(O, Properties){
-  var result;
-  if(O !== null){
-    Empty[PROTOTYPE] = anObject(O);
-    result = new Empty;
-    Empty[PROTOTYPE] = null;
-    // add "__proto__" for Object.getPrototypeOf polyfill
-    result[IE_PROTO] = O;
-  } else result = createDict();
-  return Properties === undefined ? result : dPs(result, Properties);
-};
-});
-
-var require$$0$14 = (_objectCreate && typeof _objectCreate === 'object' && 'default' in _objectCreate ? _objectCreate['default'] : _objectCreate);
-
-var _isArray = __commonjs(function (module) {
-// 7.2.2 IsArray(argument)
-var cof = require$$1$12;
-module.exports = Array.isArray || function isArray(arg){
-  return cof(arg) == 'Array';
-};
-});
-
-var require$$14$1 = (_isArray && typeof _isArray === 'object' && 'default' in _isArray ? _isArray['default'] : _isArray);
-
-var _enumKeys = __commonjs(function (module) {
-// all enumerable object keys, includes symbols
-var getKeys = require$$1$13
-  , gOPS    = require$$1$5
-  , pIE     = require$$0$8;
-module.exports = function(it){
-  var result     = getKeys(it)
-    , getSymbols = gOPS.f;
-  if(getSymbols){
-    var symbols = getSymbols(it)
-      , isEnum  = pIE.f
-      , i       = 0
-      , key;
-    while(symbols.length > i)if(isEnum.call(it, key = symbols[i++]))result.push(key);
-  } return result;
-};
-});
-
-var require$$15$1 = (_enumKeys && typeof _enumKeys === 'object' && 'default' in _enumKeys ? _enumKeys['default'] : _enumKeys);
-
-var _keyof = __commonjs(function (module) {
-var getKeys   = require$$1$13
-  , toIObject = require$$1$10;
-module.exports = function(object, el){
-  var O      = toIObject(object)
-    , keys   = getKeys(O)
-    , length = keys.length
-    , index  = 0
-    , key;
-  while(length > index)if(O[key = keys[index++]] === el)return key;
-};
-});
-
-var require$$16 = (_keyof && typeof _keyof === 'object' && 'default' in _keyof ? _keyof['default'] : _keyof);
-
-var _setToStringTag = __commonjs(function (module) {
-var def = require$$2.f
-  , has = require$$2$4
-  , TAG = require$$2$3('toStringTag');
-
-module.exports = function(it, tag, stat){
-  if(it && !has(it = stat ? it : it.prototype, TAG))def(it, TAG, {configurable: true, value: tag});
-};
-});
-
-var require$$3$4 = (_setToStringTag && typeof _setToStringTag === 'object' && 'default' in _setToStringTag ? _setToStringTag['default'] : _setToStringTag);
-
-var _meta = __commonjs(function (module) {
-var META     = require$$4('meta')
-  , isObject = require$$14
-  , has      = require$$2$4
-  , setDesc  = require$$2.f
-  , id       = 0;
-var isExtensible = Object.isExtensible || function(){
-  return true;
-};
-var FREEZE = !require$$0$3(function(){
-  return isExtensible(Object.preventExtensions({}));
-});
-var setMeta = function(it){
-  setDesc(it, META, {value: {
-    i: 'O' + ++id, // object ID
-    w: {}          // weak collections IDs
-  }});
-};
-var fastKey = function(it, create){
-  // return primitive with prefix
-  if(!isObject(it))return typeof it == 'symbol' ? it : (typeof it == 'string' ? 'S' : 'P') + it;
-  if(!has(it, META)){
-    // can't set metadata to uncaught frozen object
-    if(!isExtensible(it))return 'F';
-    // not necessary to add metadata
-    if(!create)return 'E';
-    // add missing metadata
-    setMeta(it);
-  // return object ID
-  } return it[META].i;
-};
-var getWeak = function(it, create){
-  if(!has(it, META)){
-    // can't set metadata to uncaught frozen object
-    if(!isExtensible(it))return true;
-    // not necessary to add metadata
-    if(!create)return false;
-    // add missing metadata
-    setMeta(it);
-  // return hash weak collections IDs
-  } return it[META].w;
-};
-// add metadata on freeze-family methods calling
-var onFreeze = function(it){
-  if(FREEZE && meta.NEED && isExtensible(it) && !has(it, META))setMeta(it);
-  return it;
-};
-var meta = module.exports = {
-  KEY:      META,
-  NEED:     false,
-  fastKey:  fastKey,
-  getWeak:  getWeak,
-  onFreeze: onFreeze
-};
-});
-
-var require$$24 = (_meta && typeof _meta === 'object' && 'default' in _meta ? _meta['default'] : _meta);
-
-var _redefine = __commonjs(function (module) {
-module.exports = require$$0$4;
-});
-
-var require$$7 = (_redefine && typeof _redefine === 'object' && 'default' in _redefine ? _redefine['default'] : _redefine);
-
-var es6_symbol = __commonjs(function (module) {
-'use strict';
-// ECMAScript 6 symbols shim
-var global         = require$$1$2
-  , has            = require$$2$4
-  , DESCRIPTORS    = require$$1
-  , $export        = require$$15
-  , redefine       = require$$7
-  , META           = require$$24.KEY
-  , $fails         = require$$0$3
-  , shared         = require$$1$4
-  , setToStringTag = require$$3$4
-  , uid            = require$$4
-  , wks            = require$$2$3
-  , wksExt         = require$$0$7
-  , wksDefine      = require$$17
-  , keyOf          = require$$16
-  , enumKeys       = require$$15$1
-  , isArray        = require$$14$1
-  , anObject       = require$$2$2
-  , toIObject      = require$$1$10
-  , toPrimitive    = require$$3
-  , createDesc     = require$$3$1
-  , _create        = require$$0$14
-  , gOPNExt        = require$$8
-  , $GOPD          = require$$0$13
-  , $DP            = require$$2
-  , $keys          = require$$1$13
-  , gOPD           = $GOPD.f
-  , dP             = $DP.f
-  , gOPN           = gOPNExt.f
-  , $Symbol        = global.Symbol
-  , $JSON          = global.JSON
-  , _stringify     = $JSON && $JSON.stringify
-  , PROTOTYPE      = 'prototype'
-  , HIDDEN         = wks('_hidden')
-  , TO_PRIMITIVE   = wks('toPrimitive')
-  , isEnum         = {}.propertyIsEnumerable
-  , SymbolRegistry = shared('symbol-registry')
-  , AllSymbols     = shared('symbols')
-  , OPSymbols      = shared('op-symbols')
-  , ObjectProto    = Object[PROTOTYPE]
-  , USE_NATIVE     = typeof $Symbol == 'function'
-  , QObject        = global.QObject;
-// Don't use setters in Qt Script, https://github.com/zloirock/core-js/issues/173
-var setter = !QObject || !QObject[PROTOTYPE] || !QObject[PROTOTYPE].findChild;
-
-// fallback for old Android, https://code.google.com/p/v8/issues/detail?id=687
-var setSymbolDesc = DESCRIPTORS && $fails(function(){
-  return _create(dP({}, 'a', {
-    get: function(){ return dP(this, 'a', {value: 7}).a; }
-  })).a != 7;
-}) ? function(it, key, D){
-  var protoDesc = gOPD(ObjectProto, key);
-  if(protoDesc)delete ObjectProto[key];
-  dP(it, key, D);
-  if(protoDesc && it !== ObjectProto)dP(ObjectProto, key, protoDesc);
-} : dP;
-
-var wrap = function(tag){
-  var sym = AllSymbols[tag] = _create($Symbol[PROTOTYPE]);
-  sym._k = tag;
-  return sym;
-};
-
-var isSymbol = USE_NATIVE && typeof $Symbol.iterator == 'symbol' ? function(it){
-  return typeof it == 'symbol';
-} : function(it){
-  return it instanceof $Symbol;
-};
-
-var $defineProperty = function defineProperty(it, key, D){
-  if(it === ObjectProto)$defineProperty(OPSymbols, key, D);
-  anObject(it);
-  key = toPrimitive(key, true);
-  anObject(D);
-  if(has(AllSymbols, key)){
-    if(!D.enumerable){
-      if(!has(it, HIDDEN))dP(it, HIDDEN, createDesc(1, {}));
-      it[HIDDEN][key] = true;
-    } else {
-      if(has(it, HIDDEN) && it[HIDDEN][key])it[HIDDEN][key] = false;
-      D = _create(D, {enumerable: createDesc(0, false)});
-    } return setSymbolDesc(it, key, D);
-  } return dP(it, key, D);
-};
-var $defineProperties = function defineProperties(it, P){
-  anObject(it);
-  var keys = enumKeys(P = toIObject(P))
-    , i    = 0
-    , l = keys.length
-    , key;
-  while(l > i)$defineProperty(it, key = keys[i++], P[key]);
-  return it;
-};
-var $create = function create(it, P){
-  return P === undefined ? _create(it) : $defineProperties(_create(it), P);
-};
-var $propertyIsEnumerable = function propertyIsEnumerable(key){
-  var E = isEnum.call(this, key = toPrimitive(key, true));
-  if(this === ObjectProto && has(AllSymbols, key) && !has(OPSymbols, key))return false;
-  return E || !has(this, key) || !has(AllSymbols, key) || has(this, HIDDEN) && this[HIDDEN][key] ? E : true;
-};
-var $getOwnPropertyDescriptor = function getOwnPropertyDescriptor(it, key){
-  it  = toIObject(it);
-  key = toPrimitive(key, true);
-  if(it === ObjectProto && has(AllSymbols, key) && !has(OPSymbols, key))return;
-  var D = gOPD(it, key);
-  if(D && has(AllSymbols, key) && !(has(it, HIDDEN) && it[HIDDEN][key]))D.enumerable = true;
-  return D;
-};
-var $getOwnPropertyNames = function getOwnPropertyNames(it){
-  var names  = gOPN(toIObject(it))
-    , result = []
-    , i      = 0
-    , key;
-  while(names.length > i){
-    if(!has(AllSymbols, key = names[i++]) && key != HIDDEN && key != META)result.push(key);
-  } return result;
-};
-var $getOwnPropertySymbols = function getOwnPropertySymbols(it){
-  var IS_OP  = it === ObjectProto
-    , names  = gOPN(IS_OP ? OPSymbols : toIObject(it))
-    , result = []
-    , i      = 0
-    , key;
-  while(names.length > i){
-    if(has(AllSymbols, key = names[i++]) && (IS_OP ? has(ObjectProto, key) : true))result.push(AllSymbols[key]);
-  } return result;
-};
-
-// 19.4.1.1 Symbol([description])
-if(!USE_NATIVE){
-  $Symbol = function Symbol(){
-    if(this instanceof $Symbol)throw TypeError('Symbol is not a constructor!');
-    var tag = uid(arguments.length > 0 ? arguments[0] : undefined);
-    var $set = function(value){
-      if(this === ObjectProto)$set.call(OPSymbols, value);
-      if(has(this, HIDDEN) && has(this[HIDDEN], tag))this[HIDDEN][tag] = false;
-      setSymbolDesc(this, tag, createDesc(1, value));
-    };
-    if(DESCRIPTORS && setter)setSymbolDesc(ObjectProto, tag, {configurable: true, set: $set});
-    return wrap(tag);
-  };
-  redefine($Symbol[PROTOTYPE], 'toString', function toString(){
-    return this._k;
-  });
-
-  $GOPD.f = $getOwnPropertyDescriptor;
-  $DP.f   = $defineProperty;
-  require$$0$9.f = gOPNExt.f = $getOwnPropertyNames;
-  require$$0$8.f  = $propertyIsEnumerable;
-  require$$1$5.f = $getOwnPropertySymbols;
-
-  if(DESCRIPTORS && !require$$19){
-    redefine(ObjectProto, 'propertyIsEnumerable', $propertyIsEnumerable, true);
-  }
-
-  wksExt.f = function(name){
-    return wrap(wks(name));
-  }
-}
-
-$export($export.G + $export.W + $export.F * !USE_NATIVE, {Symbol: $Symbol});
-
-for(var symbols = (
-  // 19.4.2.2, 19.4.2.3, 19.4.2.4, 19.4.2.6, 19.4.2.8, 19.4.2.9, 19.4.2.10, 19.4.2.11, 19.4.2.12, 19.4.2.13, 19.4.2.14
-  'hasInstance,isConcatSpreadable,iterator,match,replace,search,species,split,toPrimitive,toStringTag,unscopables'
-).split(','), i = 0; symbols.length > i; )wks(symbols[i++]);
-
-for(var symbols = $keys(wks.store), i = 0; symbols.length > i; )wksDefine(symbols[i++]);
-
-$export($export.S + $export.F * !USE_NATIVE, 'Symbol', {
-  // 19.4.2.1 Symbol.for(key)
-  'for': function(key){
-    return has(SymbolRegistry, key += '')
-      ? SymbolRegistry[key]
-      : SymbolRegistry[key] = $Symbol(key);
-  },
-  // 19.4.2.5 Symbol.keyFor(sym)
-  keyFor: function keyFor(key){
-    if(isSymbol(key))return keyOf(SymbolRegistry, key);
-    throw TypeError(key + ' is not a symbol!');
-  },
-  useSetter: function(){ setter = true; },
-  useSimple: function(){ setter = false; }
-});
-
-$export($export.S + $export.F * !USE_NATIVE, 'Object', {
-  // 19.1.2.2 Object.create(O [, Properties])
-  create: $create,
-  // 19.1.2.4 Object.defineProperty(O, P, Attributes)
-  defineProperty: $defineProperty,
-  // 19.1.2.3 Object.defineProperties(O, Properties)
-  defineProperties: $defineProperties,
-  // 19.1.2.6 Object.getOwnPropertyDescriptor(O, P)
-  getOwnPropertyDescriptor: $getOwnPropertyDescriptor,
-  // 19.1.2.7 Object.getOwnPropertyNames(O)
-  getOwnPropertyNames: $getOwnPropertyNames,
-  // 19.1.2.8 Object.getOwnPropertySymbols(O)
-  getOwnPropertySymbols: $getOwnPropertySymbols
-});
-
-// 24.3.2 JSON.stringify(value [, replacer [, space]])
-$JSON && $export($export.S + $export.F * (!USE_NATIVE || $fails(function(){
-  var S = $Symbol();
-  // MS Edge converts symbol values to JSON as {}
-  // WebKit converts symbol values to JSON as null
-  // V8 throws on boxed symbols
-  return _stringify([S]) != '[null]' || _stringify({a: S}) != '{}' || _stringify(Object(S)) != '{}';
-})), 'JSON', {
-  stringify: function stringify(it){
-    if(it === undefined || isSymbol(it))return; // IE8 returns string on undefined
-    var args = [it]
-      , i    = 1
-      , replacer, $replacer;
-    while(arguments.length > i)args.push(arguments[i++]);
-    replacer = args[1];
-    if(typeof replacer == 'function')$replacer = replacer;
-    if($replacer || !isArray(replacer))replacer = function(key, value){
-      if($replacer)value = $replacer.call(this, key, value);
-      if(!isSymbol(value))return value;
-    };
-    args[1] = replacer;
-    return _stringify.apply($JSON, args);
-  }
-});
-
-// 19.4.3.4 Symbol.prototype[@@toPrimitive](hint)
-$Symbol[PROTOTYPE][TO_PRIMITIVE] || require$$0$4($Symbol[PROTOTYPE], TO_PRIMITIVE, $Symbol[PROTOTYPE].valueOf);
-// 19.4.3.5 Symbol.prototype[@@toStringTag]
-setToStringTag($Symbol, 'Symbol');
-// 20.2.1.9 Math[@@toStringTag]
-setToStringTag(Math, 'Math', true);
-// 24.3.3 JSON[@@toStringTag]
-setToStringTag(global.JSON, 'JSON', true);
-});
-
-var index = __commonjs(function (module) {
-module.exports = require$$0$2.Symbol;
-});
-
-var require$$0$6 = (index && typeof index === 'object' && 'default' in index ? index['default'] : index);
-
-var symbol = __commonjs(function (module) {
-module.exports = { "default": require$$0$6, __esModule: true };
-});
-
-var require$$0$5 = (symbol && typeof symbol === 'object' && 'default' in symbol ? symbol['default'] : symbol);
-
-var _iterators = __commonjs(function (module) {
-module.exports = {};
-});
-
-var require$$1$15 = (_iterators && typeof _iterators === 'object' && 'default' in _iterators ? _iterators['default'] : _iterators);
-
-var _toObject = __commonjs(function (module) {
-// 7.1.13 ToObject(argument)
-var defined = require$$0$12;
-module.exports = function(it){
-  return Object(defined(it));
-};
-});
-
-var require$$1$17 = (_toObject && typeof _toObject === 'object' && 'default' in _toObject ? _toObject['default'] : _toObject);
-
-var _objectGpo = __commonjs(function (module) {
-// 19.1.2.9 / 15.2.3.2 Object.getPrototypeOf(O)
-var has         = require$$2$4
-  , toObject    = require$$1$17
-  , IE_PROTO    = require$$0$10('IE_PROTO')
-  , ObjectProto = Object.prototype;
-
-module.exports = Object.getPrototypeOf || function(O){
-  O = toObject(O);
-  if(has(O, IE_PROTO))return O[IE_PROTO];
-  if(typeof O.constructor == 'function' && O instanceof O.constructor){
-    return O.constructor.prototype;
-  } return O instanceof Object ? ObjectProto : null;
-};
-});
-
-var require$$1$16 = (_objectGpo && typeof _objectGpo === 'object' && 'default' in _objectGpo ? _objectGpo['default'] : _objectGpo);
-
-var _iterCreate = __commonjs(function (module) {
-'use strict';
-var create         = require$$0$14
-  , descriptor     = require$$3$1
-  , setToStringTag = require$$3$4
-  , IteratorPrototype = {};
-
-// 25.1.2.1.1 %IteratorPrototype%[@@iterator]()
-require$$0$4(IteratorPrototype, require$$2$3('iterator'), function(){ return this; });
-
-module.exports = function(Constructor, NAME, next){
-  Constructor.prototype = create(IteratorPrototype, {next: descriptor(1, next)});
-  setToStringTag(Constructor, NAME + ' Iterator');
-};
-});
-
-var require$$3$5 = (_iterCreate && typeof _iterCreate === 'object' && 'default' in _iterCreate ? _iterCreate['default'] : _iterCreate);
-
-var _iterDefine = __commonjs(function (module) {
-'use strict';
-var LIBRARY        = require$$19
-  , $export        = require$$15
-  , redefine       = require$$7
-  , hide           = require$$0$4
-  , has            = require$$2$4
-  , Iterators      = require$$1$15
-  , $iterCreate    = require$$3$5
-  , setToStringTag = require$$3$4
-  , getPrototypeOf = require$$1$16
-  , ITERATOR       = require$$2$3('iterator')
-  , BUGGY          = !([].keys && 'next' in [].keys()) // Safari has buggy iterators w/o `next`
-  , FF_ITERATOR    = '@@iterator'
-  , KEYS           = 'keys'
-  , VALUES         = 'values';
-
-var returnThis = function(){ return this; };
-
-module.exports = function(Base, NAME, Constructor, next, DEFAULT, IS_SET, FORCED){
-  $iterCreate(Constructor, NAME, next);
-  var getMethod = function(kind){
-    if(!BUGGY && kind in proto)return proto[kind];
-    switch(kind){
-      case KEYS: return function keys(){ return new Constructor(this, kind); };
-      case VALUES: return function values(){ return new Constructor(this, kind); };
-    } return function entries(){ return new Constructor(this, kind); };
-  };
-  var TAG        = NAME + ' Iterator'
-    , DEF_VALUES = DEFAULT == VALUES
-    , VALUES_BUG = false
-    , proto      = Base.prototype
-    , $native    = proto[ITERATOR] || proto[FF_ITERATOR] || DEFAULT && proto[DEFAULT]
-    , $default   = $native || getMethod(DEFAULT)
-    , $entries   = DEFAULT ? !DEF_VALUES ? $default : getMethod('entries') : undefined
-    , $anyNative = NAME == 'Array' ? proto.entries || $native : $native
-    , methods, key, IteratorPrototype;
-  // Fix native
-  if($anyNative){
-    IteratorPrototype = getPrototypeOf($anyNative.call(new Base));
-    if(IteratorPrototype !== Object.prototype){
-      // Set @@toStringTag to native iterators
-      setToStringTag(IteratorPrototype, TAG, true);
-      // fix for some old engines
-      if(!LIBRARY && !has(IteratorPrototype, ITERATOR))hide(IteratorPrototype, ITERATOR, returnThis);
-    }
-  }
-  // fix Array#{values, @@iterator}.name in V8 / FF
-  if(DEF_VALUES && $native && $native.name !== VALUES){
-    VALUES_BUG = true;
-    $default = function values(){ return $native.call(this); };
-  }
-  // Define iterator
-  if((!LIBRARY || FORCED) && (BUGGY || VALUES_BUG || !proto[ITERATOR])){
-    hide(proto, ITERATOR, $default);
-  }
-  // Plug for library
-  Iterators[NAME] = $default;
-  Iterators[TAG]  = returnThis;
-  if(DEFAULT){
-    methods = {
-      values:  DEF_VALUES ? $default : getMethod(VALUES),
-      keys:    IS_SET     ? $default : getMethod(KEYS),
-      entries: $entries
-    };
-    if(FORCED)for(key in methods){
-      if(!(key in proto))redefine(proto, key, methods[key]);
-    } else $export($export.P + $export.F * (BUGGY || VALUES_BUG), NAME, methods);
-  }
-  return methods;
-};
-});
-
-var require$$0$16 = (_iterDefine && typeof _iterDefine === 'object' && 'default' in _iterDefine ? _iterDefine['default'] : _iterDefine);
-
-var _iterStep = __commonjs(function (module) {
-module.exports = function(done, value){
-  return {value: value, done: !!done};
-};
-});
-
-var require$$3$6 = (_iterStep && typeof _iterStep === 'object' && 'default' in _iterStep ? _iterStep['default'] : _iterStep);
-
-var _addToUnscopables = __commonjs(function (module) {
-module.exports = function(){ /* empty */ };
-});
-
-var require$$4$2 = (_addToUnscopables && typeof _addToUnscopables === 'object' && 'default' in _addToUnscopables ? _addToUnscopables['default'] : _addToUnscopables);
-
-var es6_array_iterator = __commonjs(function (module) {
-'use strict';
-var addToUnscopables = require$$4$2
-  , step             = require$$3$6
-  , Iterators        = require$$1$15
-  , toIObject        = require$$1$10;
-
-// 22.1.3.4 Array.prototype.entries()
-// 22.1.3.13 Array.prototype.keys()
-// 22.1.3.29 Array.prototype.values()
-// 22.1.3.30 Array.prototype[@@iterator]()
-module.exports = require$$0$16(Array, 'Array', function(iterated, kind){
-  this._t = toIObject(iterated); // target
-  this._i = 0;                   // next index
-  this._k = kind;                // kind
-// 22.1.5.2.1 %ArrayIteratorPrototype%.next()
-}, function(){
-  var O     = this._t
-    , kind  = this._k
-    , index = this._i++;
-  if(!O || index >= O.length){
-    this._t = undefined;
-    return step(1);
-  }
-  if(kind == 'keys'  )return step(0, index);
-  if(kind == 'values')return step(0, O[index]);
-  return step(0, [index, O[index]]);
-}, 'values');
-
-// argumentsList[@@iterator] is %ArrayProto_values% (9.4.4.6, 9.4.4.7)
-Iterators.Arguments = Iterators.Array;
-
-addToUnscopables('keys');
-addToUnscopables('values');
-addToUnscopables('entries');
-});
-
-var web_dom_iterable = __commonjs(function (module) {
-var global        = require$$1$2
-  , hide          = require$$0$4
-  , Iterators     = require$$1$15
-  , TO_STRING_TAG = require$$2$3('toStringTag');
-
-for(var collections = ['NodeList', 'DOMTokenList', 'MediaList', 'StyleSheetList', 'CSSRuleList'], i = 0; i < 5; i++){
-  var NAME       = collections[i]
-    , Collection = global[NAME]
-    , proto      = Collection && Collection.prototype;
-  if(proto && !proto[TO_STRING_TAG])hide(proto, TO_STRING_TAG, NAME);
-  Iterators[NAME] = Iterators.Array;
-}
-});
-
-var _stringAt = __commonjs(function (module) {
-var toInteger = require$$1$8
-  , defined   = require$$0$12;
-// true  -> String#at
-// false -> String#codePointAt
-module.exports = function(TO_STRING){
-  return function(that, pos){
-    var s = String(defined(that))
-      , i = toInteger(pos)
-      , l = s.length
-      , a, b;
-    if(i < 0 || i >= l)return TO_STRING ? '' : undefined;
-    a = s.charCodeAt(i);
-    return a < 0xd800 || a > 0xdbff || i + 1 === l || (b = s.charCodeAt(i + 1)) < 0xdc00 || b > 0xdfff
-      ? TO_STRING ? s.charAt(i) : a
-      : TO_STRING ? s.slice(i, i + 2) : (a - 0xd800 << 10) + (b - 0xdc00) + 0x10000;
-  };
-};
-});
-
-var require$$1$18 = (_stringAt && typeof _stringAt === 'object' && 'default' in _stringAt ? _stringAt['default'] : _stringAt);
-
-var es6_string_iterator = __commonjs(function (module) {
-'use strict';
-var $at  = require$$1$18(true);
-
-// 21.1.3.27 String.prototype[@@iterator]()
-require$$0$16(String, 'String', function(iterated){
-  this._t = String(iterated); // target
-  this._i = 0;                // next index
-// 21.1.5.2.1 %StringIteratorPrototype%.next()
-}, function(){
-  var O     = this._t
-    , index = this._i
-    , point;
-  if(index >= O.length)return {value: undefined, done: true};
-  point = $at(O, index);
-  this._i += point.length;
-  return {value: point, done: false};
-});
-});
-
-var iterator$1 = __commonjs(function (module) {
-module.exports = require$$0$7.f('iterator');
-});
-
-var require$$0$15 = (iterator$1 && typeof iterator$1 === 'object' && 'default' in iterator$1 ? iterator$1['default'] : iterator$1);
-
-var iterator = __commonjs(function (module) {
-module.exports = { "default": require$$0$15, __esModule: true };
-});
-
-var require$$1$14 = (iterator && typeof iterator === 'object' && 'default' in iterator ? iterator['default'] : iterator);
-
-var _typeof = __commonjs(function (module, exports) {
-"use strict";
-
-exports.__esModule = true;
-
-var _iterator = require$$1$14;
-
-var _iterator2 = _interopRequireDefault(_iterator);
-
-var _symbol = require$$0$5;
-
-var _symbol2 = _interopRequireDefault(_symbol);
-
-var _typeof = typeof _symbol2.default === "function" && typeof _iterator2.default === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof _symbol2.default === "function" && obj.constructor === _symbol2.default ? "symbol" : typeof obj; };
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-exports.default = typeof _symbol2.default === "function" && _typeof(_iterator2.default) === "symbol" ? function (obj) {
-  return typeof obj === "undefined" ? "undefined" : _typeof(obj);
-} : function (obj) {
-  return obj && typeof _symbol2.default === "function" && obj.constructor === _symbol2.default ? "symbol" : typeof obj === "undefined" ? "undefined" : _typeof(obj);
-};
-});
-
-var _typeof$1 = (_typeof && typeof _typeof === 'object' && 'default' in _typeof ? _typeof['default'] : _typeof);
-
-var possibleConstructorReturn = __commonjs(function (module, exports) {
-"use strict";
-
-exports.__esModule = true;
-
-var _typeof2 = _typeof$1;
-
-var _typeof3 = _interopRequireDefault(_typeof2);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-exports.default = function (self, call) {
-  if (!self) {
-    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
-  }
-
-  return call && ((typeof call === "undefined" ? "undefined" : (0, _typeof3.default)(call)) === "object" || typeof call === "function") ? call : self;
-};
-});
-
-var _possibleConstructorReturn = (possibleConstructorReturn && typeof possibleConstructorReturn === 'object' && 'default' in possibleConstructorReturn ? possibleConstructorReturn['default'] : possibleConstructorReturn);
-
-var es6_object_create = __commonjs(function (module) {
-var $export = require$$15
-// 19.1.2.2 / 15.2.3.5 Object.create(O [, Properties])
-$export($export.S, 'Object', {create: require$$0$14});
-});
-
-var create$1 = __commonjs(function (module) {
-var $Object = require$$0$2.Object;
-module.exports = function create(P, D){
-  return $Object.create(P, D);
-};
-});
-
-var require$$0$17 = (create$1 && typeof create$1 === 'object' && 'default' in create$1 ? create$1['default'] : create$1);
-
-var create = __commonjs(function (module) {
-module.exports = { "default": require$$0$17, __esModule: true };
-});
-
-var require$$1$19 = (create && typeof create === 'object' && 'default' in create ? create['default'] : create);
-
-var _setProto = __commonjs(function (module) {
-// Works with __proto__ only. Old v8 can't work with null proto objects.
-/* eslint-disable no-proto */
-var isObject = require$$14
-  , anObject = require$$2$2;
-var check = function(O, proto){
-  anObject(O);
-  if(!isObject(proto) && proto !== null)throw TypeError(proto + ": can't set as prototype!");
-};
-module.exports = {
-  set: Object.setPrototypeOf || ('__proto__' in {} ? // eslint-disable-line
-    function(test, buggy, set){
-      try {
-        set = require$$5(Function.call, require$$0$13.f(Object.prototype, '__proto__').set, 2);
-        set(test, []);
-        buggy = !(test instanceof Array);
-      } catch(e){ buggy = true; }
-      return function setPrototypeOf(O, proto){
-        check(O, proto);
-        if(buggy)O.__proto__ = proto;
-        else set(O, proto);
-        return O;
-      };
-    }({}, false) : undefined),
-  check: check
-};
-});
-
-var require$$9 = (_setProto && typeof _setProto === 'object' && 'default' in _setProto ? _setProto['default'] : _setProto);
-
-var es6_object_setPrototypeOf = __commonjs(function (module) {
-// 19.1.3.19 Object.setPrototypeOf(O, proto)
-var $export = require$$15;
-$export($export.S, 'Object', {setPrototypeOf: require$$9.set});
-});
-
-var setPrototypeOf$1 = __commonjs(function (module) {
-module.exports = require$$0$2.Object.setPrototypeOf;
-});
-
-var require$$0$18 = (setPrototypeOf$1 && typeof setPrototypeOf$1 === 'object' && 'default' in setPrototypeOf$1 ? setPrototypeOf$1['default'] : setPrototypeOf$1);
-
-var setPrototypeOf = __commonjs(function (module) {
-module.exports = { "default": require$$0$18, __esModule: true };
-});
-
-var require$$2$5 = (setPrototypeOf && typeof setPrototypeOf === 'object' && 'default' in setPrototypeOf ? setPrototypeOf['default'] : setPrototypeOf);
-
-var inherits = __commonjs(function (module, exports) {
-"use strict";
-
-exports.__esModule = true;
-
-var _setPrototypeOf = require$$2$5;
-
-var _setPrototypeOf2 = _interopRequireDefault(_setPrototypeOf);
-
-var _create = require$$1$19;
-
-var _create2 = _interopRequireDefault(_create);
-
-var _typeof2 = _typeof$1;
-
-var _typeof3 = _interopRequireDefault(_typeof2);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-exports.default = function (subClass, superClass) {
-  if (typeof superClass !== "function" && superClass !== null) {
-    throw new TypeError("Super expression must either be null or a function, not " + (typeof superClass === "undefined" ? "undefined" : (0, _typeof3.default)(superClass)));
-  }
-
-  subClass.prototype = (0, _create2.default)(superClass && superClass.prototype, {
-    constructor: {
-      value: subClass,
-      enumerable: false,
-      writable: true,
-      configurable: true
-    }
-  });
-  if (superClass) _setPrototypeOf2.default ? (0, _setPrototypeOf2.default)(subClass, superClass) : subClass.__proto__ = superClass;
-};
-});
-
-var _inherits = (inherits && typeof inherits === 'object' && 'default' in inherits ? inherits['default'] : inherits);
-
 var runtime = __commonjs(function (module, exports, global) {
 /**
  * Copyright (c) 2014, Facebook, Inc.
@@ -2123,7 +672,7 @@ var runtime = __commonjs(function (module, exports, global) {
 );
 });
 
-var require$$0$20 = (runtime && typeof runtime === 'object' && 'default' in runtime ? runtime['default'] : runtime);
+var require$$0$1 = (runtime && typeof runtime === 'object' && 'default' in runtime ? runtime['default'] : runtime);
 
 var runtimeModule = __commonjs(function (module, exports, global) {
 // This method of obtaining a reference to the global object needs to be
@@ -2144,7 +693,7 @@ var oldRuntime = hadRuntime && g.regeneratorRuntime;
 // Force reevalutation of runtime.js.
 g.regeneratorRuntime = undefined;
 
-module.exports = require$$0$20;
+module.exports = require$$0$1;
 
 if (hadRuntime) {
   // Restore the original runtime.
@@ -2159,16 +708,69 @@ if (hadRuntime) {
 }
 });
 
-var require$$0$19 = (runtimeModule && typeof runtimeModule === 'object' && 'default' in runtimeModule ? runtimeModule['default'] : runtimeModule);
+var require$$0 = (runtimeModule && typeof runtimeModule === 'object' && 'default' in runtimeModule ? runtimeModule['default'] : runtimeModule);
 
-var index$1 = __commonjs(function (module) {
-module.exports = require$$0$19;
+var index = __commonjs(function (module) {
+module.exports = require$$0;
 });
 
-var _regeneratorRuntime = (index$1 && typeof index$1 === 'object' && 'default' in index$1 ? index$1['default'] : index$1);
+var _regeneratorRuntime = (index && typeof index === 'object' && 'default' in index ? index['default'] : index);
+
+var _core = __commonjs(function (module) {
+var core = module.exports = {version: '2.4.0'};
+if(typeof __e == 'number')__e = core; // eslint-disable-line no-undef
+});
+
+var require$$0$4 = (_core && typeof _core === 'object' && 'default' in _core ? _core['default'] : _core);
+
+var _global = __commonjs(function (module) {
+// https://github.com/zloirock/core-js/issues/86#issuecomment-115759028
+var global = module.exports = typeof window != 'undefined' && window.Math == Math
+  ? window : typeof self != 'undefined' && self.Math == Math ? self : Function('return this')();
+if(typeof __g == 'number')__g = global; // eslint-disable-line no-undef
+});
+
+var require$$29 = (_global && typeof _global === 'object' && 'default' in _global ? _global['default'] : _global);
+
+var _uid = __commonjs(function (module) {
+var id = 0
+  , px = Math.random();
+module.exports = function(key){
+  return 'Symbol('.concat(key === undefined ? '' : key, ')_', (++id + px).toString(36));
+};
+});
+
+var require$$4 = (_uid && typeof _uid === 'object' && 'default' in _uid ? _uid['default'] : _uid);
+
+var _shared = __commonjs(function (module) {
+var global = require$$29
+  , SHARED = '__core-js_shared__'
+  , store  = global[SHARED] || (global[SHARED] = {});
+module.exports = function(key){
+  return store[key] || (store[key] = {});
+};
+});
+
+var require$$22 = (_shared && typeof _shared === 'object' && 'default' in _shared ? _shared['default'] : _shared);
+
+var _wks = __commonjs(function (module) {
+var store      = require$$22('wks')
+  , uid        = require$$4
+  , Symbol     = require$$29.Symbol
+  , USE_SYMBOL = typeof Symbol == 'function';
+
+var $exports = module.exports = function(name){
+  return store[name] || (store[name] =
+    USE_SYMBOL && Symbol[name] || (USE_SYMBOL ? Symbol : uid)('Symbol.' + name));
+};
+
+$exports.store = store;
+});
+
+var require$$19 = (_wks && typeof _wks === 'object' && 'default' in _wks ? _wks['default'] : _wks);
 
 var _iterDetect = __commonjs(function (module) {
-var ITERATOR     = require$$2$3('iterator')
+var ITERATOR     = require$$19('iterator')
   , SAFE_CLOSING = false;
 
 try {
@@ -2191,15 +793,112 @@ module.exports = function(exec, skipClosing){
 };
 });
 
-var require$$0$23 = (_iterDetect && typeof _iterDetect === 'object' && 'default' in _iterDetect ? _iterDetect['default'] : _iterDetect);
+var require$$0$5 = (_iterDetect && typeof _iterDetect === 'object' && 'default' in _iterDetect ? _iterDetect['default'] : _iterDetect);
+
+var _fails = __commonjs(function (module) {
+module.exports = function(exec){
+  try {
+    return !!exec();
+  } catch(e){
+    return true;
+  }
+};
+});
+
+var require$$0$6 = (_fails && typeof _fails === 'object' && 'default' in _fails ? _fails['default'] : _fails);
+
+var _descriptors = __commonjs(function (module) {
+// Thank's IE8 for his funny defineProperty
+module.exports = !require$$0$6(function(){
+  return Object.defineProperty({}, 'a', {get: function(){ return 7; }}).a != 7;
+});
+});
+
+var require$$27 = (_descriptors && typeof _descriptors === 'object' && 'default' in _descriptors ? _descriptors['default'] : _descriptors);
+
+var _isObject = __commonjs(function (module) {
+module.exports = function(it){
+  return typeof it === 'object' ? it !== null : typeof it === 'function';
+};
+});
+
+var require$$3 = (_isObject && typeof _isObject === 'object' && 'default' in _isObject ? _isObject['default'] : _isObject);
+
+var _toPrimitive = __commonjs(function (module) {
+// 7.1.1 ToPrimitive(input [, PreferredType])
+var isObject = require$$3;
+// instead of the ES6 spec version, we didn't implement @@toPrimitive case
+// and the second argument - flag - preferred type is a string
+module.exports = function(it, S){
+  if(!isObject(it))return it;
+  var fn, val;
+  if(S && typeof (fn = it.toString) == 'function' && !isObject(val = fn.call(it)))return val;
+  if(typeof (fn = it.valueOf) == 'function' && !isObject(val = fn.call(it)))return val;
+  if(!S && typeof (fn = it.toString) == 'function' && !isObject(val = fn.call(it)))return val;
+  throw TypeError("Can't convert object to primitive value");
+};
+});
+
+var require$$11 = (_toPrimitive && typeof _toPrimitive === 'object' && 'default' in _toPrimitive ? _toPrimitive['default'] : _toPrimitive);
+
+var _domCreate = __commonjs(function (module) {
+var isObject = require$$3
+  , document = require$$29.document
+  // in old IE typeof document.createElement is 'object'
+  , is = isObject(document) && isObject(document.createElement);
+module.exports = function(it){
+  return is ? document.createElement(it) : {};
+};
+});
+
+var require$$1$2 = (_domCreate && typeof _domCreate === 'object' && 'default' in _domCreate ? _domCreate['default'] : _domCreate);
+
+var _ie8DomDefine = __commonjs(function (module) {
+module.exports = !require$$27 && !require$$0$6(function(){
+  return Object.defineProperty(require$$1$2('div'), 'a', {get: function(){ return 7; }}).a != 7;
+});
+});
+
+var require$$1$1 = (_ie8DomDefine && typeof _ie8DomDefine === 'object' && 'default' in _ie8DomDefine ? _ie8DomDefine['default'] : _ie8DomDefine);
+
+var _anObject = __commonjs(function (module) {
+var isObject = require$$3;
+module.exports = function(it){
+  if(!isObject(it))throw TypeError(it + ' is not an object!');
+  return it;
+};
+});
+
+var require$$13 = (_anObject && typeof _anObject === 'object' && 'default' in _anObject ? _anObject['default'] : _anObject);
+
+var _objectDp = __commonjs(function (module, exports) {
+var anObject       = require$$13
+  , IE8_DOM_DEFINE = require$$1$1
+  , toPrimitive    = require$$11
+  , dP             = Object.defineProperty;
+
+exports.f = require$$27 ? Object.defineProperty : function defineProperty(O, P, Attributes){
+  anObject(O);
+  P = toPrimitive(P, true);
+  anObject(Attributes);
+  if(IE8_DOM_DEFINE)try {
+    return dP(O, P, Attributes);
+  } catch(e){ /* empty */ }
+  if('get' in Attributes || 'set' in Attributes)throw TypeError('Accessors not supported!');
+  if('value' in Attributes)O[P] = Attributes.value;
+  return O;
+};
+});
+
+var require$$1 = (_objectDp && typeof _objectDp === 'object' && 'default' in _objectDp ? _objectDp['default'] : _objectDp);
 
 var _setSpecies = __commonjs(function (module) {
 'use strict';
-var global      = require$$1$2
-  , core        = require$$0$2
-  , dP          = require$$2
-  , DESCRIPTORS = require$$1
-  , SPECIES     = require$$2$3('species');
+var global      = require$$29
+  , core        = require$$0$4
+  , dP          = require$$1
+  , DESCRIPTORS = require$$27
+  , SPECIES     = require$$19('species');
 
 module.exports = function(KEY){
   var C = typeof core[KEY] == 'function' ? core[KEY] : global[KEY];
@@ -2210,10 +909,57 @@ module.exports = function(KEY){
 };
 });
 
-var require$$2$6 = (_setSpecies && typeof _setSpecies === 'object' && 'default' in _setSpecies ? _setSpecies['default'] : _setSpecies);
+var require$$2 = (_setSpecies && typeof _setSpecies === 'object' && 'default' in _setSpecies ? _setSpecies['default'] : _setSpecies);
+
+var _has = __commonjs(function (module) {
+var hasOwnProperty = {}.hasOwnProperty;
+module.exports = function(it, key){
+  return hasOwnProperty.call(it, key);
+};
+});
+
+var require$$2$1 = (_has && typeof _has === 'object' && 'default' in _has ? _has['default'] : _has);
+
+var _setToStringTag = __commonjs(function (module) {
+var def = require$$1.f
+  , has = require$$2$1
+  , TAG = require$$19('toStringTag');
+
+module.exports = function(it, tag, stat){
+  if(it && !has(it = stat ? it : it.prototype, TAG))def(it, TAG, {configurable: true, value: tag});
+};
+});
+
+var require$$21 = (_setToStringTag && typeof _setToStringTag === 'object' && 'default' in _setToStringTag ? _setToStringTag['default'] : _setToStringTag);
+
+var _propertyDesc = __commonjs(function (module) {
+module.exports = function(bitmap, value){
+  return {
+    enumerable  : !(bitmap & 1),
+    configurable: !(bitmap & 2),
+    writable    : !(bitmap & 4),
+    value       : value
+  };
+};
+});
+
+var require$$10 = (_propertyDesc && typeof _propertyDesc === 'object' && 'default' in _propertyDesc ? _propertyDesc['default'] : _propertyDesc);
+
+var _hide = __commonjs(function (module) {
+var dP         = require$$1
+  , createDesc = require$$10;
+module.exports = require$$27 ? function(object, key, value){
+  return dP.f(object, key, createDesc(1, value));
+} : function(object, key, value){
+  object[key] = value;
+  return object;
+};
+});
+
+var require$$0$7 = (_hide && typeof _hide === 'object' && 'default' in _hide ? _hide['default'] : _hide);
 
 var _redefineAll = __commonjs(function (module) {
-var hide = require$$0$4;
+var hide = require$$0$7;
 module.exports = function(target, src, safe){
   for(var key in src){
     if(safe && target[key])target[key] = src[key];
@@ -2222,7 +968,23 @@ module.exports = function(target, src, safe){
 };
 });
 
-var require$$4$3 = (_redefineAll && typeof _redefineAll === 'object' && 'default' in _redefineAll ? _redefineAll['default'] : _redefineAll);
+var require$$4$1 = (_redefineAll && typeof _redefineAll === 'object' && 'default' in _redefineAll ? _redefineAll['default'] : _redefineAll);
+
+var _cof = __commonjs(function (module) {
+var toString = {}.toString;
+
+module.exports = function(it){
+  return toString.call(it).slice(8, -1);
+};
+});
+
+var require$$0$8 = (_cof && typeof _cof === 'object' && 'default' in _cof ? _cof['default'] : _cof);
+
+var _html = __commonjs(function (module) {
+module.exports = require$$29.document && document.documentElement;
+});
+
+var require$$0$9 = (_html && typeof _html === 'object' && 'default' in _html ? _html['default'] : _html);
 
 var _invoke = __commonjs(function (module) {
 // fast apply, http://jsperf.lnkit.com/fast-apply/5
@@ -2243,14 +1005,48 @@ module.exports = function(fn, args, that){
 };
 });
 
-var require$$4$4 = (_invoke && typeof _invoke === 'object' && 'default' in _invoke ? _invoke['default'] : _invoke);
+var require$$4$2 = (_invoke && typeof _invoke === 'object' && 'default' in _invoke ? _invoke['default'] : _invoke);
+
+var _aFunction = __commonjs(function (module) {
+module.exports = function(it){
+  if(typeof it != 'function')throw TypeError(it + ' is not a function!');
+  return it;
+};
+});
+
+var require$$1$5 = (_aFunction && typeof _aFunction === 'object' && 'default' in _aFunction ? _aFunction['default'] : _aFunction);
+
+var _ctx = __commonjs(function (module) {
+// optional / simple context binding
+var aFunction = require$$1$5;
+module.exports = function(fn, that, length){
+  aFunction(fn);
+  if(that === undefined)return fn;
+  switch(length){
+    case 1: return function(a){
+      return fn.call(that, a);
+    };
+    case 2: return function(a, b){
+      return fn.call(that, a, b);
+    };
+    case 3: return function(a, b, c){
+      return fn.call(that, a, b, c);
+    };
+  }
+  return function(/* ...args */){
+    return fn.apply(that, arguments);
+  };
+};
+});
+
+var require$$1$4 = (_ctx && typeof _ctx === 'object' && 'default' in _ctx ? _ctx['default'] : _ctx);
 
 var _task = __commonjs(function (module, exports, global) {
-var ctx                = require$$5
-  , invoke             = require$$4$4
-  , html               = require$$3$3
-  , cel                = require$$2$1
-  , global             = require$$1$2
+var ctx                = require$$1$4
+  , invoke             = require$$4$2
+  , html               = require$$0$9
+  , cel                = require$$1$2
+  , global             = require$$29
   , process            = global.process
   , setTask            = global.setImmediate
   , clearTask          = global.clearImmediate
@@ -2285,7 +1081,7 @@ if(!setTask || !clearTask){
     delete queue[id];
   };
   // Node.js 0.8-
-  if(require$$1$12(process) == 'process'){
+  if(require$$0$8(process) == 'process'){
     defer = function(id){
       process.nextTick(ctx(run, id, 1));
     };
@@ -2323,15 +1119,15 @@ module.exports = {
 };
 });
 
-var require$$1$20 = (_task && typeof _task === 'object' && 'default' in _task ? _task['default'] : _task);
+var require$$1$3 = (_task && typeof _task === 'object' && 'default' in _task ? _task['default'] : _task);
 
 var _microtask = __commonjs(function (module) {
-var global    = require$$1$2
-  , macrotask = require$$1$20.set
+var global    = require$$29
+  , macrotask = require$$1$3.set
   , Observer  = global.MutationObserver || global.WebKitMutationObserver
   , process   = global.process
   , Promise   = global.Promise
-  , isNode    = require$$1$12(process) == 'process';
+  , isNode    = require$$0$8(process) == 'process';
 
 module.exports = function(){
   var head, last, notify;
@@ -2400,21 +1196,115 @@ var require$$6 = (_microtask && typeof _microtask === 'object' && 'default' in _
 
 var _speciesConstructor = __commonjs(function (module) {
 // 7.3.20 SpeciesConstructor(O, defaultConstructor)
-var anObject  = require$$2$2
-  , aFunction = require$$1$3
-  , SPECIES   = require$$2$3('species');
+var anObject  = require$$13
+  , aFunction = require$$1$5
+  , SPECIES   = require$$19('species');
 module.exports = function(O, D){
   var C = anObject(O).constructor, S;
   return C === undefined || (S = anObject(C)[SPECIES]) == undefined ? D : aFunction(S);
 };
 });
 
-var require$$8$1 = (_speciesConstructor && typeof _speciesConstructor === 'object' && 'default' in _speciesConstructor ? _speciesConstructor['default'] : _speciesConstructor);
+var require$$8 = (_speciesConstructor && typeof _speciesConstructor === 'object' && 'default' in _speciesConstructor ? _speciesConstructor['default'] : _speciesConstructor);
+
+var _defined = __commonjs(function (module) {
+// 7.2.1 RequireObjectCoercible(argument)
+module.exports = function(it){
+  if(it == undefined)throw TypeError("Can't call method on  " + it);
+  return it;
+};
+});
+
+var require$$0$12 = (_defined && typeof _defined === 'object' && 'default' in _defined ? _defined['default'] : _defined);
+
+var _iobject = __commonjs(function (module) {
+// fallback for non-array-like ES3 and non-enumerable old V8 strings
+var cof = require$$0$8;
+module.exports = Object('z').propertyIsEnumerable(0) ? Object : function(it){
+  return cof(it) == 'String' ? it.split('') : Object(it);
+};
+});
+
+var require$$1$6 = (_iobject && typeof _iobject === 'object' && 'default' in _iobject ? _iobject['default'] : _iobject);
+
+var _toIobject = __commonjs(function (module) {
+// to indexed object, toObject with fallback for non-array-like ES3 strings
+var IObject = require$$1$6
+  , defined = require$$0$12;
+module.exports = function(it){
+  return IObject(defined(it));
+};
+});
+
+var require$$0$11 = (_toIobject && typeof _toIobject === 'object' && 'default' in _toIobject ? _toIobject['default'] : _toIobject);
+
+var _objectPie = __commonjs(function (module, exports) {
+exports.f = {}.propertyIsEnumerable;
+});
+
+var require$$0$13 = (_objectPie && typeof _objectPie === 'object' && 'default' in _objectPie ? _objectPie['default'] : _objectPie);
+
+var _objectGopd = __commonjs(function (module, exports) {
+var pIE            = require$$0$13
+  , createDesc     = require$$10
+  , toIObject      = require$$0$11
+  , toPrimitive    = require$$11
+  , has            = require$$2$1
+  , IE8_DOM_DEFINE = require$$1$1
+  , gOPD           = Object.getOwnPropertyDescriptor;
+
+exports.f = require$$27 ? gOPD : function getOwnPropertyDescriptor(O, P){
+  O = toIObject(O);
+  P = toPrimitive(P, true);
+  if(IE8_DOM_DEFINE)try {
+    return gOPD(O, P);
+  } catch(e){ /* empty */ }
+  if(has(O, P))return createDesc(!pIE.f.call(O, P), O[P]);
+};
+});
+
+var require$$7 = (_objectGopd && typeof _objectGopd === 'object' && 'default' in _objectGopd ? _objectGopd['default'] : _objectGopd);
+
+var _setProto = __commonjs(function (module) {
+// Works with __proto__ only. Old v8 can't work with null proto objects.
+/* eslint-disable no-proto */
+var isObject = require$$3
+  , anObject = require$$13;
+var check = function(O, proto){
+  anObject(O);
+  if(!isObject(proto) && proto !== null)throw TypeError(proto + ": can't set as prototype!");
+};
+module.exports = {
+  set: Object.setPrototypeOf || ('__proto__' in {} ? // eslint-disable-line
+    function(test, buggy, set){
+      try {
+        set = require$$1$4(Function.call, require$$7.f(Object.prototype, '__proto__').set, 2);
+        set(test, []);
+        buggy = !(test instanceof Array);
+      } catch(e){ buggy = true; }
+      return function setPrototypeOf(O, proto){
+        check(O, proto);
+        if(buggy)O.__proto__ = proto;
+        else set(O, proto);
+        return O;
+      };
+    }({}, false) : undefined),
+  check: check
+};
+});
+
+var require$$0$10 = (_setProto && typeof _setProto === 'object' && 'default' in _setProto ? _setProto['default'] : _setProto);
+
+var _iterators = __commonjs(function (module) {
+module.exports = {};
+});
+
+var require$$4$3 = (_iterators && typeof _iterators === 'object' && 'default' in _iterators ? _iterators['default'] : _iterators);
 
 var _classof = __commonjs(function (module) {
 // getting tag from 19.1.3.6 Object.prototype.toString()
-var cof = require$$1$12
-  , TAG = require$$2$3('toStringTag')
+var cof = require$$0$8
+  , TAG = require$$19('toStringTag')
   // ES3 wrong here
   , ARG = cof(function(){ return arguments; }()) == 'Arguments';
 
@@ -2437,25 +1327,47 @@ module.exports = function(it){
 };
 });
 
-var require$$3$7 = (_classof && typeof _classof === 'object' && 'default' in _classof ? _classof['default'] : _classof);
+var require$$3$1 = (_classof && typeof _classof === 'object' && 'default' in _classof ? _classof['default'] : _classof);
 
 var core_getIteratorMethod = __commonjs(function (module) {
-var classof   = require$$3$7
-  , ITERATOR  = require$$2$3('iterator')
-  , Iterators = require$$1$15;
-module.exports = require$$0$2.getIteratorMethod = function(it){
+var classof   = require$$3$1
+  , ITERATOR  = require$$19('iterator')
+  , Iterators = require$$4$3;
+module.exports = require$$0$4.getIteratorMethod = function(it){
   if(it != undefined)return it[ITERATOR]
     || it['@@iterator']
     || Iterators[classof(it)];
 };
 });
 
-var require$$1$21 = (core_getIteratorMethod && typeof core_getIteratorMethod === 'object' && 'default' in core_getIteratorMethod ? core_getIteratorMethod['default'] : core_getIteratorMethod);
+var require$$0$14 = (core_getIteratorMethod && typeof core_getIteratorMethod === 'object' && 'default' in core_getIteratorMethod ? core_getIteratorMethod['default'] : core_getIteratorMethod);
+
+var _toInteger = __commonjs(function (module) {
+// 7.1.4 ToInteger
+var ceil  = Math.ceil
+  , floor = Math.floor;
+module.exports = function(it){
+  return isNaN(it = +it) ? 0 : (it > 0 ? floor : ceil)(it);
+};
+});
+
+var require$$1$8 = (_toInteger && typeof _toInteger === 'object' && 'default' in _toInteger ? _toInteger['default'] : _toInteger);
+
+var _toLength = __commonjs(function (module) {
+// 7.1.15 ToLength
+var toInteger = require$$1$8
+  , min       = Math.min;
+module.exports = function(it){
+  return it > 0 ? min(toInteger(it), 0x1fffffffffffff) : 0; // pow(2, 53) - 1 == 9007199254740991
+};
+});
+
+var require$$1$7 = (_toLength && typeof _toLength === 'object' && 'default' in _toLength ? _toLength['default'] : _toLength);
 
 var _isArrayIter = __commonjs(function (module) {
 // check on default Array iterator
-var Iterators  = require$$1$15
-  , ITERATOR   = require$$2$3('iterator')
+var Iterators  = require$$4$3
+  , ITERATOR   = require$$19('iterator')
   , ArrayProto = Array.prototype;
 
 module.exports = function(it){
@@ -2463,11 +1375,11 @@ module.exports = function(it){
 };
 });
 
-var require$$3$8 = (_isArrayIter && typeof _isArrayIter === 'object' && 'default' in _isArrayIter ? _isArrayIter['default'] : _isArrayIter);
+var require$$3$2 = (_isArrayIter && typeof _isArrayIter === 'object' && 'default' in _isArrayIter ? _isArrayIter['default'] : _isArrayIter);
 
 var _iterCall = __commonjs(function (module) {
 // call something on iterator step with safe closing on error
-var anObject = require$$2$2;
+var anObject = require$$13;
 module.exports = function(iterator, fn, value, entries){
   try {
     return entries ? fn(anObject(value)[0], value[1]) : fn(value);
@@ -2480,15 +1392,15 @@ module.exports = function(iterator, fn, value, entries){
 };
 });
 
-var require$$4$5 = (_iterCall && typeof _iterCall === 'object' && 'default' in _iterCall ? _iterCall['default'] : _iterCall);
+var require$$4$4 = (_iterCall && typeof _iterCall === 'object' && 'default' in _iterCall ? _iterCall['default'] : _iterCall);
 
 var _forOf = __commonjs(function (module) {
-var ctx         = require$$5
-  , call        = require$$4$5
-  , isArrayIter = require$$3$8
-  , anObject    = require$$2$2
-  , toLength    = require$$1$9
-  , getIterFn   = require$$1$21
+var ctx         = require$$1$4
+  , call        = require$$4$4
+  , isArrayIter = require$$3$2
+  , anObject    = require$$13
+  , toLength    = require$$1$7
+  , getIterFn   = require$$0$14
   , BREAK       = {}
   , RETURN      = {};
 var exports = module.exports = function(iterable, entries, fn, that, ITERATOR){
@@ -2510,7 +1422,7 @@ exports.BREAK  = BREAK;
 exports.RETURN = RETURN;
 });
 
-var require$$10 = (_forOf && typeof _forOf === 'object' && 'default' in _forOf ? _forOf['default'] : _forOf);
+var require$$10$1 = (_forOf && typeof _forOf === 'object' && 'default' in _forOf ? _forOf['default'] : _forOf);
 
 var _anInstance = __commonjs(function (module) {
 module.exports = function(it, Constructor, name, forbiddenField){
@@ -2520,23 +1432,95 @@ module.exports = function(it, Constructor, name, forbiddenField){
 };
 });
 
-var require$$11 = (_anInstance && typeof _anInstance === 'object' && 'default' in _anInstance ? _anInstance['default'] : _anInstance);
+var require$$11$1 = (_anInstance && typeof _anInstance === 'object' && 'default' in _anInstance ? _anInstance['default'] : _anInstance);
+
+var _export = __commonjs(function (module, exports) {
+var global    = require$$29
+  , core      = require$$0$4
+  , ctx       = require$$1$4
+  , hide      = require$$0$7
+  , PROTOTYPE = 'prototype';
+
+var $export = function(type, name, source){
+  var IS_FORCED = type & $export.F
+    , IS_GLOBAL = type & $export.G
+    , IS_STATIC = type & $export.S
+    , IS_PROTO  = type & $export.P
+    , IS_BIND   = type & $export.B
+    , IS_WRAP   = type & $export.W
+    , exports   = IS_GLOBAL ? core : core[name] || (core[name] = {})
+    , expProto  = exports[PROTOTYPE]
+    , target    = IS_GLOBAL ? global : IS_STATIC ? global[name] : (global[name] || {})[PROTOTYPE]
+    , key, own, out;
+  if(IS_GLOBAL)source = name;
+  for(key in source){
+    // contains in native
+    own = !IS_FORCED && target && target[key] !== undefined;
+    if(own && key in exports)continue;
+    // export native or passed
+    out = own ? target[key] : source[key];
+    // prevent global pollution for namespaces
+    exports[key] = IS_GLOBAL && typeof target[key] != 'function' ? source[key]
+    // bind timers to global for call from export context
+    : IS_BIND && own ? ctx(out, global)
+    // wrap global constructors for prevent change them in library
+    : IS_WRAP && target[key] == out ? (function(C){
+      var F = function(a, b, c){
+        if(this instanceof C){
+          switch(arguments.length){
+            case 0: return new C;
+            case 1: return new C(a);
+            case 2: return new C(a, b);
+          } return new C(a, b, c);
+        } return C.apply(this, arguments);
+      };
+      F[PROTOTYPE] = C[PROTOTYPE];
+      return F;
+    // make static versions for prototype methods
+    })(out) : IS_PROTO && typeof out == 'function' ? ctx(Function.call, out) : out;
+    // export proto methods to core.%CONSTRUCTOR%.methods.%NAME%
+    if(IS_PROTO){
+      (exports.virtual || (exports.virtual = {}))[key] = out;
+      // export proto methods to core.%CONSTRUCTOR%.prototype.%NAME%
+      if(type & $export.R && expProto && !expProto[key])hide(expProto, key, out);
+    }
+  }
+};
+// type bitmap
+$export.F = 1;   // forced
+$export.G = 2;   // global
+$export.S = 4;   // static
+$export.P = 8;   // proto
+$export.B = 16;  // bind
+$export.W = 32;  // wrap
+$export.U = 64;  // safe
+$export.R = 128; // real proto method for `library` 
+module.exports = $export;
+});
+
+var require$$1$9 = (_export && typeof _export === 'object' && 'default' in _export ? _export['default'] : _export);
+
+var _library = __commonjs(function (module) {
+module.exports = true;
+});
+
+var require$$1$10 = (_library && typeof _library === 'object' && 'default' in _library ? _library['default'] : _library);
 
 var es6_promise = __commonjs(function (module, exports, global) {
 'use strict';
-var LIBRARY            = require$$19
-  , global             = require$$1$2
-  , ctx                = require$$5
-  , classof            = require$$3$7
-  , $export            = require$$15
-  , isObject           = require$$14
-  , anObject           = require$$2$2
-  , aFunction          = require$$1$3
-  , anInstance         = require$$11
-  , forOf              = require$$10
-  , setProto           = require$$9.set
-  , speciesConstructor = require$$8$1
-  , task               = require$$1$20.set
+var LIBRARY            = require$$1$10
+  , global             = require$$29
+  , ctx                = require$$1$4
+  , classof            = require$$3$1
+  , $export            = require$$1$9
+  , isObject           = require$$3
+  , anObject           = require$$13
+  , aFunction          = require$$1$5
+  , anInstance         = require$$11$1
+  , forOf              = require$$10$1
+  , setProto           = require$$0$10.set
+  , speciesConstructor = require$$8
+  , task               = require$$1$3.set
   , microtask          = require$$6()
   , PROMISE            = 'Promise'
   , TypeError          = global.TypeError
@@ -2551,7 +1535,7 @@ var USE_NATIVE = !!function(){
   try {
     // correct subclassing with @@species support
     var promise     = $Promise.resolve(1)
-      , FakePromise = (promise.constructor = {})[require$$2$3('species')] = function(exec){ exec(empty, empty); };
+      , FakePromise = (promise.constructor = {})[require$$19('species')] = function(exec){ exec(empty, empty); };
     // unhandled rejections tracking support, NodeJS Promise without it fails @@species test
     return (isNode || typeof PromiseRejectionEvent == 'function') && promise.then(empty) instanceof FakePromise;
   } catch(e){ /* empty */ }
@@ -2729,7 +1713,7 @@ if(!USE_NATIVE){
     this._h = 0;              // <- rejection state, 0 - default, 1 - handled, 2 - unhandled
     this._n = false;          // <- notify
   };
-  Internal.prototype = require$$4$3($Promise.prototype, {
+  Internal.prototype = require$$4$1($Promise.prototype, {
     // 25.4.5.3 Promise.prototype.then(onFulfilled, onRejected)
     then: function then(onFulfilled, onRejected){
       var reaction    = newPromiseCapability(speciesConstructor(this, $Promise));
@@ -2755,9 +1739,9 @@ if(!USE_NATIVE){
 }
 
 $export($export.G + $export.W + $export.F * !USE_NATIVE, {Promise: $Promise});
-require$$3$4($Promise, PROMISE);
-require$$2$6(PROMISE);
-Wrapper = require$$0$2[PROMISE];
+require$$21($Promise, PROMISE);
+require$$2(PROMISE);
+Wrapper = require$$0$4[PROMISE];
 
 // statics
 $export($export.S + $export.F * !USE_NATIVE, PROMISE, {
@@ -2780,7 +1764,7 @@ $export($export.S + $export.F * (LIBRARY || !USE_NATIVE), PROMISE, {
     return capability.promise;
   }
 });
-$export($export.S + $export.F * !(USE_NATIVE && require$$0$23(function(iter){
+$export($export.S + $export.F * !(USE_NATIVE && require$$0$5(function(iter){
   $Promise.all(iter)['catch'](empty);
 })), PROMISE, {
   // 25.4.4.1 Promise.all(iterable)
@@ -2826,24 +1810,413 @@ $export($export.S + $export.F * !(USE_NATIVE && require$$0$23(function(iter){
 });
 });
 
-var promise$1 = __commonjs(function (module) {
-module.exports = require$$0$2.Promise;
+var _sharedKey = __commonjs(function (module) {
+var shared = require$$22('keys')
+  , uid    = require$$4;
+module.exports = function(key){
+  return shared[key] || (shared[key] = uid(key));
+};
 });
 
-var require$$0$22 = (promise$1 && typeof promise$1 === 'object' && 'default' in promise$1 ? promise$1['default'] : promise$1);
+var require$$0$16 = (_sharedKey && typeof _sharedKey === 'object' && 'default' in _sharedKey ? _sharedKey['default'] : _sharedKey);
+
+var _toObject = __commonjs(function (module) {
+// 7.1.13 ToObject(argument)
+var defined = require$$0$12;
+module.exports = function(it){
+  return Object(defined(it));
+};
+});
+
+var require$$1$12 = (_toObject && typeof _toObject === 'object' && 'default' in _toObject ? _toObject['default'] : _toObject);
+
+var _objectGpo = __commonjs(function (module) {
+// 19.1.2.9 / 15.2.3.2 Object.getPrototypeOf(O)
+var has         = require$$2$1
+  , toObject    = require$$1$12
+  , IE_PROTO    = require$$0$16('IE_PROTO')
+  , ObjectProto = Object.prototype;
+
+module.exports = Object.getPrototypeOf || function(O){
+  O = toObject(O);
+  if(has(O, IE_PROTO))return O[IE_PROTO];
+  if(typeof O.constructor == 'function' && O instanceof O.constructor){
+    return O.constructor.prototype;
+  } return O instanceof Object ? ObjectProto : null;
+};
+});
+
+var require$$1$11 = (_objectGpo && typeof _objectGpo === 'object' && 'default' in _objectGpo ? _objectGpo['default'] : _objectGpo);
+
+var _enumBugKeys = __commonjs(function (module) {
+// IE 8- don't enum bug keys
+module.exports = (
+  'constructor,hasOwnProperty,isPrototypeOf,propertyIsEnumerable,toLocaleString,toString,valueOf'
+).split(',');
+});
+
+var require$$0$18 = (_enumBugKeys && typeof _enumBugKeys === 'object' && 'default' in _enumBugKeys ? _enumBugKeys['default'] : _enumBugKeys);
+
+var _toIndex = __commonjs(function (module) {
+var toInteger = require$$1$8
+  , max       = Math.max
+  , min       = Math.min;
+module.exports = function(index, length){
+  index = toInteger(index);
+  return index < 0 ? max(index + length, 0) : min(index, length);
+};
+});
+
+var require$$0$19 = (_toIndex && typeof _toIndex === 'object' && 'default' in _toIndex ? _toIndex['default'] : _toIndex);
+
+var _arrayIncludes = __commonjs(function (module) {
+// false -> Array#indexOf
+// true  -> Array#includes
+var toIObject = require$$0$11
+  , toLength  = require$$1$7
+  , toIndex   = require$$0$19;
+module.exports = function(IS_INCLUDES){
+  return function($this, el, fromIndex){
+    var O      = toIObject($this)
+      , length = toLength(O.length)
+      , index  = toIndex(fromIndex, length)
+      , value;
+    // Array#includes uses SameValueZero equality algorithm
+    if(IS_INCLUDES && el != el)while(length > index){
+      value = O[index++];
+      if(value != value)return true;
+    // Array#toIndex ignores holes, Array#includes - not
+    } else for(;length > index; index++)if(IS_INCLUDES || index in O){
+      if(O[index] === el)return IS_INCLUDES || index || 0;
+    } return !IS_INCLUDES && -1;
+  };
+};
+});
+
+var require$$1$15 = (_arrayIncludes && typeof _arrayIncludes === 'object' && 'default' in _arrayIncludes ? _arrayIncludes['default'] : _arrayIncludes);
+
+var _objectKeysInternal = __commonjs(function (module) {
+var has          = require$$2$1
+  , toIObject    = require$$0$11
+  , arrayIndexOf = require$$1$15(false)
+  , IE_PROTO     = require$$0$16('IE_PROTO');
+
+module.exports = function(object, names){
+  var O      = toIObject(object)
+    , i      = 0
+    , result = []
+    , key;
+  for(key in O)if(key != IE_PROTO)has(O, key) && result.push(key);
+  // Don't enum bug & hidden keys
+  while(names.length > i)if(has(O, key = names[i++])){
+    ~arrayIndexOf(result, key) || result.push(key);
+  }
+  return result;
+};
+});
+
+var require$$1$14 = (_objectKeysInternal && typeof _objectKeysInternal === 'object' && 'default' in _objectKeysInternal ? _objectKeysInternal['default'] : _objectKeysInternal);
+
+var _objectKeys = __commonjs(function (module) {
+// 19.1.2.14 / 15.2.3.14 Object.keys(O)
+var $keys       = require$$1$14
+  , enumBugKeys = require$$0$18;
+
+module.exports = Object.keys || function keys(O){
+  return $keys(O, enumBugKeys);
+};
+});
+
+var require$$1$13 = (_objectKeys && typeof _objectKeys === 'object' && 'default' in _objectKeys ? _objectKeys['default'] : _objectKeys);
+
+var _objectDps = __commonjs(function (module) {
+var dP       = require$$1
+  , anObject = require$$13
+  , getKeys  = require$$1$13;
+
+module.exports = require$$27 ? Object.defineProperties : function defineProperties(O, Properties){
+  anObject(O);
+  var keys   = getKeys(Properties)
+    , length = keys.length
+    , i = 0
+    , P;
+  while(length > i)dP.f(O, P = keys[i++], Properties[P]);
+  return O;
+};
+});
+
+var require$$4$5 = (_objectDps && typeof _objectDps === 'object' && 'default' in _objectDps ? _objectDps['default'] : _objectDps);
+
+var _objectCreate = __commonjs(function (module) {
+// 19.1.2.2 / 15.2.3.5 Object.create(O [, Properties])
+var anObject    = require$$13
+  , dPs         = require$$4$5
+  , enumBugKeys = require$$0$18
+  , IE_PROTO    = require$$0$16('IE_PROTO')
+  , Empty       = function(){ /* empty */ }
+  , PROTOTYPE   = 'prototype';
+
+// Create object with fake `null` prototype: use iframe Object with cleared prototype
+var createDict = function(){
+  // Thrash, waste and sodomy: IE GC bug
+  var iframe = require$$1$2('iframe')
+    , i      = enumBugKeys.length
+    , gt     = '>'
+    , iframeDocument;
+  iframe.style.display = 'none';
+  require$$0$9.appendChild(iframe);
+  iframe.src = 'javascript:'; // eslint-disable-line no-script-url
+  // createDict = iframe.contentWindow.Object;
+  // html.removeChild(iframe);
+  iframeDocument = iframe.contentWindow.document;
+  iframeDocument.open();
+  iframeDocument.write('<script>document.F=Object</script' + gt);
+  iframeDocument.close();
+  createDict = iframeDocument.F;
+  while(i--)delete createDict[PROTOTYPE][enumBugKeys[i]];
+  return createDict();
+};
+
+module.exports = Object.create || function create(O, Properties){
+  var result;
+  if(O !== null){
+    Empty[PROTOTYPE] = anObject(O);
+    result = new Empty;
+    Empty[PROTOTYPE] = null;
+    // add "__proto__" for Object.getPrototypeOf polyfill
+    result[IE_PROTO] = O;
+  } else result = createDict();
+  return Properties === undefined ? result : dPs(result, Properties);
+};
+});
+
+var require$$0$17 = (_objectCreate && typeof _objectCreate === 'object' && 'default' in _objectCreate ? _objectCreate['default'] : _objectCreate);
+
+var _iterCreate = __commonjs(function (module) {
+'use strict';
+var create         = require$$0$17
+  , descriptor     = require$$10
+  , setToStringTag = require$$21
+  , IteratorPrototype = {};
+
+// 25.1.2.1.1 %IteratorPrototype%[@@iterator]()
+require$$0$7(IteratorPrototype, require$$19('iterator'), function(){ return this; });
+
+module.exports = function(Constructor, NAME, next){
+  Constructor.prototype = create(IteratorPrototype, {next: descriptor(1, next)});
+  setToStringTag(Constructor, NAME + ' Iterator');
+};
+});
+
+var require$$3$3 = (_iterCreate && typeof _iterCreate === 'object' && 'default' in _iterCreate ? _iterCreate['default'] : _iterCreate);
+
+var _redefine = __commonjs(function (module) {
+module.exports = require$$0$7;
+});
+
+var require$$25 = (_redefine && typeof _redefine === 'object' && 'default' in _redefine ? _redefine['default'] : _redefine);
+
+var _iterDefine = __commonjs(function (module) {
+'use strict';
+var LIBRARY        = require$$1$10
+  , $export        = require$$1$9
+  , redefine       = require$$25
+  , hide           = require$$0$7
+  , has            = require$$2$1
+  , Iterators      = require$$4$3
+  , $iterCreate    = require$$3$3
+  , setToStringTag = require$$21
+  , getPrototypeOf = require$$1$11
+  , ITERATOR       = require$$19('iterator')
+  , BUGGY          = !([].keys && 'next' in [].keys()) // Safari has buggy iterators w/o `next`
+  , FF_ITERATOR    = '@@iterator'
+  , KEYS           = 'keys'
+  , VALUES         = 'values';
+
+var returnThis = function(){ return this; };
+
+module.exports = function(Base, NAME, Constructor, next, DEFAULT, IS_SET, FORCED){
+  $iterCreate(Constructor, NAME, next);
+  var getMethod = function(kind){
+    if(!BUGGY && kind in proto)return proto[kind];
+    switch(kind){
+      case KEYS: return function keys(){ return new Constructor(this, kind); };
+      case VALUES: return function values(){ return new Constructor(this, kind); };
+    } return function entries(){ return new Constructor(this, kind); };
+  };
+  var TAG        = NAME + ' Iterator'
+    , DEF_VALUES = DEFAULT == VALUES
+    , VALUES_BUG = false
+    , proto      = Base.prototype
+    , $native    = proto[ITERATOR] || proto[FF_ITERATOR] || DEFAULT && proto[DEFAULT]
+    , $default   = $native || getMethod(DEFAULT)
+    , $entries   = DEFAULT ? !DEF_VALUES ? $default : getMethod('entries') : undefined
+    , $anyNative = NAME == 'Array' ? proto.entries || $native : $native
+    , methods, key, IteratorPrototype;
+  // Fix native
+  if($anyNative){
+    IteratorPrototype = getPrototypeOf($anyNative.call(new Base));
+    if(IteratorPrototype !== Object.prototype){
+      // Set @@toStringTag to native iterators
+      setToStringTag(IteratorPrototype, TAG, true);
+      // fix for some old engines
+      if(!LIBRARY && !has(IteratorPrototype, ITERATOR))hide(IteratorPrototype, ITERATOR, returnThis);
+    }
+  }
+  // fix Array#{values, @@iterator}.name in V8 / FF
+  if(DEF_VALUES && $native && $native.name !== VALUES){
+    VALUES_BUG = true;
+    $default = function values(){ return $native.call(this); };
+  }
+  // Define iterator
+  if((!LIBRARY || FORCED) && (BUGGY || VALUES_BUG || !proto[ITERATOR])){
+    hide(proto, ITERATOR, $default);
+  }
+  // Plug for library
+  Iterators[NAME] = $default;
+  Iterators[TAG]  = returnThis;
+  if(DEFAULT){
+    methods = {
+      values:  DEF_VALUES ? $default : getMethod(VALUES),
+      keys:    IS_SET     ? $default : getMethod(KEYS),
+      entries: $entries
+    };
+    if(FORCED)for(key in methods){
+      if(!(key in proto))redefine(proto, key, methods[key]);
+    } else $export($export.P + $export.F * (BUGGY || VALUES_BUG), NAME, methods);
+  }
+  return methods;
+};
+});
+
+var require$$0$15 = (_iterDefine && typeof _iterDefine === 'object' && 'default' in _iterDefine ? _iterDefine['default'] : _iterDefine);
+
+var _iterStep = __commonjs(function (module) {
+module.exports = function(done, value){
+  return {value: value, done: !!done};
+};
+});
+
+var require$$3$4 = (_iterStep && typeof _iterStep === 'object' && 'default' in _iterStep ? _iterStep['default'] : _iterStep);
+
+var _addToUnscopables = __commonjs(function (module) {
+module.exports = function(){ /* empty */ };
+});
+
+var require$$4$6 = (_addToUnscopables && typeof _addToUnscopables === 'object' && 'default' in _addToUnscopables ? _addToUnscopables['default'] : _addToUnscopables);
+
+var es6_array_iterator = __commonjs(function (module) {
+'use strict';
+var addToUnscopables = require$$4$6
+  , step             = require$$3$4
+  , Iterators        = require$$4$3
+  , toIObject        = require$$0$11;
+
+// 22.1.3.4 Array.prototype.entries()
+// 22.1.3.13 Array.prototype.keys()
+// 22.1.3.29 Array.prototype.values()
+// 22.1.3.30 Array.prototype[@@iterator]()
+module.exports = require$$0$15(Array, 'Array', function(iterated, kind){
+  this._t = toIObject(iterated); // target
+  this._i = 0;                   // next index
+  this._k = kind;                // kind
+// 22.1.5.2.1 %ArrayIteratorPrototype%.next()
+}, function(){
+  var O     = this._t
+    , kind  = this._k
+    , index = this._i++;
+  if(!O || index >= O.length){
+    this._t = undefined;
+    return step(1);
+  }
+  if(kind == 'keys'  )return step(0, index);
+  if(kind == 'values')return step(0, O[index]);
+  return step(0, [index, O[index]]);
+}, 'values');
+
+// argumentsList[@@iterator] is %ArrayProto_values% (9.4.4.6, 9.4.4.7)
+Iterators.Arguments = Iterators.Array;
+
+addToUnscopables('keys');
+addToUnscopables('values');
+addToUnscopables('entries');
+});
+
+var web_dom_iterable = __commonjs(function (module) {
+var global        = require$$29
+  , hide          = require$$0$7
+  , Iterators     = require$$4$3
+  , TO_STRING_TAG = require$$19('toStringTag');
+
+for(var collections = ['NodeList', 'DOMTokenList', 'MediaList', 'StyleSheetList', 'CSSRuleList'], i = 0; i < 5; i++){
+  var NAME       = collections[i]
+    , Collection = global[NAME]
+    , proto      = Collection && Collection.prototype;
+  if(proto && !proto[TO_STRING_TAG])hide(proto, TO_STRING_TAG, NAME);
+  Iterators[NAME] = Iterators.Array;
+}
+});
+
+var _stringAt = __commonjs(function (module) {
+var toInteger = require$$1$8
+  , defined   = require$$0$12;
+// true  -> String#at
+// false -> String#codePointAt
+module.exports = function(TO_STRING){
+  return function(that, pos){
+    var s = String(defined(that))
+      , i = toInteger(pos)
+      , l = s.length
+      , a, b;
+    if(i < 0 || i >= l)return TO_STRING ? '' : undefined;
+    a = s.charCodeAt(i);
+    return a < 0xd800 || a > 0xdbff || i + 1 === l || (b = s.charCodeAt(i + 1)) < 0xdc00 || b > 0xdfff
+      ? TO_STRING ? s.charAt(i) : a
+      : TO_STRING ? s.slice(i, i + 2) : (a - 0xd800 << 10) + (b - 0xdc00) + 0x10000;
+  };
+};
+});
+
+var require$$1$16 = (_stringAt && typeof _stringAt === 'object' && 'default' in _stringAt ? _stringAt['default'] : _stringAt);
+
+var es6_string_iterator = __commonjs(function (module) {
+'use strict';
+var $at  = require$$1$16(true);
+
+// 21.1.3.27 String.prototype[@@iterator]()
+require$$0$15(String, 'String', function(iterated){
+  this._t = String(iterated); // target
+  this._i = 0;                // next index
+// 21.1.5.2.1 %StringIteratorPrototype%.next()
+}, function(){
+  var O     = this._t
+    , index = this._i
+    , point;
+  if(index >= O.length)return {value: undefined, done: true};
+  point = $at(O, index);
+  this._i += point.length;
+  return {value: point, done: false};
+});
+});
+
+var promise$1 = __commonjs(function (module) {
+module.exports = require$$0$4.Promise;
+});
+
+var require$$0$3 = (promise$1 && typeof promise$1 === 'object' && 'default' in promise$1 ? promise$1['default'] : promise$1);
 
 var promise = __commonjs(function (module) {
-module.exports = { "default": require$$0$22, __esModule: true };
+module.exports = { "default": require$$0$3, __esModule: true };
 });
 
-var require$$0$21 = (promise && typeof promise === 'object' && 'default' in promise ? promise['default'] : promise);
+var require$$0$2 = (promise && typeof promise === 'object' && 'default' in promise ? promise['default'] : promise);
 
 var asyncToGenerator = __commonjs(function (module, exports) {
 "use strict";
 
 exports.__esModule = true;
 
-var _promise = require$$0$21;
+var _promise = require$$0$2;
 
 var _promise2 = _interopRequireDefault(_promise);
 
@@ -2881,15 +2254,72 @@ exports.default = function (fn) {
 
 var _asyncToGenerator = (asyncToGenerator && typeof asyncToGenerator === 'object' && 'default' in asyncToGenerator ? asyncToGenerator['default'] : asyncToGenerator);
 
-var ViewController = function ViewController() {
-  var elementType = arguments.length <= 0 || arguments[0] === undefined ? 'div' : arguments[0];
+var classCallCheck = __commonjs(function (module, exports) {
+"use strict";
 
-  _classCallCheck(this, ViewController);
+exports.__esModule = true;
 
-  this.html = {};
-  this.html.container = document.createElement(elementType);
-  this.html.container.controller = this;
+exports.default = function (instance, Constructor) {
+  if (!(instance instanceof Constructor)) {
+    throw new TypeError("Cannot call a class as a function");
+  }
 };
+});
+
+var _classCallCheck = (classCallCheck && typeof classCallCheck === 'object' && 'default' in classCallCheck ? classCallCheck['default'] : classCallCheck);
+
+var es6_object_defineProperty = __commonjs(function (module) {
+var $export = require$$1$9;
+// 19.1.2.4 / 15.2.3.6 Object.defineProperty(O, P, Attributes)
+$export($export.S + $export.F * !require$$27, 'Object', {defineProperty: require$$1.f});
+});
+
+var defineProperty$1 = __commonjs(function (module) {
+var $Object = require$$0$4.Object;
+module.exports = function defineProperty(it, key, desc){
+  return $Object.defineProperty(it, key, desc);
+};
+});
+
+var require$$0$21 = (defineProperty$1 && typeof defineProperty$1 === 'object' && 'default' in defineProperty$1 ? defineProperty$1['default'] : defineProperty$1);
+
+var defineProperty = __commonjs(function (module) {
+module.exports = { "default": require$$0$21, __esModule: true };
+});
+
+var require$$0$20 = (defineProperty && typeof defineProperty === 'object' && 'default' in defineProperty ? defineProperty['default'] : defineProperty);
+
+var createClass = __commonjs(function (module, exports) {
+"use strict";
+
+exports.__esModule = true;
+
+var _defineProperty = require$$0$20;
+
+var _defineProperty2 = _interopRequireDefault(_defineProperty);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = function () {
+  function defineProperties(target, props) {
+    for (var i = 0; i < props.length; i++) {
+      var descriptor = props[i];
+      descriptor.enumerable = descriptor.enumerable || false;
+      descriptor.configurable = true;
+      if ("value" in descriptor) descriptor.writable = true;
+      (0, _defineProperty2.default)(target, descriptor.key, descriptor);
+    }
+  }
+
+  return function (Constructor, protoProps, staticProps) {
+    if (protoProps) defineProperties(Constructor.prototype, protoProps);
+    if (staticProps) defineProperties(Constructor, staticProps);
+    return Constructor;
+  };
+}();
+});
+
+var _createClass = (createClass && typeof createClass === 'object' && 'default' in createClass ? createClass['default'] : createClass);
 
 var moment = __commonjs(function (module, exports, global) {
 //! moment.js
@@ -7052,123 +6482,780 @@ var CustomDate = function () {
   return CustomDate;
 }();
 
+var _wksExt = __commonjs(function (module, exports) {
+exports.f = require$$19;
+});
+
+var require$$0$25 = (_wksExt && typeof _wksExt === 'object' && 'default' in _wksExt ? _wksExt['default'] : _wksExt);
+
+var _wksDefine = __commonjs(function (module) {
+var global         = require$$29
+  , core           = require$$0$4
+  , LIBRARY        = require$$1$10
+  , wksExt         = require$$0$25
+  , defineProperty = require$$1.f;
+module.exports = function(name){
+  var $Symbol = core.Symbol || (core.Symbol = LIBRARY ? {} : global.Symbol || {});
+  if(name.charAt(0) != '_' && !(name in $Symbol))defineProperty($Symbol, name, {value: wksExt.f(name)});
+};
+});
+
+var require$$17 = (_wksDefine && typeof _wksDefine === 'object' && 'default' in _wksDefine ? _wksDefine['default'] : _wksDefine);
+
+var es7_symbol_observable = __commonjs(function (module) {
+require$$17('observable');
+});
+
+var es7_symbol_asyncIterator = __commonjs(function (module) {
+require$$17('asyncIterator');
+});
+
+var _objectGops = __commonjs(function (module, exports) {
+exports.f = Object.getOwnPropertySymbols;
+});
+
+var require$$1$17 = (_objectGops && typeof _objectGops === 'object' && 'default' in _objectGops ? _objectGops['default'] : _objectGops);
+
+var _objectGopn = __commonjs(function (module, exports) {
+// 19.1.2.7 / 15.2.3.4 Object.getOwnPropertyNames(O)
+var $keys      = require$$1$14
+  , hiddenKeys = require$$0$18.concat('length', 'prototype');
+
+exports.f = Object.getOwnPropertyNames || function getOwnPropertyNames(O){
+  return $keys(O, hiddenKeys);
+};
+});
+
+var require$$0$26 = (_objectGopn && typeof _objectGopn === 'object' && 'default' in _objectGopn ? _objectGopn['default'] : _objectGopn);
+
+var _objectGopnExt = __commonjs(function (module) {
+// fallback for IE11 buggy Object.getOwnPropertyNames with iframe and window
+var toIObject = require$$0$11
+  , gOPN      = require$$0$26.f
+  , toString  = {}.toString;
+
+var windowNames = typeof window == 'object' && window && Object.getOwnPropertyNames
+  ? Object.getOwnPropertyNames(window) : [];
+
+var getWindowNames = function(it){
+  try {
+    return gOPN(it);
+  } catch(e){
+    return windowNames.slice();
+  }
+};
+
+module.exports.f = function getOwnPropertyNames(it){
+  return windowNames && toString.call(it) == '[object Window]' ? getWindowNames(it) : gOPN(toIObject(it));
+};
+});
+
+var require$$8$1 = (_objectGopnExt && typeof _objectGopnExt === 'object' && 'default' in _objectGopnExt ? _objectGopnExt['default'] : _objectGopnExt);
+
+var _isArray = __commonjs(function (module) {
+// 7.2.2 IsArray(argument)
+var cof = require$$0$8;
+module.exports = Array.isArray || function isArray(arg){
+  return cof(arg) == 'Array';
+};
+});
+
+var require$$14 = (_isArray && typeof _isArray === 'object' && 'default' in _isArray ? _isArray['default'] : _isArray);
+
+var _enumKeys = __commonjs(function (module) {
+// all enumerable object keys, includes symbols
+var getKeys = require$$1$13
+  , gOPS    = require$$1$17
+  , pIE     = require$$0$13;
+module.exports = function(it){
+  var result     = getKeys(it)
+    , getSymbols = gOPS.f;
+  if(getSymbols){
+    var symbols = getSymbols(it)
+      , isEnum  = pIE.f
+      , i       = 0
+      , key;
+    while(symbols.length > i)if(isEnum.call(it, key = symbols[i++]))result.push(key);
+  } return result;
+};
+});
+
+var require$$15 = (_enumKeys && typeof _enumKeys === 'object' && 'default' in _enumKeys ? _enumKeys['default'] : _enumKeys);
+
+var _keyof = __commonjs(function (module) {
+var getKeys   = require$$1$13
+  , toIObject = require$$0$11;
+module.exports = function(object, el){
+  var O      = toIObject(object)
+    , keys   = getKeys(O)
+    , length = keys.length
+    , index  = 0
+    , key;
+  while(length > index)if(O[key = keys[index++]] === el)return key;
+};
+});
+
+var require$$16 = (_keyof && typeof _keyof === 'object' && 'default' in _keyof ? _keyof['default'] : _keyof);
+
+var _meta = __commonjs(function (module) {
+var META     = require$$4('meta')
+  , isObject = require$$3
+  , has      = require$$2$1
+  , setDesc  = require$$1.f
+  , id       = 0;
+var isExtensible = Object.isExtensible || function(){
+  return true;
+};
+var FREEZE = !require$$0$6(function(){
+  return isExtensible(Object.preventExtensions({}));
+});
+var setMeta = function(it){
+  setDesc(it, META, {value: {
+    i: 'O' + ++id, // object ID
+    w: {}          // weak collections IDs
+  }});
+};
+var fastKey = function(it, create){
+  // return primitive with prefix
+  if(!isObject(it))return typeof it == 'symbol' ? it : (typeof it == 'string' ? 'S' : 'P') + it;
+  if(!has(it, META)){
+    // can't set metadata to uncaught frozen object
+    if(!isExtensible(it))return 'F';
+    // not necessary to add metadata
+    if(!create)return 'E';
+    // add missing metadata
+    setMeta(it);
+  // return object ID
+  } return it[META].i;
+};
+var getWeak = function(it, create){
+  if(!has(it, META)){
+    // can't set metadata to uncaught frozen object
+    if(!isExtensible(it))return true;
+    // not necessary to add metadata
+    if(!create)return false;
+    // add missing metadata
+    setMeta(it);
+  // return hash weak collections IDs
+  } return it[META].w;
+};
+// add metadata on freeze-family methods calling
+var onFreeze = function(it){
+  if(FREEZE && meta.NEED && isExtensible(it) && !has(it, META))setMeta(it);
+  return it;
+};
+var meta = module.exports = {
+  KEY:      META,
+  NEED:     false,
+  fastKey:  fastKey,
+  getWeak:  getWeak,
+  onFreeze: onFreeze
+};
+});
+
+var require$$24 = (_meta && typeof _meta === 'object' && 'default' in _meta ? _meta['default'] : _meta);
+
+var es6_symbol = __commonjs(function (module) {
+'use strict';
+// ECMAScript 6 symbols shim
+var global         = require$$29
+  , has            = require$$2$1
+  , DESCRIPTORS    = require$$27
+  , $export        = require$$1$9
+  , redefine       = require$$25
+  , META           = require$$24.KEY
+  , $fails         = require$$0$6
+  , shared         = require$$22
+  , setToStringTag = require$$21
+  , uid            = require$$4
+  , wks            = require$$19
+  , wksExt         = require$$0$25
+  , wksDefine      = require$$17
+  , keyOf          = require$$16
+  , enumKeys       = require$$15
+  , isArray        = require$$14
+  , anObject       = require$$13
+  , toIObject      = require$$0$11
+  , toPrimitive    = require$$11
+  , createDesc     = require$$10
+  , _create        = require$$0$17
+  , gOPNExt        = require$$8$1
+  , $GOPD          = require$$7
+  , $DP            = require$$1
+  , $keys          = require$$1$13
+  , gOPD           = $GOPD.f
+  , dP             = $DP.f
+  , gOPN           = gOPNExt.f
+  , $Symbol        = global.Symbol
+  , $JSON          = global.JSON
+  , _stringify     = $JSON && $JSON.stringify
+  , PROTOTYPE      = 'prototype'
+  , HIDDEN         = wks('_hidden')
+  , TO_PRIMITIVE   = wks('toPrimitive')
+  , isEnum         = {}.propertyIsEnumerable
+  , SymbolRegistry = shared('symbol-registry')
+  , AllSymbols     = shared('symbols')
+  , OPSymbols      = shared('op-symbols')
+  , ObjectProto    = Object[PROTOTYPE]
+  , USE_NATIVE     = typeof $Symbol == 'function'
+  , QObject        = global.QObject;
+// Don't use setters in Qt Script, https://github.com/zloirock/core-js/issues/173
+var setter = !QObject || !QObject[PROTOTYPE] || !QObject[PROTOTYPE].findChild;
+
+// fallback for old Android, https://code.google.com/p/v8/issues/detail?id=687
+var setSymbolDesc = DESCRIPTORS && $fails(function(){
+  return _create(dP({}, 'a', {
+    get: function(){ return dP(this, 'a', {value: 7}).a; }
+  })).a != 7;
+}) ? function(it, key, D){
+  var protoDesc = gOPD(ObjectProto, key);
+  if(protoDesc)delete ObjectProto[key];
+  dP(it, key, D);
+  if(protoDesc && it !== ObjectProto)dP(ObjectProto, key, protoDesc);
+} : dP;
+
+var wrap = function(tag){
+  var sym = AllSymbols[tag] = _create($Symbol[PROTOTYPE]);
+  sym._k = tag;
+  return sym;
+};
+
+var isSymbol = USE_NATIVE && typeof $Symbol.iterator == 'symbol' ? function(it){
+  return typeof it == 'symbol';
+} : function(it){
+  return it instanceof $Symbol;
+};
+
+var $defineProperty = function defineProperty(it, key, D){
+  if(it === ObjectProto)$defineProperty(OPSymbols, key, D);
+  anObject(it);
+  key = toPrimitive(key, true);
+  anObject(D);
+  if(has(AllSymbols, key)){
+    if(!D.enumerable){
+      if(!has(it, HIDDEN))dP(it, HIDDEN, createDesc(1, {}));
+      it[HIDDEN][key] = true;
+    } else {
+      if(has(it, HIDDEN) && it[HIDDEN][key])it[HIDDEN][key] = false;
+      D = _create(D, {enumerable: createDesc(0, false)});
+    } return setSymbolDesc(it, key, D);
+  } return dP(it, key, D);
+};
+var $defineProperties = function defineProperties(it, P){
+  anObject(it);
+  var keys = enumKeys(P = toIObject(P))
+    , i    = 0
+    , l = keys.length
+    , key;
+  while(l > i)$defineProperty(it, key = keys[i++], P[key]);
+  return it;
+};
+var $create = function create(it, P){
+  return P === undefined ? _create(it) : $defineProperties(_create(it), P);
+};
+var $propertyIsEnumerable = function propertyIsEnumerable(key){
+  var E = isEnum.call(this, key = toPrimitive(key, true));
+  if(this === ObjectProto && has(AllSymbols, key) && !has(OPSymbols, key))return false;
+  return E || !has(this, key) || !has(AllSymbols, key) || has(this, HIDDEN) && this[HIDDEN][key] ? E : true;
+};
+var $getOwnPropertyDescriptor = function getOwnPropertyDescriptor(it, key){
+  it  = toIObject(it);
+  key = toPrimitive(key, true);
+  if(it === ObjectProto && has(AllSymbols, key) && !has(OPSymbols, key))return;
+  var D = gOPD(it, key);
+  if(D && has(AllSymbols, key) && !(has(it, HIDDEN) && it[HIDDEN][key]))D.enumerable = true;
+  return D;
+};
+var $getOwnPropertyNames = function getOwnPropertyNames(it){
+  var names  = gOPN(toIObject(it))
+    , result = []
+    , i      = 0
+    , key;
+  while(names.length > i){
+    if(!has(AllSymbols, key = names[i++]) && key != HIDDEN && key != META)result.push(key);
+  } return result;
+};
+var $getOwnPropertySymbols = function getOwnPropertySymbols(it){
+  var IS_OP  = it === ObjectProto
+    , names  = gOPN(IS_OP ? OPSymbols : toIObject(it))
+    , result = []
+    , i      = 0
+    , key;
+  while(names.length > i){
+    if(has(AllSymbols, key = names[i++]) && (IS_OP ? has(ObjectProto, key) : true))result.push(AllSymbols[key]);
+  } return result;
+};
+
+// 19.4.1.1 Symbol([description])
+if(!USE_NATIVE){
+  $Symbol = function Symbol(){
+    if(this instanceof $Symbol)throw TypeError('Symbol is not a constructor!');
+    var tag = uid(arguments.length > 0 ? arguments[0] : undefined);
+    var $set = function(value){
+      if(this === ObjectProto)$set.call(OPSymbols, value);
+      if(has(this, HIDDEN) && has(this[HIDDEN], tag))this[HIDDEN][tag] = false;
+      setSymbolDesc(this, tag, createDesc(1, value));
+    };
+    if(DESCRIPTORS && setter)setSymbolDesc(ObjectProto, tag, {configurable: true, set: $set});
+    return wrap(tag);
+  };
+  redefine($Symbol[PROTOTYPE], 'toString', function toString(){
+    return this._k;
+  });
+
+  $GOPD.f = $getOwnPropertyDescriptor;
+  $DP.f   = $defineProperty;
+  require$$0$26.f = gOPNExt.f = $getOwnPropertyNames;
+  require$$0$13.f  = $propertyIsEnumerable;
+  require$$1$17.f = $getOwnPropertySymbols;
+
+  if(DESCRIPTORS && !require$$1$10){
+    redefine(ObjectProto, 'propertyIsEnumerable', $propertyIsEnumerable, true);
+  }
+
+  wksExt.f = function(name){
+    return wrap(wks(name));
+  }
+}
+
+$export($export.G + $export.W + $export.F * !USE_NATIVE, {Symbol: $Symbol});
+
+for(var symbols = (
+  // 19.4.2.2, 19.4.2.3, 19.4.2.4, 19.4.2.6, 19.4.2.8, 19.4.2.9, 19.4.2.10, 19.4.2.11, 19.4.2.12, 19.4.2.13, 19.4.2.14
+  'hasInstance,isConcatSpreadable,iterator,match,replace,search,species,split,toPrimitive,toStringTag,unscopables'
+).split(','), i = 0; symbols.length > i; )wks(symbols[i++]);
+
+for(var symbols = $keys(wks.store), i = 0; symbols.length > i; )wksDefine(symbols[i++]);
+
+$export($export.S + $export.F * !USE_NATIVE, 'Symbol', {
+  // 19.4.2.1 Symbol.for(key)
+  'for': function(key){
+    return has(SymbolRegistry, key += '')
+      ? SymbolRegistry[key]
+      : SymbolRegistry[key] = $Symbol(key);
+  },
+  // 19.4.2.5 Symbol.keyFor(sym)
+  keyFor: function keyFor(key){
+    if(isSymbol(key))return keyOf(SymbolRegistry, key);
+    throw TypeError(key + ' is not a symbol!');
+  },
+  useSetter: function(){ setter = true; },
+  useSimple: function(){ setter = false; }
+});
+
+$export($export.S + $export.F * !USE_NATIVE, 'Object', {
+  // 19.1.2.2 Object.create(O [, Properties])
+  create: $create,
+  // 19.1.2.4 Object.defineProperty(O, P, Attributes)
+  defineProperty: $defineProperty,
+  // 19.1.2.3 Object.defineProperties(O, Properties)
+  defineProperties: $defineProperties,
+  // 19.1.2.6 Object.getOwnPropertyDescriptor(O, P)
+  getOwnPropertyDescriptor: $getOwnPropertyDescriptor,
+  // 19.1.2.7 Object.getOwnPropertyNames(O)
+  getOwnPropertyNames: $getOwnPropertyNames,
+  // 19.1.2.8 Object.getOwnPropertySymbols(O)
+  getOwnPropertySymbols: $getOwnPropertySymbols
+});
+
+// 24.3.2 JSON.stringify(value [, replacer [, space]])
+$JSON && $export($export.S + $export.F * (!USE_NATIVE || $fails(function(){
+  var S = $Symbol();
+  // MS Edge converts symbol values to JSON as {}
+  // WebKit converts symbol values to JSON as null
+  // V8 throws on boxed symbols
+  return _stringify([S]) != '[null]' || _stringify({a: S}) != '{}' || _stringify(Object(S)) != '{}';
+})), 'JSON', {
+  stringify: function stringify(it){
+    if(it === undefined || isSymbol(it))return; // IE8 returns string on undefined
+    var args = [it]
+      , i    = 1
+      , replacer, $replacer;
+    while(arguments.length > i)args.push(arguments[i++]);
+    replacer = args[1];
+    if(typeof replacer == 'function')$replacer = replacer;
+    if($replacer || !isArray(replacer))replacer = function(key, value){
+      if($replacer)value = $replacer.call(this, key, value);
+      if(!isSymbol(value))return value;
+    };
+    args[1] = replacer;
+    return _stringify.apply($JSON, args);
+  }
+});
+
+// 19.4.3.4 Symbol.prototype[@@toPrimitive](hint)
+$Symbol[PROTOTYPE][TO_PRIMITIVE] || require$$0$7($Symbol[PROTOTYPE], TO_PRIMITIVE, $Symbol[PROTOTYPE].valueOf);
+// 19.4.3.5 Symbol.prototype[@@toStringTag]
+setToStringTag($Symbol, 'Symbol');
+// 20.2.1.9 Math[@@toStringTag]
+setToStringTag(Math, 'Math', true);
+// 24.3.3 JSON[@@toStringTag]
+setToStringTag(global.JSON, 'JSON', true);
+});
+
+var index$1 = __commonjs(function (module) {
+module.exports = require$$0$4.Symbol;
+});
+
+var require$$0$24 = (index$1 && typeof index$1 === 'object' && 'default' in index$1 ? index$1['default'] : index$1);
+
+var symbol = __commonjs(function (module) {
+module.exports = { "default": require$$0$24, __esModule: true };
+});
+
+var require$$0$23 = (symbol && typeof symbol === 'object' && 'default' in symbol ? symbol['default'] : symbol);
+
+var iterator$1 = __commonjs(function (module) {
+module.exports = require$$0$25.f('iterator');
+});
+
+var require$$0$27 = (iterator$1 && typeof iterator$1 === 'object' && 'default' in iterator$1 ? iterator$1['default'] : iterator$1);
+
+var iterator = __commonjs(function (module) {
+module.exports = { "default": require$$0$27, __esModule: true };
+});
+
+var require$$1$18 = (iterator && typeof iterator === 'object' && 'default' in iterator ? iterator['default'] : iterator);
+
+var _typeof = __commonjs(function (module, exports) {
+"use strict";
+
+exports.__esModule = true;
+
+var _iterator = require$$1$18;
+
+var _iterator2 = _interopRequireDefault(_iterator);
+
+var _symbol = require$$0$23;
+
+var _symbol2 = _interopRequireDefault(_symbol);
+
+var _typeof = typeof _symbol2.default === "function" && typeof _iterator2.default === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof _symbol2.default === "function" && obj.constructor === _symbol2.default ? "symbol" : typeof obj; };
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = typeof _symbol2.default === "function" && _typeof(_iterator2.default) === "symbol" ? function (obj) {
+  return typeof obj === "undefined" ? "undefined" : _typeof(obj);
+} : function (obj) {
+  return obj && typeof _symbol2.default === "function" && obj.constructor === _symbol2.default ? "symbol" : typeof obj === "undefined" ? "undefined" : _typeof(obj);
+};
+});
+
+var require$$0$22 = (_typeof && typeof _typeof === 'object' && 'default' in _typeof ? _typeof['default'] : _typeof);
+
+var possibleConstructorReturn = __commonjs(function (module, exports) {
+"use strict";
+
+exports.__esModule = true;
+
+var _typeof2 = require$$0$22;
+
+var _typeof3 = _interopRequireDefault(_typeof2);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = function (self, call) {
+  if (!self) {
+    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+  }
+
+  return call && ((typeof call === "undefined" ? "undefined" : (0, _typeof3.default)(call)) === "object" || typeof call === "function") ? call : self;
+};
+});
+
+var _possibleConstructorReturn = (possibleConstructorReturn && typeof possibleConstructorReturn === 'object' && 'default' in possibleConstructorReturn ? possibleConstructorReturn['default'] : possibleConstructorReturn);
+
+var es6_object_create = __commonjs(function (module) {
+var $export = require$$1$9
+// 19.1.2.2 / 15.2.3.5 Object.create(O [, Properties])
+$export($export.S, 'Object', {create: require$$0$17});
+});
+
+var create$1 = __commonjs(function (module) {
+var $Object = require$$0$4.Object;
+module.exports = function create(P, D){
+  return $Object.create(P, D);
+};
+});
+
+var require$$0$28 = (create$1 && typeof create$1 === 'object' && 'default' in create$1 ? create$1['default'] : create$1);
+
+var create = __commonjs(function (module) {
+module.exports = { "default": require$$0$28, __esModule: true };
+});
+
+var require$$1$19 = (create && typeof create === 'object' && 'default' in create ? create['default'] : create);
+
+var es6_object_setPrototypeOf = __commonjs(function (module) {
+// 19.1.3.19 Object.setPrototypeOf(O, proto)
+var $export = require$$1$9;
+$export($export.S, 'Object', {setPrototypeOf: require$$0$10.set});
+});
+
+var setPrototypeOf$1 = __commonjs(function (module) {
+module.exports = require$$0$4.Object.setPrototypeOf;
+});
+
+var require$$0$29 = (setPrototypeOf$1 && typeof setPrototypeOf$1 === 'object' && 'default' in setPrototypeOf$1 ? setPrototypeOf$1['default'] : setPrototypeOf$1);
+
+var setPrototypeOf = __commonjs(function (module) {
+module.exports = { "default": require$$0$29, __esModule: true };
+});
+
+var require$$2$2 = (setPrototypeOf && typeof setPrototypeOf === 'object' && 'default' in setPrototypeOf ? setPrototypeOf['default'] : setPrototypeOf);
+
+var inherits = __commonjs(function (module, exports) {
+"use strict";
+
+exports.__esModule = true;
+
+var _setPrototypeOf = require$$2$2;
+
+var _setPrototypeOf2 = _interopRequireDefault(_setPrototypeOf);
+
+var _create = require$$1$19;
+
+var _create2 = _interopRequireDefault(_create);
+
+var _typeof2 = require$$0$22;
+
+var _typeof3 = _interopRequireDefault(_typeof2);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = function (subClass, superClass) {
+  if (typeof superClass !== "function" && superClass !== null) {
+    throw new TypeError("Super expression must either be null or a function, not " + (typeof superClass === "undefined" ? "undefined" : (0, _typeof3.default)(superClass)));
+  }
+
+  subClass.prototype = (0, _create2.default)(superClass && superClass.prototype, {
+    constructor: {
+      value: subClass,
+      enumerable: false,
+      writable: true,
+      configurable: true
+    }
+  });
+  if (superClass) _setPrototypeOf2.default ? (0, _setPrototypeOf2.default)(subClass, superClass) : subClass.__proto__ = superClass;
+};
+});
+
+var _inherits = (inherits && typeof inherits === 'object' && 'default' in inherits ? inherits['default'] : inherits);
+
+var ViewController = function ViewController(modulePrefix, classPrefix) {
+  _classCallCheck(this, ViewController);
+
+  this.modulePrefix = modulePrefix;
+  this.cssPrefix = classPrefix ? modulePrefix + '-' + classPrefix : modulePrefix;
+  this.html = {};
+  this.html.container = document.createElement('div');
+  this.html.container.classList.add(this.cssPrefix);
+
+  // TODO: move all buildHtml to here
+  this.buildHtml();
+};
+
+var CLASS_PREFIX = 'LegendsBar';
+
+var LegendsBar = function (_ViewController) {
+  _inherits(LegendsBar, _ViewController);
+
+  function LegendsBar(title, modulePrefix) {
+    _classCallCheck(this, LegendsBar);
+
+    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(LegendsBar).call(this, modulePrefix, CLASS_PREFIX));
+
+    Object.preventExtensions(_this);
+
+    _this.html.header.textContent = title;
+    return _this;
+  }
+
+  _createClass(LegendsBar, [{
+    key: 'buildHtml',
+    value: function buildHtml() {
+      this.html.header = document.createElement('div');
+      this.html.header.classList.add(this.cssPrefix + '-header');
+      this.html.container.appendChild(this.html.header);
+
+      this.html.legendsContainer = document.createElement('div');
+      this.html.container.appendChild(this.html.legendsContainer);
+    }
+
+    /**
+     * @public
+     * @method addSubject
+     * @param  {Object} subject
+     * @param  {String} beforeAfter
+     */
+
+  }, {
+    key: 'addSubject',
+    value: function addSubject(subject, beforeAfter) {
+      var legend = this.createSubjectLegend(subject);
+      var referenceNode = beforeAfter === 'before' ? this.html.legendsContainer.children[0] : null;
+      this.html.legendsContainer.insertBefore(legend, referenceNode);
+    }
+
+    /**
+     * @public
+     * @method removeSubject
+     * @param  {Object} subject
+     * @return {void}
+     */
+
+  }, {
+    key: 'removeSubject',
+    value: function removeSubject(subject) {
+      var identifier = this.createLegendIdentifier(subject);
+      var legendNode = this.html.legendsContainer.querySelector('.' + identifier);
+      legendNode.remove();
+    }
+
+    /**
+     * @private
+     * @method createSubjectLegend
+     * @param  {Object} subject
+     * @return {HTMLElement}
+     */
+
+  }, {
+    key: 'createSubjectLegend',
+    value: function createSubjectLegend(subject) {
+      var el = document.createElement('div');
+      el.classList.add(this.cssPrefix + '-legend');
+      el.classList.add(this.createLegendIdentifier(subject));
+      el.textContent = subject.name;
+      return el;
+    }
+
+    /**
+     * @private
+     * @method createLegendIdentifier
+     * @param  {Object} subject
+     * @return {String}
+     */
+
+  }, {
+    key: 'createLegendIdentifier',
+    value: function createLegendIdentifier(subject) {
+      return this.cssPrefix + '-legend-' + subject.id;
+    }
+  }]);
+
+  return LegendsBar;
+}(ViewController);
+
 var CLASS_PREFIX$1 = 'btnBar';
 var DATEPICKER_FORMAT = 'YYYY-[W]WW';
-
-// TODO: Make static constants dynamic;
-var SUBJECT_COUNT = 20;
-var COLUMN_COUNT = 30;
 
 var ControlBar = function (_ViewController) {
   _inherits(ControlBar, _ViewController);
 
   /**
    * @constructor
-   * @param  {CustomDate} startDate
-   * @param  {DateBar} dateBar
-   * @param  {SubjectsContainer} subjectsContainer
-   * @param  {String} cssPrefix
+   * @param  {ModuleCoordinator} moduleCoordinator
+   * @param  {String} modulePrefix
    * @return {ControlBar}
    */
 
-  function ControlBar(startDate, dateBar, subjectsContainer, modulePrefix) {
+  function ControlBar(moduleCoordinator, modulePrefix) {
     _classCallCheck(this, ControlBar);
 
-    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(ControlBar).call(this));
+    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(ControlBar).call(this, modulePrefix, CLASS_PREFIX$1));
 
-    _this.cssPrefix = modulePrefix + '-' + CLASS_PREFIX$1;
-    _this.html.container.classList.add(_this.cssPrefix);
-
-    _this.startDate = new CustomDate(startDate);
-    _this.dayCount = 0;
-
-    _this.dateBar = dateBar;
-    _this.subjectsContainer = subjectsContainer;
-
-    _this.createButtons();
-    _this.setListeners();
+    _this.moduleCoordinator = moduleCoordinator;
+    _this.startDate = _this.moduleCoordinator.getStartDate();
     Object.preventExtensions(_this);
-
-    _this.setStartDate(startDate).then(function () {
-      return _this.subjectsContainer.setSubjectCount(SUBJECT_COUNT);
-    }).then(function () {
-      return _this.setDayCount(COLUMN_COUNT);
-    });
     return _this;
   }
 
-  /**
-   * @method createButtons
-   * @param  {String} [cssPrefix]
-   * @return {void}
-   */
-
-
   _createClass(ControlBar, [{
+    key: 'buildHtml',
+    value: function buildHtml() {
+      this.createButtons();
+      this.setListeners();
+    }
+
+    /**
+     * @private
+     * @method createButtons
+     * @param  {String} [cssPrefix]
+     * @return {void}
+     */
+
+  }, {
     key: 'createButtons',
     value: function createButtons() {
-      var cssPrefix = arguments.length <= 0 || arguments[0] === undefined ? this.cssPrefix : arguments[0];
-
       var scrollLeftBtn = document.createElement('button');
-      scrollLeftBtn.classList.add(cssPrefix + '-btn');
+      scrollLeftBtn.classList.add(this.cssPrefix + '-btn');
       scrollLeftBtn.innerHTML = '<';
       this.html.scrollLeftBtn = scrollLeftBtn;
       this.html.container.appendChild(scrollLeftBtn);
 
       var scrollRightBtn = document.createElement('button');
-      scrollRightBtn.classList.add(cssPrefix + '-btn');
+      scrollRightBtn.classList.add(this.cssPrefix + '-btn');
       scrollRightBtn.innerHTML = '>';
       this.html.scrollRightBtn = scrollRightBtn;
       this.html.container.appendChild(scrollRightBtn);
 
       var scrollUpBtn = document.createElement('button');
-      scrollUpBtn.classList.add(cssPrefix + '-btn');
+      scrollUpBtn.classList.add(this.cssPrefix + '-btn');
       scrollUpBtn.innerHTML = 'Scroll up';
       this.html.scrollUpBtn = scrollUpBtn;
       this.html.container.appendChild(scrollUpBtn);
 
       var scrollDownBtn = document.createElement('button');
-      scrollDownBtn.classList.add(cssPrefix + '-btn');
+      scrollDownBtn.classList.add(this.cssPrefix + '-btn');
       scrollDownBtn.innerHTML = 'Scroll Down';
       this.html.scrollDownBtn = scrollDownBtn;
       this.html.container.appendChild(scrollDownBtn);
 
       var datePicker = document.createElement('input');
-      datePicker.classList.add(cssPrefix + '-btn');
-      datePicker.classList.add(cssPrefix + '-datepicker');
+      datePicker.classList.add(this.cssPrefix + '-btn');
+      datePicker.classList.add(this.cssPrefix + '-datepicker');
       datePicker.setAttribute('type', 'week');
       this.html.datePicker = datePicker;
       this.html.container.appendChild(datePicker);
     }
+
+    /**
+     * @private
+     * @method setListeners
+     */
+
   }, {
     key: 'setListeners',
     value: function setListeners() {
       var _this2 = this;
 
       this.html.scrollLeftBtn.addEventListener('mousedown', function () {
-        holdButton(_this2.scrollLeft.bind(_this2));
+        _this2.scroll('left');
       });
 
       this.html.scrollRightBtn.addEventListener('mousedown', function () {
-        holdButton(_this2.scrollRight.bind(_this2));
+        _this2.scroll('right');
       });
 
       this.html.scrollUpBtn.addEventListener('mousedown', function () {
-        holdButton(_this2.scrollUp.bind(_this2));
+        _this2.scroll('up');
       });
 
       this.html.scrollDownBtn.addEventListener('mousedown', function () {
-        holdButton(_this2.scrollDown.bind(_this2));
+        _this2.scroll('down');
       });
 
       this.html.datePicker.addEventListener('change', function () {
         var datepickerDate = new CustomDate(_this2.html.datePicker.value);
         var normalisedDate = datepickerDate.startOf('isoweek');
-        _this2.setStartDate(normalisedDate);
+        _this2.setDatepickerDate(normalisedDate);
+        // TODO: Change general date from here
+        console.warn('Datepicker date not fully implemented.');
       });
     }
 
     /**
+     * @public
      * @method setDatepickerDate
      * @param  {CustomDate} date
      */
@@ -7180,164 +7267,43 @@ var ControlBar = function (_ViewController) {
     }
 
     /**
-     * @method setStartDate
-     * @param  {CustomDate} date
+     * @private
+     * @method scroll
+     * @param  {String} direction - up, down, left or right
+     * @return {void}
      */
 
   }, {
-    key: 'setStartDate',
-    value: function () {
-      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee(date) {
-        var newDate;
-        return _regeneratorRuntime.wrap(function _callee$(_context) {
-          while (1) {
-            switch (_context.prev = _context.next) {
-              case 0:
-                newDate = date ? new CustomDate(date) : this.startDate;
-
-                this.startDate = newDate;
-
-                _context.next = 4;
-                return this.subjectsContainer.setStartDate(newDate);
-
-              case 4:
-                this.setDatepickerDate(newDate);
-                this.dateBar.setStartDate(newDate);
-
-              case 6:
-              case 'end':
-                return _context.stop();
-            }
-          }
-        }, _callee, this);
-      }));
-
-      function setStartDate(_x2) {
-        return ref.apply(this, arguments);
-      }
-
-      return setStartDate;
-    }()
-
-    /**
-     * Sets the start date given an offset number from the
-     * current start date.
-     * @method addToStartDate
-     * @param  {CustomDate} val
-     */
-
-  }, {
-    key: 'addToStartDate',
-    value: function () {
-      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee2(val) {
-        return _regeneratorRuntime.wrap(function _callee2$(_context2) {
-          while (1) {
-            switch (_context2.prev = _context2.next) {
-              case 0:
-                this.startDate.add(val);
-                _context2.next = 3;
-                return this.setStartDate();
-
-              case 3:
-              case 'end':
-                return _context2.stop();
-            }
-          }
-        }, _callee2, this);
-      }));
-
-      function addToStartDate(_x3) {
-        return ref.apply(this, arguments);
-      }
-
-      return addToStartDate;
-    }()
-  }, {
-    key: 'setDayCount',
-    value: function setDayCount(count) {
-      this.subjectsContainer.setDayCount(count);
-      this.dateBar.setDayCount(count);
-    }
-  }, {
-    key: 'scrollLeft',
-    value: function () {
-      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee3() {
-        return _regeneratorRuntime.wrap(function _callee3$(_context3) {
-          while (1) {
-            switch (_context3.prev = _context3.next) {
-              case 0:
-                _context3.next = 2;
-                return this.addToStartDate(-1);
-
-              case 2:
-              case 'end':
-                return _context3.stop();
-            }
-          }
-        }, _callee3, this);
-      }));
-
-      function scrollLeft() {
-        return ref.apply(this, arguments);
-      }
-
-      return scrollLeft;
-    }()
-  }, {
-    key: 'scrollRight',
-    value: function () {
-      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee4() {
-        return _regeneratorRuntime.wrap(function _callee4$(_context4) {
-          while (1) {
-            switch (_context4.prev = _context4.next) {
-              case 0:
-                _context4.next = 2;
-                return this.addToStartDate(1);
-
-              case 2:
-              case 'end':
-                return _context4.stop();
-            }
-          }
-        }, _callee4, this);
-      }));
-
-      function scrollRight() {
-        return ref.apply(this, arguments);
-      }
-
-      return scrollRight;
-    }()
-  }, {
-    key: 'scrollUp',
-    value: function scrollUp() {
-      this.subjectsContainer.scrollUp();
-    }
-  }, {
-    key: 'scrollDown',
-    value: function scrollDown() {
-      this.subjectsContainer.scrollDown();
+    key: 'scroll',
+    value: function scroll(direction) {
+      console.log('Scrolling ' + direction);
     }
   }]);
 
   return ControlBar;
 }(ViewController);
 
-function holdButton(fn) {
-  var functionSchedule = void 0;
-  function doFunction(f) {
-    f();
-    functionSchedule = requestAnimationFrame(function () {
-      doFunction(f);
-    });
+var DatesPanel = function (_ViewController) {
+  _inherits(DatesPanel, _ViewController);
+
+  function DatesPanel(modulePrefix) {
+    _classCallCheck(this, DatesPanel);
+
+    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(DatesPanel).call(this, modulePrefix));
+
+    Object.preventExtensions(_this);
+    return _this;
   }
 
-  doFunction(fn);
-  var docMouseUp = document.addEventListener('mouseup', function () {
-    cancelAnimationFrame(functionSchedule);
-    document.removeEventListener('mouseup', docMouseUp);
-  });
-}
+  _createClass(DatesPanel, [{
+    key: 'buildHtml',
+    value: function buildHtml() {
+      this.html.container.textContent = 'Imagine the dates';
+    }
+  }]);
+
+  return DatesPanel;
+}(ViewController);
 
 // Bug checking function that will throw an error whenever
 // the condition sent to it is evaluated to false
@@ -7411,39 +7377,88 @@ assert.warn = function warn(condition, errorMessage) {
   }
 };
 
-var CLASS_PREFIX$2 = 'dateBar';
+var CalendarContainer = function (_ViewController) {
+  _inherits(CalendarContainer, _ViewController);
 
-var DateBar = function (_ViewController) {
-  _inherits(DateBar, _ViewController);
+  function CalendarContainer(modulePrefix) {
+    _classCallCheck(this, CalendarContainer);
 
-  function DateBar(modulePrefix) {
-    _classCallCheck(this, DateBar);
+    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(CalendarContainer).call(this, modulePrefix));
 
-    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(DateBar).call(this));
-
-    _this.cssPrefix = modulePrefix + '-' + CLASS_PREFIX$2;
-    _this.startDate = new CustomDate();
     Object.preventExtensions(_this);
-
-    _this.buildHtml();
     return _this;
   }
 
-  _createClass(DateBar, [{
+  _createClass(CalendarContainer, [{
+    key: 'set',
+    value: function set(name, instance) {
+      assert(this.html[name], 'Trying to set invalid property: ' + name);
+      this.html.container.replaceChild(instance.html.container, this.html[name]);
+      this.html[name] = instance.html.container;
+    }
+  }, {
     key: 'buildHtml',
     value: function buildHtml() {
-      this.html.container.classList.add(this.cssPrefix);
+      this.html.controlBar = document.createElement('div');
+      this.html.container.appendChild(this.html.controlBar);
 
-      this.html.monthRow = document.createElement('div');
-      this.html.monthRow.classList.add(this.cssPrefix + '-monthRow');
-      this.html.container.appendChild(this.html.monthRow);
+      this.html.legendsBar = document.createElement('div');
+      this.html.container.appendChild(this.html.legendsBar);
 
-      this.html.dayRow = document.createElement('div');
-      this.html.dayRow.classList.add(this.cssPrefix + '-dayRow');
-      this.html.container.appendChild(this.html.dayRow);
+      this.html.datesPanel = document.createElement('div');
+      this.html.container.appendChild(this.html.datesPanel);
+    }
+  }]);
+
+  return CalendarContainer;
+}(ViewController);
+
+var MODULE_PREFIX = 'fl-msc';
+
+var ModuleCoordinator = function () {
+  function ModuleCoordinator(xdiv, loadUrl, subjectsHeader, initialSubjectCount) {
+    _classCallCheck(this, ModuleCoordinator);
+
+    this.startDate = new CustomDate();
+
+    // create html container
+    this.calendarContainer = new CalendarContainer(MODULE_PREFIX);
+
+    // create controlBar
+    this.controlBar = new ControlBar(this, MODULE_PREFIX);
+    this.calendarContainer.set('controlBar', this.controlBar);
+
+    // create titlesContainer
+    this.legendsBar = new LegendsBar(subjectsHeader, MODULE_PREFIX);
+    this.calendarContainer.set('legendsBar', this.legendsBar);
+
+    // create datesContainer
+    this.datesPanel = new DatesPanel(MODULE_PREFIX);
+    this.calendarContainer.set('datesPanel', this.datesPanel);
+
+    xdiv.appendChild(this.calendarContainer.html.container);
+    // set start date and dayCount
+    this.setStartDate(this.startDate);
+
+    // add x subjects
+    // this.setSubjectCount(initialSubjectCount);
+  }
+
+  /**
+   * @public
+   * @method getStartDate
+   * @return {CustomDate}
+   */
+
+
+  _createClass(ModuleCoordinator, [{
+    key: 'getStartDate',
+    value: function getStartDate() {
+      return new CustomDate(this.startDate);
     }
 
     /**
+     * @public
      * @method setStartDate
      * @param  {CustomDate} date
      */
@@ -7451,1876 +7466,134 @@ var DateBar = function (_ViewController) {
   }, {
     key: 'setStartDate',
     value: function setStartDate(date) {
-      assert(date instanceof CustomDate, 'Invalid startDate.');
-
-      var dayCount = this.getDayCount();
-      this.setDayCount(0);
-      this.startDate = date;
-      this.setDayCount(dayCount);
-    }
-  }, {
-    key: 'setDayCount',
-    value: function setDayCount(dayCount) {
-      assert(typeof dayCount === 'number', 'Invalid dayCount value: ' + dayCount);
-      while (this.getDayCount() > dayCount) {
-        this.removeDay();
-      }
-      while (dayCount > this.getDayCount()) {
-        this.addDay();
-      }
+      this.startDate = new CustomDate(date);
+      console.warn('setStartDate not fully implemented yet');
     }
 
     /**
-     * @method addDay
-     * @param  {String} leftRight
-     */
-
-  }, {
-    key: 'addDay',
-    value: function addDay() {
-      var leftRight = arguments.length <= 0 || arguments[0] === undefined ? 'right' : arguments[0];
-
-      var toTheRight = leftRight === 'right';
-      assert(toTheRight || leftRight === 'left', 'Invalid leftRight value: ' + leftRight);
-
-      var firstDayToBeAdded = this.getDayCount() === 0;
-      var newDate = void 0;
-      if (firstDayToBeAdded) {
-        newDate = new CustomDate(this.startDate);
-      } else if (toTheRight) {
-        newDate = this.getEndDate().add(1, 'days');
-      } else {
-        newDate = new CustomDate(this.startDate).add(-1, 'days');
-      }
-
-      this.addToDayRow(newDate, toTheRight);
-      this.addToMonthRow(newDate, toTheRight);
-
-      if (!toTheRight) {
-        this.startDate = newDate;
-      }
-    }
-
-    /**
-     * @method addToDayRow
-     * @param  {CustomDate} date
-     * @param  {Boolean} toTheRight
-     */
-
-  }, {
-    key: 'addToDayRow',
-    value: function addToDayRow(date) {
-      var toTheRight = arguments.length <= 1 || arguments[1] === undefined ? true : arguments[1];
-
-      var newDay = document.createElement('div');
-      newDay.classList.add(this.cssPrefix + '-day');
-      newDay.innerHTML = date.format('DD');
-
-      if (toTheRight || this.html.dayRow.length === 0) {
-        this.html.dayRow.appendChild(newDay);
-      } else {
-        var firstDayElement = this.html.dayRow.children[0];
-        this.html.dayRow.insertBefore(newDay, firstDayElement);
-      }
-    }
-
-    /**
-     * @method addToMonthRow
-     * @param  {CustomDate} date
-     * @param  {Boolean} toTheRight
-     */
-
-  }, {
-    key: 'addToMonthRow',
-    value: function addToMonthRow(date) {
-      var toTheRight = arguments.length <= 1 || arguments[1] === undefined ? true : arguments[1];
-
-      var monthName = date.format('MMM');
-      var months = this.html.monthRow.children;
-
-      var firstMonthElement = months[0];
-      var lastMonthElement = months[months.length - 1];
-
-      var existingMonth = toTheRight ? lastMonthElement : firstMonthElement;
-      var monthEl = void 0;
-
-      if (existingMonth && existingMonth.innerHTML === monthName) {
-        monthEl = existingMonth;
-        existingMonth.span = existingMonth.span + 1;
-      } else {
-        monthEl = document.createElement('div');
-        monthEl.innerHTML = monthName;
-        monthEl.span = 1;
-        if (toTheRight || months.length === 0) {
-          this.html.monthRow.appendChild(monthEl);
-        } else {
-          this.html.monthRow.insertBefore(monthEl, firstMonthElement);
-        }
-      }
-      monthEl.className = '';
-      monthEl.classList.add(this.cssPrefix + '-month');
-      monthEl.classList.add(this.cssPrefix + '-month-' + monthEl.span);
-    }
-
-    /**
-     * @method removeDay
-     * @param  {String} leftRight
-     */
-
-  }, {
-    key: 'removeDay',
-    value: function removeDay() {
-      var leftRight = arguments.length <= 0 || arguments[0] === undefined ? 'right' : arguments[0];
-
-      var toTheRight = leftRight === 'right';
-
-      this.removeFromDayRow(toTheRight);
-      this.removeFromMonthRow(toTheRight);
-      if (!toTheRight) {
-        this.startDate.add(1, 'days');
-      }
-    }
-
-    /**
-     * @method removeFromDayRow
-     * @param  {Boolean} toTheRight
-     */
-
-  }, {
-    key: 'removeFromDayRow',
-    value: function removeFromDayRow() {
-      var toTheRight = arguments.length <= 0 || arguments[0] === undefined ? true : arguments[0];
-
-      // remove from day row
-      if (toTheRight) {
-        var lastDay = this.html.dayRow.children[this.html.dayRow.children.length - 1];
-        lastDay.remove();
-      } else {
-        var firstDay = this.html.dayRow.children[0];
-        firstDay.remove();
-      }
-    }
-
-    /**
-     * @method removeFromMonthRow
-     * @param  {Boolean} toTheRight
-     */
-
-  }, {
-    key: 'removeFromMonthRow',
-    value: function removeFromMonthRow() {
-      var toTheRight = arguments.length <= 0 || arguments[0] === undefined ? true : arguments[0];
-
-      var months = this.html.monthRow.children;
-      var firstMonthElement = months[0];
-      var lastMonthElement = months[months.length - 1];
-
-      var monthEl = void 0;
-      if (toTheRight) {
-        monthEl = lastMonthElement;
-      } else {
-        monthEl = firstMonthElement;
-      }
-
-      if (monthEl.span > 1) {
-        monthEl.span--;
-        monthEl.className = '';
-        monthEl.classList.add(this.cssPrefix + '-month');
-        monthEl.classList.add(this.cssPrefix + '-month-' + monthEl.span);
-      } else {
-        monthEl.remove();
-      }
-    }
-  }, {
-    key: 'scrollLeft',
-    value: function scrollLeft() {
-      this.addDay('left');
-      this.removeDay('right');
-    }
-  }, {
-    key: 'scrollRight',
-    value: function scrollRight() {
-      this.addDay('right');
-      this.removeDay('left');
-    }
-  }, {
-    key: 'getEndDate',
-    value: function getEndDate() {
-      var startDate = new CustomDate(this.startDate);
-      var dayCount = Math.max(0, this.getDayCount() - 1);
-      var endDate = startDate.add(dayCount, 'days');
-      return endDate;
-    }
-  }, {
-    key: 'getDayCount',
-    value: function getDayCount() {
-      return this.html.dayRow.children.length;
-    }
-  }]);
-
-  return DateBar;
-}(ViewController);
-
-var core_getIterator = __commonjs(function (module) {
-var anObject = require$$2$2
-  , get      = require$$1$21;
-module.exports = require$$0$2.getIterator = function(it){
-  var iterFn = get(it);
-  if(typeof iterFn != 'function')throw TypeError(it + ' is not iterable!');
-  return anObject(iterFn.call(it));
-};
-});
-
-var require$$0$26 = (core_getIterator && typeof core_getIterator === 'object' && 'default' in core_getIterator ? core_getIterator['default'] : core_getIterator);
-
-var getIterator$1 = __commonjs(function (module) {
-module.exports = require$$0$26;
-});
-
-var require$$0$25 = (getIterator$1 && typeof getIterator$1 === 'object' && 'default' in getIterator$1 ? getIterator$1['default'] : getIterator$1);
-
-var getIterator = __commonjs(function (module) {
-module.exports = { "default": require$$0$25, __esModule: true };
-});
-
-var require$$0$24 = (getIterator && typeof getIterator === 'object' && 'default' in getIterator ? getIterator['default'] : getIterator);
-
-var core_isIterable = __commonjs(function (module) {
-var classof   = require$$3$7
-  , ITERATOR  = require$$2$3('iterator')
-  , Iterators = require$$1$15;
-module.exports = require$$0$2.isIterable = function(it){
-  var O = Object(it);
-  return O[ITERATOR] !== undefined
-    || '@@iterator' in O
-    || Iterators.hasOwnProperty(classof(O));
-};
-});
-
-var require$$0$28 = (core_isIterable && typeof core_isIterable === 'object' && 'default' in core_isIterable ? core_isIterable['default'] : core_isIterable);
-
-var isIterable$1 = __commonjs(function (module) {
-module.exports = require$$0$28;
-});
-
-var require$$0$27 = (isIterable$1 && typeof isIterable$1 === 'object' && 'default' in isIterable$1 ? isIterable$1['default'] : isIterable$1);
-
-var isIterable = __commonjs(function (module) {
-module.exports = { "default": require$$0$27, __esModule: true };
-});
-
-var require$$1$22 = (isIterable && typeof isIterable === 'object' && 'default' in isIterable ? isIterable['default'] : isIterable);
-
-var slicedToArray = __commonjs(function (module, exports) {
-"use strict";
-
-exports.__esModule = true;
-
-var _isIterable2 = require$$1$22;
-
-var _isIterable3 = _interopRequireDefault(_isIterable2);
-
-var _getIterator2 = require$$0$24;
-
-var _getIterator3 = _interopRequireDefault(_getIterator2);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-exports.default = function () {
-  function sliceIterator(arr, i) {
-    var _arr = [];
-    var _n = true;
-    var _d = false;
-    var _e = undefined;
-
-    try {
-      for (var _i = (0, _getIterator3.default)(arr), _s; !(_n = (_s = _i.next()).done); _n = true) {
-        _arr.push(_s.value);
-
-        if (i && _arr.length === i) break;
-      }
-    } catch (err) {
-      _d = true;
-      _e = err;
-    } finally {
-      try {
-        if (!_n && _i["return"]) _i["return"]();
-      } finally {
-        if (_d) throw _e;
-      }
-    }
-
-    return _arr;
-  }
-
-  return function (arr, i) {
-    if (Array.isArray(arr)) {
-      return arr;
-    } else if ((0, _isIterable3.default)(Object(arr))) {
-      return sliceIterator(arr, i);
-    } else {
-      throw new TypeError("Invalid attempt to destructure non-iterable instance");
-    }
-  };
-}();
-});
-
-var _slicedToArray = (slicedToArray && typeof slicedToArray === 'object' && 'default' in slicedToArray ? slicedToArray['default'] : slicedToArray);
-
-var Day = function (_ViewController) {
-  _inherits(Day, _ViewController);
-
-  /**
-   * @method constructor
-   * @param  {CustomDate} date
-   * @param  {Array<Object>} events
-   * @param  {String} modulePrefix
-   * @return {Day}
-   */
-
-  function Day(date, events, modulePrefix) {
-    _classCallCheck(this, Day);
-
-    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Day).call(this));
-
-    _this.destroyed = false;
-    _this.modulePrefix = modulePrefix;
-    _this.date = date;
-    Object.preventExtensions(_this);
-
-    _this.html.container.setAttribute('title', date.toString());
-    if (events) {
-      _this.setEvents(events);
-    }
-    return _this;
-  }
-
-  _createClass(Day, [{
-    key: 'destroy',
-    value: function destroy() {
-      var _this2 = this;
-
-      this.destroyed = true;
-      requestAnimationFrame(function () {
-        _this2.html.container.remove();
-        _this2.html = null;
-      });
-    }
-  }, {
-    key: 'checkIfdestroyed',
-    value: function checkIfdestroyed() {
-      assert(!this.destroyed, 'Trying to call function on destroyed day.');
-    }
-
-    /**
-     * @method setEvents
-     * @param  {Array<Object>} events
-     */
-
-  }, {
-    key: 'setEvents',
-    value: function setEvents(events) {
-      assert(Array.isArray(events), 'Invalid events object. Expected array and got ' + (typeof events === 'undefined' ? 'undefined' : _typeof$1(events)));
-
-      var classesToAdd = this.modulePrefix + '-day';
-      var statuses = new Set();
-
-      events.forEach(function (event) {
-        if (typeof event.className === 'string') {
-          classesToAdd += ' ' + event.className;
-        }
-        if (typeof event.status === 'string') {
-          statuses.add(event.status);
-        }
-      });
-
-      var _iteratorNormalCompletion = true;
-      var _didIteratorError = false;
-      var _iteratorError = undefined;
-
-      try {
-        for (var _iterator = statuses[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-          var status = _step.value;
-
-          classesToAdd += ' ' + this.modulePrefix + '-day--' + status;
-        }
-      } catch (err) {
-        _didIteratorError = true;
-        _iteratorError = err;
-      } finally {
-        try {
-          if (!_iteratorNormalCompletion && _iterator.return) {
-            _iterator.return();
-          }
-        } finally {
-          if (_didIteratorError) {
-            throw _iteratorError;
-          }
-        }
-      }
-
-      if (classesToAdd !== this.html.container.className) {
-        this.html.container.className = classesToAdd;
-      }
-    }
-  }]);
-
-  return Day;
-}(ViewController);
-
-var CLASS_PREFIX$4 = 'subject';
-
-var Subject = function (_ViewController) {
-  _inherits(Subject, _ViewController);
-
-  /**
-   * @method constructor
-   * @param  {Object} config
-   * @param  {String} config.name
-   * @param  {Int | String} config.id
-   * @param  {String} modulePrefix
-   * @return {Subject}
-   */
-
-  function Subject(config, startDate, modulePrefix) {
-    _classCallCheck(this, Subject);
-
-    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Subject).call(this));
-
-    assert(typeof config.name === 'string', 'Invalid subject name: ' + config.name);
-    _this.name = config.name;
-    _this.id = config.id;
-
-    _this.cssPrefix = modulePrefix + '-' + CLASS_PREFIX$4;
-
-    _this.startDate = new CustomDate(startDate);
-    _this.days = [];
-
-    // It must be ordered chronologically
-    _this.events = new Set();
-    _this.orderedeEvents = [];
-
-    _this.eventsLoadedRange = {
-      from: new CustomDate(config.eventsFromDate),
-      to: new CustomDate(config.eventsToDate)
-    };
-    _this.destroyed = false;
-    Object.preventExtensions(_this);
-
-    _this.setEvents(config.events);
-    _this.buildHtml();
-    return _this;
-  }
-
-  _createClass(Subject, [{
-    key: 'buildHtml',
-    value: function buildHtml() {
-      this.html.container.classList.add(this.cssPrefix);
-
-      this.html.nameContainer = document.createElement('div');
-      this.html.nameContainer.classList.add(this.cssPrefix + '-name');
-      this.html.nameContainer.innerHTML = this.name;
-      this.html.nameContainer.setAttribute('title', this.name);
-      this.html.container.appendChild(this.html.nameContainer);
-
-      this.html.daysContainer = document.createElement('div');
-      this.html.daysContainer.classList.add(this.cssPrefix + '-days');
-      this.html.container.appendChild(this.html.daysContainer);
-    }
-
-    // ---------------------------------------------------------------------------
-    // Setters
-    // ---------------------------------------------------------------------------
-    /**
-     * @method setEvents
-     * @param  {Array<Object> | Set<Object>} events
-     * @param  {CustomDate} fromDate
-     * @param  {CustomDate} toDate
-     */
-
-  }, {
-    key: 'setEvents',
-    value: function setEvents(events) {
-      this.checkIfdestroyed();
-
-      // Replace last events for new ones
-      this.events = events;
-      // for (const event of events) {
-      //   this.events.add(event);
-      // }
-      this.updateOrderedEvents();
-      this.refreshDayEvents();
-    }
-
-    /**
-     * @method setStartDate
-     * @param  {CustomDate} date
-     */
-
-  }, {
-    key: 'setStartDate',
-    value: function setStartDate(newstartDate) {
-      this.checkIfdestroyed();
-
-      var daysDiff = newstartDate.diff(this.startDate, 'days');
-      var absoluteDiff = Math.abs(daysDiff);
-      var dayCount = this.getDayCount();
-
-      if (absoluteDiff >= dayCount) {
-        this.removeMultipleDays('front', dayCount);
-        this.startDate = new CustomDate(newstartDate);
-        this.addMultipleDays('front', dayCount);
-      } else {
-        var removeFrom = daysDiff < 0 ? 'front' : 'back';
-        var addTo = daysDiff < 0 ? 'back' : 'front';
-
-        // In this case the startDate is changed in the add
-        // and remove methods.
-        this.removeMultipleDays(removeFrom, absoluteDiff);
-        this.addMultipleDays(addTo, absoluteDiff);
-      }
-    }
-  }, {
-    key: 'setEventsLoadedFrom',
-    value: function setEventsLoadedFrom(date) {
-      if (this.orderedeEvents[0]) {
-        var firstBusyDate = this.orderedeEvents[0].start;
-        var dateIsAfterFirstBusyDate = date.diff(firstBusyDate) > 0;
-        if (dateIsAfterFirstBusyDate) {
-          return;
-        }
-      }
-      this.eventsLoadedRange.from = new CustomDate(date);
-    }
-  }, {
-    key: 'setEventsLoadedTo',
-    value: function setEventsLoadedTo(date) {
-      if (this.orderedeEvents[0]) {
-        var lastBusyDate = this.orderedeEvents[this.orderedeEvents.length - 1].start;
-        var dateIsBeforeLastBusyDate = date.diff(lastBusyDate) < 0;
-        if (dateIsBeforeLastBusyDate) {
-          return;
-        }
-      }
-      this.eventsLoadedRange.to = new CustomDate(date);
-    }
-  }, {
-    key: 'setDayCount',
-    value: function setDayCount(unsanitisedCount) {
-      var count = parseInt(unsanitisedCount, 10);
-      var dayCount = this.getDayCount();
-      var method = dayCount < count ? 'addDay' : 'removeDay';
-      var dayDiff = dayCount - count;
-
-      while (dayDiff !== 0) {
-        this[method]('front');
-        dayCount += dayDiff > 0 ? -1 : 1;
-        dayDiff = dayCount - count;
-      }
-    }
-    // ---------------------------------------------------------------------------
-    // Getters
-    // ---------------------------------------------------------------------------
-
-  }, {
-    key: 'getId',
-    value: function getId() {
-      return this.id;
-    }
-  }, {
-    key: 'getDayCount',
-    value: function getDayCount() {
-      return this.days.length;
-    }
-  }, {
-    key: 'getEndDate',
-    value: function getEndDate() {
-      var endDate = new CustomDate(this.startDate);
-      var daysToAdd = Math.max(0, this.getDayCount() - 1);
-      return endDate.add(daysToAdd, 'days');
-    }
-  }, {
-    key: 'getEventsLoadedRange',
-    value: function getEventsLoadedRange() {
-      assert(this.eventsLoadedRange.from instanceof CustomDate && this.eventsLoadedRange.to instanceof CustomDate, 'Uninitialised eventsLoadedRange');
-      return this.eventsLoadedRange;
-    }
-  }, {
-    key: 'checkIfdestroyed',
-    value: function checkIfdestroyed() {
-      assert(!this.destroyed, 'Tried to invoke a method of a destroyed Subject object');
-    }
-
-    /**
-     * @method getDateEvents
-     * @param  {CustomDate} date [description]
-     * @return {Array<Object>}
-     */
-
-  }, {
-    key: 'getDateEvents',
-    value: function getDateEvents(date) {
-      this.checkIfdestroyed();
-
-      var events = this.orderedeEvents;
-      if (!events.length) {
-        return [];
-      }
-
-      var eventIndex = 0;
-      var event = events[eventIndex];
-      var dayEvents = [];
-
-      // While events are starting before or at the date we are evaluating
-      while (event && date.diff(event.start) >= 0) {
-        // Add to dayEvents if it finishes on or after the date in question.
-        if (date.diff(event.end) <= 0) {
-          dayEvents.push(event);
-        }
-
-        eventIndex++;
-        event = events[eventIndex];
-      }
-      return dayEvents;
-    }
-
-    // ---------------------------------------------------------------------------
-    // Modifiers
-    // ---------------------------------------------------------------------------
-
-  }, {
-    key: 'updateOrderedEvents',
-    value: function updateOrderedEvents() {
-      var ordered = [];
-      var _iteratorNormalCompletion = true;
-      var _didIteratorError = false;
-      var _iteratorError = undefined;
-
-      try {
-        for (var _iterator = this.events[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-          var event = _step.value;
-
-          insertInOrder(event, ordered);
-        }
-      } catch (err) {
-        _didIteratorError = true;
-        _iteratorError = err;
-      } finally {
-        try {
-          if (!_iteratorNormalCompletion && _iterator.return) {
-            _iterator.return();
-          }
-        } finally {
-          if (_didIteratorError) {
-            throw _iteratorError;
-          }
-        }
-      }
-
-      this.orderedeEvents = ordered;
-
-      function insertInOrder(event, arr) {
-        var i = 0;
-        while (arr[i] && arr[i].start.diff(event.start) < 0) {
-          i++;
-        }
-        arr.splice(i, 0, event);
-      }
-    }
-  }, {
-    key: 'refreshDayEvents',
-    value: function refreshDayEvents() {
-      var _this2 = this;
-
-      this.checkIfdestroyed();
-
-      this.days.forEach(function (day) {
-        var dayEvents = _this2.getDateEvents(day.date);
-        day.setEvents(dayEvents);
-      });
-    }
-
-    /**
-     * @method addDay
-     * @param  {String} position - Accepts 'front' or 'back'
-     */
-
-  }, {
-    key: 'addDay',
-    value: function addDay() {
-      var _this3 = this;
-
-      var position = arguments.length <= 0 || arguments[0] === undefined ? 'front' : arguments[0];
-
-      this.checkIfdestroyed();
-
-      var addToFront = position === 'front';
-      var firstDayToBeAdded = this.days.length === 0;
-      assert(addToFront || position === 'back', 'Invalid position value. Expected \'front\' or \'back\', gor \'' + position + '\'');
-
-      var newDate = void 0;
-      if (firstDayToBeAdded) {
-        newDate = new CustomDate(this.startDate);
-      } else if (addToFront) {
-        newDate = new CustomDate(this.getEndDate()).add(1, 'days');
-      } else {
-        newDate = new CustomDate(this.startDate).add(-1, 'days');
-      }
-
-      var dateEvents = this.getDateEvents(newDate);
-      var newDay = new Day(newDate, dateEvents, this.cssPrefix);
-
-      if (addToFront || firstDayToBeAdded) {
-        this.days.push(newDay);
-        requestAnimationFrame(function () {
-          _this3.html.daysContainer.appendChild(newDay.html.container);
-        });
-      } else {
-        this.days = [newDay].concat(this.days);
-        requestAnimationFrame(function () {
-          _this3.html.daysContainer.insertBefore(newDay.html.container, _this3.html.daysContainer.children[0]);
-        });
-        this.startDate = newDate;
-      }
-    }
-
-    /**
-     * @method removeDay
-     * @param  {String} position - Accepts 'front' or 'back'
-     */
-
-  }, {
-    key: 'removeDay',
-    value: function removeDay(position) {
-      this.checkIfdestroyed();
-
-      var fromFront = position === 'front';
-      assert(fromFront || position === 'back', 'Invalid position value. Expected \'front\' or \'back\', gor \'' + position + '\'');
-
-      if (this.getDayCount() === 0) {
-        return;
-      }
-
-      if (fromFront) {
-        var dayToBeRemoved = this.days.pop();
-        dayToBeRemoved.destroy();
-      } else {
-        var _days$splice = this.days.splice(0, 1);
-
-        var _days$splice2 = _slicedToArray(_days$splice, 1);
-
-        var _dayToBeRemoved = _days$splice2[0];
-
-        _dayToBeRemoved.destroy();
-        this.startDate.add(1, 'days');
-      }
-    }
-
-    /**
-     * @method addMultipleDays
-     * @param  {String} frontBack 'front' or 'back'
-     * @param  {Int} amount
-     * @return {Promise<Boolean>}
-     */
-
-  }, {
-    key: 'addMultipleDays',
-    value: function addMultipleDays(frontBack, amount) {
-      for (var i = 0; i < amount; i++) {
-        this.addDay(frontBack);
-      }
-    }
-
-    /**
-     * @method removeMultipleDays
-     * @param  {String} frontBack 'front' or 'back'
-     * @param  {Int} amount
-     * @return {void}
-     */
-
-  }, {
-    key: 'removeMultipleDays',
-    value: function removeMultipleDays(frontBack, amount) {
-      for (var i = 0; i < amount; i++) {
-        this.removeDay(frontBack);
-      }
-    }
-  }, {
-    key: 'destroy',
-    value: function destroy() {
-      var _this4 = this;
-
-      this.checkIfdestroyed();
-
-      this.days = null;
-      this.destroyed = true;
-      requestAnimationFrame(function () {
-        _this4.html.container.remove();
-      });
-    }
-  }]);
-
-  return Subject;
-}(ViewController);
-
-var Ajax = function () {
-  function Ajax(url) {
-    _classCallCheck(this, Ajax);
-
-    assert(url, 'No URL provided on instantiation');
-    this.url = url;
-  }
-
-  _createClass(Ajax, [{
-    key: 'query',
-    value: function () {
-      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee(params) {
-        var url = arguments.length <= 1 || arguments[1] === undefined ? this.url : arguments[1];
-        var requestUrl, requestConfig, response, content;
-        return _regeneratorRuntime.wrap(function _callee$(_context) {
-          while (1) {
-            switch (_context.prev = _context.next) {
-              case 0:
-                console.log('LOADING FROM SERVER');
-                requestUrl = this.addParametersToUrl(params, url);
-                requestConfig = {
-                  method: 'GET',
-                  cache: 'no-cache'
-                };
-                _context.next = 5;
-                return fetch(requestUrl, requestConfig);
-
-              case 5:
-                response = _context.sent;
-                _context.next = 8;
-                return response.json();
-
-              case 8:
-                content = _context.sent;
-                return _context.abrupt('return', content);
-
-              case 10:
-              case 'end':
-                return _context.stop();
-            }
-          }
-        }, _callee, this);
-      }));
-
-      function query(_x, _x2) {
-        return ref.apply(this, arguments);
-      }
-
-      return query;
-    }()
-
-    /**
-     * Adds parameters as GET string parameters to a prepared URL
-     * @private
-     * @method _addParametersToUrl
-     * @param  {Object} params
-     * @param  {String} url
-     * @return {String} The full URL with parameters
-     */
-    // TODO: this must be more robust. What about www.asdf.com/, www.asdf.com/?, www.asdf.com
-
-  }, {
-    key: 'addParametersToUrl',
-    value: function addParametersToUrl(params) {
-      var url = arguments.length <= 1 || arguments[1] === undefined ? this.url : arguments[1];
-
-      var getParams = [];
-      var keys = Object.keys(params);
-      var _iteratorNormalCompletion = true;
-      var _didIteratorError = false;
-      var _iteratorError = undefined;
-
-      try {
-        for (var _iterator = keys[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-          var key = _step.value;
-
-          var value = params[key] ? params[key].toString() : '';
-          var encodedKey = encodeURIComponent(key);
-          var encodedValue = encodeURIComponent(value);
-          getParams.push(encodedKey + '=' + encodedValue);
-        }
-      } catch (err) {
-        _didIteratorError = true;
-        _iteratorError = err;
-      } finally {
-        try {
-          if (!_iteratorNormalCompletion && _iterator.return) {
-            _iterator.return();
-          }
-        } finally {
-          if (_didIteratorError) {
-            throw _iteratorError;
-          }
-        }
-      }
-
-      var encodedGetParams = getParams.join('&');
-      var fullUrl = url + '?' + encodedGetParams;
-      return fullUrl;
-    }
-  }]);
-
-  return Ajax;
-}();
-
-var CONTENT_LOADING_PADDING = 40;
-var MAX_LOADED_RANGE = 120; // in days
-
-// // Data object example
-// {
-//   fromDate: CustomDate,
-//   toDate: CustomDate,
-//   subjects: [
-//     {
-//       name: "Prop number 1",
-//       id:123
-//       events: Set([
-//         {
-//           desc: "Rented to John",
-//           start: today(),
-//           end: daysFromNow(5)
-//         },
-//         {
-//           desc: "Rented to Carl",
-//           start: daysFromNow(10),
-//           end: daysFromNow(20)
-//         },
-//         {
-//           desc: "Under Maintenance",
-//           visitable: true,
-//           start: daysFromNow(30),
-//           end: daysFromNow(50)
-//         }
-//       ])
-//     }
-//   ]
-// };
-
-var DataLoader = function () {
-  function DataLoader(loadUrl) {
-    _classCallCheck(this, DataLoader);
-
-    this.ajax = new Ajax(loadUrl);
-    this.cacheStartDate = new CustomDate();
-    this.cacheEndDate = new CustomDate();
-
-    this.cache = [];
-  }
-
-  // ---------------------------------------------------------------------------
-  // Public
-  // ---------------------------------------------------------------------------
-
-  _createClass(DataLoader, [{
-    key: 'getCacheStartDate',
-    value: function getCacheStartDate() {
-      return new CustomDate(this.cacheStartDate);
-    }
-  }, {
-    key: 'getCacheEndDate',
-    value: function getCacheEndDate() {
-      return new CustomDate(this.cacheEndDate);
-    }
-  }, {
-    key: 'getEventsForIds',
-    value: function () {
-      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee(ids, fromDate, toDate) {
-        var cachedSubjects;
-        return _regeneratorRuntime.wrap(function _callee$(_context) {
-          while (1) {
-            switch (_context.prev = _context.next) {
-              case 0:
-                if (!(this.cacheStartDate.isAfter(fromDate) || this.cacheEndDate.isBefore(toDate))) {
-                  _context.next = 4;
-                  break;
-                }
-
-                _context.next = 3;
-                return this.loadSubjects({
-                  ids: ids,
-                  fromDate: fromDate,
-                  toDate: toDate
-                });
-
-              case 3:
-                return _context.abrupt('return', _context.sent);
-
-              case 4:
-                cachedSubjects = this.cache.filter(function (subj) {
-                  return ids.indexOf(subj.id) !== -1;
-                });
-                return _context.abrupt('return', cachedSubjects);
-
-              case 6:
-              case 'end':
-                return _context.stop();
-            }
-          }
-        }, _callee, this);
-      }));
-
-      function getEventsForIds(_x, _x2, _x3) {
-        return ref.apply(this, arguments);
-      }
-
-      return getEventsForIds;
-    }()
-  }, {
-    key: 'getSubjects',
-    value: function () {
-      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee2(amount, beforeAfter, referenceId) {
-        var referenceSubjectIndex, referenceFound, haveAllSubjectsInCache, fromIndex, toIndex;
-        return _regeneratorRuntime.wrap(function _callee2$(_context2) {
-          while (1) {
-            switch (_context2.prev = _context2.next) {
-              case 0:
-                referenceSubjectIndex = this.cache.findIndex(function (subj) {
-                  return subj.id === referenceId;
-                });
-                referenceFound = referenceSubjectIndex !== -1;
-
-                assert(referenceFound || this.cache.length === 0, 'Invalid referenceId: ' + referenceId);
-
-                haveAllSubjectsInCache = void 0;
-                fromIndex = void 0;
-                toIndex = void 0;
-
-                if (beforeAfter === 'before') {
-                  haveAllSubjectsInCache = referenceSubjectIndex >= amount;
-                  toIndex = referenceSubjectIndex - 1;
-                  fromIndex = toIndex - amount;
-                } else {
-                  haveAllSubjectsInCache = referenceSubjectIndex + amount < this.cache.length;
-                  fromIndex = referenceSubjectIndex + 1;
-                  toIndex = fromIndex + amount;
-                }
-
-                if (!haveAllSubjectsInCache) {
-                  _context2.next = 9;
-                  break;
-                }
-
-                return _context2.abrupt('return', this.cache.slice(fromIndex, toIndex));
-
-              case 9:
-                _context2.next = 11;
-                return this.loadSubjects({
-                  recordCount: amount,
-                  fromDate: this.cacheStartDate,
-                  toDate: this.cacheEndDate,
-                  referenceId: referenceId,
-                  beforeAfter: beforeAfter
-                });
-
-              case 11:
-                return _context2.abrupt('return', _context2.sent);
-
-              case 12:
-              case 'end':
-                return _context2.stop();
-            }
-          }
-        }, _callee2, this);
-      }));
-
-      function getSubjects(_x4, _x5, _x6) {
-        return ref.apply(this, arguments);
-      }
-
-      return getSubjects;
-    }()
-  }, {
-    key: 'loadSubjects',
-    value: function () {
-      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee3(params) {
-        var _calculateLoadingDate,
-        // Prepare dates
-        loadFrom, loadTo, response, subjects;
-
-        return _regeneratorRuntime.wrap(function _callee3$(_context3) {
-          while (1) {
-            switch (_context3.prev = _context3.next) {
-              case 0:
-                _calculateLoadingDate = this.calculateLoadingDate(params.fromDate, params.toDate);
-                loadFrom = _calculateLoadingDate.loadFrom;
-                loadTo = _calculateLoadingDate.loadTo;
-
-                params.fromDate = loadFrom.toISOString(); // eslint-disable-line no-param-reassign
-                params.toDate = loadTo.toISOString(); // eslint-disable-line no-param-reassign
-
-                // Prepare amount
-                if (params.recordCount) {
-                  params.recordCount += CONTENT_LOADING_PADDING; // eslint-disable-line no-param-reassign
-                }
-
-                _context3.next = 8;
-                return this.ajax.query(params);
-
-              case 8:
-                response = _context3.sent;
-                subjects = this.processServerResponse(response);
-
-                snapshot(this);
-                return _context3.abrupt('return', subjects);
-
-              case 12:
-              case 'end':
-                return _context3.stop();
-            }
-          }
-        }, _callee3, this);
-      }));
-
-      function loadSubjects(_x7) {
-        return ref.apply(this, arguments);
-      }
-
-      return loadSubjects;
-    }()
-
-    /**
-     * Compares from and to dates with cacheStartDate and cacheEndDate, choosing
-     * the widest possible range within the range limit and adding adequate
-     * padding
-     * @method calculateLoadingDate
-     * @param  {CustomDate} fromDate
-     * @param  {CustomDate} toDate
-     * @return {Object}
-     */
-
-  }, {
-    key: 'calculateLoadingDate',
-    value: function calculateLoadingDate(fromDate, toDate) {
-      var initialRange = toDate.diff(fromDate, 'days');
-      var maximumPaddding = (MAX_LOADED_RANGE - initialRange) / 2;
-      var padding = Math.min(maximumPaddding, CONTENT_LOADING_PADDING);
-      var loadFrom = new CustomDate(fromDate).add(padding, 'days');
-      var loadTo = new CustomDate(toDate).add(padding, 'days');
-      return { loadFrom: loadFrom, loadTo: loadTo };
-    }
-
-    /**
-     * @method processServerResponse
-     * @param  {Object} responseObj - A typical server response
-     * @return {Array<Object>} Array of subject objects
-     */
-
-  }, {
-    key: 'processServerResponse',
-    value: function processServerResponse(responseObj) {
-      // Convert event dates into CustomDate objects
-      responseObj.subjects.forEach(function (s) {
-        s.events.forEach(function (e) {
-          e.start = new CustomDate(e.start); // eslint-disable-line no-param-reassign
-          e.end = new CustomDate(e.end); // eslint-disable-line no-param-reassign
-        });
-      });
-      var fromDate = new CustomDate(responseObj.fromDate);
-      var toDate = new CustomDate(responseObj.toDate);
-
-      assert(fromDate.isValid() && toDate.isValid(), 'fromDate or fromToDate not in responseObj.');
-      this.cacheStartDate = fromDate;
-      this.cacheEndDate = toDate;
-      this.addToCache(responseObj.subjects);
-      return responseObj.subjects;
-    }
-
-    /**
-     * Adds loaded data to existing cache.
-     * @method addToCache
-     * @param  {Array} subjects
-     * @param  {CustomDate} fromDate - Date where event data period coverage starts.
-     * @param  {CustomDate} toDate - Date where event data period coverage ends.
-     */
-
-  }, {
-    key: 'addToCache',
-    value: function addToCache(subjects) {
-      var _this = this;
-
-      var _iteratorNormalCompletion = true;
-      var _didIteratorError = false;
-      var _iteratorError = undefined;
-
-      try {
-        var _loop = function _loop() {
-          var subject = _step.value;
-
-          var cacheIndex = _this.cache.findIndex(function (s) {
-            return s.id === subject.id;
-          });
-          if (cacheIndex !== -1) {
-            _this.cache[cacheIndex] = subject;
-          } else {
-            _this.insertOrderedToCache(subject);
-          }
-        };
-
-        for (var _iterator = subjects[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-          _loop();
-        }
-      } catch (err) {
-        _didIteratorError = true;
-        _iteratorError = err;
-      } finally {
-        try {
-          if (!_iteratorNormalCompletion && _iterator.return) {
-            _iterator.return();
-          }
-        } finally {
-          if (_didIteratorError) {
-            throw _iteratorError;
-          }
-        }
-      }
-    }
-
-    /**
-     * Inserts an object to the cache according to a specific ordering
-     * algorythm.
-     * NOTE: The ordering is via id and it assumes that ids are sequential
-     * and always incremented by one.
-     * @method insertOrderedToCache
-     * @param  {Object} subject [description]
-     * @return {void}
-     */
-
-  }, {
-    key: 'insertOrderedToCache',
-    value: function insertOrderedToCache(subject) {
-      var insertionIndex = 0;
-      var cachedSubject = this.cache[insertionIndex];
-      while (cachedSubject) {
-        if (subject.id < cachedSubject.id) {
-          break;
-        }
-        insertionIndex++;
-        cachedSubject = this.cache[insertionIndex];
-      }
-      var deleteCount = 0;
-      this.cache.splice(insertionIndex, deleteCount, subject);
-    }
-  }]);
-
-  return DataLoader;
-}();
-
-function snapshot(instance) {
-  var range = instance.cacheEndDate.diff(instance.cacheStartDate, 'days');
-  var cacheSize = instance.cache.length;
-  console.log('Cache size: ' + cacheSize + ' | date range: ' + range);
-}
-
-var CLASS_PREFIX$3 = 'subjects';
-
-var SubjectsContainer = function (_ViewController) {
-  _inherits(SubjectsContainer, _ViewController);
-
-  /**
-   * @method constructor
-   * @param  {String} loadUrl - URL from where to fetch subject data.
-   * @param  {CustomDate} startDate
-   * @param  {CustomDate} endDate
-   * @param  {String} modulePrefix
-   * @return {SubjectsContainer}
-   */
-
-  function SubjectsContainer(loadUrl, modulePrefix) {
-    _classCallCheck(this, SubjectsContainer);
-
-    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(SubjectsContainer).call(this));
-
-    _this.dataLoader = new DataLoader(loadUrl);
-    _this.startDate = new CustomDate();
-    _this.subjects = [];
-    _this.dayCount = 1;
-    _this.modulePrefix = modulePrefix;
-
-    Object.preventExtensions(_this);
-    _this.html.container.classList.add(modulePrefix + '-' + CLASS_PREFIX$3);
-    return _this;
-  }
-
-  // ---------------------------------------------------------------------------
-  // Setters
-  // ---------------------------------------------------------------------------
-  /**
-   * @method setStartDate
-   * @param  {CustomDate} newstartDate
-   */
-
-
-  _createClass(SubjectsContainer, [{
-    key: 'setStartDate',
-    value: function () {
-      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee(newstartDate) {
-        var endDate;
-        return _regeneratorRuntime.wrap(function _callee$(_context) {
-          while (1) {
-            switch (_context.prev = _context.next) {
-              case 0:
-                assert(newstartDate instanceof CustomDate, 'TypeError: startDate is not an instance of CustomDate');
-
-                // NOTE: It is very important that this be the start of the day
-                // as in further comparisons there will have to be a difference
-                // of 24 hours between two dates.
-                this.startDate = new CustomDate(newstartDate).startOf('day');
-
-                endDate = this.getEndDate();
-                _context.next = 5;
-                return this.loadSubjectsEvents(this.startDate, endDate);
-
-              case 5:
-
-                this.subjects.forEach(function (subject) {
-                  subject.setStartDate(newstartDate);
-                });
-
-              case 6:
-              case 'end':
-                return _context.stop();
-            }
-          }
-        }, _callee, this);
-      }));
-
-      function setStartDate(_x) {
-        return ref.apply(this, arguments);
-      }
-
-      return setStartDate;
-    }()
-
-    /**
-     * Sets the amount of days being shown in each subject row.
-     * @method setDayCount
-     * @param  {Int} count
-     * @return {Promise}
-     */
-
-  }, {
-    key: 'setDayCount',
-    value: function () {
-      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee2(count) {
-        var endDate;
-        return _regeneratorRuntime.wrap(function _callee2$(_context2) {
-          while (1) {
-            switch (_context2.prev = _context2.next) {
-              case 0:
-                assert(count >= 0, 'Negative amount of days not allowed');
-
-                this.dayCount = count;
-                endDate = this.getEndDate();
-                _context2.next = 5;
-                return this.loadSubjectsEvents(this.startDate, endDate);
-
-              case 5:
-
-                this.subjects.forEach(function (subject) {
-                  subject.setDayCount(count);
-                });
-
-              case 6:
-              case 'end':
-                return _context2.stop();
-            }
-          }
-        }, _callee2, this);
-      }));
-
-      function setDayCount(_x2) {
-        return ref.apply(this, arguments);
-      }
-
-      return setDayCount;
-    }()
-
-    /**
+     * @public
      * @method setSubjectCount
-     * @param  {Int} count
+     * @param {Int} count
      */
 
   }, {
     key: 'setSubjectCount',
     value: function () {
-      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee3(count) {
-        var dayCount, addOrRemove;
-        return _regeneratorRuntime.wrap(function _callee3$(_context3) {
+      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee(count) {
+        var currentCount, diff, i;
+        return _regeneratorRuntime.wrap(function _callee$(_context) {
           while (1) {
-            switch (_context3.prev = _context3.next) {
+            switch (_context.prev = _context.next) {
               case 0:
-                dayCount = this.getDayCount();
+                currentCount = this.getSubjectCount();
 
-                if (!(dayCount === count)) {
-                  _context3.next = 3;
+                if (!(count === currentCount)) {
+                  _context.next = 3;
                   break;
                 }
 
-                return _context3.abrupt('return');
+                return _context.abrupt('return');
 
               case 3:
-                addOrRemove = dayCount > count ? 'removeSubjects' : 'addSubjects';
-                _context3.next = 6;
-                return this[addOrRemove]('bottom', count);
+                diff = Math.abs(currentCount - count);
 
-              case 6:
+                if (!(count > currentCount)) {
+                  _context.next = 7;
+                  break;
+                }
+
+                this.removeSubjects(diff);
+                return _context.abrupt('return');
+
+              case 7:
+                i = 0;
+
+              case 8:
+                if (!(i < diff)) {
+                  _context.next = 14;
+                  break;
+                }
+
+                _context.next = 11;
+                return this.addSubject('bottom');
+
+              case 11:
+                i++;
+                _context.next = 8;
+                break;
+
+              case 14:
               case 'end':
-                return _context3.stop();
+                return _context.stop();
             }
           }
-        }, _callee3, this);
+        }, _callee, this);
       }));
 
-      function setSubjectCount(_x3) {
+      function setSubjectCount(_x) {
         return ref.apply(this, arguments);
       }
 
       return setSubjectCount;
     }()
-
-    /**
-     * @method setEvents
-     * @param  {Array<Object>} subjects - Array of objects representing a subject
-     * and having the events to be set.
-     */
-
   }, {
-    key: 'setEvents',
-    value: function setEvents(newEventsSubjects) {
-      this.subjects.forEach(function (subject) {
-        var subjWithNewEvents = newEventsSubjects.find(function (s) {
-          return s.id === subject.id;
-        });
-        if (subjWithNewEvents) {
-          subject.setEvents(subjWithNewEvents.events);
-        }
-      });
-    }
-
-    // ---------------------------------------------------------------------------
-    // Getters
-    // ---------------------------------------------------------------------------
-
-    /**
-     * [getDayCount description]
-     * @method getDayCount
-     * @return {Int} Amount of days in each subject
-     */
-
-  }, {
-    key: 'getDayCount',
-    value: function getDayCount() {
-      return this.dayCount || 1;
-      // return this.subjects[0] ? this.subjects[0].getDayCount() : 1;
-    }
-  }, {
-    key: 'getEndDate',
-    value: function getEndDate() {
-      var startDate = new CustomDate(this.startDate);
-      var dayCount = this.getDayCount();
-      var endDate = startDate.add(dayCount, 'days');
-      return endDate;
-    }
-
-    // ---------------------------------------------------------------------------
-    // Modifiers
-    // ---------------------------------------------------------------------------
-
-    /**
-     * @method removeSubjects
-     * @param  {String} topBottom - Accepts 'top' or 'bottom'
-     * @param  {Int} amount
-     */
-
-  }, {
-    key: 'removeSubjects',
-    value: function removeSubjects(topBottom) {
-      var amount = arguments.length <= 1 || arguments[1] === undefined ? 1 : arguments[1];
-
-      var fromTop = topBottom === 'top';
-      assert(fromTop || topBottom === 'bottom', 'Invalid value for topBottom: ' + topBottom);
-
-      var start = fromTop ? 0 : this.subjects.length - amount;
-
-      var subjectsToErase = this.subjects.splice(start, amount);
-      subjectsToErase.forEach(function (subj) {
-        return subj.destroy();
-      });
+    key: 'getSubjectCount',
+    value: function getSubjectCount() {
+      return this.datesPanel.getSubjectCount();
     }
 
     /**
-     * Add subject rows to the container
-     * @method addSubjects
-     * @param  {String} topBottom - Accepts 'top' or 'bottom'
-     * @param  {Int} amount
-     * @return {Promise} - The promise will be resolved when the subject has been added.
+     * @public
+     * @method addSubject
+     * @param  {String} topBottom
      */
 
   }, {
-    key: 'addSubjects',
+    key: 'addSubject',
     value: function () {
-      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee4(topBottom) {
-        var _this2 = this;
-
-        var amount = arguments.length <= 1 || arguments[1] === undefined ? 1 : arguments[1];
-
-        var fromTop, _loop, i, _ret;
-
-        return _regeneratorRuntime.wrap(function _callee4$(_context5) {
+      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee2(topBottom) {
+        var newSubject;
+        return _regeneratorRuntime.wrap(function _callee2$(_context2) {
           while (1) {
-            switch (_context5.prev = _context5.next) {
+            switch (_context2.prev = _context2.next) {
               case 0:
-                fromTop = topBottom === 'top';
-                _loop = _regeneratorRuntime.mark(function _loop(i) {
-                  var subjConfig, noMoreSubjectsToLoad, newSubject, referenceElement;
-                  return _regeneratorRuntime.wrap(function _loop$(_context4) {
-                    while (1) {
-                      switch (_context4.prev = _context4.next) {
-                        case 0:
-                          _context4.next = 2;
-                          return _this2.getNewSubjectConfig(fromTop);
-
-                        case 2:
-                          subjConfig = _context4.sent;
-                          noMoreSubjectsToLoad = !subjConfig;
-
-                          if (!noMoreSubjectsToLoad) {
-                            _context4.next = 6;
-                            break;
-                          }
-
-                          return _context4.abrupt('return', {
-                            v: false
-                          });
-
-                        case 6:
-
-                          //  This object already contains events for the date range of
-                          //  the container.
-                          newSubject = new Subject(subjConfig, _this2.startDate, _this2.modulePrefix);
-
-                          newSubject.setDayCount(_this2.getDayCount());
-
-                          referenceElement = void 0;
-
-                          if (fromTop) {
-                            _this2.subjects = [newSubject].concat(_this2.subjects);
-                            referenceElement = _this2.html.container.children[0];
-                          } else {
-                            _this2.subjects.push(newSubject);
-                            referenceElement = null;
-                          }
-
-                          requestAnimationFrame(function () {
-                            _this2.html.container.insertBefore(newSubject.html.container, referenceElement);
-                          });
-
-                        case 11:
-                        case 'end':
-                          return _context4.stop();
-                      }
-                    }
-                  }, _loop, _this2);
-                });
-                i = 0;
-
-              case 3:
-                if (!(i < amount)) {
-                  _context5.next = 11;
-                  break;
-                }
-
-                return _context5.delegateYield(_loop(i), 't0', 5);
-
-              case 5:
-                _ret = _context5.t0;
-
-                if (!((typeof _ret === 'undefined' ? 'undefined' : _typeof$1(_ret)) === "object")) {
-                  _context5.next = 8;
-                  break;
-                }
-
-                return _context5.abrupt('return', _ret.v);
-
-              case 8:
-                i++;
-                _context5.next = 3;
-                break;
-
-              case 11:
-                return _context5.abrupt('return', true);
-
-              case 12:
-              case 'end':
-                return _context5.stop();
-            }
-          }
-        }, _callee4, this);
-      }));
-
-      function addSubjects(_x5, _x6) {
-        return ref.apply(this, arguments);
-      }
-
-      return addSubjects;
-    }()
-
-    /**
-     * Gets events needed from dataloader and sends them to each event.
-     * @method loadSubjectsEvents
-     * @param  {CustomDate} fromDate - Date from which subjects need events.
-     * @param  {CustomDate} toDate - Date until which subjects need events.
-     * @return {Promise<void>}
-     */
-
-  }, {
-    key: 'loadSubjectsEvents',
-    value: function () {
-      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee5(fromDate, toDate) {
-        var cacheStartDate, cacheEndDate, datesAlreadyLoaded, subjectsIds, eventData;
-        return _regeneratorRuntime.wrap(function _callee5$(_context6) {
-          while (1) {
-            switch (_context6.prev = _context6.next) {
-              case 0:
-                cacheStartDate = this.dataLoader.getCacheStartDate();
-                cacheEndDate = this.dataLoader.getCacheStartDate();
-                datesAlreadyLoaded = fromDate.isAfter(cacheStartDate) && toDate.isBefore(cacheEndDate);
-
-                // no need to load from server;
-
-                if (!(datesAlreadyLoaded || this.subjects.length === 0)) {
-                  _context6.next = 5;
-                  break;
-                }
-
-                return _context6.abrupt('return');
-
-              case 5:
-                subjectsIds = this.subjects.map(function (subj) {
-                  return subj.getId();
-                });
-                _context6.next = 8;
-                return this.dataLoader.getEventsForIds(subjectsIds, fromDate, toDate);
-
-              case 8:
-                eventData = _context6.sent;
-
-
-                this.setEvents(eventData);
-
-              case 10:
-              case 'end':
-                return _context6.stop();
-            }
-          }
-        }, _callee5, this);
-      }));
-
-      function loadSubjectsEvents(_x8, _x9) {
-        return ref.apply(this, arguments);
-      }
-
-      return loadSubjectsEvents;
-    }()
-
-    /**
-     * @method getNewSubjectConfig
-     * @param  {Boolean} fromTop
-     * @return {Promise<Object>} Will be resolved into an object able to create a Subject instance
-     */
-
-  }, {
-    key: 'getNewSubjectConfig',
-    value: function () {
-      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee6(fromTop) {
-        var beforeAfter, referenceElement, referenceId, subjArray;
-        return _regeneratorRuntime.wrap(function _callee6$(_context7) {
-          while (1) {
-            switch (_context7.prev = _context7.next) {
-              case 0:
-                beforeAfter = fromTop ? 'before' : 'after';
-                referenceElement = fromTop ? this.subjects[0] : this.subjects[this.subjects.length - 1];
-                referenceId = referenceElement ? referenceElement.getId() : null;
-                _context7.next = 5;
-                return this.dataLoader.getSubjects(1, beforeAfter, referenceId);
-
-              case 5:
-                subjArray = _context7.sent;
-                return _context7.abrupt('return', subjArray[0]);
-
-              case 7:
-              case 'end':
-                return _context7.stop();
-            }
-          }
-        }, _callee6, this);
-      }));
-
-      function getNewSubjectConfig(_x10) {
-        return ref.apply(this, arguments);
-      }
-
-      return getNewSubjectConfig;
-    }()
-
-    /**
-     * @method scrollUp
-     * @return {Promise}
-     */
-
-  }, {
-    key: 'scrollUp',
-    value: function () {
-      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee7() {
-        var subjectAdded;
-        return _regeneratorRuntime.wrap(function _callee7$(_context8) {
-          while (1) {
-            switch (_context8.prev = _context8.next) {
-              case 0:
-                _context8.next = 2;
-                return this.addSubjects('top', 1);
+                _context2.next = 2;
+                return this.subjectFabric.newSubject(topBottom);
 
               case 2:
-                subjectAdded = _context8.sent;
+                newSubject = _context2.sent;
 
-                if (subjectAdded) {
-                  this.removeSubjects('bottom', 1);
+                if (!newSubject) {
+                  assert.warn(false, 'no subject created');
                 }
+                this.datesPanel.addSubject(newSubject);
+                this.legendsBar.addSubject(newSubject);
 
-              case 4:
+              case 6:
               case 'end':
-                return _context8.stop();
+                return _context2.stop();
             }
           }
-        }, _callee7, this);
+        }, _callee2, this);
       }));
 
-      function scrollUp() {
+      function addSubject(_x2) {
         return ref.apply(this, arguments);
       }
 
-      return scrollUp;
-    }()
-
-    /**
-     * @method scrollDown
-     * @return {Promise}
-     */
-
-  }, {
-    key: 'scrollDown',
-    value: function () {
-      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee8() {
-        var subjectAdded;
-        return _regeneratorRuntime.wrap(function _callee8$(_context9) {
-          while (1) {
-            switch (_context9.prev = _context9.next) {
-              case 0:
-                _context9.next = 2;
-                return this.addSubjects('bottom', 1);
-
-              case 2:
-                subjectAdded = _context9.sent;
-
-                if (subjectAdded) {
-                  this.removeSubjects('top', 1);
-                }
-
-              case 4:
-              case 'end':
-                return _context9.stop();
-            }
-          }
-        }, _callee8, this);
-      }));
-
-      function scrollDown() {
-        return ref.apply(this, arguments);
-      }
-
-      return scrollDown;
+      return addSubject;
     }()
   }]);
 
-  return SubjectsContainer;
-}(ViewController);
+  return ModuleCoordinator;
+}();
 
-var CLASS_PREFIX = 'fl-msc';
-
-var Calendar = function (_ViewController) {
-  _inherits(Calendar, _ViewController);
-
-  function Calendar(subjectsHeader, loadUrl, xdiv) {
-    _classCallCheck(this, Calendar);
-
-    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Calendar).call(this));
-
-    _this.dateBar = new DateBar(CLASS_PREFIX);
-    _this.subjectsContainer = new SubjectsContainer(loadUrl, CLASS_PREFIX);
-    _this.controlBar = new ControlBar(new CustomDate(), _this.dateBar, _this.subjectsContainer, CLASS_PREFIX);
-
-    _this.buildHtml(subjectsHeader, xdiv, _this.controlBar, _this.dateBar, _this.subjectsContainer);
-
-    Object.preventExtensions(_this);
-    return _this;
-  }
-
-  /**
-   * Creates the HTML structure for the Calendar
-   * @method buildHtml
-   * @param {String} subjectsHeader - Header of the subject name column
-   * @param  {HTMLElement} xdiv - Container Element
-   * @param  {controlBar} controlBar
-   * @param  {dateBar} dateBar
-   * @param  {Array<Subject>} subjects
-   * @return {void}
-   */
-
-
-  _createClass(Calendar, [{
-    key: 'buildHtml',
-    value: function buildHtml(subjectsHeader, xdiv) {
-      var controlBar = arguments.length <= 2 || arguments[2] === undefined ? this.controlBar : arguments[2];
-      var dateBar = arguments.length <= 3 || arguments[3] === undefined ? this.dateBar : arguments[3];
-      var subjectsContainer = arguments.length <= 4 || arguments[4] === undefined ? this.subjectsContainer : arguments[4];
-
-      var container = this.html.container;
-      container.classList.add(CLASS_PREFIX);
-      container.appendChild(controlBar.html.container);
-
-      var header = document.createElement('div');
-      header.classList.add(CLASS_PREFIX + '-header');
-
-      var subjectsTitle = document.createElement('div');
-      subjectsTitle.classList.add(CLASS_PREFIX + '-subjectsTitle');
-
-      var subjectsTitleText = document.createElement('p');
-      subjectsTitleText.classList.add(CLASS_PREFIX + '-subjectsTitle-text');
-      subjectsTitleText.innerHTML = subjectsHeader;
-      subjectsTitle.appendChild(subjectsTitleText);
-
-      header.appendChild(subjectsTitle);
-      header.appendChild(dateBar.html.container);
-
-      container.appendChild(header);
-      container.appendChild(subjectsContainer.html.container);
-
-      this.html.container = container;
-      xdiv.appendChild(container);
-    }
-  }]);
-
-  return Calendar;
-}(ViewController);
+var INITIAL_SUBJECT_COUNT = 50;
 
 xController(function (xdiv) {
-  var subjectsTitle = 'Properties';
+  var subjectsHeader = 'Properties';
   var loadUrl = xdiv.dataset.loadUrl;
-  return new Calendar(subjectsTitle, loadUrl, xdiv);
+  // return new Calendar(subjectsTitle, loadUrl, xdiv);
+  return new ModuleCoordinator(xdiv, loadUrl, subjectsHeader, INITIAL_SUBJECT_COUNT);
 });
 //# sourceMappingURL=fl-multi-subject-calendar.js.map
