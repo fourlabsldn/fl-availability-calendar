@@ -7612,6 +7612,8 @@ var DatesPanel = function (_ViewController) {
     var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(DatesPanel).call(this, modulePrefix, CLASS_PREFIX));
 
     _this.dateBar = new DateBar(startDate, modulePrefix);
+    _this.subjectRows = [];
+
     Object.preventExtensions(_this);
 
     _this.html.container.insertBefore(_this.dateBar.html.container, _this.html.container.children[0]);
@@ -7650,6 +7652,20 @@ var DatesPanel = function (_ViewController) {
     value: function setStartDate(date) {
       this.dateBar.setStartDate(date);
       console.warn('setStartDate not fully implemented yet.');
+    }
+
+    /**
+     * @public
+     * @method getSubjectAt
+     * @param  {String} position 'end' or 'beginning'
+     * @return {Object}
+     */
+
+  }, {
+    key: 'getSubjectAt',
+    value: function getSubjectAt(position) {
+      var subjIndex = position === 'end' ? this.subjectRows.length - 1 : 0;
+      return this.subjectRows[subjIndex].getSubject();
     }
   }]);
 
