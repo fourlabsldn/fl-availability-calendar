@@ -1,5 +1,5 @@
 export default class ViewController {
-  constructor(modulePrefix, classPrefix) {
+  constructor(modulePrefix, classPrefix = this.constructor.name) {
     this.modulePrefix = modulePrefix;
     this.cssPrefix = classPrefix ? `${modulePrefix}-${classPrefix}` : modulePrefix;
     this.html = {};
