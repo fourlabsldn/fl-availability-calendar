@@ -1,4 +1,4 @@
-import ViewController from './ViewController';
+import ViewController from '../ViewController';
 import DateBar from './DateBar';
 
 const CLASS_PREFIX = 'DatesPanel';

@@ -1,5 +1,5 @@
-import ViewController from './ViewController';
-import CustomDate from './utils/CustomDate';
+import ViewController from '../ViewController';
+import CustomDate from '../utils/CustomDate';
 import assert from 'fl-assert';
 
 const CLASS_PREFIX = 'DateBar';

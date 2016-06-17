@@ -1,7 +1,7 @@
 import CustomDate from './utils/CustomDate';
 import LegendsBar from './LegendsBar';
 import ControlBar from './ControlBar';
-import DatesPanel from './DatesPanel';
+import DatesPanel from './DatesPanel/DatesPanel';
 import DataLoader from './data/DataLoader';
 import CalendarContainer from './CalendarContainer';
 
