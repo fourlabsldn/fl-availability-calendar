@@ -1,0 +1,49 @@
+.fl-msc-DatesPanel-subjectsContainer {
+  box-sizing: inherit;
+
+  display: block;
+}
+
+.fl-msc-subject {
+  box-sizing: inherit;
+
+  display: block;
+  white-space: nowrap;
+}
+
+.fl-msc-subject-name {
+  @include elipsis-overflow();
+  box-sizing: inherit;
+
+  display: inline-block;
+  width: $first-column-width;
+  max-width: $first-column-width;
+}
+
+.fl-msc-SubjectRow {
+  box-sizing: inherit;
+
+  display: inline-flex;
+  flex-flow: row nowrap;
+  align-items: stretch;
+}
+
+.fl-msc-SubjectRow-day {
+  box-sizing: inherit;
+
+  width: $day-width;
+  height: 1.6em;
+  // border: $day-border-width solid $c-plain-background;
+  // border-width: (2 * $day-border-width) $day-border-width;
+  // border-radius: 4px;
+
+  background-color: $c-free;
+}
+
+.fl-msc-SubjectRow-day--busy {
+  background-color: $c-busy;
+}
+
+.fl-msc-SubjectRow-day--half-busy {
+  background-color: $c-half-busy;
+}

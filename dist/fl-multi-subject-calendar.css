@@ -116,6 +116,54 @@
   color: #303030;
   text-align: center; }
 
+.fl-msc-DatesPanel-subjectsContainer {
+  -webkit-box-sizing: inherit;
+          box-sizing: inherit;
+  display: block; }
+
+.fl-msc-subject {
+  -webkit-box-sizing: inherit;
+          box-sizing: inherit;
+  display: block;
+  white-space: nowrap; }
+
+.fl-msc-subject-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -webkit-box-sizing: inherit;
+          box-sizing: inherit;
+  display: inline-block;
+  width: 17em;
+  max-width: 17em; }
+
+.fl-msc-SubjectRow {
+  -webkit-box-sizing: inherit;
+          box-sizing: inherit;
+  display: -webkit-inline-box;
+  display: -webkit-inline-flex;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  -webkit-flex-flow: row nowrap;
+      -ms-flex-flow: row nowrap;
+          flex-flow: row nowrap;
+  -webkit-box-align: stretch;
+  -webkit-align-items: stretch;
+      -ms-flex-align: stretch;
+          align-items: stretch; }
+
+.fl-msc-SubjectRow-day {
+  -webkit-box-sizing: inherit;
+          box-sizing: inherit;
+  width: 2em;
+  height: 1.6em;
+  background-color: #42b382; }
+
+.fl-msc-SubjectRow-day--busy {
+  background-color: #e4585b; }
+
+.fl-msc-SubjectRow-day--half-busy {
+  background-color: #fcb827; }
+
 .fl-msc-DateBar {
   -webkit-box-sizing: inherit;
           box-sizing: inherit;
@@ -251,53 +299,5 @@
   width: 2em;
   display: inline-block;
   border: 1px solid transparent; }
-
-.fl-msc-subjects {
-  -webkit-box-sizing: inherit;
-          box-sizing: inherit;
-  display: block; }
-
-.fl-msc-subject {
-  -webkit-box-sizing: inherit;
-          box-sizing: inherit;
-  display: block;
-  white-space: nowrap; }
-
-.fl-msc-subject-name {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  -webkit-box-sizing: inherit;
-          box-sizing: inherit;
-  display: inline-block;
-  width: 17em;
-  max-width: 17em; }
-
-.fl-msc-subject-days {
-  -webkit-box-sizing: inherit;
-          box-sizing: inherit;
-  display: -webkit-inline-box;
-  display: -webkit-inline-flex;
-  display: -ms-inline-flexbox;
-  display: inline-flex;
-  -webkit-flex-flow: row nowrap;
-      -ms-flex-flow: row nowrap;
-          flex-flow: row nowrap;
-  -webkit-box-align: stretch;
-  -webkit-align-items: stretch;
-      -ms-flex-align: stretch;
-          align-items: stretch; }
-
-.fl-msc-subject-day {
-  -webkit-box-sizing: inherit;
-          box-sizing: inherit;
-  width: 2em;
-  height: 1.6em;
-  background-color: #42b382; }
-
-.fl-msc-subject-day--busy {
-  background-color: #e4585b; }
-
-.fl-msc-subject-day--half-busy {
-  background-color: #fcb827; }
 
 /*# sourceMappingURL=fl-multi-subject-calendar.css.map */
