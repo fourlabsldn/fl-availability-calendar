@@ -1,0 +1,40 @@
+.fl-msc-DateBar {
+  box-sizing: inherit;
+
+  flex: 0 0;
+  display: inline-block;
+}
+
+.fl-msc-DateBar-monthRow,
+.fl-msc-DateBar-dayRow {
+  box-sizing: inherit;
+
+  display: inline-flex;
+  align-content: stretch;
+  flex-flow: row nowrap;
+}
+
+.fl-msc-DateBar-month {
+  box-sizing: inherit;
+
+  display: inline-block;
+  background-color: $c-button-background;
+  color: $c-button-text;
+  text-align: center;
+
+  border: 2px solid $c-plain-background;
+
+  @for $i from 1 through 32 {
+    &-#{$i} {
+      width: calc(#{$day-width} * #{$i});
+    }
+  }
+}
+
+.fl-msc-DateBar-day {
+  box-sizing: border-box;
+
+  width: $day-width;
+  display: inline-block;
+  border: $day-border-width solid transparent;
+}

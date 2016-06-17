@@ -1,0 +1,31 @@
+// TO BE REMOVED THESE CLASSES DON'T EXIST ANYMORE
+.fl-msc-header {
+  box-sizing: inherit;
+
+  display: inline-flex;
+  flex-flow: row nowrap;
+  align-items: flex;
+
+  text-align: center;
+}
+
+.fl-msc-subjectsTitle {
+  box-sizing: inherit;
+  background-color: $c-button-background;
+  color: $c-button-text;
+  border-color: $c-plain-background;
+  border-style: solid;
+  border-width: 2px 2px 2px 0;
+
+  flex: 0 0 $first-column-width;
+  display: inline-flex;
+}
+
+.fl-msc-subjectsTitle-text {
+  @include inherit-font();
+  @include elipsis-overflow();
+  box-sizing: inherit;
+
+  margin: auto;
+  width: 100%;
+}

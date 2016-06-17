@@ -1,0 +1,27 @@
+.fl-msc-btnBar,
+.fl-msc-btnBar-btn,
+.fl-msc-btnBar-datepicker {
+  @include inherit-font();
+  box-sizing: inherit;
+
+  text-align: center;
+}
+
+.fl-msc-btnBar {
+  display: flex;
+  flex-flow: row nowrap;
+  align-content: stretch;
+
+  border: 1px solid $c-border;
+}
+
+.fl-msc-btnBar-btn {
+  background-color: $c-button-background;
+  color: $c-button-text;
+  border: 1px solid $c-plain-background;
+
+  cursor: pointer;
+  &:hover {
+    filter: brightness(115%);
+  }
+}
