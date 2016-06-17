@@ -32,7 +32,7 @@ export default class SubjectRow extends ViewController {
     const frag = document.createDocumentFragment();
     let pointerDate = new CustomDate(rowStartDate);
     let pointerEventIndex = 0;
-    while (pointerDate.isBefore(rowEndDate) && pointerEventIndex < events.length) {
+    while (!pointerDate.isAfter(rowEndDate) && pointerEventIndex < events.length) {
       let currEvent = events[pointerEventIndex];
       let newDay;
       while (currEvent && pointerDate.isAfter(currEvent.end)) {

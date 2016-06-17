@@ -7810,7 +7810,7 @@ var SubjectRow = function (_ViewController) {
       var frag = document.createDocumentFragment();
       var pointerDate = new CustomDate(rowStartDate);
       var pointerEventIndex = 0;
-      while (pointerDate.isBefore(rowEndDate) && pointerEventIndex < events.length) {
+      while (!pointerDate.isAfter(rowEndDate) && pointerEventIndex < events.length) {
         var currEvent = events[pointerEventIndex];
         var newDay = void 0;
         while (currEvent && pointerDate.isAfter(currEvent.end)) {
@@ -8597,7 +8597,7 @@ var ModuleCoordinator = function () {
 
     // add x subjects
     // this.setSubjectCount(initialSubjectCount);
-    this.setSubjectCount(1);
+    this.setSubjectCount(100);
   }
 
   /**

@@ -40,7 +40,7 @@ export default class ModuleCoordinator {
 
     // add x subjects
     // this.setSubjectCount(initialSubjectCount);
-    this.setSubjectCount(1);
+    this.setSubjectCount(100);
   }
 
   /**
