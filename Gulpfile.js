@@ -79,7 +79,7 @@ gulp.task('watch:build:sass', () => {
 });
 
 gulp.task('startDemoServer', () => {
-  demoServer();
+  return demoServer();
 });
 
 gulp.task('build', [
@@ -92,4 +92,4 @@ gulp.task('watch', [
   'watch:build:src',
 ]);
 
-gulp.task('demo', ['copy-dependencies', 'build','startDemoServer', 'watch' ]);
+gulp.task('demo', ['copy-dependencies', 'build', 'startDemoServer', 'watch']);
