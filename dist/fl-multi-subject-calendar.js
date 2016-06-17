@@ -7042,7 +7042,9 @@ exports.default = function (subClass, superClass) {
 
 var _inherits = (inherits && typeof inherits === 'object' && 'default' in inherits ? inherits['default'] : inherits);
 
-var ViewController = function ViewController(modulePrefix, classPrefix) {
+var ViewController = function ViewController(modulePrefix) {
+  var classPrefix = arguments.length <= 1 || arguments[1] === undefined ? this.constructor.name : arguments[1];
+
   _classCallCheck(this, ViewController);
 
   this.modulePrefix = modulePrefix;
@@ -7055,17 +7057,14 @@ var ViewController = function ViewController(modulePrefix, classPrefix) {
   this.buildHtml();
 };
 
-var CLASS_PREFIX = 'LegendsBar';
-
 var LegendsBar = function (_ViewController) {
   _inherits(LegendsBar, _ViewController);
 
-  function LegendsBar(title, moduleCoordinator, modulePrefix) {
+  function LegendsBar(title, modulePrefix) {
     _classCallCheck(this, LegendsBar);
 
-    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(LegendsBar).call(this, modulePrefix, CLASS_PREFIX));
+    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(LegendsBar).call(this, modulePrefix));
 
-    _this.moduleCoordinator = moduleCoordinator;
     Object.preventExtensions(_this);
 
     _this.html.header.textContent = title;
@@ -7147,7 +7146,6 @@ var LegendsBar = function (_ViewController) {
   return LegendsBar;
 }(ViewController);
 
-var CLASS_PREFIX$1 = 'btnBar';
 var DATEPICKER_FORMAT = 'YYYY-[W]WW';
 
 var ControlBar = function (_ViewController) {
@@ -7163,7 +7161,7 @@ var ControlBar = function (_ViewController) {
   function ControlBar(moduleCoordinator, modulePrefix) {
     _classCallCheck(this, ControlBar);
 
-    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(ControlBar).call(this, modulePrefix, CLASS_PREFIX$1));
+    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(ControlBar).call(this, modulePrefix));
 
     _this.moduleCoordinator = moduleCoordinator;
     _this.startDate = _this.moduleCoordinator.getStartDate();
@@ -7356,7 +7354,7 @@ assert.warn = function warn(condition, errorMessage) {
   }
 };
 
-var CLASS_PREFIX$3 = 'DateBar';
+var CLASS_PREFIX$1 = 'DateBar';
 
 var DateBar = function (_ViewController) {
   _inherits(DateBar, _ViewController);
@@ -7364,7 +7362,7 @@ var DateBar = function (_ViewController) {
   function DateBar(startDate, modulePrefix) {
     _classCallCheck(this, DateBar);
 
-    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(DateBar).call(this, modulePrefix, CLASS_PREFIX$3));
+    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(DateBar).call(this, modulePrefix, CLASS_PREFIX$1));
 
     _this.startDate = new CustomDate(startDate);
     Object.preventExtensions(_this);
@@ -7603,7 +7601,7 @@ var DateBar = function (_ViewController) {
   return DateBar;
 }(ViewController);
 
-var CLASS_PREFIX$2 = 'DatesPanel';
+var CLASS_PREFIX = 'DatesPanel';
 
 var DatesPanel = function (_ViewController) {
   _inherits(DatesPanel, _ViewController);
@@ -7611,7 +7609,7 @@ var DatesPanel = function (_ViewController) {
   function DatesPanel(startDate, moduleCoordinator, modulePrefix) {
     _classCallCheck(this, DatesPanel);
 
-    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(DatesPanel).call(this, modulePrefix, CLASS_PREFIX$2));
+    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(DatesPanel).call(this, modulePrefix, CLASS_PREFIX));
 
     _this.dateBar = new DateBar(startDate, modulePrefix);
     Object.preventExtensions(_this);

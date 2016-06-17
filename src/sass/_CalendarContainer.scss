@@ -1,4 +1,4 @@
-.fl-msc {
+.fl-msc-CalendarContainer {
   color: $c-text;
   background-color: $c-plain-background;
   display: inline-block;
@@ -7,7 +7,7 @@
   box-sizing: border-box;
 }
 
-.fl-msc-panelWrapper {
+.fl-msc-CalendarContainer-panelWrapper {
   display: flex;
   flex-flow: row nowrap;
   align-content: stretch;

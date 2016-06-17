@@ -1,4 +1,4 @@
-.fl-msc {
+.fl-msc-CalendarContainer {
   color: #303030;
   background-color: #f9f9f9;
   display: inline-block;
@@ -7,7 +7,7 @@
   -webkit-box-sizing: border-box;
           box-sizing: border-box; }
 
-.fl-msc-panelWrapper {
+.fl-msc-CalendarContainer-panelWrapper {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -19,9 +19,9 @@
       -ms-flex-line-pack: stretch;
           align-content: stretch; }
 
-.fl-msc-btnBar,
-.fl-msc-btnBar-btn,
-.fl-msc-btnBar-datepicker {
+.fl-msc-ControlBar,
+.fl-msc-ControlBar-btn,
+.fl-msc-ControlBar-datepicker {
   color: inherit;
   font-size: inherit;
   font-family: inherit;
@@ -29,7 +29,7 @@
           box-sizing: inherit;
   text-align: center; }
 
-.fl-msc-btnBar {
+.fl-msc-ControlBar {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -42,12 +42,12 @@
           align-content: stretch;
   border: 1px solid #dddddd; }
 
-.fl-msc-btnBar-btn {
+.fl-msc-ControlBar-btn {
   background-color: #e0e0e0;
   color: #303030;
   border: 1px solid #f9f9f9;
   cursor: pointer; }
-  .fl-msc-btnBar-btn:hover {
+  .fl-msc-ControlBar-btn:hover {
     -webkit-filter: brightness(115%);
             filter: brightness(115%); }
 

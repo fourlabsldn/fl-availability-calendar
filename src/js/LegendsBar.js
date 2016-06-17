@@ -1,10 +1,8 @@
 import ViewController from './ViewController';
-const CLASS_PREFIX = 'LegendsBar';
 
 export default class LegendsBar extends ViewController {
-  constructor(title, moduleCoordinator, modulePrefix) {
-    super(modulePrefix, CLASS_PREFIX);
-    this.moduleCoordinator = moduleCoordinator;
+  constructor(title, modulePrefix) {
+    super(modulePrefix);
     Object.preventExtensions(this);
 
     this.html.header.textContent = title;

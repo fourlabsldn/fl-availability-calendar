@@ -1,9 +1,7 @@
 import ViewController from './ViewController';
 import CustomDate from './utils/CustomDate';
 
-const CLASS_PREFIX = 'btnBar';
 const DATEPICKER_FORMAT = 'YYYY-[W]WW';
-
 export default class ControlBar extends ViewController {
   /**
    * @constructor
@@ -12,7 +10,7 @@ export default class ControlBar extends ViewController {
    * @return {ControlBar}
    */
   constructor(moduleCoordinator, modulePrefix) {
-    super(modulePrefix, CLASS_PREFIX);
+    super(modulePrefix);
     this.moduleCoordinator = moduleCoordinator;
     this.startDate = this.moduleCoordinator.getStartDate();
     Object.preventExtensions(this);
