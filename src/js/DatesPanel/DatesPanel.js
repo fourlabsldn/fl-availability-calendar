@@ -6,14 +6,14 @@ const CLASS_PREFIX = 'DatesPanel';
 export default class DatesPanel extends ViewController {
   constructor(startDate, moduleCoordinator, modulePrefix) {
     super(modulePrefix, CLASS_PREFIX);
-
+    this.moduleCoordinator = moduleCoordinator;
     this.dateBar = new DateBar(startDate, modulePrefix);
     this.subjectRows = [];
 
     Object.preventExtensions(this);
 
     this.html.container.insertBefore(
-      this.dateBar.html.container,
+      this.dateBar.getContainer(),
       this.html.container.children[0]
     );
   }
@@ -60,11 +60,12 @@ export default class DatesPanel extends ViewController {
    * @public
    * @method getSubjectAt
    * @param  {String} position 'end' or 'beginning'
-   * @return {Object}
+   * @return {Object} - or Null if none exist.
    */
   getSubjectAt(position) {
-    const subjIndex = position === 'end' ? this.subjectRows.length - 1 : 0;
-    return this.subjectRows[subjIndex].getSubject();
+    const subjRowIndex = position === 'end' ? this.subjectRows.length - 1 : 0;
+    const subjRow = this.subjectRows[subjRowIndex];
+    return subjRow ? subjRow.getSubject() : null;
   }
 
   /**

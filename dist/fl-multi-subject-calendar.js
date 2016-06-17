@@ -7174,14 +7174,14 @@ var LegendsBar = function (_ViewController) {
 
     /**
      * @public
-     * @method addSubject
-     * @param  {Object} subject
-     * @param  {String} beforeAfter
+     * @method addSubjecta
+     * @param  {Array<Object>} subjects
+     * @param  {String} position 'beginning' or 'end'
      */
 
   }, {
-    key: 'addSubject',
-    value: function addSubject(subject, beforeAfter) {
+    key: 'addSubjects',
+    value: function addSubjects(subjects, position) {
       var legend = this.createSubjectLegend(subject);
       var referenceNode = beforeAfter === 'before' ? this.html.legendsContainer.children[0] : null;
       this.html.legendsContainer.insertBefore(legend, referenceNode);
@@ -7673,12 +7673,13 @@ var DatesPanel = function (_ViewController) {
 
     var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(DatesPanel).call(this, modulePrefix, CLASS_PREFIX));
 
+    _this.moduleCoordinator = moduleCoordinator;
     _this.dateBar = new DateBar(startDate, modulePrefix);
     _this.subjectRows = [];
 
     Object.preventExtensions(_this);
 
-    _this.html.container.insertBefore(_this.dateBar.html.container, _this.html.container.children[0]);
+    _this.html.container.insertBefore(_this.dateBar.getContainer(), _this.html.container.children[0]);
     return _this;
   }
 
@@ -7735,14 +7736,15 @@ var DatesPanel = function (_ViewController) {
      * @public
      * @method getSubjectAt
      * @param  {String} position 'end' or 'beginning'
-     * @return {Object}
+     * @return {Object} - or Null if none exist.
      */
 
   }, {
     key: 'getSubjectAt',
     value: function getSubjectAt(position) {
-      var subjIndex = position === 'end' ? this.subjectRows.length - 1 : 0;
-      return this.subjectRows[subjIndex].getSubject();
+      var subjRowIndex = position === 'end' ? this.subjectRows.length - 1 : 0;
+      var subjRow = this.subjectRows[subjRowIndex];
+      return subjRow ? subjRow.getSubject() : null;
     }
 
     /**
@@ -7990,7 +7992,7 @@ var Cache = function () {
             return _this.compare(s, newRecord) === 0;
           });
           if (idxFound !== -1) {
-            _this.subjects[idxFound] = newRecord;
+            _this.storage[idxFound] = newRecord;
           } else {
             _this.storage.push(newRecord);
           }
@@ -8014,11 +8016,12 @@ var Cache = function () {
         }
       }
 
-      this.subjects.sort(this.compare);
+      this.storage.sort(this.compare);
     }
 
     /**
-     * Returns a section of the cache
+     * Returns a section of the cache. If there is no reference object,
+     * it returns the amount requested from the beginning.
      * @public
      * @method get
      * @param  {Int} amount
@@ -8031,6 +8034,10 @@ var Cache = function () {
     key: 'get',
     value: function get(amount, position, referenceObj) {
       var _this2 = this;
+
+      if (!referenceObj) {
+        return this.storage.slice(0, amount);
+      }
 
       var idxFound = this.storage.findIndex(function (s) {
         return _this2.compare(referenceObj, s) === 0;
@@ -8046,7 +8053,7 @@ var Cache = function () {
         fromIndex = Math.max(0, idxFound - amount);
         toIndex = idxFound;
       }
-      return this.subjects.slice(fromIndex, toIndex);
+      return this.storage.slice(fromIndex, toIndex);
     }
   }]);
 
@@ -8066,7 +8073,6 @@ var DataLoader = function () {
     this.ajax = new Ajax(loadUrl);
     this.cacheStartDate = new CustomDate();
     this.cacheEndDate = new CustomDate();
-    this.cache = [];
   }
 
   /**
@@ -8186,7 +8192,7 @@ var DataLoader = function () {
     key: 'getSubjects',
     value: function () {
       var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee2(amount, position, referenceSubj) {
-        var cached, missingCount, referenceSubjIndex, referenceSubjId;
+        var cached, missingCount, cachedReferenceSubj, cachedReferenceSubjId;
         return _regeneratorRuntime.wrap(function _callee2$(_context2) {
           while (1) {
             switch (_context2.prev = _context2.next) {
@@ -8202,11 +8208,11 @@ var DataLoader = function () {
                 return _context2.abrupt('return', cached);
 
               case 4:
-                referenceSubjIndex = position === 'end' ? cached.length - 1 : 0;
-                referenceSubjId = cached[referenceSubjIndex].id;
+                cachedReferenceSubj = position === 'end' ? cached[cached.length - 1] : cached[0];
+                cachedReferenceSubjId = cachedReferenceSubj ? cachedReferenceSubj.id : null;
                 _context2.next = 8;
                 return this.loadSubjects({
-                  referenceId: referenceSubjId,
+                  referenceId: cachedReferenceSubjId,
                   recordCount: amount,
                   fromDate: this.cacheStartDate,
                   toDate: this.cacheEndDate,
@@ -8470,7 +8476,7 @@ var ModuleCoordinator = function () {
 
               case 3:
                 diff = Math.abs(currentCount - count);
-                method = count > currentCount ? 'removeSubjects' : 'addSubjects';
+                method = count > currentCount ? 'addSubjects' : 'removeSubjects';
 
                 this[method](diff, 'end');
 

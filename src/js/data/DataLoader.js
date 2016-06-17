@@ -12,7 +12,6 @@ export default class DataLoader {
     this.ajax = new Ajax(loadUrl);
     this.cacheStartDate = new CustomDate();
     this.cacheEndDate = new CustomDate();
-    this.cache = [];
   }
 
   /**
@@ -55,10 +54,10 @@ export default class DataLoader {
     const missingCount = amount - cached.length;
     if (missingCount === 0) { return cached; }
 
-    const referenceSubjIndex = position === 'end' ? cached.length - 1 : 0;
-    const referenceSubjId = cached[referenceSubjIndex].id;
+    const cachedReferenceSubj = position === 'end' ? cached[cached.length - 1] : cached[0];
+    const cachedReferenceSubjId = cachedReferenceSubj ? cachedReferenceSubj.id : null;
     await this.loadSubjects({
-      referenceId: referenceSubjId,
+      referenceId: cachedReferenceSubjId,
       recordCount: amount,
       fromDate: this.cacheStartDate,
       toDate: this.cacheEndDate,

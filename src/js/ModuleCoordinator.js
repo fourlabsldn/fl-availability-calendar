@@ -72,7 +72,7 @@ export default class ModuleCoordinator {
     const currentCount = this.getSubjectCount();
     if (count === currentCount) { return; }
     const diff = Math.abs(currentCount - count);
-    const method = count > currentCount ? 'removeSubjects' : 'addSubjects';
+    const method = count > currentCount ? 'addSubjects': 'removeSubjects';
     this[method](diff, 'end');
   }
 

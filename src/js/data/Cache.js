@@ -15,16 +15,17 @@ export default class Cache {
     for (const newRecord of records) {
       const idxFound = this.storage.findIndex(s => this.compare(s, newRecord) === 0);
       if (idxFound !== -1) {
-        this.subjects[idxFound] = newRecord;
+        this.storage[idxFound] = newRecord;
       } else {
         this.storage.push(newRecord);
       }
     }
-    this.subjects.sort(this.compare);
+    this.storage.sort(this.compare);
   }
 
   /**
-   * Returns a section of the cache
+   * Returns a section of the cache. If there is no reference object,
+   * it returns the amount requested from the beginning.
    * @public
    * @method get
    * @param  {Int} amount
@@ -33,6 +34,8 @@ export default class Cache {
    * @return {Array<Object>}
    */
   get(amount, position, referenceObj) {
+    if (!referenceObj) { return this.storage.slice(0, amount); }
+
     const idxFound = this.storage.findIndex(s => this.compare(referenceObj, s) === 0);
     assert(idxFound === -1, `Invalid reference object: ${JSON.stringify(referenceObj)}`);
 
@@ -45,6 +48,6 @@ export default class Cache {
       fromIndex = Math.max(0, idxFound - amount);
       toIndex = idxFound;
     }
-    return this.subjects.slice(fromIndex, toIndex);
+    return this.storage.slice(fromIndex, toIndex);
   }
 }

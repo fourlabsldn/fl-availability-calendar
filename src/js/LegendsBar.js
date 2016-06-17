@@ -19,11 +19,11 @@ export default class LegendsBar extends ViewController {
 
   /**
    * @public
-   * @method addSubject
-   * @param  {Object} subject
-   * @param  {String} beforeAfter
+   * @method addSubjecta
+   * @param  {Array<Object>} subjects
+   * @param  {String} position 'beginning' or 'end'
    */
-  addSubject(subject, beforeAfter) {
+  addSubjects(subjects, position) {
     const legend = this.createSubjectLegend(subject);
     const referenceNode = beforeAfter === 'before'
       ? this.html.legendsContainer.children[0]
