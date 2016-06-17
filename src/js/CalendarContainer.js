@@ -21,8 +21,8 @@ export default class CalendarContainer extends ViewController {
     this.html.panelWrapper.classList.add(`${this.cssPrefix}-panelWrapper`);
     this.html.container.appendChild(this.html.panelWrapper);
 
-    this.html.legendsBar = document.createElement('div');
-    this.html.panelWrapper.appendChild(this.html.legendsBar);
+    this.html.labelsBar = document.createElement('div');
+    this.html.panelWrapper.appendChild(this.html.labelsBar);
 
     this.html.datesPanel = document.createElement('div');
     this.html.panelWrapper.appendChild(this.html.datesPanel);

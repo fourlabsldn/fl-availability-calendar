@@ -1,6 +1,6 @@
 import assert from 'fl-assert';
 import CustomDate from './utils/CustomDate';
-import LegendsBar from './LegendsBar';
+import LabelsBar from './LabelsBar';
 import ControlBar from './ControlBar';
 import DatesPanel from './DatesPanel/DatesPanel';
 import DataLoader from './data/DataLoader';
@@ -22,8 +22,8 @@ export default class ModuleCoordinator {
     this.calendarContainer.set('controlBar', this.controlBar);
 
     // create titlesContainer
-    this.legendsBar = new LegendsBar(subjectsHeader, MODULE_PREFIX);
-    this.calendarContainer.set('legendsBar', this.legendsBar);
+    this.labelsBar = new LabelsBar(subjectsHeader, MODULE_PREFIX);
+    this.calendarContainer.set('labelsBar', this.labelsBar);
 
     // create datesContainer
     this.datesPanel = new DatesPanel(this.startDate, this, MODULE_PREFIX);
@@ -72,7 +72,7 @@ export default class ModuleCoordinator {
     const currentCount = this.getSubjectCount();
     if (count === currentCount) { return; }
     const diff = Math.abs(currentCount - count);
-    const method = count > currentCount ? 'addSubjects': 'removeSubjects';
+    const method = count > currentCount ? 'addSubjects' : 'removeSubjects';
     this[method](diff, 'end');
   }
 
@@ -103,7 +103,7 @@ export default class ModuleCoordinator {
     const referenceSubj = this.datesPanel.getSubjectAt(position);
     const newSubjects = await this.dataLoader.getSubjects(amount, position, referenceSubj);
     this.datesPanel.addSubjects(newSubjects, position);
-    this.legendsBar.addSubjects(newSubjects, position);
+    this.labelsBar.addSubjects(newSubjects, position);
   }
 
   /**

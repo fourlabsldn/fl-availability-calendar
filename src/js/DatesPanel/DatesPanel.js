@@ -94,7 +94,7 @@ export default class DatesPanel extends ViewController {
     let referenceNodeIndex;
     if (position === 'end') {
       this.subjectRows = [newRow].concat(this.subjectRows);
-      referenceNodeIndex = subjectsContainer.children.length - 1;
+      referenceNodeIndex = -1;
     } else {
       this.subjectRows = this.subjectRows.concat([newRow]);
       referenceNodeIndex = 0;

@@ -7147,13 +7147,13 @@ var ViewController = function () {
   return ViewController;
 }();
 
-var LegendsBar = function (_ViewController) {
-  _inherits(LegendsBar, _ViewController);
+var LabelsBar = function (_ViewController) {
+  _inherits(LabelsBar, _ViewController);
 
-  function LegendsBar(title, modulePrefix) {
-    _classCallCheck(this, LegendsBar);
+  function LabelsBar(title, modulePrefix) {
+    _classCallCheck(this, LabelsBar);
 
-    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(LegendsBar).call(this, modulePrefix));
+    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(LabelsBar).call(this, modulePrefix));
 
     Object.preventExtensions(_this);
 
@@ -7161,15 +7161,15 @@ var LegendsBar = function (_ViewController) {
     return _this;
   }
 
-  _createClass(LegendsBar, [{
+  _createClass(LabelsBar, [{
     key: 'buildHtml',
     value: function buildHtml() {
       this.html.header = document.createElement('div');
       this.html.header.classList.add(this.cssPrefix + '-header');
       this.html.container.appendChild(this.html.header);
 
-      this.html.legendsContainer = document.createElement('div');
-      this.html.container.appendChild(this.html.legendsContainer);
+      this.html.labelsContainer = document.createElement('div');
+      this.html.container.appendChild(this.html.labelsContainer);
     }
 
     /**
@@ -7182,9 +7182,53 @@ var LegendsBar = function (_ViewController) {
   }, {
     key: 'addSubjects',
     value: function addSubjects(subjects, position) {
-      var legend = this.createSubjectLegend(subject);
-      var referenceNode = beforeAfter === 'before' ? this.html.legendsContainer.children[0] : null;
-      this.html.legendsContainer.insertBefore(legend, referenceNode);
+      var newLabelsFrag = document.createDocumentFragment();
+      var _iteratorNormalCompletion = true;
+      var _didIteratorError = false;
+      var _iteratorError = undefined;
+
+      try {
+        for (var _iterator = subjects[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+          var subject = _step.value;
+
+          var label = this.createSubjectLabel(subject);
+          newLabelsFrag.appendChild(label);
+        }
+      } catch (err) {
+        _didIteratorError = true;
+        _iteratorError = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion && _iterator.return) {
+            _iterator.return();
+          }
+        } finally {
+          if (_didIteratorError) {
+            throw _iteratorError;
+          }
+        }
+      }
+
+      var labelsContainer = this.html.labelsContainer;
+      var referenceIndex = position === 'end' ? -1 : 0;
+      labelsContainer.insertBefore(newLabelsFrag, labelsContainer[referenceIndex]);
+    }
+
+    /**
+     * @private
+     * @method createSubjectLabel
+     * @param  {Object} subject
+     * @return {HTMLElement}
+     */
+
+  }, {
+    key: 'createSubjectLabel',
+    value: function createSubjectLabel(subject) {
+      var el = document.createElement('div');
+      el.classList.add(this.cssPrefix + '-label');
+      el.classList.add(this.createLabelIdentifier(subject));
+      el.textContent = subject.name;
+      return el;
     }
 
     /**
@@ -7197,43 +7241,26 @@ var LegendsBar = function (_ViewController) {
   }, {
     key: 'removeSubject',
     value: function removeSubject(subject) {
-      var identifier = this.createLegendIdentifier(subject);
-      var legendNode = this.html.legendsContainer.querySelector('.' + identifier);
-      legendNode.remove();
+      var identifier = this.createLabelIdentifier(subject);
+      var labelNode = this.html.labelsContainer.querySelector('.' + identifier);
+      labelNode.remove();
     }
 
     /**
      * @private
-     * @method createSubjectLegend
-     * @param  {Object} subject
-     * @return {HTMLElement}
-     */
-
-  }, {
-    key: 'createSubjectLegend',
-    value: function createSubjectLegend(subject) {
-      var el = document.createElement('div');
-      el.classList.add(this.cssPrefix + '-legend');
-      el.classList.add(this.createLegendIdentifier(subject));
-      el.textContent = subject.name;
-      return el;
-    }
-
-    /**
-     * @private
-     * @method createLegendIdentifier
+     * @method createLabelIdentifier
      * @param  {Object} subject
      * @return {String}
      */
 
   }, {
-    key: 'createLegendIdentifier',
-    value: function createLegendIdentifier(subject) {
-      return this.cssPrefix + '-legend-' + subject.id;
+    key: 'createLabelIdentifier',
+    value: function createLabelIdentifier(subject) {
+      return this.cssPrefix + '-label-' + subject.id;
     }
   }]);
 
-  return LegendsBar;
+  return LabelsBar;
 }(ViewController);
 
 var DATEPICKER_FORMAT = 'YYYY-[W]WW';
@@ -7843,7 +7870,7 @@ var DatesPanel = function (_ViewController) {
       var referenceNodeIndex = void 0;
       if (position === 'end') {
         this.subjectRows = [newRow].concat(this.subjectRows);
-        referenceNodeIndex = subjectsContainer.children.length - 1;
+        referenceNodeIndex = -1;
       } else {
         this.subjectRows = this.subjectRows.concat([newRow]);
         referenceNodeIndex = 0;
@@ -8373,8 +8400,8 @@ var CalendarContainer = function (_ViewController) {
       this.html.panelWrapper.classList.add(this.cssPrefix + '-panelWrapper');
       this.html.container.appendChild(this.html.panelWrapper);
 
-      this.html.legendsBar = document.createElement('div');
-      this.html.panelWrapper.appendChild(this.html.legendsBar);
+      this.html.labelsBar = document.createElement('div');
+      this.html.panelWrapper.appendChild(this.html.labelsBar);
 
       this.html.datesPanel = document.createElement('div');
       this.html.panelWrapper.appendChild(this.html.datesPanel);
@@ -8402,8 +8429,8 @@ var ModuleCoordinator = function () {
     this.calendarContainer.set('controlBar', this.controlBar);
 
     // create titlesContainer
-    this.legendsBar = new LegendsBar(subjectsHeader, MODULE_PREFIX);
-    this.calendarContainer.set('legendsBar', this.legendsBar);
+    this.labelsBar = new LabelsBar(subjectsHeader, MODULE_PREFIX);
+    this.calendarContainer.set('labelsBar', this.labelsBar);
 
     // create datesContainer
     this.datesPanel = new DatesPanel(this.startDate, this, MODULE_PREFIX);
@@ -8542,7 +8569,7 @@ var ModuleCoordinator = function () {
                 newSubjects = _context2.sent;
 
                 this.datesPanel.addSubjects(newSubjects, position);
-                this.legendsBar.addSubjects(newSubjects, position);
+                this.labelsBar.addSubjects(newSubjects, position);
 
               case 6:
               case 'end':
