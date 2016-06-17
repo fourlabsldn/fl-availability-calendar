@@ -1,3 +1,4 @@
+import assert from 'fl-assert';
 import CustomDate from './utils/CustomDate';
 import LegendsBar from './LegendsBar';
 import ControlBar from './ControlBar';
@@ -101,21 +102,24 @@ export default class ModuleCoordinator {
   async addSubjects(amount, position) {
     const referenceSubj = this.datesPanel.getSubjectAt(position);
     const newSubjects = await this.dataLoader.getSubjects(amount, position, referenceSubj);
-    for (const newSubject of newSubjects) {
-      this.datesPanel.addSubject(newSubject);
-      this.legendsBar.addSubject(newSubject);
-    }
+    this.datesPanel.addSubjects(newSubjects, position);
+    this.legendsBar.addSubjects(newSubjects, position);
   }
 
   /**
    * @public
    * @method getSubjectEvents
-   * @param  {Int} id
+   * @param  {Array<Object>} subjects
    * @param  {CustomDate} fromDate
    * @param  {CustomDate} toDate
-   * @return {Array<Object>}
+   * @return {Object<Array<Object>>} - Each key is a subjectId and
+   * each value an array of event objects
    */
-  async getSubjectEvents(id, fromDate, toDate) {
-    return await this.dataLoader.getSubjectEvents(id, fromDate, toDate);
+  async getSubjectsEvents(subjects, fromDate, toDate) {
+    return await this.dataLoader.getSubjectsEvents(subjects, fromDate, toDate);
+  }
+
+  removeSubjects() {
+    assert.warn('Not implemented');
   }
 }

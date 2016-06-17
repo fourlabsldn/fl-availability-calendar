@@ -9,4 +9,13 @@ export default class ViewController {
     // TODO: move all buildHtml to here
     this.buildHtml();
   }
+
+  /**
+   * @public
+   * @method getContainer
+   * @return {HTMLElement}
+   */
+  getContainer() {
+    return this.html.container;
+  }
 }

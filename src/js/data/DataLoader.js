@@ -17,19 +17,29 @@ export default class DataLoader {
 
   /**
    * @public
-   * @method getEventsForSubjects
+   * @method getSubjectsEvents
    * @param  {Array<Object>} ids
    * @param  {CustomDate} fromDate
    * @param  {CustomDate} toDate
-   * @return {Array<Object>}
+   * @return {Object<Array<Object>>} - Each key is a subjectId and
+   * each value an array of event objects
    */
-  async getEventsForSubjects(subjects, fromDate, toDate) {
+  async getSubjectsEvents(subjects, fromDate, toDate) {
     // FIXME: Manage getting from cache
-    await this.loadSubjects({
+    const ids = subjects.map(s => s.id);
+    const subjectsLoaded = await this.loadSubjects({
       ids,
       fromDate,
       toDate,
     });
+
+    const subjectsEvents = {};
+    for (const subject of subjects) {
+      const sLoaded = subjectsLoaded.find(sl => sl.id === subject.id);
+      assert(sLoaded, `Events for subject of id "${subject.id}" not loaded.`);
+      subjectsEvents[subject.id] = sLoaded.events;
+    }
+    return subjectsEvents;
   }
 
   /**
@@ -41,21 +51,18 @@ export default class DataLoader {
    * @return {Array<Object>}
    */
   async getSubjects(amount, position, referenceSubj) {
-    const after = position === 'end';
     const cached = this.cache.get(amount, position, referenceSubj);
-
     const missingCount = amount - cached.length;
     if (missingCount === 0) { return cached; }
 
-    let requestReferenceId = after ? cached[cached.length] : cached[0];
-    requestReferenceId = requestReferenceId || referenceSubj.id;
-
+    const referenceSubjIndex = position === 'end' ? cached.length - 1 : 0;
+    const referenceSubjId = cached[referenceSubjIndex].id;
     await this.loadSubjects({
+      referenceId: referenceSubjId,
       recordCount: amount,
       fromDate: this.cacheStartDate,
       toDate: this.cacheEndDate,
-      referenceId: requestReferenceId,
-      beforeAfter: after ? 'after' : 'before',
+      beforeAfter: position === 'end' ? 'after' : 'before',
     });
 
     return this.cache.get(amount, position, referenceSubj);

@@ -23,6 +23,15 @@ export default class DateBar extends ViewController {
 
   /**
    * @public
+   * @method getStartDate
+   * @return {CustomDate}
+   */
+  getStartDate() {
+    return this.startDate;
+  }
+
+  /**
+   * @public
    * @method setStartDate
    * @param  {CustomDate} date
    */
@@ -33,6 +42,11 @@ export default class DateBar extends ViewController {
     this.setDayCount(0);
     this.startDate = date;
     this.setDayCount(dayCount);
+  }
+
+
+  getDayCount() {
+    return this.html.dayRow.children.length;
   }
 
   /**
@@ -49,6 +63,14 @@ export default class DateBar extends ViewController {
       this.addDay();
     }
   }
+
+  getEndDate() {
+    const startDate = new CustomDate(this.startDate);
+    const dayCount = Math.max(0, this.getDayCount() - 1);
+    const endDate = startDate.add(dayCount, 'days');
+    return endDate;
+  }
+
 
   /**
    * @private
@@ -188,15 +210,6 @@ export default class DateBar extends ViewController {
     }
   }
 
-  getEndDate() {
-    const startDate = new CustomDate(this.startDate);
-    const dayCount = Math.max(0, this.getDayCount() - 1);
-    const endDate = startDate.add(dayCount, 'days');
-    return endDate;
-  }
 
-  getDayCount() {
-    return this.html.dayRow.children.length;
-  }
 
 }

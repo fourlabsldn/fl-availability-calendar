@@ -2321,6 +2321,78 @@ exports.default = function () {
 
 var _createClass = (createClass && typeof createClass === 'object' && 'default' in createClass ? createClass['default'] : createClass);
 
+// Bug checking function that will throw an error whenever
+// the condition sent to it is evaluated to false
+/**
+ * Processes the message and outputs the correct message if the condition
+ * is false. Otherwise it outputs null.
+ * @api private
+ * @method processCondition
+ * @param  {Boolean} condition - Result of the evaluated condition
+ * @param  {String} errorMessage - Message explainig the error in case it is thrown
+ * @return {String | null}  - Error message if there is an error, nul otherwise.
+ */
+function processCondition(condition, errorMessage) {
+  if (!condition) {
+    var completeErrorMessage = '';
+    var re = /at ([^\s]+)\s\(/g;
+    var stackTrace = new Error().stack;
+    var stackFunctions = [];
+
+    var funcName = re.exec(stackTrace);
+    while (funcName && funcName[1]) {
+      stackFunctions.push(funcName[1]);
+      funcName = re.exec(stackTrace);
+    }
+
+    // Number 0 is processCondition itself,
+    // Number 1 is assert,
+    // Number 2 is the caller function.
+    if (stackFunctions[2]) {
+      completeErrorMessage = stackFunctions[2] + ': ' + completeErrorMessage;
+    }
+
+    completeErrorMessage += errorMessage;
+    return completeErrorMessage;
+  }
+
+  return null;
+}
+
+/**
+ * Throws an error if the boolean passed to it evaluates to false.
+ * To be used like this:
+ * 		assert(myDate !== undefined, "Date cannot be undefined.");
+ * @api public
+ * @method assert
+ * @param  {Boolean} condition - Result of the evaluated condition
+ * @param  {String} errorMessage - Message explainig the error in case it is thrown
+ * @return void
+ */
+function assert(condition, errorMessage) {
+  var error = processCondition(condition, errorMessage);
+  if (typeof error === 'string') {
+    throw new Error(error);
+  }
+}
+
+/**
+ * Logs a warning if the boolean passed to it evaluates to false.
+ * To be used like this:
+ * 		assert.warn(myDate !== undefined, "No date provided.");
+ * @api public
+ * @method warn
+ * @param  {Boolean} condition - Result of the evaluated condition
+ * @param  {String} errorMessage - Message explainig the error in case it is thrown
+ * @return void
+ */
+assert.warn = function warn(condition, errorMessage) {
+  var error = processCondition(condition, errorMessage);
+  if (typeof error === 'string') {
+    console.warn(error);
+  }
+};
+
 var moment = __commonjs(function (module, exports, global) {
 //! moment.js
 //! version : 2.13.0
@@ -7042,20 +7114,38 @@ exports.default = function (subClass, superClass) {
 
 var _inherits = (inherits && typeof inherits === 'object' && 'default' in inherits ? inherits['default'] : inherits);
 
-var ViewController = function ViewController(modulePrefix) {
-  var classPrefix = arguments.length <= 1 || arguments[1] === undefined ? this.constructor.name : arguments[1];
+var ViewController = function () {
+  function ViewController(modulePrefix) {
+    var classPrefix = arguments.length <= 1 || arguments[1] === undefined ? this.constructor.name : arguments[1];
 
-  _classCallCheck(this, ViewController);
+    _classCallCheck(this, ViewController);
 
-  this.modulePrefix = modulePrefix;
-  this.cssPrefix = classPrefix ? modulePrefix + '-' + classPrefix : modulePrefix;
-  this.html = {};
-  this.html.container = document.createElement('div');
-  this.html.container.classList.add(this.cssPrefix);
+    this.modulePrefix = modulePrefix;
+    this.cssPrefix = classPrefix ? modulePrefix + '-' + classPrefix : modulePrefix;
+    this.html = {};
+    this.html.container = document.createElement('div');
+    this.html.container.classList.add(this.cssPrefix);
 
-  // TODO: move all buildHtml to here
-  this.buildHtml();
-};
+    // TODO: move all buildHtml to here
+    this.buildHtml();
+  }
+
+  /**
+   * @public
+   * @method getContainer
+   * @return {HTMLElement}
+   */
+
+
+  _createClass(ViewController, [{
+    key: 'getContainer',
+    value: function getContainer() {
+      return this.html.container;
+    }
+  }]);
+
+  return ViewController;
+}();
 
 var LegendsBar = function (_ViewController) {
   _inherits(LegendsBar, _ViewController);
@@ -7282,78 +7372,6 @@ var ControlBar = function (_ViewController) {
   return ControlBar;
 }(ViewController);
 
-// Bug checking function that will throw an error whenever
-// the condition sent to it is evaluated to false
-/**
- * Processes the message and outputs the correct message if the condition
- * is false. Otherwise it outputs null.
- * @api private
- * @method processCondition
- * @param  {Boolean} condition - Result of the evaluated condition
- * @param  {String} errorMessage - Message explainig the error in case it is thrown
- * @return {String | null}  - Error message if there is an error, nul otherwise.
- */
-function processCondition(condition, errorMessage) {
-  if (!condition) {
-    var completeErrorMessage = '';
-    var re = /at ([^\s]+)\s\(/g;
-    var stackTrace = new Error().stack;
-    var stackFunctions = [];
-
-    var funcName = re.exec(stackTrace);
-    while (funcName && funcName[1]) {
-      stackFunctions.push(funcName[1]);
-      funcName = re.exec(stackTrace);
-    }
-
-    // Number 0 is processCondition itself,
-    // Number 1 is assert,
-    // Number 2 is the caller function.
-    if (stackFunctions[2]) {
-      completeErrorMessage = stackFunctions[2] + ': ' + completeErrorMessage;
-    }
-
-    completeErrorMessage += errorMessage;
-    return completeErrorMessage;
-  }
-
-  return null;
-}
-
-/**
- * Throws an error if the boolean passed to it evaluates to false.
- * To be used like this:
- * 		assert(myDate !== undefined, "Date cannot be undefined.");
- * @api public
- * @method assert
- * @param  {Boolean} condition - Result of the evaluated condition
- * @param  {String} errorMessage - Message explainig the error in case it is thrown
- * @return void
- */
-function assert(condition, errorMessage) {
-  var error = processCondition(condition, errorMessage);
-  if (typeof error === 'string') {
-    throw new Error(error);
-  }
-}
-
-/**
- * Logs a warning if the boolean passed to it evaluates to false.
- * To be used like this:
- * 		assert.warn(myDate !== undefined, "No date provided.");
- * @api public
- * @method warn
- * @param  {Boolean} condition - Result of the evaluated condition
- * @param  {String} errorMessage - Message explainig the error in case it is thrown
- * @return void
- */
-assert.warn = function warn(condition, errorMessage) {
-  var error = processCondition(condition, errorMessage);
-  if (typeof error === 'string') {
-    console.warn(error);
-  }
-};
-
 var CLASS_PREFIX$1 = 'DateBar';
 
 var DateBar = function (_ViewController) {
@@ -7383,6 +7401,18 @@ var DateBar = function (_ViewController) {
 
     /**
      * @public
+     * @method getStartDate
+     * @return {CustomDate}
+     */
+
+  }, {
+    key: 'getStartDate',
+    value: function getStartDate() {
+      return this.startDate;
+    }
+
+    /**
+     * @public
      * @method setStartDate
      * @param  {CustomDate} date
      */
@@ -7396,6 +7426,11 @@ var DateBar = function (_ViewController) {
       this.setDayCount(0);
       this.startDate = date;
       this.setDayCount(dayCount);
+    }
+  }, {
+    key: 'getDayCount',
+    value: function getDayCount() {
+      return this.html.dayRow.children.length;
     }
 
     /**
@@ -7414,6 +7449,14 @@ var DateBar = function (_ViewController) {
       while (dayCount > this.getDayCount()) {
         this.addDay();
       }
+    }
+  }, {
+    key: 'getEndDate',
+    value: function getEndDate() {
+      var startDate = new CustomDate(this.startDate);
+      var dayCount = Math.max(0, this.getDayCount() - 1);
+      var endDate = startDate.add(dayCount, 'days');
+      return endDate;
     }
 
     /**
@@ -7583,22 +7626,41 @@ var DateBar = function (_ViewController) {
         monthEl.remove();
       }
     }
-  }, {
-    key: 'getEndDate',
-    value: function getEndDate() {
-      var startDate = new CustomDate(this.startDate);
-      var dayCount = Math.max(0, this.getDayCount() - 1);
-      var endDate = startDate.add(dayCount, 'days');
-      return endDate;
-    }
-  }, {
-    key: 'getDayCount',
-    value: function getDayCount() {
-      return this.html.dayRow.children.length;
-    }
   }]);
 
   return DateBar;
+}(ViewController);
+
+var SubjectRow = function (_ViewController) {
+  _inherits(SubjectRow, _ViewController);
+
+  function SubjectRow(subject, modulePrefix) {
+    _classCallCheck(this, SubjectRow);
+
+    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(SubjectRow).call(this, modulePrefix));
+
+    _this.subject = subject;
+    return _this;
+  }
+
+  _createClass(SubjectRow, [{
+    key: 'buildHtml',
+    value: function buildHtml() {}
+
+    /**
+     * @public
+     * @method getSubject
+     * @return {Object}
+     */
+
+  }, {
+    key: 'getSubject',
+    value: function getSubject() {
+      return this.subject;
+    }
+  }]);
+
+  return SubjectRow;
 }(ViewController);
 
 var CLASS_PREFIX = 'DatesPanel';
@@ -7626,6 +7688,21 @@ var DatesPanel = function (_ViewController) {
       this.html.subjectsContainer = document.createElement('div');
       this.html.subjectsContainer.classList.add(this.cssPrefix + '-subjectsContainer');
       this.html.container.appendChild(this.html.subjectsContainer);
+    }
+  }, {
+    key: 'getSubjectCount',
+    value: function getSubjectCount() {
+      return this.subjectRows.length;
+    }
+  }, {
+    key: 'getDayCount',
+    value: function getDayCount() {
+      return this.dateBar.getDayCount();
+    }
+  }, {
+    key: 'getStartDate',
+    value: function getStartDate() {
+      return this.dateBar.getStartDate();
     }
 
     /**
@@ -7666,6 +7743,110 @@ var DatesPanel = function (_ViewController) {
     value: function getSubjectAt(position) {
       var subjIndex = position === 'end' ? this.subjectRows.length - 1 : 0;
       return this.subjectRows[subjIndex].getSubject();
+    }
+
+    /**
+     * Create Subject rows
+     * @method addSubjects
+     * @param  {Array<Object>} subjects
+     * @param  {String} position
+     */
+
+  }, {
+    key: 'addSubjects',
+    value: function () {
+      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee(subjects, position) {
+        var events, _iteratorNormalCompletion, _didIteratorError, _iteratorError, _iterator, _step, subject, newRow;
+
+        return _regeneratorRuntime.wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                _context.next = 2;
+                return this.moduleCoordinator.getSubjectsEvents(subjects);
+
+              case 2:
+                events = _context.sent;
+                _iteratorNormalCompletion = true;
+                _didIteratorError = false;
+                _iteratorError = undefined;
+                _context.prev = 6;
+
+                for (_iterator = subjects[Symbol.iterator](); !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                  subject = _step.value;
+                  newRow = new SubjectRow(subject);
+
+                  this.addRow(newRow, position);
+                  newRow.setEvents(events[subject.id]);
+                }
+                _context.next = 14;
+                break;
+
+              case 10:
+                _context.prev = 10;
+                _context.t0 = _context['catch'](6);
+                _didIteratorError = true;
+                _iteratorError = _context.t0;
+
+              case 14:
+                _context.prev = 14;
+                _context.prev = 15;
+
+                if (!_iteratorNormalCompletion && _iterator.return) {
+                  _iterator.return();
+                }
+
+              case 17:
+                _context.prev = 17;
+
+                if (!_didIteratorError) {
+                  _context.next = 20;
+                  break;
+                }
+
+                throw _iteratorError;
+
+              case 20:
+                return _context.finish(17);
+
+              case 21:
+                return _context.finish(14);
+
+              case 22:
+              case 'end':
+                return _context.stop();
+            }
+          }
+        }, _callee, this, [[6, 10, 14, 22], [15,, 17, 21]]);
+      }));
+
+      function addSubjects(_x, _x2) {
+        return ref.apply(this, arguments);
+      }
+
+      return addSubjects;
+    }()
+
+    /**
+     * @private
+     * @method addRow
+     * @param  {SubjectRow} newRow
+     * @param  {String} position 'beginning' or 'end'
+     */
+
+  }, {
+    key: 'addRow',
+    value: function addRow(newRow, position) {
+      var subjectsContainer = this.html.subjectsContainer;
+      var referenceNodeIndex = void 0;
+      if (position === 'end') {
+        this.subjectRows = [newRow].concat(this.subjectRows);
+        referenceNodeIndex = subjectsContainer.children.length - 1;
+      } else {
+        this.subjectRows = this.subjectRows.concat([newRow]);
+        referenceNodeIndex = 0;
+      }
+      subjectsContainer.insertBefore(newRow.getContainer(), subjectsContainer.children[referenceNodeIndex]);
     }
   }]);
 
@@ -7890,42 +8071,106 @@ var DataLoader = function () {
 
   /**
    * @public
-   * @method getEventsForSubjects
+   * @method getSubjectsEvents
    * @param  {Array<Object>} ids
    * @param  {CustomDate} fromDate
    * @param  {CustomDate} toDate
-   * @return {Array<Object>}
+   * @return {Object<Array<Object>>} - Each key is a subjectId and
+   * each value an array of event objects
    */
 
 
   _createClass(DataLoader, [{
-    key: 'getEventsForSubjects',
+    key: 'getSubjectsEvents',
     value: function () {
       var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee(subjects, fromDate, toDate) {
+        var ids, subjectsLoaded, subjectsEvents, _iteratorNormalCompletion, _didIteratorError, _iteratorError, _loop, _iterator, _step;
+
         return _regeneratorRuntime.wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
-                _context.next = 2;
+                // FIXME: Manage getting from cache
+                ids = subjects.map(function (s) {
+                  return s.id;
+                });
+                _context.next = 3;
                 return this.loadSubjects({
                   ids: ids,
                   fromDate: fromDate,
                   toDate: toDate
                 });
 
-              case 2:
+              case 3:
+                subjectsLoaded = _context.sent;
+                subjectsEvents = {};
+                _iteratorNormalCompletion = true;
+                _didIteratorError = false;
+                _iteratorError = undefined;
+                _context.prev = 8;
+
+                _loop = function _loop() {
+                  var subject = _step.value;
+
+                  var sLoaded = subjectsLoaded.find(function (sl) {
+                    return sl.id === subject.id;
+                  });
+                  assert(sLoaded, 'Events for subject of id "' + subject.id + '" not loaded.');
+                  subjectsEvents[subject.id] = sLoaded.events;
+                };
+
+                for (_iterator = subjects[Symbol.iterator](); !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                  _loop();
+                }
+                _context.next = 17;
+                break;
+
+              case 13:
+                _context.prev = 13;
+                _context.t0 = _context['catch'](8);
+                _didIteratorError = true;
+                _iteratorError = _context.t0;
+
+              case 17:
+                _context.prev = 17;
+                _context.prev = 18;
+
+                if (!_iteratorNormalCompletion && _iterator.return) {
+                  _iterator.return();
+                }
+
+              case 20:
+                _context.prev = 20;
+
+                if (!_didIteratorError) {
+                  _context.next = 23;
+                  break;
+                }
+
+                throw _iteratorError;
+
+              case 23:
+                return _context.finish(20);
+
+              case 24:
+                return _context.finish(17);
+
+              case 25:
+                return _context.abrupt('return', subjectsEvents);
+
+              case 26:
               case 'end':
                 return _context.stop();
             }
           }
-        }, _callee, this);
+        }, _callee, this, [[8, 13, 17, 25], [18,, 20, 24]]);
       }));
 
-      function getEventsForSubjects(_x, _x2, _x3) {
+      function getSubjectsEvents(_x, _x2, _x3) {
         return ref.apply(this, arguments);
       }
 
-      return getEventsForSubjects;
+      return getSubjectsEvents;
     }()
 
     /**
@@ -7941,40 +8186,37 @@ var DataLoader = function () {
     key: 'getSubjects',
     value: function () {
       var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee2(amount, position, referenceSubj) {
-        var after, cached, missingCount, requestReferenceId;
+        var cached, missingCount, referenceSubjIndex, referenceSubjId;
         return _regeneratorRuntime.wrap(function _callee2$(_context2) {
           while (1) {
             switch (_context2.prev = _context2.next) {
               case 0:
-                after = position === 'end';
                 cached = this.cache.get(amount, position, referenceSubj);
                 missingCount = amount - cached.length;
 
                 if (!(missingCount === 0)) {
-                  _context2.next = 5;
+                  _context2.next = 4;
                   break;
                 }
 
                 return _context2.abrupt('return', cached);
 
-              case 5:
-                requestReferenceId = after ? cached[cached.length] : cached[0];
-
-                requestReferenceId = requestReferenceId || referenceSubj.id;
-
-                _context2.next = 9;
+              case 4:
+                referenceSubjIndex = position === 'end' ? cached.length - 1 : 0;
+                referenceSubjId = cached[referenceSubjIndex].id;
+                _context2.next = 8;
                 return this.loadSubjects({
+                  referenceId: referenceSubjId,
                   recordCount: amount,
                   fromDate: this.cacheStartDate,
                   toDate: this.cacheEndDate,
-                  referenceId: requestReferenceId,
-                  beforeAfter: after ? 'after' : 'before'
+                  beforeAfter: position === 'end' ? 'after' : 'before'
                 });
 
-              case 9:
+              case 8:
                 return _context2.abrupt('return', this.cache.get(amount, position, referenceSubj));
 
-              case 10:
+              case 9:
               case 'end':
                 return _context2.stop();
             }
@@ -8281,8 +8523,7 @@ var ModuleCoordinator = function () {
     key: 'addSubjects',
     value: function () {
       var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee2(amount, position) {
-        var referenceSubj, newSubjects, _iteratorNormalCompletion, _didIteratorError, _iteratorError, _iterator, _step, newSubject;
-
+        var referenceSubj, newSubjects;
         return _regeneratorRuntime.wrap(function _callee2$(_context2) {
           while (1) {
             switch (_context2.prev = _context2.next) {
@@ -8293,56 +8534,16 @@ var ModuleCoordinator = function () {
 
               case 3:
                 newSubjects = _context2.sent;
-                _iteratorNormalCompletion = true;
-                _didIteratorError = false;
-                _iteratorError = undefined;
-                _context2.prev = 7;
 
-                for (_iterator = newSubjects[Symbol.iterator](); !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-                  newSubject = _step.value;
+                this.datesPanel.addSubjects(newSubjects, position);
+                this.legendsBar.addSubjects(newSubjects, position);
 
-                  this.datesPanel.addSubject(newSubject);
-                  this.legendsBar.addSubject(newSubject);
-                }
-                _context2.next = 15;
-                break;
-
-              case 11:
-                _context2.prev = 11;
-                _context2.t0 = _context2['catch'](7);
-                _didIteratorError = true;
-                _iteratorError = _context2.t0;
-
-              case 15:
-                _context2.prev = 15;
-                _context2.prev = 16;
-
-                if (!_iteratorNormalCompletion && _iterator.return) {
-                  _iterator.return();
-                }
-
-              case 18:
-                _context2.prev = 18;
-
-                if (!_didIteratorError) {
-                  _context2.next = 21;
-                  break;
-                }
-
-                throw _iteratorError;
-
-              case 21:
-                return _context2.finish(18);
-
-              case 22:
-                return _context2.finish(15);
-
-              case 23:
+              case 6:
               case 'end':
                 return _context2.stop();
             }
           }
-        }, _callee2, this, [[7, 11, 15, 23], [16,, 18, 22]]);
+        }, _callee2, this);
       }));
 
       function addSubjects(_x2, _x3) {
@@ -8355,22 +8556,23 @@ var ModuleCoordinator = function () {
     /**
      * @public
      * @method getSubjectEvents
-     * @param  {Int} id
+     * @param  {Array<Object>} subjects
      * @param  {CustomDate} fromDate
      * @param  {CustomDate} toDate
-     * @return {Array<Object>}
+     * @return {Object<Array<Object>>} - Each key is a subjectId and
+     * each value an array of event objects
      */
 
   }, {
-    key: 'getSubjectEvents',
+    key: 'getSubjectsEvents',
     value: function () {
-      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee3(id, fromDate, toDate) {
+      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee3(subjects, fromDate, toDate) {
         return _regeneratorRuntime.wrap(function _callee3$(_context3) {
           while (1) {
             switch (_context3.prev = _context3.next) {
               case 0:
                 _context3.next = 2;
-                return this.dataLoader.getSubjectEvents(id, fromDate, toDate);
+                return this.dataLoader.getSubjectsEvents(subjects, fromDate, toDate);
 
               case 2:
                 return _context3.abrupt('return', _context3.sent);
@@ -8383,12 +8585,17 @@ var ModuleCoordinator = function () {
         }, _callee3, this);
       }));
 
-      function getSubjectEvents(_x4, _x5, _x6) {
+      function getSubjectsEvents(_x4, _x5, _x6) {
         return ref.apply(this, arguments);
       }
 
-      return getSubjectEvents;
+      return getSubjectsEvents;
     }()
+  }, {
+    key: 'removeSubjects',
+    value: function removeSubjects() {
+      assert.warn('Not implemented');
+    }
   }]);
 
   return ModuleCoordinator;
