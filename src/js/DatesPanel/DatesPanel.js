@@ -36,6 +36,10 @@ export default class DatesPanel extends ViewController {
     return this.dateBar.getStartDate();
   }
 
+  getEndDate() {
+    return this.dateBar.getEndDate();
+  }
+
   /**
    * @public
    * @method setDayCount
@@ -75,11 +79,13 @@ export default class DatesPanel extends ViewController {
    * @param  {String} position
    */
   async addSubjects(subjects, position) {
-    const events = await this.moduleCoordinator.getSubjectsEvents(subjects);
+    const fromDate = this.getStartDate();
+    const toDate = this.getEndDate();
+    const events = await this.moduleCoordinator.getSubjectsEvents(subjects, fromDate, toDate);
     for (const subject of subjects) {
-      const newRow = new SubjectRow(subject);
+      const newRow = new SubjectRow(subject, this.modulePrefix);
       this.addRow(newRow, position);
-      newRow.setEvents(events[subject.id]);
+      newRow.setEvents(events[subject.id], fromDate, toDate);
     }
   }
 

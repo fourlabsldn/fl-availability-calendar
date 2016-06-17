@@ -72,6 +72,10 @@ export default class CustomDate {
     return this.diff(date) > 0;
   }
 
+  sameDay(date) {
+    return this.diff(date, 'day') === 0;
+  }
+
   toISOString() {
     return this.date.toISOString();
   }

@@ -1,5 +1,5 @@
 import assert from 'fl-assert';
-import ViewController from './ViewController';
+import ViewController from '../ViewController';
 
 export default class Day extends ViewController {
   /**

@@ -6530,6 +6530,11 @@ var CustomDate = function () {
       return this.diff(date) > 0;
     }
   }, {
+    key: 'sameDay',
+    value: function sameDay(date) {
+      return this.diff(date, 'day') === 0;
+    }
+  }, {
     key: 'toISOString',
     value: function toISOString() {
       return this.date.toISOString();
@@ -6558,13 +6563,13 @@ var _wksExt = __commonjs(function (module, exports) {
 exports.f = require$$19;
 });
 
-var require$$0$25 = (_wksExt && typeof _wksExt === 'object' && 'default' in _wksExt ? _wksExt['default'] : _wksExt);
+var require$$0$24 = (_wksExt && typeof _wksExt === 'object' && 'default' in _wksExt ? _wksExt['default'] : _wksExt);
 
 var _wksDefine = __commonjs(function (module) {
 var global         = require$$29
   , core           = require$$0$4
   , LIBRARY        = require$$1$10
-  , wksExt         = require$$0$25
+  , wksExt         = require$$0$24
   , defineProperty = require$$1.f;
 module.exports = function(name){
   var $Symbol = core.Symbol || (core.Symbol = LIBRARY ? {} : global.Symbol || {});
@@ -6598,12 +6603,12 @@ exports.f = Object.getOwnPropertyNames || function getOwnPropertyNames(O){
 };
 });
 
-var require$$0$26 = (_objectGopn && typeof _objectGopn === 'object' && 'default' in _objectGopn ? _objectGopn['default'] : _objectGopn);
+var require$$0$25 = (_objectGopn && typeof _objectGopn === 'object' && 'default' in _objectGopn ? _objectGopn['default'] : _objectGopn);
 
 var _objectGopnExt = __commonjs(function (module) {
 // fallback for IE11 buggy Object.getOwnPropertyNames with iframe and window
 var toIObject = require$$0$11
-  , gOPN      = require$$0$26.f
+  , gOPN      = require$$0$25.f
   , toString  = {}.toString;
 
 var windowNames = typeof window == 'object' && window && Object.getOwnPropertyNames
@@ -6741,7 +6746,7 @@ var global         = require$$29
   , setToStringTag = require$$21
   , uid            = require$$4
   , wks            = require$$19
-  , wksExt         = require$$0$25
+  , wksExt         = require$$0$24
   , wksDefine      = require$$17
   , keyOf          = require$$16
   , enumKeys       = require$$15
@@ -6877,7 +6882,7 @@ if(!USE_NATIVE){
 
   $GOPD.f = $getOwnPropertyDescriptor;
   $DP.f   = $defineProperty;
-  require$$0$26.f = gOPNExt.f = $getOwnPropertyNames;
+  require$$0$25.f = gOPNExt.f = $getOwnPropertyNames;
   require$$0$13.f  = $propertyIsEnumerable;
   require$$1$17.f = $getOwnPropertySymbols;
 
@@ -6969,22 +6974,22 @@ var index$1 = __commonjs(function (module) {
 module.exports = require$$0$4.Symbol;
 });
 
-var require$$0$24 = (index$1 && typeof index$1 === 'object' && 'default' in index$1 ? index$1['default'] : index$1);
+var require$$0$23 = (index$1 && typeof index$1 === 'object' && 'default' in index$1 ? index$1['default'] : index$1);
 
 var symbol = __commonjs(function (module) {
-module.exports = { "default": require$$0$24, __esModule: true };
+module.exports = { "default": require$$0$23, __esModule: true };
 });
 
-var require$$0$23 = (symbol && typeof symbol === 'object' && 'default' in symbol ? symbol['default'] : symbol);
+var require$$0$22 = (symbol && typeof symbol === 'object' && 'default' in symbol ? symbol['default'] : symbol);
 
 var iterator$1 = __commonjs(function (module) {
-module.exports = require$$0$25.f('iterator');
+module.exports = require$$0$24.f('iterator');
 });
 
-var require$$0$27 = (iterator$1 && typeof iterator$1 === 'object' && 'default' in iterator$1 ? iterator$1['default'] : iterator$1);
+var require$$0$26 = (iterator$1 && typeof iterator$1 === 'object' && 'default' in iterator$1 ? iterator$1['default'] : iterator$1);
 
 var iterator = __commonjs(function (module) {
-module.exports = { "default": require$$0$27, __esModule: true };
+module.exports = { "default": require$$0$26, __esModule: true };
 });
 
 var require$$1$18 = (iterator && typeof iterator === 'object' && 'default' in iterator ? iterator['default'] : iterator);
@@ -6998,7 +7003,7 @@ var _iterator = require$$1$18;
 
 var _iterator2 = _interopRequireDefault(_iterator);
 
-var _symbol = require$$0$23;
+var _symbol = require$$0$22;
 
 var _symbol2 = _interopRequireDefault(_symbol);
 
@@ -7013,14 +7018,14 @@ exports.default = typeof _symbol2.default === "function" && _typeof(_iterator2.d
 };
 });
 
-var require$$0$22 = (_typeof && typeof _typeof === 'object' && 'default' in _typeof ? _typeof['default'] : _typeof);
+var _typeof$1 = (_typeof && typeof _typeof === 'object' && 'default' in _typeof ? _typeof['default'] : _typeof);
 
 var possibleConstructorReturn = __commonjs(function (module, exports) {
 "use strict";
 
 exports.__esModule = true;
 
-var _typeof2 = require$$0$22;
+var _typeof2 = _typeof$1;
 
 var _typeof3 = _interopRequireDefault(_typeof2);
 
@@ -7050,10 +7055,10 @@ module.exports = function create(P, D){
 };
 });
 
-var require$$0$28 = (create$1 && typeof create$1 === 'object' && 'default' in create$1 ? create$1['default'] : create$1);
+var require$$0$27 = (create$1 && typeof create$1 === 'object' && 'default' in create$1 ? create$1['default'] : create$1);
 
 var create = __commonjs(function (module) {
-module.exports = { "default": require$$0$28, __esModule: true };
+module.exports = { "default": require$$0$27, __esModule: true };
 });
 
 var require$$1$19 = (create && typeof create === 'object' && 'default' in create ? create['default'] : create);
@@ -7068,10 +7073,10 @@ var setPrototypeOf$1 = __commonjs(function (module) {
 module.exports = require$$0$4.Object.setPrototypeOf;
 });
 
-var require$$0$29 = (setPrototypeOf$1 && typeof setPrototypeOf$1 === 'object' && 'default' in setPrototypeOf$1 ? setPrototypeOf$1['default'] : setPrototypeOf$1);
+var require$$0$28 = (setPrototypeOf$1 && typeof setPrototypeOf$1 === 'object' && 'default' in setPrototypeOf$1 ? setPrototypeOf$1['default'] : setPrototypeOf$1);
 
 var setPrototypeOf = __commonjs(function (module) {
-module.exports = { "default": require$$0$29, __esModule: true };
+module.exports = { "default": require$$0$28, __esModule: true };
 });
 
 var require$$2$2 = (setPrototypeOf && typeof setPrototypeOf === 'object' && 'default' in setPrototypeOf ? setPrototypeOf['default'] : setPrototypeOf);
@@ -7089,7 +7094,7 @@ var _create = require$$1$19;
 
 var _create2 = _interopRequireDefault(_create);
 
-var _typeof2 = require$$0$22;
+var _typeof2 = _typeof$1;
 
 var _typeof3 = _interopRequireDefault(_typeof2);
 
@@ -7126,18 +7131,22 @@ var ViewController = function () {
     this.html.container = document.createElement('div');
     this.html.container.classList.add(this.cssPrefix);
 
-    // TODO: move all buildHtml to here
     this.buildHtml();
   }
 
-  /**
-   * @public
-   * @method getContainer
-   * @return {HTMLElement}
-   */
-
-
   _createClass(ViewController, [{
+    key: 'buildHtml',
+    value: function buildHtml() {
+      return;
+    }
+
+    /**
+     * @public
+     * @method getContainer
+     * @return {HTMLElement}
+     */
+
+  }, {
     key: 'getContainer',
     value: function getContainer() {
       return this.html.container;
@@ -7658,6 +7667,107 @@ var DateBar = function (_ViewController) {
   return DateBar;
 }(ViewController);
 
+var Day = function (_ViewController) {
+  _inherits(Day, _ViewController);
+
+  /**
+   * @method constructor
+   * @param  {CustomDate} date
+   * @param  {Array<Object>} events
+   * @param  {String} modulePrefix
+   * @return {Day}
+   */
+
+  function Day(date, events, modulePrefix) {
+    _classCallCheck(this, Day);
+
+    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Day).call(this));
+
+    _this.destroyed = false;
+    _this.modulePrefix = modulePrefix;
+    _this.date = date;
+    Object.preventExtensions(_this);
+
+    _this.html.container.setAttribute('title', date.toString());
+    if (events) {
+      _this.setEvents(events);
+    }
+    return _this;
+  }
+
+  _createClass(Day, [{
+    key: 'destroy',
+    value: function destroy() {
+      var _this2 = this;
+
+      this.destroyed = true;
+      requestAnimationFrame(function () {
+        _this2.html.container.remove();
+        _this2.html = null;
+      });
+    }
+  }, {
+    key: 'checkIfdestroyed',
+    value: function checkIfdestroyed() {
+      assert(!this.destroyed, 'Trying to call function on destroyed day.');
+    }
+
+    /**
+     * @method setEvents
+     * @param  {Array<Object>} events
+     */
+
+  }, {
+    key: 'setEvents',
+    value: function setEvents(events) {
+      assert(Array.isArray(events), 'Invalid events object. Expected array and got ' + (typeof events === 'undefined' ? 'undefined' : _typeof$1(events)));
+
+      var classesToAdd = this.modulePrefix + '-day';
+      var statuses = new Set();
+
+      events.forEach(function (event) {
+        if (typeof event.className === 'string') {
+          classesToAdd += ' ' + event.className;
+        }
+        if (typeof event.status === 'string') {
+          statuses.add(event.status);
+        }
+      });
+
+      var _iteratorNormalCompletion = true;
+      var _didIteratorError = false;
+      var _iteratorError = undefined;
+
+      try {
+        for (var _iterator = statuses[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+          var status = _step.value;
+
+          classesToAdd += ' ' + this.modulePrefix + '-day--' + status;
+        }
+      } catch (err) {
+        _didIteratorError = true;
+        _iteratorError = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion && _iterator.return) {
+            _iterator.return();
+          }
+        } finally {
+          if (_didIteratorError) {
+            throw _iteratorError;
+          }
+        }
+      }
+
+      if (classesToAdd !== this.html.container.className) {
+        this.html.container.className = classesToAdd;
+      }
+    }
+  }]);
+
+  return Day;
+}(ViewController);
+
 var SubjectRow = function (_ViewController) {
   _inherits(SubjectRow, _ViewController);
 
@@ -7684,6 +7794,39 @@ var SubjectRow = function (_ViewController) {
     key: 'getSubject',
     value: function getSubject() {
       return this.subject;
+    }
+
+    /**
+     * @public
+     * @method setEvents
+     * @param  {Array<Object>} events - Ordered events index
+     * @param  {CustomDate} rowStartDate
+     * @param  {CustomDate} rowEndDate
+     */
+
+  }, {
+    key: 'setEvents',
+    value: function setEvents(events, rowStartDate, rowEndDate) {
+      var frag = document.createDocumentFragment();
+      var pointerDate = new CustomDate(rowStartDate);
+      var pointerEventIndex = 0;
+      while (pointerDate.isBefore(rowEndDate) && pointerEventIndex < events.length) {
+        var currEvent = events[pointerEventIndex];
+        var newDay = void 0;
+        while (currEvent && pointerDate.isAfter(currEvent.end)) {
+          pointerEventIndex++;
+          currEvent = events[pointerEventIndex];
+        }
+        if (pointerDate.isAfter(currEvent.start)) {
+          newDay = new Day(pointerDate, [currEvent], this.cssPrefix);
+        } else {
+          newDay = new Day(pointerDate, [], this.cssPrefix);
+        }
+        frag.appendChild(newDay.getContainer());
+        pointerDate = new CustomDate(pointerDate).add(1, 'day');
+      }
+      this.html.container.innerHTML = '';
+      this.html.container.appendChild(frag);
     }
   }]);
 
@@ -7731,6 +7874,11 @@ var DatesPanel = function (_ViewController) {
     key: 'getStartDate',
     value: function getStartDate() {
       return this.dateBar.getStartDate();
+    }
+  }, {
+    key: 'getEndDate',
+    value: function getEndDate() {
+      return this.dateBar.getEndDate();
     }
 
     /**
@@ -7785,68 +7933,70 @@ var DatesPanel = function (_ViewController) {
     key: 'addSubjects',
     value: function () {
       var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee(subjects, position) {
-        var events, _iteratorNormalCompletion, _didIteratorError, _iteratorError, _iterator, _step, subject, newRow;
+        var fromDate, toDate, events, _iteratorNormalCompletion, _didIteratorError, _iteratorError, _iterator, _step, subject, newRow;
 
         return _regeneratorRuntime.wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
-                _context.next = 2;
-                return this.moduleCoordinator.getSubjectsEvents(subjects);
+                fromDate = this.getStartDate();
+                toDate = this.getEndDate();
+                _context.next = 4;
+                return this.moduleCoordinator.getSubjectsEvents(subjects, fromDate, toDate);
 
-              case 2:
+              case 4:
                 events = _context.sent;
                 _iteratorNormalCompletion = true;
                 _didIteratorError = false;
                 _iteratorError = undefined;
-                _context.prev = 6;
+                _context.prev = 8;
 
                 for (_iterator = subjects[Symbol.iterator](); !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
                   subject = _step.value;
-                  newRow = new SubjectRow(subject);
+                  newRow = new SubjectRow(subject, this.modulePrefix);
 
                   this.addRow(newRow, position);
-                  newRow.setEvents(events[subject.id]);
+                  newRow.setEvents(events[subject.id], fromDate, toDate);
                 }
-                _context.next = 14;
+                _context.next = 16;
                 break;
 
-              case 10:
-                _context.prev = 10;
-                _context.t0 = _context['catch'](6);
+              case 12:
+                _context.prev = 12;
+                _context.t0 = _context['catch'](8);
                 _didIteratorError = true;
                 _iteratorError = _context.t0;
 
-              case 14:
-                _context.prev = 14;
-                _context.prev = 15;
+              case 16:
+                _context.prev = 16;
+                _context.prev = 17;
 
                 if (!_iteratorNormalCompletion && _iterator.return) {
                   _iterator.return();
                 }
 
-              case 17:
-                _context.prev = 17;
+              case 19:
+                _context.prev = 19;
 
                 if (!_didIteratorError) {
-                  _context.next = 20;
+                  _context.next = 22;
                   break;
                 }
 
                 throw _iteratorError;
 
-              case 20:
-                return _context.finish(17);
-
-              case 21:
-                return _context.finish(14);
-
               case 22:
+                return _context.finish(19);
+
+              case 23:
+                return _context.finish(16);
+
+              case 24:
               case 'end':
                 return _context.stop();
             }
           }
-        }, _callee, this, [[6, 10, 14, 22], [15,, 17, 21]]);
+        }, _callee, this, [[8, 12, 16, 24], [17,, 19, 23]]);
       }));
 
       function addSubjects(_x, _x2) {

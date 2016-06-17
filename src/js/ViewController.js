@@ -6,8 +6,11 @@ export default class ViewController {
     this.html.container = document.createElement('div');
     this.html.container.classList.add(this.cssPrefix);
 
-    // TODO: move all buildHtml to here
     this.buildHtml();
+  }
+
+  buildHtml() {
+    return;
   }
 
   /**
