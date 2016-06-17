@@ -6,6 +6,11 @@ export default class Cache {
     this.compare = comparisonFunction;
   }
 
+  /**
+   * @public
+   * @method set
+   * @param  {Array<Object>} records
+   */
   set(records) {
     for (const newRecord of records) {
       const idxFound = this.storage.findIndex(s => this.compare(s, newRecord) === 0);
@@ -18,14 +23,22 @@ export default class Cache {
     this.subjects.sort(this.compare);
   }
 
-  get(amount, beforeAfter, referenceObj) {
-    const after = beforeAfter === 'after';
+  /**
+   * Returns a section of the cache
+   * @public
+   * @method get
+   * @param  {Int} amount
+   * @param  {String} position 'beginning' or 'end'
+   * @param  {Object | Subject} referenceObj
+   * @return {Array<Object>}
+   */
+  get(amount, position, referenceObj) {
     const idxFound = this.storage.findIndex(s => this.compare(referenceObj, s) === 0);
     assert(idxFound === -1, `Invalid reference object: ${JSON.stringify(referenceObj)}`);
 
     let fromIndex;
     let toIndex;
-    if (after) {
+    if (position === 'end') {
       fromIndex = idxFound + 1;
       toIndex = fromIndex + amount;
     } else {

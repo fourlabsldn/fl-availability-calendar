@@ -7060,11 +7060,12 @@ var CLASS_PREFIX = 'LegendsBar';
 var LegendsBar = function (_ViewController) {
   _inherits(LegendsBar, _ViewController);
 
-  function LegendsBar(title, modulePrefix) {
+  function LegendsBar(title, moduleCoordinator, modulePrefix) {
     _classCallCheck(this, LegendsBar);
 
     var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(LegendsBar).call(this, modulePrefix, CLASS_PREFIX));
 
+    _this.moduleCoordinator = moduleCoordinator;
     Object.preventExtensions(_this);
 
     _this.html.header.textContent = title;
@@ -7607,7 +7608,7 @@ var CLASS_PREFIX$2 = 'DatesPanel';
 var DatesPanel = function (_ViewController) {
   _inherits(DatesPanel, _ViewController);
 
-  function DatesPanel(startDate, modulePrefix) {
+  function DatesPanel(startDate, moduleCoordinator, modulePrefix) {
     _classCallCheck(this, DatesPanel);
 
     var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(DatesPanel).call(this, modulePrefix, CLASS_PREFIX$2));
@@ -7657,6 +7658,430 @@ var DatesPanel = function (_ViewController) {
   return DatesPanel;
 }(ViewController);
 
+var Ajax = function () {
+  function Ajax(url) {
+    _classCallCheck(this, Ajax);
+
+    assert(url, 'No URL provided on instantiation');
+    this.url = url;
+  }
+
+  _createClass(Ajax, [{
+    key: 'query',
+    value: function () {
+      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee(params) {
+        var url = arguments.length <= 1 || arguments[1] === undefined ? this.url : arguments[1];
+        var requestUrl, requestConfig, response, content;
+        return _regeneratorRuntime.wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                console.log('LOADING FROM SERVER');
+                requestUrl = this.addParametersToUrl(params, url);
+                requestConfig = {
+                  method: 'GET',
+                  cache: 'no-cache'
+                };
+                _context.next = 5;
+                return fetch(requestUrl, requestConfig);
+
+              case 5:
+                response = _context.sent;
+                _context.next = 8;
+                return response.json();
+
+              case 8:
+                content = _context.sent;
+                return _context.abrupt('return', content);
+
+              case 10:
+              case 'end':
+                return _context.stop();
+            }
+          }
+        }, _callee, this);
+      }));
+
+      function query(_x, _x2) {
+        return ref.apply(this, arguments);
+      }
+
+      return query;
+    }()
+
+    /**
+     * Adds parameters as GET string parameters to a prepared URL
+     * @private
+     * @method _addParametersToUrl
+     * @param  {Object} params
+     * @param  {String} url
+     * @return {String} The full URL with parameters
+     */
+    // TODO: this must be more robust. What about www.asdf.com/, www.asdf.com/?, www.asdf.com
+
+  }, {
+    key: 'addParametersToUrl',
+    value: function addParametersToUrl(params) {
+      var url = arguments.length <= 1 || arguments[1] === undefined ? this.url : arguments[1];
+
+      var getParams = [];
+      var keys = Object.keys(params);
+      var _iteratorNormalCompletion = true;
+      var _didIteratorError = false;
+      var _iteratorError = undefined;
+
+      try {
+        for (var _iterator = keys[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+          var key = _step.value;
+
+          var value = params[key] ? params[key].toString() : '';
+          var encodedKey = encodeURIComponent(key);
+          var encodedValue = encodeURIComponent(value);
+          getParams.push(encodedKey + '=' + encodedValue);
+        }
+      } catch (err) {
+        _didIteratorError = true;
+        _iteratorError = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion && _iterator.return) {
+            _iterator.return();
+          }
+        } finally {
+          if (_didIteratorError) {
+            throw _iteratorError;
+          }
+        }
+      }
+
+      var encodedGetParams = getParams.join('&');
+      var fullUrl = url + '?' + encodedGetParams;
+      return fullUrl;
+    }
+  }]);
+
+  return Ajax;
+}();
+
+var Cache = function () {
+  function Cache(comparisonFunction) {
+    _classCallCheck(this, Cache);
+
+    this.storage = [];
+    this.compare = comparisonFunction;
+  }
+
+  /**
+   * @public
+   * @method set
+   * @param  {Array<Object>} records
+   */
+
+
+  _createClass(Cache, [{
+    key: 'set',
+    value: function set(records) {
+      var _this = this;
+
+      var _iteratorNormalCompletion = true;
+      var _didIteratorError = false;
+      var _iteratorError = undefined;
+
+      try {
+        var _loop = function _loop() {
+          var newRecord = _step.value;
+
+          var idxFound = _this.storage.findIndex(function (s) {
+            return _this.compare(s, newRecord) === 0;
+          });
+          if (idxFound !== -1) {
+            _this.subjects[idxFound] = newRecord;
+          } else {
+            _this.storage.push(newRecord);
+          }
+        };
+
+        for (var _iterator = records[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+          _loop();
+        }
+      } catch (err) {
+        _didIteratorError = true;
+        _iteratorError = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion && _iterator.return) {
+            _iterator.return();
+          }
+        } finally {
+          if (_didIteratorError) {
+            throw _iteratorError;
+          }
+        }
+      }
+
+      this.subjects.sort(this.compare);
+    }
+
+    /**
+     * Returns a section of the cache
+     * @public
+     * @method get
+     * @param  {Int} amount
+     * @param  {String} position 'beginning' or 'end'
+     * @param  {Object | Subject} referenceObj
+     * @return {Array<Object>}
+     */
+
+  }, {
+    key: 'get',
+    value: function get(amount, position, referenceObj) {
+      var _this2 = this;
+
+      var idxFound = this.storage.findIndex(function (s) {
+        return _this2.compare(referenceObj, s) === 0;
+      });
+      assert(idxFound === -1, 'Invalid reference object: ' + JSON.stringify(referenceObj));
+
+      var fromIndex = void 0;
+      var toIndex = void 0;
+      if (position === 'end') {
+        fromIndex = idxFound + 1;
+        toIndex = fromIndex + amount;
+      } else {
+        fromIndex = Math.max(0, idxFound - amount);
+        toIndex = idxFound;
+      }
+      return this.subjects.slice(fromIndex, toIndex);
+    }
+  }]);
+
+  return Cache;
+}();
+
+var CONTENT_LOADING_PADDING = 40;
+var MAX_LOADED_RANGE = 120; // in days
+
+var DataLoader = function () {
+  function DataLoader(loadUrl) {
+    _classCallCheck(this, DataLoader);
+
+    this.cache = new Cache(function (a, b) {
+      return a.id - b.id;
+    });
+    this.ajax = new Ajax(loadUrl);
+    this.cacheStartDate = new CustomDate();
+    this.cacheEndDate = new CustomDate();
+    this.cache = [];
+  }
+
+  /**
+   * @public
+   * @method getEventsForSubjects
+   * @param  {Array<Object>} ids
+   * @param  {CustomDate} fromDate
+   * @param  {CustomDate} toDate
+   * @return {Array<Object>}
+   */
+
+
+  _createClass(DataLoader, [{
+    key: 'getEventsForSubjects',
+    value: function () {
+      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee(subjects, fromDate, toDate) {
+        return _regeneratorRuntime.wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                _context.next = 2;
+                return this.loadSubjects({
+                  ids: ids,
+                  fromDate: fromDate,
+                  toDate: toDate
+                });
+
+              case 2:
+              case 'end':
+                return _context.stop();
+            }
+          }
+        }, _callee, this);
+      }));
+
+      function getEventsForSubjects(_x, _x2, _x3) {
+        return ref.apply(this, arguments);
+      }
+
+      return getEventsForSubjects;
+    }()
+
+    /**
+     * @public
+     * @method getSubjects
+     * @param  {Int} amount
+     * @param  {String} position 'begigging' or 'end'
+     * @param  {Object | Subject} referenceSubj
+     * @return {Array<Object>}
+     */
+
+  }, {
+    key: 'getSubjects',
+    value: function () {
+      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee2(amount, position, referenceSubj) {
+        var after, cached, missingCount, requestReferenceId;
+        return _regeneratorRuntime.wrap(function _callee2$(_context2) {
+          while (1) {
+            switch (_context2.prev = _context2.next) {
+              case 0:
+                after = position === 'end';
+                cached = this.cache.get(amount, position, referenceSubj);
+                missingCount = amount - cached.length;
+
+                if (!(missingCount === 0)) {
+                  _context2.next = 5;
+                  break;
+                }
+
+                return _context2.abrupt('return', cached);
+
+              case 5:
+                requestReferenceId = after ? cached[cached.length] : cached[0];
+
+                requestReferenceId = requestReferenceId || referenceSubj.id;
+
+                _context2.next = 9;
+                return this.loadSubjects({
+                  recordCount: amount,
+                  fromDate: this.cacheStartDate,
+                  toDate: this.cacheEndDate,
+                  referenceId: requestReferenceId,
+                  beforeAfter: after ? 'after' : 'before'
+                });
+
+              case 9:
+                return _context2.abrupt('return', this.cache.get(amount, position, referenceSubj));
+
+              case 10:
+              case 'end':
+                return _context2.stop();
+            }
+          }
+        }, _callee2, this);
+      }));
+
+      function getSubjects(_x4, _x5, _x6) {
+        return ref.apply(this, arguments);
+      }
+
+      return getSubjects;
+    }()
+
+    /**
+     * @private
+     * @method loadSubjects
+     * @param  {Object} params - pre request object
+     * @return {Array<Object>}
+     */
+
+  }, {
+    key: 'loadSubjects',
+    value: function () {
+      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee3(params) {
+        var _calculateLoadingDate,
+        // Prepare dates
+        loadFrom, loadTo, response, subjects;
+
+        return _regeneratorRuntime.wrap(function _callee3$(_context3) {
+          while (1) {
+            switch (_context3.prev = _context3.next) {
+              case 0:
+                _calculateLoadingDate = this.calculateLoadingDate(params.fromDate, params.toDate);
+                loadFrom = _calculateLoadingDate.loadFrom;
+                loadTo = _calculateLoadingDate.loadTo;
+
+                params.fromDate = loadFrom.toISOString(); // eslint-disable-line no-param-reassign
+                params.toDate = loadTo.toISOString(); // eslint-disable-line no-param-reassign
+
+                // Prepare amount
+                if (params.recordCount) {
+                  params.recordCount += CONTENT_LOADING_PADDING; // eslint-disable-line no-param-reassign
+                }
+
+                _context3.next = 8;
+                return this.ajax.query(params);
+
+              case 8:
+                response = _context3.sent;
+                subjects = this.processServerResponse(response);
+                return _context3.abrupt('return', subjects);
+
+              case 11:
+              case 'end':
+                return _context3.stop();
+            }
+          }
+        }, _callee3, this);
+      }));
+
+      function loadSubjects(_x7) {
+        return ref.apply(this, arguments);
+      }
+
+      return loadSubjects;
+    }()
+
+    /**
+     * Compares from and to dates with cacheStartDate and cacheEndDate, choosing
+     * the widest possible range within the range limit and adding adequate
+     * padding
+     * @private
+     * @method calculateLoadingDate
+     * @param  {CustomDate} fromDate
+     * @param  {CustomDate} toDate
+     * @return {Object}
+     */
+
+  }, {
+    key: 'calculateLoadingDate',
+    value: function calculateLoadingDate(fromDate, toDate) {
+      var initialRange = toDate.diff(fromDate, 'days');
+      var maximumPaddding = (MAX_LOADED_RANGE - initialRange) / 2;
+      var padding = Math.min(maximumPaddding, CONTENT_LOADING_PADDING);
+      var loadFrom = new CustomDate(fromDate).add(padding, 'days');
+      var loadTo = new CustomDate(toDate).add(padding, 'days');
+      return { loadFrom: loadFrom, loadTo: loadTo };
+    }
+
+    /**
+     * @private
+     * @method processServerResponse
+     * @param  {Object} responseObj - A typical server response
+     * @return {Array<Object>} Array of subject objects
+     */
+
+  }, {
+    key: 'processServerResponse',
+    value: function processServerResponse(responseObj) {
+      // Convert event dates into CustomDate objects
+      responseObj.subjects.forEach(function (s) {
+        s.events.forEach(function (e) {
+          e.start = new CustomDate(e.start); // eslint-disable-line no-param-reassign
+          e.end = new CustomDate(e.end); // eslint-disable-line no-param-reassign
+        });
+      });
+      var fromDate = new CustomDate(responseObj.fromDate);
+      var toDate = new CustomDate(responseObj.toDate);
+
+      assert(fromDate.isValid() && toDate.isValid(), 'fromDate or fromToDate not in responseObj.');
+      this.cacheStartDate = fromDate;
+      this.cacheEndDate = toDate;
+      this.cache.set(responseObj.subjects);
+      return responseObj.subjects;
+    }
+  }]);
+
+  return DataLoader;
+}();
+
 var CalendarContainer = function (_ViewController) {
   _inherits(CalendarContainer, _ViewController);
 
@@ -7705,6 +8130,7 @@ var ModuleCoordinator = function () {
     _classCallCheck(this, ModuleCoordinator);
 
     this.startDate = new CustomDate();
+    this.dataLoader = new DataLoader(loadUrl);
 
     // create html container
     this.calendarContainer = new CalendarContainer(MODULE_PREFIX);
@@ -7718,8 +8144,10 @@ var ModuleCoordinator = function () {
     this.calendarContainer.set('legendsBar', this.legendsBar);
 
     // create datesContainer
-    this.datesPanel = new DatesPanel(this.startDate, MODULE_PREFIX);
+    this.datesPanel = new DatesPanel(this.startDate, this, MODULE_PREFIX);
     this.calendarContainer.set('datesPanel', this.datesPanel);
+
+    Object.preventExtensions(this);
 
     xdiv.appendChild(this.calendarContainer.html.container);
 
@@ -7730,6 +8158,7 @@ var ModuleCoordinator = function () {
 
     // add x subjects
     // this.setSubjectCount(initialSubjectCount);
+    this.setSubjectCount(1);
   }
 
   /**
@@ -7757,7 +8186,6 @@ var ModuleCoordinator = function () {
       this.startDate = new CustomDate(date);
       this.datesPanel.setStartDate(date);
       this.controlBar.setDatepickerDate(date);
-      console.warn('setStartDate not fully implemented yet');
     }
 
     /**
@@ -7770,7 +8198,7 @@ var ModuleCoordinator = function () {
     key: 'setSubjectCount',
     value: function () {
       var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee(count) {
-        var currentCount, diff, i;
+        var currentCount, diff, method;
         return _regeneratorRuntime.wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
@@ -7786,33 +8214,11 @@ var ModuleCoordinator = function () {
 
               case 3:
                 diff = Math.abs(currentCount - count);
+                method = count > currentCount ? 'removeSubjects' : 'addSubjects';
 
-                if (!(count > currentCount)) {
-                  _context.next = 7;
-                  break;
-                }
+                this[method](diff, 'end');
 
-                this.removeSubjects(diff);
-                return _context.abrupt('return');
-
-              case 7:
-                i = 0;
-
-              case 8:
-                if (!(i < diff)) {
-                  _context.next = 14;
-                  break;
-                }
-
-                _context.next = 11;
-                return this.addSubject('bottom');
-
-              case 11:
-                i++;
-                _context.next = 8;
-                break;
-
-              case 14:
+              case 6:
               case 'end':
                 return _context.stop();
             }
@@ -7854,43 +8260,120 @@ var ModuleCoordinator = function () {
     /**
      * @public
      * @method addSubject
-     * @param  {String} topBottom
+     * @param  {String} position 'beginning' or 'end'
      */
 
   }, {
-    key: 'addSubject',
+    key: 'addSubjects',
     value: function () {
-      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee2(topBottom) {
-        var newSubject;
+      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee2(amount, position) {
+        var referenceSubj, newSubjects, _iteratorNormalCompletion, _didIteratorError, _iteratorError, _iterator, _step, newSubject;
+
         return _regeneratorRuntime.wrap(function _callee2$(_context2) {
           while (1) {
             switch (_context2.prev = _context2.next) {
               case 0:
-                _context2.next = 2;
-                return this.subjectFabric.newSubject(topBottom);
+                referenceSubj = this.datesPanel.getSubjectAt(position);
+                _context2.next = 3;
+                return this.dataLoader.getSubjects(amount, position, referenceSubj);
 
-              case 2:
-                newSubject = _context2.sent;
+              case 3:
+                newSubjects = _context2.sent;
+                _iteratorNormalCompletion = true;
+                _didIteratorError = false;
+                _iteratorError = undefined;
+                _context2.prev = 7;
 
-                if (!newSubject) {
-                  assert.warn(false, 'no subject created');
+                for (_iterator = newSubjects[Symbol.iterator](); !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                  newSubject = _step.value;
+
+                  this.datesPanel.addSubject(newSubject);
+                  this.legendsBar.addSubject(newSubject);
                 }
-                this.datesPanel.addSubject(newSubject);
-                this.legendsBar.addSubject(newSubject);
+                _context2.next = 15;
+                break;
 
-              case 6:
+              case 11:
+                _context2.prev = 11;
+                _context2.t0 = _context2['catch'](7);
+                _didIteratorError = true;
+                _iteratorError = _context2.t0;
+
+              case 15:
+                _context2.prev = 15;
+                _context2.prev = 16;
+
+                if (!_iteratorNormalCompletion && _iterator.return) {
+                  _iterator.return();
+                }
+
+              case 18:
+                _context2.prev = 18;
+
+                if (!_didIteratorError) {
+                  _context2.next = 21;
+                  break;
+                }
+
+                throw _iteratorError;
+
+              case 21:
+                return _context2.finish(18);
+
+              case 22:
+                return _context2.finish(15);
+
+              case 23:
               case 'end':
                 return _context2.stop();
             }
           }
-        }, _callee2, this);
+        }, _callee2, this, [[7, 11, 15, 23], [16,, 18, 22]]);
       }));
 
-      function addSubject(_x2) {
+      function addSubjects(_x2, _x3) {
         return ref.apply(this, arguments);
       }
 
-      return addSubject;
+      return addSubjects;
+    }()
+
+    /**
+     * @public
+     * @method getSubjectEvents
+     * @param  {Int} id
+     * @param  {CustomDate} fromDate
+     * @param  {CustomDate} toDate
+     * @return {Array<Object>}
+     */
+
+  }, {
+    key: 'getSubjectEvents',
+    value: function () {
+      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee3(id, fromDate, toDate) {
+        return _regeneratorRuntime.wrap(function _callee3$(_context3) {
+          while (1) {
+            switch (_context3.prev = _context3.next) {
+              case 0:
+                _context3.next = 2;
+                return this.dataLoader.getSubjectEvents(id, fromDate, toDate);
+
+              case 2:
+                return _context3.abrupt('return', _context3.sent);
+
+              case 3:
+              case 'end':
+                return _context3.stop();
+            }
+          }
+        }, _callee3, this);
+      }));
+
+      function getSubjectEvents(_x4, _x5, _x6) {
+        return ref.apply(this, arguments);
+      }
+
+      return getSubjectEvents;
     }()
   }]);
 

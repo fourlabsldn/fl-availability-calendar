@@ -1,7 +1,7 @@
-import assert from 'fl-assert';
-import CustomDate from '../CustomDate';
 import Ajax from './Ajax';
 import Cache from './Cache';
+import assert from 'fl-assert';
+import CustomDate from '../utils/CustomDate';
 
 const CONTENT_LOADING_PADDING = 40;
 const MAX_LOADED_RANGE = 120; // in days
@@ -15,22 +15,16 @@ export default class DataLoader {
     this.cache = [];
   }
 
-  // ---------------------------------------------------------------------------
-  // Public
-  // ---------------------------------------------------------------------------
-
-  getCacheStartDate() {
-    return new CustomDate(this.cacheStartDate);
-  }
-
-  getCacheEndDate() {
-    return new CustomDate(this.cacheEndDate);
-  }
-
-  async getEventsForIds(ids, fromDate, toDate) {
-    assert(fromDate.isAfter(this.cacheStartDate) && toDate.isBefore(this.cacheEndDate),
-      'Requesting data already loaded.');
-
+  /**
+   * @public
+   * @method getEventsForSubjects
+   * @param  {Array<Object>} ids
+   * @param  {CustomDate} fromDate
+   * @param  {CustomDate} toDate
+   * @return {Array<Object>}
+   */
+  async getEventsForSubjects(subjects, fromDate, toDate) {
+    // FIXME: Manage getting from cache
     await this.loadSubjects({
       ids,
       fromDate,
@@ -38,27 +32,41 @@ export default class DataLoader {
     });
   }
 
-  async getSubjects(amount, beforeAfter, referenceId) {
-    const after = beforeAfter === 'after';
-    const cached = this.cache.get(amount, beforeAfter, { id: referenceId });
+  /**
+   * @public
+   * @method getSubjects
+   * @param  {Int} amount
+   * @param  {String} position 'begigging' or 'end'
+   * @param  {Object | Subject} referenceSubj
+   * @return {Array<Object>}
+   */
+  async getSubjects(amount, position, referenceSubj) {
+    const after = position === 'end';
+    const cached = this.cache.get(amount, position, referenceSubj);
 
     const missingCount = amount - cached.length;
     if (missingCount === 0) { return cached; }
 
     let requestReferenceId = after ? cached[cached.length] : cached[0];
-    requestReferenceId = requestReferenceId || referenceId;
+    requestReferenceId = requestReferenceId || referenceSubj.id;
 
     await this.loadSubjects({
       recordCount: amount,
       fromDate: this.cacheStartDate,
       toDate: this.cacheEndDate,
       referenceId: requestReferenceId,
-      beforeAfter,
+      beforeAfter: after ? 'after' : 'before',
     });
 
-    return this.cache.get(amount, beforeAfter, { id: referenceId });
+    return this.cache.get(amount, position, referenceSubj);
   }
 
+  /**
+   * @private
+   * @method loadSubjects
+   * @param  {Object} params - pre request object
+   * @return {Array<Object>}
+   */
   async loadSubjects(params) {
     // Prepare dates
     const { loadFrom, loadTo } = this.calculateLoadingDate(params.fromDate, params.toDate);
@@ -79,6 +87,7 @@ export default class DataLoader {
    * Compares from and to dates with cacheStartDate and cacheEndDate, choosing
    * the widest possible range within the range limit and adding adequate
    * padding
+   * @private
    * @method calculateLoadingDate
    * @param  {CustomDate} fromDate
    * @param  {CustomDate} toDate
@@ -94,6 +103,7 @@ export default class DataLoader {
   }
 
   /**
+   * @private
    * @method processServerResponse
    * @param  {Object} responseObj - A typical server response
    * @return {Array<Object>} Array of subject objects

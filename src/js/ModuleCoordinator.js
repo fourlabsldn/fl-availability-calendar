@@ -1,9 +1,9 @@
-import CustomDate from './CustomDate';
+import CustomDate from './utils/CustomDate';
 import LegendsBar from './LegendsBar';
 import ControlBar from './ControlBar';
 import DatesPanel from './DatesPanel';
+import DataLoader from './data/DataLoader';
 import CalendarContainer from './CalendarContainer';
-import assert from 'fl-assert';
 
 const MODULE_PREFIX = 'fl-msc';
 const CUSTOM_DAYCOUNT = 80;
@@ -11,6 +11,7 @@ const CUSTOM_DAYCOUNT = 80;
 export default class ModuleCoordinator {
   constructor(xdiv, loadUrl, subjectsHeader, initialSubjectCount) {
     this.startDate = new CustomDate();
+    this.dataLoader = new DataLoader(loadUrl);
 
     // create html container
     this.calendarContainer = new CalendarContainer(MODULE_PREFIX);
@@ -24,8 +25,10 @@ export default class ModuleCoordinator {
     this.calendarContainer.set('legendsBar', this.legendsBar);
 
     // create datesContainer
-    this.datesPanel = new DatesPanel(this.startDate, MODULE_PREFIX);
+    this.datesPanel = new DatesPanel(this.startDate, this, MODULE_PREFIX);
     this.calendarContainer.set('datesPanel', this.datesPanel);
+
+    Object.preventExtensions(this);
 
     xdiv.appendChild(this.calendarContainer.html.container);
 
@@ -36,6 +39,7 @@ export default class ModuleCoordinator {
 
     // add x subjects
     // this.setSubjectCount(initialSubjectCount);
+    this.setSubjectCount(1);
   }
 
   /**
@@ -56,7 +60,6 @@ export default class ModuleCoordinator {
     this.startDate = new CustomDate(date);
     this.datesPanel.setStartDate(date);
     this.controlBar.setDatepickerDate(date);
-    console.warn('setStartDate not fully implemented yet');
   }
 
   /**
@@ -68,14 +71,8 @@ export default class ModuleCoordinator {
     const currentCount = this.getSubjectCount();
     if (count === currentCount) { return; }
     const diff = Math.abs(currentCount - count);
-    if (count > currentCount) {
-      this.removeSubjects(diff);
-      return;
-    }
-
-    for (let i = 0; i < diff; i++) {
-      await this.addSubject('bottom');
-    }
+    const method = count > currentCount ? 'removeSubjects' : 'addSubjects';
+    this[method](diff, 'end');
   }
 
   /**
@@ -99,12 +96,26 @@ export default class ModuleCoordinator {
   /**
    * @public
    * @method addSubject
-   * @param  {String} topBottom
+   * @param  {String} position 'beginning' or 'end'
    */
-  async addSubject(topBottom) {
-    const newSubject = await this.subjectFabric.newSubject(topBottom);
-    if (!newSubject) { assert.warn(false, 'no subject created'); }
-    this.datesPanel.addSubject(newSubject);
-    this.legendsBar.addSubject(newSubject);
+  async addSubjects(amount, position) {
+    const referenceSubj = this.datesPanel.getSubjectAt(position);
+    const newSubjects = await this.dataLoader.getSubjects(amount, position, referenceSubj);
+    for (const newSubject of newSubjects) {
+      this.datesPanel.addSubject(newSubject);
+      this.legendsBar.addSubject(newSubject);
+    }
+  }
+
+  /**
+   * @public
+   * @method getSubjectEvents
+   * @param  {Int} id
+   * @param  {CustomDate} fromDate
+   * @param  {CustomDate} toDate
+   * @return {Array<Object>}
+   */
+  async getSubjectEvents(id, fromDate, toDate) {
+    return await this.dataLoader.getSubjectEvents(id, fromDate, toDate);
   }
 }

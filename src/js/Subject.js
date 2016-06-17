@@ -14,7 +14,7 @@ export default class Subject extends ViewController {
    * @param  {String} modulePrefix
    * @return {Subject}
    */
-  constructor(config, startDate, modulePrefix) {
+  constructor(config, modulePrefix) {
     super();
     assert(typeof config.name === 'string', `Invalid subject name: ${config.name}`);
     this.name = config.name;

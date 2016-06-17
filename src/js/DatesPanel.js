@@ -3,7 +3,7 @@ import DateBar from './DateBar';
 
 const CLASS_PREFIX = 'DatesPanel';
 export default class DatesPanel extends ViewController {
-  constructor(startDate, modulePrefix) {
+  constructor(startDate, moduleCoordinator, modulePrefix) {
     super(modulePrefix, CLASS_PREFIX);
     this.dateBar = new DateBar(startDate, modulePrefix);
     Object.preventExtensions(this);

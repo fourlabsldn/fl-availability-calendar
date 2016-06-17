@@ -1,5 +1,5 @@
 import ViewController from './ViewController';
-import CustomDate from './CustomDate';
+import CustomDate from './utils/CustomDate';
 
 const CLASS_PREFIX = 'btnBar';
 const DATEPICKER_FORMAT = 'YYYY-[W]WW';
