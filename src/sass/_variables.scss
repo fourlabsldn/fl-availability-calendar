@@ -21,9 +21,10 @@ $c-half-busy-text: $c-plain-background;
 
 
 // Measures
-$first-column-width: 17em;
-$day-width: 2em;
-$day-border-width: 1px;
+$s-first-column-width: 17em;
+$s-day-width: 2em;
+$s-day-border-width: 1px;
+$s-row-height: 1.5em;
 
 // Mixins
 @mixin inherit-font() {

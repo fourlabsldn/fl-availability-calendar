@@ -16,8 +16,8 @@
   box-sizing: inherit;
 
   display: inline-block;
-  width: $first-column-width;
-  max-width: $first-column-width;
+  width: $s-first-column-width;
+  max-width: $s-first-column-width;
 }
 
 .fl-msc-SubjectRow {
@@ -31,10 +31,10 @@
 .fl-msc-SubjectRow-day {
   box-sizing: inherit;
 
-  width: $day-width;
+  width: $s-day-width;
   height: 1.6em;
-  // border: $day-border-width solid $c-plain-background;
-  // border-width: (2 * $day-border-width) $day-border-width;
+  // border: $s-day-border-width solid $c-plain-background;
+  // border-width: (2 * $s-day-border-width) $s-day-border-width;
   // border-radius: 4px;
 
   background-color: $c-free;
