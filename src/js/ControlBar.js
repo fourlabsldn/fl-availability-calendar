@@ -28,6 +28,13 @@ export default class ControlBar extends ViewController {
    * @return {void}
    */
   createButtons() {
+    const datePicker = document.createElement('input');
+    datePicker.classList.add(`${this.cssPrefix}-btn`);
+    datePicker.classList.add(`${this.cssPrefix}-datepicker`);
+    datePicker.setAttribute('type', 'week');
+    this.html.datePicker = datePicker;
+    this.html.container.appendChild(datePicker);
+
     const scrollLeftBtn = document.createElement('button');
     scrollLeftBtn.classList.add(`${this.cssPrefix}-btn`);
     scrollLeftBtn.innerHTML = '<';
@@ -39,25 +46,6 @@ export default class ControlBar extends ViewController {
     scrollRightBtn.innerHTML = '>';
     this.html.scrollRightBtn = scrollRightBtn;
     this.html.container.appendChild(scrollRightBtn);
-
-    const scrollUpBtn = document.createElement('button');
-    scrollUpBtn.classList.add(`${this.cssPrefix}-btn`);
-    scrollUpBtn.innerHTML = 'Scroll up';
-    this.html.scrollUpBtn = scrollUpBtn;
-    this.html.container.appendChild(scrollUpBtn);
-
-    const scrollDownBtn = document.createElement('button');
-    scrollDownBtn.classList.add(`${this.cssPrefix}-btn`);
-    scrollDownBtn.innerHTML = 'Scroll Down';
-    this.html.scrollDownBtn = scrollDownBtn;
-    this.html.container.appendChild(scrollDownBtn);
-
-    const datePicker = document.createElement('input');
-    datePicker.classList.add(`${this.cssPrefix}-btn`);
-    datePicker.classList.add(`${this.cssPrefix}-datepicker`);
-    datePicker.setAttribute('type', 'week');
-    this.html.datePicker = datePicker;
-    this.html.container.appendChild(datePicker);
   }
 
   /**
@@ -65,28 +53,20 @@ export default class ControlBar extends ViewController {
    * @method setListeners
    */
   setListeners() {
-    this.html.scrollLeftBtn.addEventListener('mousedown', () => {
-      this.scroll('left');
-    });
-
-    this.html.scrollRightBtn.addEventListener('mousedown', () => {
-      this.scroll('right');
-    });
-
-    this.html.scrollUpBtn.addEventListener('mousedown', () => {
-      this.scroll('up');
-    });
-
-    this.html.scrollDownBtn.addEventListener('mousedown', () => {
-      this.scroll('down');
-    });
-
     this.html.datePicker.addEventListener('change', () => {
       const datepickerDate = new CustomDate(this.html.datePicker.value);
       const normalisedDate = datepickerDate.startOf('isoweek');
       this.setDatepickerDate(normalisedDate);
       // TODO: Change general date from here
       console.warn('Datepicker date not fully implemented.');
+    });
+
+    this.html.scrollLeftBtn.addEventListener('mousedown', () => {
+      this.scroll('left');
+    });
+
+    this.html.scrollRightBtn.addEventListener('mousedown', () => {
+      this.scroll('right');
     });
   }
 
@@ -107,5 +87,9 @@ export default class ControlBar extends ViewController {
    */
   scroll(direction) {
     console.log(`Scrolling ${direction}`);
+    const monthsToScroll = direction === 'right' ? 1 : -1;
+    const currStartDate = this.moduleCoordinator.getStartDate();
+    const newStartDate = new CustomDate(currStartDate).add(monthsToScroll, 'month');
+    this.moduleCoordinator.setStartDate(newStartDate);
   }
 }
