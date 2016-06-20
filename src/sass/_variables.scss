@@ -26,6 +26,10 @@ $s-day-width: 2em;
 $s-day-height: 1.5em;
 $s-day-border-width: 2px;
 
+$s-DateBar-height: 2 * $s-day-height;
+$s-LabelsBar-width: 8 * $s-day-width;
+
+
 // Mixins
 @mixin inherit-font() {
   color: inherit;

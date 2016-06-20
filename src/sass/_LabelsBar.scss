@@ -7,6 +7,9 @@
   flex: 0 0 $s-first-column-width;
   display: inline-flex;
   flex-flow: column nowrap;
+
+  background-color: $c-plain-background;
+  width: $s-LabelsBar-width;
 }
 
 .fl-msc-LabelsBar-header {
@@ -31,4 +34,8 @@
 .fl-msc-LabelsBar-label {
   height: $s-day-height;
   line-height: $s-day-height;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }

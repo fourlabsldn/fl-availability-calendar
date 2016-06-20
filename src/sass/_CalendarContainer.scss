@@ -11,4 +11,10 @@
   display: flex;
   flex-flow: row nowrap;
   align-content: stretch;
+
+  max-height: $s-DateBar-height + 20 * $s-day-height;
+  max-width: 40 * $s-day-width;
+
+  overflow-y: scroll;
+  overflow-x: visible;
 }

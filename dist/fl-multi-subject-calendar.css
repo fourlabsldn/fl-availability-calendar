@@ -17,7 +17,11 @@
           flex-flow: row nowrap;
   -webkit-align-content: stretch;
       -ms-flex-line-pack: stretch;
-          align-content: stretch; }
+          align-content: stretch;
+  max-height: 33em;
+  max-width: 80em;
+  overflow-y: scroll;
+  overflow-x: visible; }
 
 .fl-msc-ControlBar,
 .fl-msc-ControlBar-btn,
@@ -51,50 +55,6 @@
     -webkit-filter: brightness(115%);
             filter: brightness(115%); }
 
-.fl-msc-header {
-  -webkit-box-sizing: inherit;
-          box-sizing: inherit;
-  display: -webkit-inline-box;
-  display: -webkit-inline-flex;
-  display: -ms-inline-flexbox;
-  display: inline-flex;
-  -webkit-flex-flow: row nowrap;
-      -ms-flex-flow: row nowrap;
-          flex-flow: row nowrap;
-  -webkit-box-align: flex;
-  -webkit-align-items: flex;
-      -ms-flex-align: flex;
-          align-items: flex;
-  text-align: center; }
-
-.fl-msc-subjectsTitle {
-  -webkit-box-sizing: inherit;
-          box-sizing: inherit;
-  background-color: #e0e0e0;
-  color: #303030;
-  border-color: #f9f9f9;
-  border-style: solid;
-  border-width: 2px 2px 2px 0;
-  -webkit-box-flex: 0;
-  -webkit-flex: 0 0 17em;
-      -ms-flex: 0 0 17em;
-          flex: 0 0 17em;
-  display: -webkit-inline-box;
-  display: -webkit-inline-flex;
-  display: -ms-inline-flexbox;
-  display: inline-flex; }
-
-.fl-msc-subjectsTitle-text {
-  color: inherit;
-  font-size: inherit;
-  font-family: inherit;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  -webkit-box-sizing: inherit;
-          box-sizing: inherit;
-  margin: auto;
-  width: 100%; }
-
 .fl-msc-LabelsBar {
   -webkit-box-sizing: inherit;
           box-sizing: inherit;
@@ -111,7 +71,9 @@
   display: inline-flex;
   -webkit-flex-flow: column nowrap;
       -ms-flex-flow: column nowrap;
-          flex-flow: column nowrap; }
+          flex-flow: column nowrap;
+  background-color: #f9f9f9;
+  width: 16em; }
 
 .fl-msc-LabelsBar-header {
   -webkit-box-sizing: border-box;
@@ -128,7 +90,10 @@
 
 .fl-msc-LabelsBar-label {
   height: 1.5em;
-  line-height: 1.5em; }
+  line-height: 1.5em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis; }
 
 .fl-msc-DatesPanel-subjectsContainer {
   -webkit-box-sizing: inherit;
@@ -161,6 +126,7 @@
 .fl-msc-DateBar {
   -webkit-box-sizing: inherit;
           box-sizing: inherit;
+  height: 3em;
   -webkit-box-flex: 0;
   -webkit-flex: 0 0;
       -ms-flex: 0 0;
