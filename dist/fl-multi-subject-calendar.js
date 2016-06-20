@@ -7880,6 +7880,11 @@ var DatesPanel = function (_ViewController) {
     value: function getEndDate() {
       return this.dateBar.getEndDate();
     }
+  }, {
+    key: 'getDateBar',
+    value: function getDateBar() {
+      return this.dateBar;
+    }
 
     /**
      * @public
@@ -8523,13 +8528,15 @@ var DataLoader = function () {
 
 var acceptableSides = ['left', 'top'];
 
-function setSticky(side, element) {
+function setSticky(side, element, container) {
   assert(acceptableSides.includes(side), 'Invalid value for side: ' + side);
-  var container = element.parentNode;
   assert(container && typeof container.addEventListener === 'function', 'Element does not have a parent.');
 
+  console.log('Element:', element);
+  console.log('Container:', container);
   var moved = true;
   var moveFunction = function moveFunction() {
+    console.log('moving: ' + side);
     if (moved) {
       return;
     }
@@ -8571,7 +8578,11 @@ var CalendarContainer = function (_ViewController) {
       this.html[name].parentNode.replaceChild(instance.html.container, this.html[name]);
       this.html[name] = instance.html.container;
       if (name === 'labelsBar') {
-        setSticky('left', this.html[name]);
+        setSticky('left', this.html[name], this.html.panelWrapper);
+      } else if (name === 'datesPanel') {
+        var dateBar = instance.getDateBar();
+        var dateBarContainer = dateBar.getContainer();
+        setSticky('top', dateBarContainer, this.html.panelWrapper);
       }
     }
   }, {

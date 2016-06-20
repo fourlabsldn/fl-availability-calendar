@@ -13,7 +13,11 @@ export default class CalendarContainer extends ViewController {
     this.html[name].parentNode.replaceChild(instance.html.container, this.html[name]);
     this.html[name] = instance.html.container;
     if (name === 'labelsBar') {
-      setSticky('left', this.html[name]);
+      setSticky('left', this.html[name], this.html.panelWrapper);
+    } else if (name === 'datesPanel') {
+      const dateBar = instance.getDateBar();
+      const dateBarContainer = dateBar.getContainer();
+      setSticky('top', dateBarContainer, this.html.panelWrapper);
     }
   }
 

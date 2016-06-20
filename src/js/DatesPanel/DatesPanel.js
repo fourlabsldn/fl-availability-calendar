@@ -1,6 +1,6 @@
-import ViewController from '../ViewController';
 import DateBar from './DateBar';
 import SubjectRow from './SubjectRow';
+import ViewController from '../ViewController';
 
 const CLASS_PREFIX = 'DatesPanel';
 export default class DatesPanel extends ViewController {
@@ -38,6 +38,10 @@ export default class DatesPanel extends ViewController {
 
   getEndDate() {
     return this.dateBar.getEndDate();
+  }
+
+  getDateBar() {
+    return this.dateBar;
   }
 
   /**

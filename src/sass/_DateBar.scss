@@ -1,9 +1,11 @@
 .fl-msc-DateBar {
-  box-sizing: inherit;
+  display: inline-block;
+  position: relative;
   height: $s-DateBar-height;
 
   flex: 0 0;
-  display: inline-block;
+  box-sizing: inherit;
+  background-color: inherit;
 }
 
 .fl-msc-DateBar-monthRow,

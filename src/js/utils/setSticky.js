@@ -3,14 +3,16 @@
 import assert from 'fl-assert';
 const acceptableSides = ['left', 'top'];
 
-export default function setSticky(side, element) {
+export default function setSticky(side, element, container) {
   assert(acceptableSides.includes(side), `Invalid value for side: ${side}`);
-  const container = element.parentNode;
   assert(container && typeof container.addEventListener === 'function',
     'Element does not have a parent.');
 
+  console.log('Element:', element);
+  console.log('Container:', container);
   let moved = true;
   const moveFunction = () => {
+    console.log(`moving: ${side}`);
     if (moved) { return; }
     moved = true;
     if (side === 'left') {
