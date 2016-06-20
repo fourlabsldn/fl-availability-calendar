@@ -1,4 +1,5 @@
 import ViewController from './ViewController';
+import setSticky from './utils/setSticky';
 import assert from 'fl-assert';
 
 export default class CalendarContainer extends ViewController {
@@ -11,6 +12,9 @@ export default class CalendarContainer extends ViewController {
     assert(this.html[name], `Trying to set invalid property: ${name}`);
     this.html[name].parentNode.replaceChild(instance.html.container, this.html[name]);
     this.html[name] = instance.html.container;
+    if (name === 'labelsBar') {
+      setSticky('left', this.html[name]);
+    }
   }
 
   buildHtml() {

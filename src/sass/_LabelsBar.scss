@@ -8,6 +8,7 @@
   display: inline-flex;
   flex-flow: column nowrap;
 
+  position: absolute;
   background-color: $c-plain-background;
   width: $s-LabelsBar-width;
 }

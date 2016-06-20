@@ -18,6 +18,7 @@
   -webkit-align-content: stretch;
       -ms-flex-line-pack: stretch;
           align-content: stretch;
+  position: relative;
   max-height: 33em;
   max-width: 80em;
   overflow-y: scroll;
@@ -72,6 +73,7 @@
   -webkit-flex-flow: column nowrap;
       -ms-flex-flow: column nowrap;
           flex-flow: column nowrap;
+  position: absolute;
   background-color: #f9f9f9;
   width: 16em; }
 

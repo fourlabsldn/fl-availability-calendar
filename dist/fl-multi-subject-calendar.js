@@ -8521,6 +8521,37 @@ var DataLoader = function () {
   return DataLoader;
 }();
 
+var acceptableSides = ['left', 'top'];
+
+function setSticky(side, element) {
+  assert(acceptableSides.includes(side), 'Invalid value for side: ' + side);
+  var container = element.parentNode;
+  assert(container && typeof container.addEventListener === 'function', 'Element does not have a parent.');
+
+  var moved = true;
+  var moveFunction = function moveFunction() {
+    if (moved) {
+      return;
+    }
+    moved = true;
+    if (side === 'left') {
+      element.style.left = container.scrollLeft + 'px';
+    } else {
+      element.style.top = container.scrollTop + 'px';
+    }
+  };
+
+  container.addEventListener('scroll', function () {
+    // If not moved is because scroll has been called and the animation frame
+    // function was not triggered yet
+    if (!moved) {
+      return;
+    }
+    moved = false;
+    requestAnimationFrame(moveFunction);
+  });
+}
+
 var CalendarContainer = function (_ViewController) {
   _inherits(CalendarContainer, _ViewController);
 
@@ -8539,6 +8570,9 @@ var CalendarContainer = function (_ViewController) {
       assert(this.html[name], 'Trying to set invalid property: ' + name);
       this.html[name].parentNode.replaceChild(instance.html.container, this.html[name]);
       this.html[name] = instance.html.container;
+      if (name === 'labelsBar') {
+        setSticky('left', this.html[name]);
+      }
     }
   }, {
     key: 'buildHtml',
