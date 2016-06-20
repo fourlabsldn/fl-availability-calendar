@@ -8424,7 +8424,7 @@ var DataLoader = function () {
 
                 if (this.cacheCoversPeriod(fromDate, toDate)) {
                   subjectsLoaded = this.cache.getWithIds(ids);
-                  loadedFromCache = subjectsLoaded.length < subjects.length;
+                  loadedFromCache = subjects.length === subjectsLoaded.length;
                 }
 
                 if (loadedFromCache) {
