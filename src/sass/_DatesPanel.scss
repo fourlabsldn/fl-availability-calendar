@@ -3,39 +3,40 @@
 
   display: block;
 }
-
-.fl-msc-subject {
-  box-sizing: inherit;
-
-  display: block;
-  white-space: nowrap;
-}
-
-.fl-msc-subject-name {
-  @include elipsis-overflow();
-  box-sizing: inherit;
-
-  display: inline-block;
-  width: $s-first-column-width;
-  max-width: $s-first-column-width;
-}
+//
+// .fl-msc-subject {
+//   box-sizing: inherit;
+//
+//   display: block;
+//   white-space: nowrap;
+// }
+//
+// .fl-msc-subject-name {
+//   @include elipsis-overflow();
+//   box-sizing: inherit;
+//
+//   display: inline-block;
+//   width: $s-first-column-width;
+//   max-width: $s-first-column-width;
+// }
 
 .fl-msc-SubjectRow {
   box-sizing: inherit;
+  display: block;
 
-  display: inline-flex;
-  flex-flow: row nowrap;
-  align-items: stretch;
+  height: $s-day-height;
 }
 
 .fl-msc-SubjectRow-day {
-  box-sizing: inherit;
+  box-sizing: border-box;
+  display: inline-block;
 
   width: $s-day-width;
-  height: 1.6em;
-  // border: $s-day-border-width solid $c-plain-background;
-  // border-width: (2 * $s-day-border-width) $s-day-border-width;
-  // border-radius: 4px;
+  height: $s-day-height;
+
+  border-color: $c-plain-background;
+  border-style: solid;
+  border-width: $s-day-border-width 0;
 
   background-color: $c-free;
 }

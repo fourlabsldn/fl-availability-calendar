@@ -23,8 +23,8 @@ $c-half-busy-text: $c-plain-background;
 // Measures
 $s-first-column-width: 17em;
 $s-day-width: 2em;
-$s-day-border-width: 1px;
-$s-row-height: 1.5em;
+$s-day-height: 1.5em;
+$s-day-border-width: 2px;
 
 // Mixins
 @mixin inherit-font() {

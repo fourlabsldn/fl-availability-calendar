@@ -1,7 +1,7 @@
 .fl-msc-LabelsBar {
   box-sizing: inherit;
   border-style: solid;
-  border-width: 2px 2px 2px 0;
+  border-width: 0 2px 0 0;
   border-color: transparent;
 
   flex: 0 0 $s-first-column-width;
@@ -10,10 +10,25 @@
 }
 
 .fl-msc-LabelsBar-header {
+  box-sizing: border-box;
+
+  // This is equivalend to the height of the month row plus the
+  // height of the day row.
+  height: (2 * $s-day-height);
   width: 100%;
+
+  border-width: $s-day-border-width 0 0;
+  border-color: $c-plain-background;
+  border-style: solid;
 
   background-color: $c-button-background;
   color: $c-button-text;
 
   text-align: center;
+  line-height: (2 * $s-day-height);
+}
+
+.fl-msc-LabelsBar-label {
+  height: $s-day-height;
+  line-height: $s-day-height;
 }

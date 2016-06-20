@@ -7,20 +7,22 @@
 
 .fl-msc-DateBar-monthRow,
 .fl-msc-DateBar-dayRow {
-  box-sizing: inherit;
+  box-sizing: border-box;
 
   display: inline-flex;
   align-content: stretch;
   flex-flow: row nowrap;
+  text-align: center;
 }
 
 .fl-msc-DateBar-month {
   box-sizing: inherit;
 
   display: inline-block;
+  height: $s-day-height;
+
   background-color: $c-button-background;
   color: $c-button-text;
-  text-align: center;
 
   border: 2px solid $c-plain-background;
 
@@ -33,8 +35,9 @@
 
 .fl-msc-DateBar-day {
   box-sizing: border-box;
+  display: inline-block;
 
   width: $s-day-width;
-  display: inline-block;
+  height: $s-day-height;
   border: $s-day-border-width solid transparent;
 }

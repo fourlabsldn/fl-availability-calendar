@@ -99,7 +99,7 @@
   -webkit-box-sizing: inherit;
           box-sizing: inherit;
   border-style: solid;
-  border-width: 2px 2px 2px 0;
+  border-width: 0 2px 0 0;
   border-color: transparent;
   -webkit-box-flex: 0;
   -webkit-flex: 0 0 17em;
@@ -114,51 +114,42 @@
           flex-flow: column nowrap; }
 
 .fl-msc-LabelsBar-header {
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  height: 3em;
   width: 100%;
+  border-width: 2px 0 0;
+  border-color: #f9f9f9;
+  border-style: solid;
   background-color: #e0e0e0;
   color: #303030;
-  text-align: center; }
+  text-align: center;
+  line-height: 3em; }
+
+.fl-msc-LabelsBar-label {
+  height: 1.5em;
+  line-height: 1.5em; }
 
 .fl-msc-DatesPanel-subjectsContainer {
   -webkit-box-sizing: inherit;
           box-sizing: inherit;
   display: block; }
 
-.fl-msc-subject {
-  -webkit-box-sizing: inherit;
-          box-sizing: inherit;
-  display: block;
-  white-space: nowrap; }
-
-.fl-msc-subject-name {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  -webkit-box-sizing: inherit;
-          box-sizing: inherit;
-  display: inline-block;
-  width: 17em;
-  max-width: 17em; }
-
 .fl-msc-SubjectRow {
   -webkit-box-sizing: inherit;
           box-sizing: inherit;
-  display: -webkit-inline-box;
-  display: -webkit-inline-flex;
-  display: -ms-inline-flexbox;
-  display: inline-flex;
-  -webkit-flex-flow: row nowrap;
-      -ms-flex-flow: row nowrap;
-          flex-flow: row nowrap;
-  -webkit-box-align: stretch;
-  -webkit-align-items: stretch;
-      -ms-flex-align: stretch;
-          align-items: stretch; }
+  display: block;
+  height: 1.5em; }
 
 .fl-msc-SubjectRow-day {
-  -webkit-box-sizing: inherit;
-          box-sizing: inherit;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  display: inline-block;
   width: 2em;
-  height: 1.6em;
+  height: 1.5em;
+  border-color: #f9f9f9;
+  border-style: solid;
+  border-width: 2px 0;
   background-color: #42b382; }
 
 .fl-msc-SubjectRow-day--busy {
@@ -178,8 +169,8 @@
 
 .fl-msc-DateBar-monthRow,
 .fl-msc-DateBar-dayRow {
-  -webkit-box-sizing: inherit;
-          box-sizing: inherit;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
   display: -webkit-inline-box;
   display: -webkit-inline-flex;
   display: -ms-inline-flexbox;
@@ -189,15 +180,16 @@
           align-content: stretch;
   -webkit-flex-flow: row nowrap;
       -ms-flex-flow: row nowrap;
-          flex-flow: row nowrap; }
+          flex-flow: row nowrap;
+  text-align: center; }
 
 .fl-msc-DateBar-month {
   -webkit-box-sizing: inherit;
           box-sizing: inherit;
   display: inline-block;
+  height: 1.5em;
   background-color: #e0e0e0;
   color: #303030;
-  text-align: center;
   border: 2px solid #f9f9f9; }
   .fl-msc-DateBar-month-1 {
     width: -webkit-calc(2em * 1);
@@ -299,8 +291,9 @@
 .fl-msc-DateBar-day {
   -webkit-box-sizing: border-box;
           box-sizing: border-box;
-  width: 2em;
   display: inline-block;
-  border: 1px solid transparent; }
+  width: 2em;
+  height: 1.5em;
+  border: 2px solid transparent; }
 
 /*# sourceMappingURL=fl-multi-subject-calendar.css.map */
