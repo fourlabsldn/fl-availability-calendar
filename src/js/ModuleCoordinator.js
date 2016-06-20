@@ -10,7 +10,7 @@ const MODULE_PREFIX = 'fl-msc';
 const CUSTOM_DAYCOUNT = 80;
 
 export default class ModuleCoordinator {
-  constructor(xdiv, loadUrl, subjectsHeader, initialSubjectCount) {
+  constructor(xdiv, loadUrl, subjectsHeader, initialSubjectCount = 100) {
     this.startDate = new CustomDate();
     this.dataLoader = new DataLoader(loadUrl);
 
@@ -39,8 +39,7 @@ export default class ModuleCoordinator {
     this.setDayCount(CUSTOM_DAYCOUNT);
 
     // add x subjects
-    // this.setSubjectCount(initialSubjectCount);
-    this.setSubjectCount(100);
+    this.setSubjectCount(initialSubjectCount);
   }
 
   /**
@@ -51,6 +50,14 @@ export default class ModuleCoordinator {
   getStartDate() {
     return new CustomDate(this.startDate);
   }
+  /**
+   * @public
+   * @method getEndDate
+   * @return {CustomDate}
+   */
+  getEndDate() {
+    return new CustomDate(this.startDate).add(this.getDayCount() - 1, 'days');
+  }
 
   /**
    * @public
@@ -58,9 +65,10 @@ export default class ModuleCoordinator {
    * @param  {CustomDate} date
    */
   async setStartDate(date) {
-    this.startDate = new CustomDate(date);
-    this.controlBar.setDatepickerDate(date);
-    await this.datesPanel.setStartDate(date);
+    const newDate = new CustomDate(date).startOf('day');
+    this.startDate = new CustomDate(newDate);
+    this.controlBar.setDatepickerDate(newDate);
+    await this.datesPanel.setStartDate(newDate);
   }
 
   /**
@@ -96,12 +104,30 @@ export default class ModuleCoordinator {
 
   /**
    * @public
+   * @method getDayCount
+   * @param  {Int} count
+   * return {Int}
+   */
+  getDayCount() {
+    return this.datesPanel.getDayCount();
+  }
+
+  /**
+   * @public
    * @method addSubject
    * @param  {String} position 'beginning' or 'end'
    */
   async addSubjects(amount, position) {
+    const fromDate = this.getStartDate();
+    const toDate = this.getEndDate();
     const referenceSubj = this.datesPanel.getSubjectAt(position);
-    const newSubjects = await this.dataLoader.getSubjects(amount, position, referenceSubj);
+    const newSubjects = await this.dataLoader.getSubjects(
+      amount,
+      position,
+      referenceSubj,
+      fromDate,
+      toDate
+    );
     this.datesPanel.addSubjects(newSubjects, position);
     this.labelsBar.addSubjects(newSubjects, position);
   }

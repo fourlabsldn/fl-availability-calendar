@@ -8,7 +8,12 @@ const MAX_LOADED_RANGE = 120; // in days
 
 export default class DataLoader {
   constructor(loadUrl) {
-    this.cache = new Cache((a, b) => a.id - b.id);
+    // The comparison function accepts both ids and subjects
+    this.cache = new Cache((a, b) => {
+      const id1 = a.id || a;
+      const id2 = b.id || b;
+      return id1 - id2;
+    });
     this.ajax = new Ajax(loadUrl);
     this.cacheStartDate = new CustomDate();
     this.cacheEndDate = new CustomDate();
@@ -24,13 +29,22 @@ export default class DataLoader {
    * each value an array of event objects
    */
   async getSubjectsEvents(subjects, fromDate, toDate) {
-    // FIXME: Manage getting from cache
+    if (subjects.length === 0) { return []; }
     const ids = subjects.map(s => s.id);
-    const subjectsLoaded = await this.loadSubjects({
-      ids,
-      fromDate,
-      toDate,
-    });
+    let subjectsLoaded;
+    let loadedFromCache = false;
+    if (this.cacheCoversPeriod(fromDate, toDate)) {
+      subjectsLoaded = this.cache.getWithIds(ids);
+      loadedFromCache = subjectsLoaded.length < subjects.length;
+    }
+
+    if (!loadedFromCache) {
+      subjectsLoaded = await this.loadSubjects({
+        ids,
+        fromDate,
+        toDate,
+      });
+    }
 
     const subjectsEvents = {};
     for (const subject of subjects) {
@@ -49,18 +63,20 @@ export default class DataLoader {
    * @param  {Object | Subject} referenceSubj
    * @return {Array<Object>}
    */
-  async getSubjects(amount, position, referenceSubj) {
-    const cached = this.cache.get(amount, position, referenceSubj);
+  async getSubjects(amount, position, referenceSubj, fromDate, toDate) {
+    const cached = this.cacheCoversPeriod(fromDate, toDate)
+      ? this.cache.get(amount, position, referenceSubj)
+      : [];
     const missingCount = amount - cached.length;
     if (missingCount === 0) { return cached; }
 
     const cachedReferenceSubj = position === 'end' ? cached[cached.length - 1] : cached[0];
     const cachedReferenceSubjId = cachedReferenceSubj ? cachedReferenceSubj.id : null;
     await this.loadSubjects({
+      fromDate,
+      toDate,
       referenceId: cachedReferenceSubjId,
       recordCount: amount,
-      fromDate: this.cacheStartDate,
-      toDate: this.cacheEndDate,
       beforeAfter: position === 'end' ? 'after' : 'before',
     });
 
@@ -76,6 +92,7 @@ export default class DataLoader {
   async loadSubjects(params) {
     // Prepare dates
     const { loadFrom, loadTo } = this.calculateLoadingDate(params.fromDate, params.toDate);
+    console.log('Calculated from and to', loadFrom.toString(), loadTo.toString());
     params.fromDate = loadFrom.toISOString(); // eslint-disable-line no-param-reassign
     params.toDate = loadTo.toISOString(); // eslint-disable-line no-param-reassign
 
@@ -103,7 +120,7 @@ export default class DataLoader {
     const initialRange = toDate.diff(fromDate, 'days');
     const maximumPaddding = (MAX_LOADED_RANGE - initialRange) / 2;
     const padding = Math.min(maximumPaddding, CONTENT_LOADING_PADDING);
-    const loadFrom = new CustomDate(fromDate).add(padding, 'days');
+    const loadFrom = new CustomDate(fromDate).add(-padding, 'days');
     const loadTo = new CustomDate(toDate).add(padding, 'days');
     return { loadFrom, loadTo };
   }
@@ -130,6 +147,17 @@ export default class DataLoader {
     this.cacheEndDate = toDate;
     this.cache.set(responseObj.subjects);
     return responseObj.subjects;
+  }
+
+  /**
+   * @private
+   * @method cacheCoversPeriod
+   * @param  {CustomDate} fromDate
+   * @param  {CustomDate} toDate
+   * @return {Boolean}
+   */
+  cacheCoversPeriod(fromDate, toDate) {
+    return !(fromDate.isBefore(this.cacheStartDate) || toDate.isAfter(this.cacheEndDate));;
   }
 }
 

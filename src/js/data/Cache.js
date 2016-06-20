@@ -50,4 +50,8 @@ export default class Cache {
     }
     return this.storage.slice(fromIndex, toIndex);
   }
+
+  getWithIds(ids) {
+    return this.storage.filter(s => ids.find(id => this.compare(s, id) === 0));
+  }
 }

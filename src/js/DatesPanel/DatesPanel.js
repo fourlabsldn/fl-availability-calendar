@@ -68,9 +68,8 @@ export default class DatesPanel extends ViewController {
    * @param  {CustomDate} date
    */
   async setStartDate(date) {
-    const newStartDate = new CustomDate(date).startOf('day');
-    this.dateBar.setStartDate(newStartDate);
-    await this.setRowsStartDate(newStartDate);
+    this.dateBar.setStartDate(date);
+    await this.setRowsStartDate(date);
   }
 
   /**
@@ -80,6 +79,7 @@ export default class DatesPanel extends ViewController {
    * @return {Promise}
    */
   async setRowsStartDate(date) {
+    console.log('setRowsStartDate');
     const dayCount = this.getDayCount();
     const fromDate = new CustomDate(date);
     const toDate = new CustomDate(date).add(dayCount - 1, 'days');
@@ -110,6 +110,7 @@ export default class DatesPanel extends ViewController {
    * @param  {String} position
    */
   async addSubjects(subjects, position) {
+    console.log('addSubjects');
     const fromDate = this.getStartDate();
     const toDate = this.getEndDate();
     const events = await this.moduleCoordinator.getSubjectsEvents(subjects, fromDate, toDate);

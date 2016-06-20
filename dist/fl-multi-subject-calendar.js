@@ -7916,18 +7916,15 @@ var DatesPanel = function (_ViewController) {
     key: 'setStartDate',
     value: function () {
       var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee(date) {
-        var newStartDate;
         return _regeneratorRuntime.wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
-                newStartDate = new CustomDate(date).startOf('day');
+                this.dateBar.setStartDate(date);
+                _context.next = 3;
+                return this.setRowsStartDate(date);
 
-                this.dateBar.setStartDate(newStartDate);
-                _context.next = 4;
-                return this.setRowsStartDate(newStartDate);
-
-              case 4:
+              case 3:
               case 'end':
                 return _context.stop();
             }
@@ -7959,21 +7956,22 @@ var DatesPanel = function (_ViewController) {
           while (1) {
             switch (_context2.prev = _context2.next) {
               case 0:
+                console.log('setRowsStartDate');
                 dayCount = this.getDayCount();
                 fromDate = new CustomDate(date);
                 toDate = new CustomDate(date).add(dayCount - 1, 'days');
                 subjects = this.subjectRows.map(function (r) {
                   return r.getSubject();
                 });
-                _context2.next = 6;
+                _context2.next = 7;
                 return this.moduleCoordinator.getSubjectsEvents(subjects, fromDate, toDate);
 
-              case 6:
+              case 7:
                 newEvents = _context2.sent;
                 _iteratorNormalCompletion = true;
                 _didIteratorError = false;
                 _iteratorError = undefined;
-                _context2.prev = 10;
+                _context2.prev = 11;
 
 
                 for (_iterator = this.subjectRows[Symbol.iterator](); !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
@@ -7982,45 +7980,45 @@ var DatesPanel = function (_ViewController) {
 
                   subjectRow.setEvents(newEvents[subject.id], fromDate, toDate);
                 }
-                _context2.next = 18;
+                _context2.next = 19;
                 break;
 
-              case 14:
-                _context2.prev = 14;
-                _context2.t0 = _context2['catch'](10);
+              case 15:
+                _context2.prev = 15;
+                _context2.t0 = _context2['catch'](11);
                 _didIteratorError = true;
                 _iteratorError = _context2.t0;
 
-              case 18:
-                _context2.prev = 18;
+              case 19:
                 _context2.prev = 19;
+                _context2.prev = 20;
 
                 if (!_iteratorNormalCompletion && _iterator.return) {
                   _iterator.return();
                 }
 
-              case 21:
-                _context2.prev = 21;
+              case 22:
+                _context2.prev = 22;
 
                 if (!_didIteratorError) {
-                  _context2.next = 24;
+                  _context2.next = 25;
                   break;
                 }
 
                 throw _iteratorError;
 
-              case 24:
-                return _context2.finish(21);
-
               case 25:
-                return _context2.finish(18);
+                return _context2.finish(22);
 
               case 26:
+                return _context2.finish(19);
+
+              case 27:
               case 'end':
                 return _context2.stop();
             }
           }
-        }, _callee2, this, [[10, 14, 18, 26], [19,, 21, 25]]);
+        }, _callee2, this, [[11, 15, 19, 27], [20,, 22, 26]]);
       }));
 
       function setRowsStartDate(_x2) {
@@ -8061,17 +8059,18 @@ var DatesPanel = function (_ViewController) {
           while (1) {
             switch (_context3.prev = _context3.next) {
               case 0:
+                console.log('addSubjects');
                 fromDate = this.getStartDate();
                 toDate = this.getEndDate();
-                _context3.next = 4;
+                _context3.next = 5;
                 return this.moduleCoordinator.getSubjectsEvents(subjects, fromDate, toDate);
 
-              case 4:
+              case 5:
                 events = _context3.sent;
                 _iteratorNormalCompletion2 = true;
                 _didIteratorError2 = false;
                 _iteratorError2 = undefined;
-                _context3.prev = 8;
+                _context3.prev = 9;
 
                 for (_iterator2 = subjects[Symbol.iterator](); !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
                   subject = _step2.value;
@@ -8080,45 +8079,45 @@ var DatesPanel = function (_ViewController) {
                   this.addRow(newRow, position);
                   newRow.setEvents(events[subject.id], fromDate, toDate);
                 }
-                _context3.next = 16;
+                _context3.next = 17;
                 break;
 
-              case 12:
-                _context3.prev = 12;
-                _context3.t0 = _context3['catch'](8);
+              case 13:
+                _context3.prev = 13;
+                _context3.t0 = _context3['catch'](9);
                 _didIteratorError2 = true;
                 _iteratorError2 = _context3.t0;
 
-              case 16:
-                _context3.prev = 16;
+              case 17:
                 _context3.prev = 17;
+                _context3.prev = 18;
 
                 if (!_iteratorNormalCompletion2 && _iterator2.return) {
                   _iterator2.return();
                 }
 
-              case 19:
-                _context3.prev = 19;
+              case 20:
+                _context3.prev = 20;
 
                 if (!_didIteratorError2) {
-                  _context3.next = 22;
+                  _context3.next = 23;
                   break;
                 }
 
                 throw _iteratorError2;
 
-              case 22:
-                return _context3.finish(19);
-
               case 23:
-                return _context3.finish(16);
+                return _context3.finish(20);
 
               case 24:
+                return _context3.finish(17);
+
+              case 25:
               case 'end':
                 return _context3.stop();
             }
           }
-        }, _callee3, this, [[8, 12, 16, 24], [17,, 19, 23]]);
+        }, _callee3, this, [[9, 13, 17, 25], [18,, 20, 24]]);
       }));
 
       function addSubjects(_x3, _x4) {
@@ -8172,7 +8171,7 @@ var Ajax = function () {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
-                console.log('LOADING FROM SERVER');
+                console.log('LOADING FROM SERVER', params);
                 requestUrl = this.addParametersToUrl(params, url);
                 requestConfig = {
                   method: 'GET',
@@ -8354,6 +8353,17 @@ var Cache = function () {
       }
       return this.storage.slice(fromIndex, toIndex);
     }
+  }, {
+    key: 'getWithIds',
+    value: function getWithIds(ids) {
+      var _this3 = this;
+
+      return this.storage.filter(function (s) {
+        return ids.find(function (id) {
+          return _this3.compare(s, id) === 0;
+        });
+      });
+    }
   }]);
 
   return Cache;
@@ -8366,8 +8376,11 @@ var DataLoader = function () {
   function DataLoader(loadUrl) {
     _classCallCheck(this, DataLoader);
 
+    // The comparison function accepts both ids and subjects
     this.cache = new Cache(function (a, b) {
-      return a.id - b.id;
+      var id1 = a.id || a;
+      var id2 = b.id || b;
+      return id1 - id2;
     });
     this.ajax = new Ajax(loadUrl);
     this.cacheStartDate = new CustomDate();
@@ -8389,30 +8402,52 @@ var DataLoader = function () {
     key: 'getSubjectsEvents',
     value: function () {
       var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee(subjects, fromDate, toDate) {
-        var ids, subjectsLoaded, subjectsEvents, _iteratorNormalCompletion, _didIteratorError, _iteratorError, _loop, _iterator, _step;
+        var ids, subjectsLoaded, loadedFromCache, subjectsEvents, _iteratorNormalCompletion, _didIteratorError, _iteratorError, _loop, _iterator, _step;
 
         return _regeneratorRuntime.wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
-                // FIXME: Manage getting from cache
+                if (!(subjects.length === 0)) {
+                  _context.next = 2;
+                  break;
+                }
+
+                return _context.abrupt('return', []);
+
+              case 2:
                 ids = subjects.map(function (s) {
                   return s.id;
                 });
-                _context.next = 3;
+                subjectsLoaded = void 0;
+                loadedFromCache = false;
+
+                if (this.cacheCoversPeriod(fromDate, toDate)) {
+                  subjectsLoaded = this.cache.getWithIds(ids);
+                  loadedFromCache = subjectsLoaded.length < subjects.length;
+                }
+
+                if (loadedFromCache) {
+                  _context.next = 10;
+                  break;
+                }
+
+                _context.next = 9;
                 return this.loadSubjects({
                   ids: ids,
                   fromDate: fromDate,
                   toDate: toDate
                 });
 
-              case 3:
+              case 9:
                 subjectsLoaded = _context.sent;
+
+              case 10:
                 subjectsEvents = {};
                 _iteratorNormalCompletion = true;
                 _didIteratorError = false;
                 _iteratorError = undefined;
-                _context.prev = 8;
+                _context.prev = 14;
 
                 _loop = function _loop() {
                   var subject = _step.value;
@@ -8427,48 +8462,48 @@ var DataLoader = function () {
                 for (_iterator = subjects[Symbol.iterator](); !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
                   _loop();
                 }
-                _context.next = 17;
+                _context.next = 23;
                 break;
 
-              case 13:
-                _context.prev = 13;
-                _context.t0 = _context['catch'](8);
+              case 19:
+                _context.prev = 19;
+                _context.t0 = _context['catch'](14);
                 _didIteratorError = true;
                 _iteratorError = _context.t0;
 
-              case 17:
-                _context.prev = 17;
-                _context.prev = 18;
+              case 23:
+                _context.prev = 23;
+                _context.prev = 24;
 
                 if (!_iteratorNormalCompletion && _iterator.return) {
                   _iterator.return();
                 }
 
-              case 20:
-                _context.prev = 20;
+              case 26:
+                _context.prev = 26;
 
                 if (!_didIteratorError) {
-                  _context.next = 23;
+                  _context.next = 29;
                   break;
                 }
 
                 throw _iteratorError;
 
-              case 23:
-                return _context.finish(20);
+              case 29:
+                return _context.finish(26);
 
-              case 24:
-                return _context.finish(17);
+              case 30:
+                return _context.finish(23);
 
-              case 25:
+              case 31:
                 return _context.abrupt('return', subjectsEvents);
 
-              case 26:
+              case 32:
               case 'end':
                 return _context.stop();
             }
           }
-        }, _callee, this, [[8, 13, 17, 25], [18,, 20, 24]]);
+        }, _callee, this, [[14, 19, 23, 31], [24,, 26, 30]]);
       }));
 
       function getSubjectsEvents(_x, _x2, _x3) {
@@ -8490,13 +8525,13 @@ var DataLoader = function () {
   }, {
     key: 'getSubjects',
     value: function () {
-      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee2(amount, position, referenceSubj) {
+      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee2(amount, position, referenceSubj, fromDate, toDate) {
         var cached, missingCount, cachedReferenceSubj, cachedReferenceSubjId;
         return _regeneratorRuntime.wrap(function _callee2$(_context2) {
           while (1) {
             switch (_context2.prev = _context2.next) {
               case 0:
-                cached = this.cache.get(amount, position, referenceSubj);
+                cached = this.cacheCoversPeriod(fromDate, toDate) ? this.cache.get(amount, position, referenceSubj) : [];
                 missingCount = amount - cached.length;
 
                 if (!(missingCount === 0)) {
@@ -8511,10 +8546,10 @@ var DataLoader = function () {
                 cachedReferenceSubjId = cachedReferenceSubj ? cachedReferenceSubj.id : null;
                 _context2.next = 8;
                 return this.loadSubjects({
+                  fromDate: fromDate,
+                  toDate: toDate,
                   referenceId: cachedReferenceSubjId,
                   recordCount: amount,
-                  fromDate: this.cacheStartDate,
-                  toDate: this.cacheEndDate,
                   beforeAfter: position === 'end' ? 'after' : 'before'
                 });
 
@@ -8529,7 +8564,7 @@ var DataLoader = function () {
         }, _callee2, this);
       }));
 
-      function getSubjects(_x4, _x5, _x6) {
+      function getSubjects(_x4, _x5, _x6, _x7, _x8) {
         return ref.apply(this, arguments);
       }
 
@@ -8559,6 +8594,7 @@ var DataLoader = function () {
                 loadFrom = _calculateLoadingDate.loadFrom;
                 loadTo = _calculateLoadingDate.loadTo;
 
+                console.log('Calculated from and to', loadFrom.toString(), loadTo.toString());
                 params.fromDate = loadFrom.toISOString(); // eslint-disable-line no-param-reassign
                 params.toDate = loadTo.toISOString(); // eslint-disable-line no-param-reassign
 
@@ -8567,15 +8603,15 @@ var DataLoader = function () {
                   params.recordCount += CONTENT_LOADING_PADDING; // eslint-disable-line no-param-reassign
                 }
 
-                _context3.next = 8;
+                _context3.next = 9;
                 return this.ajax.query(params);
 
-              case 8:
+              case 9:
                 response = _context3.sent;
                 subjects = this.processServerResponse(response);
                 return _context3.abrupt('return', subjects);
 
-              case 11:
+              case 12:
               case 'end':
                 return _context3.stop();
             }
@@ -8583,7 +8619,7 @@ var DataLoader = function () {
         }, _callee3, this);
       }));
 
-      function loadSubjects(_x7) {
+      function loadSubjects(_x9) {
         return ref.apply(this, arguments);
       }
 
@@ -8607,7 +8643,7 @@ var DataLoader = function () {
       var initialRange = toDate.diff(fromDate, 'days');
       var maximumPaddding = (MAX_LOADED_RANGE - initialRange) / 2;
       var padding = Math.min(maximumPaddding, CONTENT_LOADING_PADDING);
-      var loadFrom = new CustomDate(fromDate).add(padding, 'days');
+      var loadFrom = new CustomDate(fromDate).add(-padding, 'days');
       var loadTo = new CustomDate(toDate).add(padding, 'days');
       return { loadFrom: loadFrom, loadTo: loadTo };
     }
@@ -8637,6 +8673,20 @@ var DataLoader = function () {
       this.cacheEndDate = toDate;
       this.cache.set(responseObj.subjects);
       return responseObj.subjects;
+    }
+
+    /**
+     * @private
+     * @method cacheCoversPeriod
+     * @param  {CustomDate} fromDate
+     * @param  {CustomDate} toDate
+     * @return {Boolean}
+     */
+
+  }, {
+    key: 'cacheCoversPeriod',
+    value: function cacheCoversPeriod(fromDate, toDate) {
+      return !(fromDate.isBefore(this.cacheStartDate) || toDate.isAfter(this.cacheEndDate));;
     }
   }]);
 
@@ -8751,7 +8801,9 @@ var MODULE_PREFIX = 'fl-msc';
 var CUSTOM_DAYCOUNT = 80;
 
 var ModuleCoordinator = function () {
-  function ModuleCoordinator(xdiv, loadUrl, subjectsHeader, initialSubjectCount) {
+  function ModuleCoordinator(xdiv, loadUrl, subjectsHeader) {
+    var initialSubjectCount = arguments.length <= 3 || arguments[3] === undefined ? 100 : arguments[3];
+
     _classCallCheck(this, ModuleCoordinator);
 
     this.startDate = new CustomDate();
@@ -8782,8 +8834,7 @@ var ModuleCoordinator = function () {
     this.setDayCount(CUSTOM_DAYCOUNT);
 
     // add x subjects
-    // this.setSubjectCount(initialSubjectCount);
-    this.setSubjectCount(100);
+    this.setSubjectCount(initialSubjectCount);
   }
 
   /**
@@ -8798,6 +8849,17 @@ var ModuleCoordinator = function () {
     value: function getStartDate() {
       return new CustomDate(this.startDate);
     }
+    /**
+     * @public
+     * @method getEndDate
+     * @return {CustomDate}
+     */
+
+  }, {
+    key: 'getEndDate',
+    value: function getEndDate() {
+      return new CustomDate(this.startDate).add(this.getDayCount() - 1, 'days');
+    }
 
     /**
      * @public
@@ -8809,16 +8871,19 @@ var ModuleCoordinator = function () {
     key: 'setStartDate',
     value: function () {
       var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee(date) {
+        var newDate;
         return _regeneratorRuntime.wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
-                this.startDate = new CustomDate(date);
-                this.controlBar.setDatepickerDate(date);
-                _context.next = 4;
-                return this.datesPanel.setStartDate(date);
+                newDate = new CustomDate(date).startOf('day');
 
-              case 4:
+                this.startDate = new CustomDate(newDate);
+                this.controlBar.setDatepickerDate(newDate);
+                _context.next = 5;
+                return this.datesPanel.setStartDate(newDate);
+
+              case 5:
               case 'end':
                 return _context.stop();
             }
@@ -8826,7 +8891,7 @@ var ModuleCoordinator = function () {
         }, _callee, this);
       }));
 
-      function setStartDate(_x) {
+      function setStartDate(_x2) {
         return ref.apply(this, arguments);
       }
 
@@ -8871,7 +8936,7 @@ var ModuleCoordinator = function () {
         }, _callee2, this);
       }));
 
-      function setSubjectCount(_x2) {
+      function setSubjectCount(_x3) {
         return ref.apply(this, arguments);
       }
 
@@ -8904,6 +8969,19 @@ var ModuleCoordinator = function () {
 
     /**
      * @public
+     * @method getDayCount
+     * @param  {Int} count
+     * return {Int}
+     */
+
+  }, {
+    key: 'getDayCount',
+    value: function getDayCount() {
+      return this.datesPanel.getDayCount();
+    }
+
+    /**
+     * @public
      * @method addSubject
      * @param  {String} position 'beginning' or 'end'
      */
@@ -8912,22 +8990,24 @@ var ModuleCoordinator = function () {
     key: 'addSubjects',
     value: function () {
       var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee3(amount, position) {
-        var referenceSubj, newSubjects;
+        var fromDate, toDate, referenceSubj, newSubjects;
         return _regeneratorRuntime.wrap(function _callee3$(_context3) {
           while (1) {
             switch (_context3.prev = _context3.next) {
               case 0:
+                fromDate = this.getStartDate();
+                toDate = this.getEndDate();
                 referenceSubj = this.datesPanel.getSubjectAt(position);
-                _context3.next = 3;
-                return this.dataLoader.getSubjects(amount, position, referenceSubj);
+                _context3.next = 5;
+                return this.dataLoader.getSubjects(amount, position, referenceSubj, fromDate, toDate);
 
-              case 3:
+              case 5:
                 newSubjects = _context3.sent;
 
                 this.datesPanel.addSubjects(newSubjects, position);
                 this.labelsBar.addSubjects(newSubjects, position);
 
-              case 6:
+              case 8:
               case 'end':
                 return _context3.stop();
             }
@@ -8935,7 +9015,7 @@ var ModuleCoordinator = function () {
         }, _callee3, this);
       }));
 
-      function addSubjects(_x3, _x4) {
+      function addSubjects(_x4, _x5) {
         return ref.apply(this, arguments);
       }
 
@@ -8974,7 +9054,7 @@ var ModuleCoordinator = function () {
         }, _callee4, this);
       }));
 
-      function getSubjectsEvents(_x5, _x6, _x7) {
+      function getSubjectsEvents(_x6, _x7, _x8) {
         return ref.apply(this, arguments);
       }
 
