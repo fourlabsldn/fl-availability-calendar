@@ -7903,7 +7903,7 @@ var DatesPanel = function (_ViewController) {
     key: 'setDayCount',
     value: function setDayCount(count) {
       this.dateBar.setDayCount(count);
-      console.warn('setDayCount not fully implemented yet.');
+      this.setRowsStartDate(this.getStartDate());
     }
 
     /**

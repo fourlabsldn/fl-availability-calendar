@@ -59,7 +59,7 @@ export default class DatesPanel extends ViewController {
    */
   setDayCount(count) {
     this.dateBar.setDayCount(count);
-    console.warn('setDayCount not fully implemented yet.');
+    this.setRowsStartDate(this.getStartDate());
   }
 
   /**
