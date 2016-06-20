@@ -1,6 +1,7 @@
 import DateBar from './DateBar';
 import SubjectRow from './SubjectRow';
 import ViewController from '../ViewController';
+import CustomDate from '../utils/CustomDate';
 
 const CLASS_PREFIX = 'DatesPanel';
 export default class DatesPanel extends ViewController {
@@ -66,11 +67,30 @@ export default class DatesPanel extends ViewController {
    * @method setStartDate
    * @param  {CustomDate} date
    */
-  setStartDate(date) {
-    this.dateBar.setStartDate(date);
-    console.warn('setStartDate not fully implemented yet.');
+  async setStartDate(date) {
+    const newStartDate = new CustomDate(date).startOf('day');
+    this.dateBar.setStartDate(newStartDate);
+    await this.setRowsStartDate(newStartDate);
   }
 
+  /**
+   * Makes all subjectRows' start date be the current DatesPanel start Date.
+   * @private
+   * @method setRowsStartDate
+   * @return {Promise}
+   */
+  async setRowsStartDate(date) {
+    const dayCount = this.getDayCount();
+    const fromDate = new CustomDate(date);
+    const toDate = new CustomDate(date).add(dayCount - 1, 'days');
+    const subjects = this.subjectRows.map(r => r.getSubject());
+    const newEvents = await this.moduleCoordinator.getSubjectsEvents(subjects, fromDate, toDate);
+
+    for (const subjectRow of this.subjectRows) {
+      const subject = subjectRow.getSubject();
+      subjectRow.setEvents(newEvents[subject.id], fromDate, toDate);
+    }
+  }
   /**
    * @public
    * @method getSubjectAt

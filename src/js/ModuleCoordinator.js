@@ -57,10 +57,10 @@ export default class ModuleCoordinator {
    * @method setStartDate
    * @param  {CustomDate} date
    */
-  setStartDate(date) {
+  async setStartDate(date) {
     this.startDate = new CustomDate(date);
-    this.datesPanel.setStartDate(date);
     this.controlBar.setDatepickerDate(date);
+    await this.datesPanel.setStartDate(date);
   }
 
   /**
