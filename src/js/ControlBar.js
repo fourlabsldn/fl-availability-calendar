@@ -86,7 +86,6 @@ export default class ControlBar extends ViewController {
    * @return {void}
    */
   scroll(direction) {
-    console.log(`Scrolling ${direction}`);
     const monthsToScroll = direction === 'right' ? 1 : -1;
     const currStartDate = this.moduleCoordinator.getStartDate();
     const newStartDate = new CustomDate(currStartDate).add(monthsToScroll, 'month');

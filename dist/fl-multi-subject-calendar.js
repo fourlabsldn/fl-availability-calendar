@@ -7396,7 +7396,6 @@ var ControlBar = function (_ViewController) {
   }, {
     key: 'scroll',
     value: function scroll(direction) {
-      console.log('Scrolling ' + direction);
       var monthsToScroll = direction === 'right' ? 1 : -1;
       var currStartDate = this.moduleCoordinator.getStartDate();
       var newStartDate = new CustomDate(currStartDate).add(monthsToScroll, 'month');
@@ -7697,13 +7696,9 @@ var Day = function (_ViewController) {
   _createClass(Day, [{
     key: 'destroy',
     value: function destroy() {
-      var _this2 = this;
-
       this.destroyed = true;
-      requestAnimationFrame(function () {
-        _this2.html.container.remove();
-        _this2.html = null;
-      });
+      this.html.container.remove();
+      this.html = null;
     }
   }, {
     key: 'checkIfdestroyed',
@@ -7956,22 +7951,21 @@ var DatesPanel = function (_ViewController) {
           while (1) {
             switch (_context2.prev = _context2.next) {
               case 0:
-                console.log('setRowsStartDate');
                 dayCount = this.getDayCount();
                 fromDate = new CustomDate(date);
                 toDate = new CustomDate(date).add(dayCount - 1, 'days');
                 subjects = this.subjectRows.map(function (r) {
                   return r.getSubject();
                 });
-                _context2.next = 7;
+                _context2.next = 6;
                 return this.moduleCoordinator.getSubjectsEvents(subjects, fromDate, toDate);
 
-              case 7:
+              case 6:
                 newEvents = _context2.sent;
                 _iteratorNormalCompletion = true;
                 _didIteratorError = false;
                 _iteratorError = undefined;
-                _context2.prev = 11;
+                _context2.prev = 10;
 
 
                 for (_iterator = this.subjectRows[Symbol.iterator](); !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
@@ -7980,45 +7974,45 @@ var DatesPanel = function (_ViewController) {
 
                   subjectRow.setEvents(newEvents[subject.id], fromDate, toDate);
                 }
-                _context2.next = 19;
+                _context2.next = 18;
                 break;
 
-              case 15:
-                _context2.prev = 15;
-                _context2.t0 = _context2['catch'](11);
+              case 14:
+                _context2.prev = 14;
+                _context2.t0 = _context2['catch'](10);
                 _didIteratorError = true;
                 _iteratorError = _context2.t0;
 
-              case 19:
+              case 18:
+                _context2.prev = 18;
                 _context2.prev = 19;
-                _context2.prev = 20;
 
                 if (!_iteratorNormalCompletion && _iterator.return) {
                   _iterator.return();
                 }
 
-              case 22:
-                _context2.prev = 22;
+              case 21:
+                _context2.prev = 21;
 
                 if (!_didIteratorError) {
-                  _context2.next = 25;
+                  _context2.next = 24;
                   break;
                 }
 
                 throw _iteratorError;
 
+              case 24:
+                return _context2.finish(21);
+
               case 25:
-                return _context2.finish(22);
+                return _context2.finish(18);
 
               case 26:
-                return _context2.finish(19);
-
-              case 27:
               case 'end':
                 return _context2.stop();
             }
           }
-        }, _callee2, this, [[11, 15, 19, 27], [20,, 22, 26]]);
+        }, _callee2, this, [[10, 14, 18, 26], [19,, 21, 25]]);
       }));
 
       function setRowsStartDate(_x2) {
@@ -8059,18 +8053,17 @@ var DatesPanel = function (_ViewController) {
           while (1) {
             switch (_context3.prev = _context3.next) {
               case 0:
-                console.log('addSubjects');
                 fromDate = this.getStartDate();
                 toDate = this.getEndDate();
-                _context3.next = 5;
+                _context3.next = 4;
                 return this.moduleCoordinator.getSubjectsEvents(subjects, fromDate, toDate);
 
-              case 5:
+              case 4:
                 events = _context3.sent;
                 _iteratorNormalCompletion2 = true;
                 _didIteratorError2 = false;
                 _iteratorError2 = undefined;
-                _context3.prev = 9;
+                _context3.prev = 8;
 
                 for (_iterator2 = subjects[Symbol.iterator](); !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
                   subject = _step2.value;
@@ -8079,45 +8072,45 @@ var DatesPanel = function (_ViewController) {
                   this.addRow(newRow, position);
                   newRow.setEvents(events[subject.id], fromDate, toDate);
                 }
-                _context3.next = 17;
+                _context3.next = 16;
                 break;
 
-              case 13:
-                _context3.prev = 13;
-                _context3.t0 = _context3['catch'](9);
+              case 12:
+                _context3.prev = 12;
+                _context3.t0 = _context3['catch'](8);
                 _didIteratorError2 = true;
                 _iteratorError2 = _context3.t0;
 
-              case 17:
+              case 16:
+                _context3.prev = 16;
                 _context3.prev = 17;
-                _context3.prev = 18;
 
                 if (!_iteratorNormalCompletion2 && _iterator2.return) {
                   _iterator2.return();
                 }
 
-              case 20:
-                _context3.prev = 20;
+              case 19:
+                _context3.prev = 19;
 
                 if (!_didIteratorError2) {
-                  _context3.next = 23;
+                  _context3.next = 22;
                   break;
                 }
 
                 throw _iteratorError2;
 
+              case 22:
+                return _context3.finish(19);
+
               case 23:
-                return _context3.finish(20);
+                return _context3.finish(16);
 
               case 24:
-                return _context3.finish(17);
-
-              case 25:
               case 'end':
                 return _context3.stop();
             }
           }
-        }, _callee3, this, [[9, 13, 17, 25], [18,, 20, 24]]);
+        }, _callee3, this, [[8, 12, 16, 24], [17,, 19, 23]]);
       }));
 
       function addSubjects(_x3, _x4) {
@@ -8369,7 +8362,7 @@ var Cache = function () {
   return Cache;
 }();
 
-var CONTENT_LOADING_PADDING = 40;
+var CONTENT_LOADING_PADDING = 100;
 var MAX_LOADED_RANGE = 120; // in days
 
 var DataLoader = function () {
@@ -8594,7 +8587,6 @@ var DataLoader = function () {
                 loadFrom = _calculateLoadingDate.loadFrom;
                 loadTo = _calculateLoadingDate.loadTo;
 
-                console.log('Calculated from and to', loadFrom.toString(), loadTo.toString());
                 params.fromDate = loadFrom.toISOString(); // eslint-disable-line no-param-reassign
                 params.toDate = loadTo.toISOString(); // eslint-disable-line no-param-reassign
 
@@ -8603,15 +8595,15 @@ var DataLoader = function () {
                   params.recordCount += CONTENT_LOADING_PADDING; // eslint-disable-line no-param-reassign
                 }
 
-                _context3.next = 9;
+                _context3.next = 8;
                 return this.ajax.query(params);
 
-              case 9:
+              case 8:
                 response = _context3.sent;
                 subjects = this.processServerResponse(response);
                 return _context3.abrupt('return', subjects);
 
-              case 12:
+              case 11:
               case 'end':
                 return _context3.stop();
             }
@@ -8877,11 +8869,12 @@ var ModuleCoordinator = function () {
             switch (_context.prev = _context.next) {
               case 0:
                 newDate = new CustomDate(date).startOf('day');
+                _context.next = 3;
+                return this.datesPanel.setStartDate(newDate);
 
+              case 3:
                 this.startDate = new CustomDate(newDate);
                 this.controlBar.setDatepickerDate(newDate);
-                _context.next = 5;
-                return this.datesPanel.setStartDate(newDate);
 
               case 5:
               case 'end':

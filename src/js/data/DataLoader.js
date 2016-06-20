@@ -3,7 +3,7 @@ import Cache from './Cache';
 import assert from 'fl-assert';
 import CustomDate from '../utils/CustomDate';
 
-const CONTENT_LOADING_PADDING = 40;
+const CONTENT_LOADING_PADDING = 100;
 const MAX_LOADED_RANGE = 120; // in days
 
 export default class DataLoader {
@@ -92,7 +92,6 @@ export default class DataLoader {
   async loadSubjects(params) {
     // Prepare dates
     const { loadFrom, loadTo } = this.calculateLoadingDate(params.fromDate, params.toDate);
-    console.log('Calculated from and to', loadFrom.toString(), loadTo.toString());
     params.fromDate = loadFrom.toISOString(); // eslint-disable-line no-param-reassign
     params.toDate = loadTo.toISOString(); // eslint-disable-line no-param-reassign
 

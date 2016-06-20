@@ -66,9 +66,9 @@ export default class ModuleCoordinator {
    */
   async setStartDate(date) {
     const newDate = new CustomDate(date).startOf('day');
+    await this.datesPanel.setStartDate(newDate);
     this.startDate = new CustomDate(newDate);
     this.controlBar.setDatepickerDate(newDate);
-    await this.datesPanel.setStartDate(newDate);
   }
 
   /**
