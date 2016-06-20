@@ -14,6 +14,8 @@ export default class CalendarContainer extends ViewController {
     this.html[name] = instance.html.container;
     if (name === 'labelsBar') {
       setSticky('left', this.html[name], this.html.panelWrapper);
+      const header = instance.getHeader();
+      setSticky('top', header, this.html.panelWrapper);
     } else if (name === 'datesPanel') {
       const dateBar = instance.getDateBar();
       const dateBarContainer = dateBar.getContainer();

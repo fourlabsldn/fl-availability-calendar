@@ -7178,7 +7178,21 @@ var LabelsBar = function (_ViewController) {
       this.html.container.appendChild(this.html.header);
 
       this.html.labelsContainer = document.createElement('div');
+      this.html.labelsContainer.classList.add(this.cssPrefix + '-labelsContainer');
       this.html.container.appendChild(this.html.labelsContainer);
+    }
+
+    /** 
+     * Used by CalendarContainer
+     * @public
+     * @method getHeader
+     * @return {HTMLElement}
+     */
+
+  }, {
+    key: 'getHeader',
+    value: function getHeader() {
+      return this.html.header;
     }
 
     /**
@@ -7237,6 +7251,7 @@ var LabelsBar = function (_ViewController) {
       el.classList.add(this.cssPrefix + '-label');
       el.classList.add(this.createLabelIdentifier(subject));
       el.textContent = subject.name;
+      el.title = subject.name;
       return el;
     }
 
@@ -7880,6 +7895,14 @@ var DatesPanel = function (_ViewController) {
     value: function getEndDate() {
       return this.dateBar.getEndDate();
     }
+
+    /**
+     * Used by CalendarContainer
+     * @public
+     * @method getDateBar
+     * @return {ViewController}
+     */
+
   }, {
     key: 'getDateBar',
     value: function getDateBar() {
@@ -8527,36 +8550,58 @@ var DataLoader = function () {
 }();
 
 var acceptableSides = ['left', 'top'];
+var containers = new Map();
+var updatedContainers = new Map();
 
 function setSticky(side, element, container) {
   assert(acceptableSides.includes(side), 'Invalid value for side: ' + side);
   assert(container && typeof container.addEventListener === 'function', 'Element does not have a parent.');
 
-  console.log('Element:', element);
-  console.log('Container:', container);
-  var moved = true;
-  var moveFunction = function moveFunction() {
-    console.log('moving: ' + side);
-    if (moved) {
-      return;
-    }
-    moved = true;
+  if (!containers.has(container)) {
+    trackContainer(container);
+  }
+
+  var upToDate = true;
+  function moveFunction() {
+    upToDate = true;
+    var containerInfo = containers.get(container);
     if (side === 'left') {
-      element.style.left = container.scrollLeft + 'px';
+      element.style.left = containerInfo.scrollLeft + 'px';
     } else {
-      element.style.top = container.scrollTop + 'px';
+      element.style.top = containerInfo.scrollTop + 'px';
     }
-  };
+  }
 
   container.addEventListener('scroll', function () {
     // If not moved is because scroll has been called and the animation frame
     // function was not triggered yet
-    if (!moved) {
+    if (!upToDate) {
       return;
     }
-    moved = false;
+    upToDate = false;
     requestAnimationFrame(moveFunction);
   });
+}
+
+function trackContainer(container) {
+  updatedContainers.set(container, true);
+  container.addEventListener('scroll', function prepareContainerValueUpdate() {
+    if (updatedContainers.get(container) === false) {
+      return;
+    }
+    updatedContainers.set(container, false);
+    requestAnimationFrame(function () {
+      return updateContainerCoordinates(container);
+    });
+  });
+}
+
+function updateContainerCoordinates(el) {
+  containers.set(el, {
+    scrollTop: el.scrollTop,
+    scrollLeft: el.scrollLeft
+  });
+  updatedContainers.set(el, true);
 }
 
 var CalendarContainer = function (_ViewController) {
@@ -8579,6 +8624,8 @@ var CalendarContainer = function (_ViewController) {
       this.html[name] = instance.html.container;
       if (name === 'labelsBar') {
         setSticky('left', this.html[name], this.html.panelWrapper);
+        var header = instance.getHeader();
+        setSticky('top', header, this.html.panelWrapper);
       } else if (name === 'datesPanel') {
         var dateBar = instance.getDateBar();
         var dateBarContainer = dateBar.getContainer();

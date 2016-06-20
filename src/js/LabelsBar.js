@@ -14,7 +14,18 @@ export default class LabelsBar extends ViewController {
     this.html.container.appendChild(this.html.header);
 
     this.html.labelsContainer = document.createElement('div');
+    this.html.labelsContainer.classList.add(`${this.cssPrefix}-labelsContainer`);
     this.html.container.appendChild(this.html.labelsContainer);
+  }
+
+  /** 
+   * Used by CalendarContainer
+   * @public
+   * @method getHeader
+   * @return {HTMLElement}
+   */
+  getHeader() {
+    return this.html.header;
   }
 
   /**
@@ -46,6 +57,7 @@ export default class LabelsBar extends ViewController {
     el.classList.add(`${this.cssPrefix}-label`);
     el.classList.add(this.createLabelIdentifier(subject));
     el.textContent = subject.name;
+    el.title = subject.name;
     return el;
   }
 

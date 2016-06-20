@@ -40,6 +40,13 @@ export default class DatesPanel extends ViewController {
     return this.dateBar.getEndDate();
   }
 
+
+  /**
+   * Used by CalendarContainer
+   * @public
+   * @method getDateBar
+   * @return {ViewController}
+   */
   getDateBar() {
     return this.dateBar;
   }

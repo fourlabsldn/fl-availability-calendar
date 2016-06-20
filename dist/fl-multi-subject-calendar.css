@@ -57,32 +57,28 @@
     -webkit-filter: brightness(115%);
             filter: brightness(115%); }
 
-.fl-msc-LabelsBar {
-  -webkit-box-sizing: inherit;
-          box-sizing: inherit;
-  border-style: solid;
-  border-width: 0 2px 0 0;
-  border-color: transparent;
-  -webkit-box-flex: 0;
-  -webkit-flex: 0 0 17em;
-      -ms-flex: 0 0 17em;
-          flex: 0 0 17em;
-  display: -webkit-inline-box;
-  display: -webkit-inline-flex;
-  display: -ms-inline-flexbox;
-  display: inline-flex;
-  -webkit-flex-flow: column nowrap;
-      -ms-flex-flow: column nowrap;
-          flex-flow: column nowrap;
-  position: relative;
-  background-color: inherit;
-  width: 16em; }
-
-.fl-msc-LabelsBar-header {
+.fl-msc-LabelsBar,
+.fl-msc-LabelsBar-header,
+.fl-msc-LabelsBar-labelsContainer,
+.fl-msc-LabelsBar-label {
   -webkit-box-sizing: border-box;
           box-sizing: border-box;
+  background-color: inherit; }
+
+.fl-msc-LabelsBar {
+  border-style: solid;
+  border-width: 0 2px 0 0;
+  border-color: #f9f9f9;
+  display: block;
+  position: relative;
+  background-color: inherit;
+  width: 18em;
+  z-index: 1; }
+
+.fl-msc-LabelsBar-header {
   height: 3em;
   width: 100%;
+  position: relative;
   border-width: 2px 0 0;
   border-color: #f9f9f9;
   border-style: solid;
@@ -96,7 +92,8 @@
   line-height: 1.5em;
   white-space: nowrap;
   overflow: hidden;
-  text-overflow: ellipsis; }
+  text-overflow: ellipsis;
+  padding: 0 .5em; }
 
 .fl-msc-DatesPanel {
   background-color: inherit; }
