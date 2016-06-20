@@ -95,7 +95,7 @@
   margin: auto;
   width: 100%; }
 
-.fl-msc-LegendsBar {
+.fl-msc-LabelsBar {
   -webkit-box-sizing: inherit;
           box-sizing: inherit;
   border-style: solid;
@@ -108,9 +108,12 @@
   display: -webkit-inline-box;
   display: -webkit-inline-flex;
   display: -ms-inline-flexbox;
-  display: inline-flex; }
+  display: inline-flex;
+  -webkit-flex-flow: column nowrap;
+      -ms-flex-flow: column nowrap;
+          flex-flow: column nowrap; }
 
-.fl-msc-LegendsBar-header {
+.fl-msc-LabelsBar-header {
   width: 100%;
   background-color: #e0e0e0;
   color: #303030;
