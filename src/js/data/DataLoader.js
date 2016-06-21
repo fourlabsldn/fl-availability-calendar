@@ -14,22 +14,19 @@ export default class DataLoader {
    * @param  {Array<Object>} ids
    * @param  {CustomDate} fromDate
    * @param  {CustomDate} toDate
-   * @return {Object<Array<Object>>} - Each key is a subjectId and
-   * each value an array of event objects
+   * @return {<Array<Object>>}
    */
   async getSubjectsEvents(subjects, fromDate, toDate) {
     if (subjects.length === 0) { return []; }
     const params = { ids: subjects.map(s => s.id), fromDate, toDate };
     const subjectsLoaded = await this.load(params, this.ajaxNewSubjectsEvents);
 
-    const subjectsEvents = {};
-    subjectsLoaded.forEach(s => { subjectsEvents[s.id] = s; });
-
     // check that all subjects were loaded
     subjects.forEach(
-      s => assert(subjectsEvents[s.id], `Events for subject of id "${s.id}" not loaded.`)
+      s => assert(subjectsLoaded.find(l => l.id === s.id),
+          `Events for subject of id "${s.id}" not loaded.`)
     );
-    return subjectsEvents;
+    return subjectsLoaded;
   }
 
   /**

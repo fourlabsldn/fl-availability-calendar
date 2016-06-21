@@ -79,6 +79,7 @@ export default class DatesPanel extends ViewController {
     this.dateBar.setDayCount(toDate.diff(fromDate, 'days'));
 
     this.clearRows();
+    if (!subjects) { return; }
     for (const subject of subjects) {
       this.addRow(subject, fromDate, toDate, 'end');
     }

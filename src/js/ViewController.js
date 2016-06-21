@@ -21,4 +21,16 @@ export default class ViewController {
   getContainer() {
     return this.html.container;
   }
+
+  /**
+   * @public
+   * @method destroy
+   * @return {void}
+   */
+  destroy() {
+    this.html.container.remove();
+    this.html = {};
+    const thisKeys = Object.keys(this);
+    thisKeys.forEach(k => { this[k] = null; });
+  }
 }

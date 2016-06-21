@@ -37,7 +37,7 @@ export default class ModuleCoordinator {
     // set start date and dayCount
     this.setDateRange(
       this.startDate,
-      new CustomDate(this.startDate).add(CUSTOM_DAYCOUNT, 'days')
+      new CustomDate(this.endDate).add(CUSTOM_DAYCOUNT, 'days')
     )
     .then(() => this.setSubjectCount(initialSubjectCount));
   }
@@ -69,7 +69,25 @@ export default class ModuleCoordinator {
   }
 
   /**
-   * @public
+   * @private
+   * @method getDayCount
+   * @return {Int}
+   */
+  getDayCount() {
+    this.endDate.diff(this.startDate, 'days');
+  }
+
+  /**
+   * @method setStartDate
+   * @param  {CustomDate} date
+   */
+  async setStartDate(date) {
+    const newEndDate = new CustomDate(date).add(this.getDayCount(), 'days');
+    return await this.setDateRange(date, newEndDate);
+  }
+
+  /**
+   * @private
    * @method setStartDate
    * @param  {CustomDate} fromDate
    * @param  {CustomDate} toDate
