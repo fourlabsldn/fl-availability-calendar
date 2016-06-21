@@ -33,6 +33,8 @@ export default class ModuleCoordinator {
     Object.preventExtensions(this);
     xdiv.appendChild(this.calendarContainer.html.container);
 
+    this.calendarContainer.on('scrollEndBottom', () => console.log('Bottom!'));
+    this.calendarContainer.on('scrollEndTop', () => console.log('Top!'));
     // set start date and dayCount
     this.setDateRange(
       this.startDate,

@@ -66,6 +66,7 @@ export default class ViewController {
    * @param  {String} event
    */
   trigger(event) {
+    if (!this.listeners[event]) { return; }
     this.listeners[event].forEach(fn => fn(this));
   }
 

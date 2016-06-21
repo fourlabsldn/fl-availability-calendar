@@ -7239,6 +7239,9 @@ var ViewController = function () {
     value: function trigger(event) {
       var _this = this;
 
+      if (!this.listeners[event]) {
+        return;
+      }
       this.listeners[event].forEach(function (fn) {
         return fn(_this);
       });
@@ -8446,6 +8449,26 @@ function updateContainerCoordinates(el) {
   updatedContainers.set(el, true);
 }
 
+// Returns a function, that, as long as it continues to be invoked, will not
+// be triggered. The function will be called after it stops being called for
+// N milliseconds. If `immediate` is passed, trigger the function on the
+// leading edge, instead of the trailing.
+function debounce(wait, func, immediate) {
+	var timeout;
+	return function () {
+		var context = this,
+		    args = arguments;
+		var later = function later() {
+			timeout = null;
+			if (!immediate) func.apply(context, args);
+		};
+		var callNow = immediate && !timeout;
+		clearTimeout(timeout);
+		timeout = setTimeout(later, wait);
+		if (callNow) func.apply(context, args);
+	};
+}
+
 var CalendarContainer = function (_ViewController) {
   _inherits(CalendarContainer, _ViewController);
 
@@ -8455,6 +8478,8 @@ var CalendarContainer = function (_ViewController) {
     var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(CalendarContainer).call(this, modulePrefix));
 
     Object.preventExtensions(_this);
+
+    _this.acceptEvents('scrollEndBottom', 'scrollEndTop');
     return _this;
   }
 
@@ -8477,11 +8502,25 @@ var CalendarContainer = function (_ViewController) {
   }, {
     key: 'buildHtml',
     value: function buildHtml() {
+      var _this2 = this;
+
       this.html.controlBar = document.createElement('div');
       this.html.container.appendChild(this.html.controlBar);
 
       this.html.panelWrapper = document.createElement('div');
       this.html.panelWrapper.classList.add(this.cssPrefix + '-panelWrapper');
+
+      var scrollCheck = debounce(250, function () {
+        var panel = _this2.html.panelWrapper;
+        var scrolledToTheEnd = panel.clientHeight + panel.scrollTop === panel.scrollHeight;
+        var scrolletToTheTop = panel.scrollTop === 0;
+        if (scrolledToTheEnd) {
+          _this2.trigger('scrollEndBottom');
+        } else if (scrolletToTheTop) {
+          _this2.trigger('scrollEndTop');
+        }
+      });
+      this.html.panelWrapper.addEventListener('scroll', scrollCheck);
       this.html.container.appendChild(this.html.panelWrapper);
 
       this.html.labelsBar = document.createElement('div');
@@ -8526,6 +8565,12 @@ var ModuleCoordinator = function () {
     Object.preventExtensions(this);
     xdiv.appendChild(this.calendarContainer.html.container);
 
+    this.calendarContainer.on('scrollEndBottom', function () {
+      return console.log('Bottom!');
+    });
+    this.calendarContainer.on('scrollEndTop', function () {
+      return console.log('Top!');
+    });
     // set start date and dayCount
     this.setDateRange(this.startDate, new CustomDate(this.endDate).add(CUSTOM_DAYCOUNT, 'days')).then(function () {
       return _this.setSubjectCount(initialSubjectCount);

@@ -1,11 +1,14 @@
 import ViewController from './ViewController';
 import setSticky from './utils/setSticky';
+import debounce from './utils/debounce';
 import assert from 'fl-assert';
 
 export default class CalendarContainer extends ViewController {
   constructor(modulePrefix) {
     super(modulePrefix);
     Object.preventExtensions(this);
+
+    this.acceptEvents('scrollEndBottom', 'scrollEndTop');
   }
 
   set(name, instance) {
@@ -29,6 +32,18 @@ export default class CalendarContainer extends ViewController {
 
     this.html.panelWrapper = document.createElement('div');
     this.html.panelWrapper.classList.add(`${this.cssPrefix}-panelWrapper`);
+
+    const scrollCheck = debounce(250, () => {
+      const panel = this.html.panelWrapper;
+      const scrolledToTheEnd = panel.clientHeight + panel.scrollTop === panel.scrollHeight;
+      const scrolletToTheTop = panel.scrollTop === 0;
+      if (scrolledToTheEnd) {
+        this.trigger('scrollEndBottom');
+      } else if (scrolletToTheTop) {
+        this.trigger('scrollEndTop');
+      }
+    });
+    this.html.panelWrapper.addEventListener('scroll', scrollCheck);
     this.html.container.appendChild(this.html.panelWrapper);
 
     this.html.labelsBar = document.createElement('div');
