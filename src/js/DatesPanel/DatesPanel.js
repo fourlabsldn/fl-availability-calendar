@@ -109,10 +109,10 @@ export default class DatesPanel extends ViewController {
     const subjectsContainer = this.html.subjectsContainer;
     let referenceNodeIndex;
     if (position === 'end') {
-      this.subjectRows = [newRow].concat(this.subjectRows);
+      this.subjectRows = this.subjectRows.concat([newRow]);
       referenceNodeIndex = -1;
     } else {
-      this.subjectRows = this.subjectRows.concat([newRow]);
+      this.subjectRows = [newRow].concat(this.subjectRows);
       referenceNodeIndex = 0;
     }
     subjectsContainer.insertBefore(

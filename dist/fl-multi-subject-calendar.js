@@ -7319,10 +7319,7 @@ var LabelsBar = function (_ViewController) {
   }, {
     key: 'setSubjects',
     value: function setSubjects(subjects) {
-      var labels = Array.of(this.html.labelsContainer.children);
-      labels.forEach(function (l) {
-        return l.remove();
-      });
+      this.removeSubjects(this.html.labelsContainer.children.length, 'end');
       this.addSubjects(subjects, 'end');
     }
     /**
@@ -7397,12 +7394,32 @@ var LabelsBar = function (_ViewController) {
     value: function createLabelIdentifier(subject) {
       return this.cssPrefix + '-label-' + subject.id;
     }
+
+    /**
+     * @public
+     * @method removeSubjects
+     * @param  {Int} rawAmount
+     * @param  {String} position
+     * @return {void}
+     */
+
   }, {
     key: 'removeSubjects',
-    value: function removeSubjects(amount) {
+    value: function removeSubjects(rawAmount) {
       var position = arguments.length <= 1 || arguments[1] === undefined ? 'end' : arguments[1];
 
-      assert(typeof amount === 'number', 'Invalid amount type: ' + amount);
+      assert(typeof rawAmount === 'number', 'Invalid amount type: ' + amount);
+      var labels = Array.from(this.html.labelsContainer.children);
+      var amount = Math.min(rawAmount, labels.length);
+      var removeFromEnd = position === 'end';
+
+      var removeFrom = removeFromEnd ? amount : 0;
+      var removeTo = removeFromEnd ? labels.length : amount;
+      var labelsToRemove = labels.slice(removeFrom, removeTo);
+      console.log(labelsToRemove);
+      labelsToRemove.forEach(function (r) {
+        return r.remove();
+      });
     }
   }]);
 
@@ -8047,10 +8064,10 @@ var DatesPanel = function (_ViewController) {
       var subjectsContainer = this.html.subjectsContainer;
       var referenceNodeIndex = void 0;
       if (position === 'end') {
-        this.subjectRows = [newRow].concat(this.subjectRows);
+        this.subjectRows = this.subjectRows.concat([newRow]);
         referenceNodeIndex = -1;
       } else {
-        this.subjectRows = this.subjectRows.concat([newRow]);
+        this.subjectRows = [newRow].concat(this.subjectRows);
         referenceNodeIndex = 0;
       }
       subjectsContainer.insertBefore(newRow.getContainer(), subjectsContainer.children[referenceNodeIndex]);
@@ -8559,7 +8576,8 @@ var ModuleCoordinator = function () {
     xdiv.appendChild(this.calendarContainer.html.container);
 
     this.calendarContainer.on('scrollEndBottom', function () {
-      return console.log('Bottom!');
+      _this.addSubjects(10, 'end');
+      _this.removeSubjects(10, 'beginning');
     });
     this.calendarContainer.on('scrollEndTop', function () {
       return console.log('Top!');
@@ -8799,10 +8817,21 @@ var ModuleCoordinator = function () {
 
       return addSubjects;
     }()
+
+    /**
+     * @private
+     * @method removeSubjects
+     * @param  {Int} amount
+     * @param  {String} position
+     * @return {void}
+     */
+
   }, {
     key: 'removeSubjects',
     value: function removeSubjects(amount, position) {
-      console.warn('Not implemented yet');
+      console.log('Removing', amount, 'subjects');
+      this.datesPanel.removeSubjects(amount, position);
+      this.labelsBar.removeSubjects(amount, position);
     }
   }]);
 

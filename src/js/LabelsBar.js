@@ -82,15 +82,23 @@ export default class LabelsBar extends ViewController {
     return `${this.cssPrefix}-label-${subject.id}`;
   }
 
+  /**
+   * @public
+   * @method removeSubjects
+   * @param  {Int} rawAmount
+   * @param  {String} position
+   * @return {void}
+   */
   removeSubjects(rawAmount, position = 'end') {
     assert(typeof rawAmount === 'number', `Invalid amount type: ${amount}`);
-    const labels = Array.of(this.html.labelsContainer.children);
+    const labels = Array.from(this.html.labelsContainer.children);
     const amount = Math.min(rawAmount, labels.length);
     const removeFromEnd = position === 'end';
 
     const removeFrom = removeFromEnd ? amount : 0;
     const removeTo = removeFromEnd ? labels.length : amount;
     const labelsToRemove = labels.slice(removeFrom, removeTo);
+    console.log(labelsToRemove);
     labelsToRemove.forEach(r => r.remove());
   }
 }

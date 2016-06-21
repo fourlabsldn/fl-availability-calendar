@@ -33,7 +33,10 @@ export default class ModuleCoordinator {
     Object.preventExtensions(this);
     xdiv.appendChild(this.calendarContainer.html.container);
 
-    this.calendarContainer.on('scrollEndBottom', () => console.log('Bottom!'));
+    this.calendarContainer.on('scrollEndBottom', () => {
+      this.addSubjects(10, 'end');
+      this.removeSubjects(10, 'beginning');
+    });
     this.calendarContainer.on('scrollEndTop', () => console.log('Top!'));
     // set start date and dayCount
     this.setDateRange(
@@ -148,7 +151,16 @@ export default class ModuleCoordinator {
     this.labelsBar.addSubjects(newSubjects, position);
   }
 
+  /**
+   * @private
+   * @method removeSubjects
+   * @param  {Int} amount
+   * @param  {String} position
+   * @return {void}
+   */
   removeSubjects(amount, position) {
-    console.warn('Not implemented yet');
+    console.log('Removing', amount, 'subjects');
+    this.datesPanel.removeSubjects(amount, position);
+    this.labelsBar.removeSubjects(amount, position);
   }
 }
