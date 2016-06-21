@@ -75,14 +75,10 @@ export default class DatesPanel extends ViewController {
    * @param  {CustomDate} toDate
    */
   setSubjects(subjects, fromDate, toDate) {
-    // TODO: Change this for a setDateRange method
     this.dateBar.setDateRange(fromDate, toDate);
-
-    this.clearRows();
+    this.removeSubjects(this.subjectRows.length, 'end');
     if (!subjects) { return; }
-    for (const subject of subjects) {
-      this.addRow(subject, fromDate, toDate, 'end');
-    }
+    this.addRows(subjects, fromDate, toDate, 'end');
   }
 
   /**
@@ -94,37 +90,35 @@ export default class DatesPanel extends ViewController {
   addSubjects(subjects, position) {
     const fromDate = this.getStartDate();
     const toDate = this.getEndDate();
-    subjects.forEach(s => this.addRow(s, fromDate, toDate, position));
+    this.addRows(subjects, fromDate, toDate, position);
   }
+
 
   /**
-   * @private
-   * @method addRow
-   * @param  {SubjectRow} newRow
+   * @public
+   * @method addRows
+   * @param  {Array<Objects>} subjects
+   * @param  {CustomDate} fromDate
+   * @param  {CustomDate} toDate
    * @param  {String} position 'beginning' or 'end'
-   * @return {SubjectRow}
    */
-  addRow(subject, fromDate, toDate, position) {
-    const newRow = new SubjectRow(subject, fromDate, toDate, this.modulePrefix);
-    const subjectsContainer = this.html.subjectsContainer;
-    let referenceNodeIndex;
-    if (position === 'end') {
-      this.subjectRows = this.subjectRows.concat([newRow]);
-      referenceNodeIndex = -1;
-    } else {
-      this.subjectRows = [newRow].concat(this.subjectRows);
-      referenceNodeIndex = 0;
+  addRows(subjects, fromDate, toDate, position) {
+    const frag = document.createDocumentFragment();
+    const newRows = [];
+    for (const subject of subjects) {
+      const newRow = new SubjectRow(subject, fromDate, toDate, this.modulePrefix);
+      frag.appendChild(newRow.getContainer());
+      newRows.push(newRow);
     }
-    subjectsContainer.insertBefore(
-      newRow.getContainer(),
-      subjectsContainer.children[referenceNodeIndex]
-    );
 
-    return newRow;
-  }
-
-  clearRows() {
-    this.removeSubjects(this.subjectRows.length, 'end');
+    const container = this.html.subjectsContainer;
+    if (position === 'end') {
+      this.subjectRows = this.subjectRows.concat(newRows);
+      container.insertBefore(frag, null);
+    } else {
+      this.subjectRows = newRows.concat(this.subjectRows);
+      container.insertBefore(frag, container.children[0]);
+    }
   }
 
   removeSubjects(rawAmount, position = 'end') {

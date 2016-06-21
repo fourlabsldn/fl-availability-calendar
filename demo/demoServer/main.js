@@ -26,7 +26,7 @@ module.exports = () => {
 
       let ids;
       if (!isNaN(recordCount) && typeof beforeAfter === 'string') {
-        ids = db.getIds(beforeAfter, parseInt(referenceId, 10), recordCount);
+        ids = db.getIds(beforeAfter, referenceId, recordCount);
       } else {
         const idStrings = req.query.ids ? req.query.ids.split(',') : [];
         ids = idStrings.map(num => parseInt(num, 10));

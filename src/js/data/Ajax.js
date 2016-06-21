@@ -33,7 +33,7 @@ export default class Ajax {
     const getParams = [];
     const keys = Object.keys(params);
     for (const key of keys) {
-      const value = params[key] ? params[key].toString() : '';
+      const value = params[key] !== undefined && params[key] !== null ? params[key].toString() : '';
       const encodedKey = encodeURIComponent(key);
       const encodedValue = encodeURIComponent(value);
       getParams.push(`${encodedKey}=${encodedValue}`);

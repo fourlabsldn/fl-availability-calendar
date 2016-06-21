@@ -79,6 +79,8 @@ export default class DataLoader {
       s.events.forEach(e => {
         e.start = new CustomDate(e.start); // eslint-disable-line no-param-reassign
         e.end = new CustomDate(e.end); // eslint-disable-line no-param-reassign
+        // TODO: FIXME: REMOVE THIS SUBJECTID
+        e.subjectId = s.id;
       });
     });
 

@@ -7361,7 +7361,7 @@ var LabelsBar = function (_ViewController) {
 
       var labelsContainer = this.html.labelsContainer;
       var referenceIndex = position === 'end' ? -1 : 0;
-      labelsContainer.insertBefore(newLabelsFrag, labelsContainer[referenceIndex]);
+      labelsContainer.insertBefore(newLabelsFrag, labelsContainer.children[referenceIndex]);
     }
 
     /**
@@ -7413,10 +7413,9 @@ var LabelsBar = function (_ViewController) {
       var amount = Math.min(rawAmount, labels.length);
       var removeFromEnd = position === 'end';
 
-      var removeFrom = removeFromEnd ? amount : 0;
+      var removeFrom = removeFromEnd ? labels.length - amount : 0;
       var removeTo = removeFromEnd ? labels.length : amount;
       var labelsToRemove = labels.slice(removeFrom, removeTo);
-      console.log(labelsToRemove);
       labelsToRemove.forEach(function (r) {
         return r.remove();
       });
@@ -7762,7 +7761,9 @@ var Day = function (_ViewController) {
     _this.date = date;
     Object.preventExtensions(_this);
 
-    _this.html.container.setAttribute('title', date.toString());
+    // TODO: FIXME: REMOVE THIS SUBJECTID
+    var subjectId = events[0] ? events[0].subjectId : '';
+    _this.html.container.setAttribute('title', date.toString() + (' ' + subjectId));
     if (events) {
       _this.setEvents(events);
     }
@@ -7997,13 +7998,43 @@ var DatesPanel = function (_ViewController) {
   }, {
     key: 'setSubjects',
     value: function setSubjects(subjects, fromDate, toDate) {
-      // TODO: Change this for a setDateRange method
       this.dateBar.setDateRange(fromDate, toDate);
-
-      this.clearRows();
+      this.removeSubjects(this.subjectRows.length, 'end');
       if (!subjects) {
         return;
       }
+      this.addRows(subjects, fromDate, toDate, 'end');
+    }
+
+    /**
+     * Adds rows to represent subjects
+     * @method addSubjects
+     * @param  {Array<Object>} subjects
+     * @param  {String} position 'beginning' or 'end'
+     */
+
+  }, {
+    key: 'addSubjects',
+    value: function addSubjects(subjects, position) {
+      var fromDate = this.getStartDate();
+      var toDate = this.getEndDate();
+      this.addRows(subjects, fromDate, toDate, position);
+    }
+
+    /**
+     * @public
+     * @method addRows
+     * @param  {Array<Objects>} subjects
+     * @param  {CustomDate} fromDate
+     * @param  {CustomDate} toDate
+     * @param  {String} position 'beginning' or 'end'
+     */
+
+  }, {
+    key: 'addRows',
+    value: function addRows(subjects, fromDate, toDate, position) {
+      var frag = document.createDocumentFragment();
+      var newRows = [];
       var _iteratorNormalCompletion = true;
       var _didIteratorError = false;
       var _iteratorError = undefined;
@@ -8012,7 +8043,9 @@ var DatesPanel = function (_ViewController) {
         for (var _iterator = subjects[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
           var subject = _step.value;
 
-          this.addRow(subject, fromDate, toDate, 'end');
+          var newRow = new SubjectRow(subject, fromDate, toDate, this.modulePrefix);
+          frag.appendChild(newRow.getContainer());
+          newRows.push(newRow);
         }
       } catch (err) {
         _didIteratorError = true;
@@ -8028,56 +8061,15 @@ var DatesPanel = function (_ViewController) {
           }
         }
       }
-    }
 
-    /**
-     * Adds rows to represent subjects
-     * @method addSubjects
-     * @param  {Array<Object>} subjects
-     * @param  {String} position 'beginning' or 'end'
-     */
-
-  }, {
-    key: 'addSubjects',
-    value: function addSubjects(subjects, position) {
-      var _this2 = this;
-
-      var fromDate = this.getStartDate();
-      var toDate = this.getEndDate();
-      subjects.forEach(function (s) {
-        return _this2.addRow(s, fromDate, toDate, position);
-      });
-    }
-
-    /**
-     * @private
-     * @method addRow
-     * @param  {SubjectRow} newRow
-     * @param  {String} position 'beginning' or 'end'
-     * @return {SubjectRow}
-     */
-
-  }, {
-    key: 'addRow',
-    value: function addRow(subject, fromDate, toDate, position) {
-      var newRow = new SubjectRow(subject, fromDate, toDate, this.modulePrefix);
-      var subjectsContainer = this.html.subjectsContainer;
-      var referenceNodeIndex = void 0;
+      var container = this.html.subjectsContainer;
       if (position === 'end') {
-        this.subjectRows = this.subjectRows.concat([newRow]);
-        referenceNodeIndex = -1;
+        this.subjectRows = this.subjectRows.concat(newRows);
+        container.insertBefore(frag, null);
       } else {
-        this.subjectRows = [newRow].concat(this.subjectRows);
-        referenceNodeIndex = 0;
+        this.subjectRows = newRows.concat(this.subjectRows);
+        container.insertBefore(frag, container.children[0]);
       }
-      subjectsContainer.insertBefore(newRow.getContainer(), subjectsContainer.children[referenceNodeIndex]);
-
-      return newRow;
-    }
-  }, {
-    key: 'clearRows',
-    value: function clearRows() {
-      this.removeSubjects(this.subjectRows.length, 'end');
     }
   }, {
     key: 'removeSubjects',
@@ -8179,7 +8171,7 @@ var Ajax = function () {
         for (var _iterator = keys[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
           var key = _step.value;
 
-          var value = params[key] ? params[key].toString() : '';
+          var value = params[key] !== undefined && params[key] !== null ? params[key].toString() : '';
           var encodedKey = encodeURIComponent(key);
           var encodedValue = encodeURIComponent(value);
           getParams.push(encodedKey + '=' + encodedValue);
@@ -8382,6 +8374,8 @@ var DataLoader = function () {
         s.events.forEach(function (e) {
           e.start = new CustomDate(e.start); // eslint-disable-line no-param-reassign
           e.end = new CustomDate(e.end); // eslint-disable-line no-param-reassign
+          // TODO: FIXME: REMOVE THIS SUBJECTID
+          e.subjectId = s.id;
         });
       });
 
@@ -8575,12 +8569,16 @@ var ModuleCoordinator = function () {
     Object.preventExtensions(this);
     xdiv.appendChild(this.calendarContainer.html.container);
 
+    var elementsToScroll = 20;
     this.calendarContainer.on('scrollEndBottom', function () {
-      _this.addSubjects(10, 'end');
-      _this.removeSubjects(10, 'beginning');
+      _this.addSubjects(elementsToScroll, 'end').then(function (amountAdded) {
+        return _this.removeSubjects(amountAdded, 'beginning');
+      });
     });
     this.calendarContainer.on('scrollEndTop', function () {
-      return console.log('Top!');
+      _this.addSubjects(elementsToScroll, 'beginning').then(function (amountAdded) {
+        return _this.removeSubjects(amountAdded, 'end');
+      });
     });
     // set start date and dayCount
     this.setDateRange(this.startDate, new CustomDate(this.endDate).add(CUSTOM_DAYCOUNT, 'days')).then(function () {
@@ -8780,6 +8778,7 @@ var ModuleCoordinator = function () {
      * @private
      * @method addSubject
      * @param  {String} position 'beginning' or 'end'
+     * @return {Promise<Int>} Amount of subjects added.
      */
 
   }, {
@@ -8802,8 +8801,9 @@ var ModuleCoordinator = function () {
 
                 this.datesPanel.addSubjects(newSubjects, position);
                 this.labelsBar.addSubjects(newSubjects, position);
+                return _context4.abrupt('return', newSubjects.length);
 
-              case 8:
+              case 9:
               case 'end':
                 return _context4.stop();
             }
@@ -8829,7 +8829,6 @@ var ModuleCoordinator = function () {
   }, {
     key: 'removeSubjects',
     value: function removeSubjects(amount, position) {
-      console.log('Removing', amount, 'subjects');
       this.datesPanel.removeSubjects(amount, position);
       this.labelsBar.removeSubjects(amount, position);
     }

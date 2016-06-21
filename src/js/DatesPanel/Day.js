@@ -16,7 +16,9 @@ export default class Day extends ViewController {
     this.date = date;
     Object.preventExtensions(this);
 
-    this.html.container.setAttribute('title', date.toString());
+    // TODO: FIXME: REMOVE THIS SUBJECTID
+    const subjectId = events[0] ? events[0].subjectId : '';
+    this.html.container.setAttribute('title', date.toString() + ` ${subjectId}`);
     if (events) {
       this.setEvents(events);
     }

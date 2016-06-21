@@ -33,11 +33,15 @@ export default class ModuleCoordinator {
     Object.preventExtensions(this);
     xdiv.appendChild(this.calendarContainer.html.container);
 
+    const elementsToScroll = 20;
     this.calendarContainer.on('scrollEndBottom', () => {
-      this.addSubjects(10, 'end');
-      this.removeSubjects(10, 'beginning');
+      this.addSubjects(elementsToScroll, 'end')
+      .then(amountAdded => this.removeSubjects(amountAdded, 'beginning'));
     });
-    this.calendarContainer.on('scrollEndTop', () => console.log('Top!'));
+    this.calendarContainer.on('scrollEndTop', () => {
+      this.addSubjects(elementsToScroll, 'beginning')
+      .then(amountAdded => this.removeSubjects(amountAdded, 'end'));
+    });
     // set start date and dayCount
     this.setDateRange(
       this.startDate,
@@ -135,6 +139,7 @@ export default class ModuleCoordinator {
    * @private
    * @method addSubject
    * @param  {String} position 'beginning' or 'end'
+   * @return {Promise<Int>} Amount of subjects added.
    */
   async addSubjects(amount, position) {
     const fromDate = this.getStartDate();
@@ -149,6 +154,7 @@ export default class ModuleCoordinator {
     );
     this.datesPanel.addSubjects(newSubjects, position);
     this.labelsBar.addSubjects(newSubjects, position);
+    return newSubjects.length;
   }
 
   /**
@@ -159,7 +165,6 @@ export default class ModuleCoordinator {
    * @return {void}
    */
   removeSubjects(amount, position) {
-    console.log('Removing', amount, 'subjects');
     this.datesPanel.removeSubjects(amount, position);
     this.labelsBar.removeSubjects(amount, position);
   }

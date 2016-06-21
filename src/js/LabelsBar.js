@@ -52,7 +52,7 @@ export default class LabelsBar extends ViewController {
     }
     const labelsContainer = this.html.labelsContainer;
     const referenceIndex = position === 'end' ? -1 : 0;
-    labelsContainer.insertBefore(newLabelsFrag, labelsContainer[referenceIndex]);
+    labelsContainer.insertBefore(newLabelsFrag, labelsContainer.children[referenceIndex]);
   }
 
 
@@ -95,10 +95,9 @@ export default class LabelsBar extends ViewController {
     const amount = Math.min(rawAmount, labels.length);
     const removeFromEnd = position === 'end';
 
-    const removeFrom = removeFromEnd ? amount : 0;
+    const removeFrom = removeFromEnd ? labels.length - amount : 0;
     const removeTo = removeFromEnd ? labels.length : amount;
     const labelsToRemove = labels.slice(removeFrom, removeTo);
-    console.log(labelsToRemove);
     labelsToRemove.forEach(r => r.remove());
   }
 }
