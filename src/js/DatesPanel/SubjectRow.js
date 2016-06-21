@@ -1,5 +1,3 @@
-// import Day from './Day';
-// import CustomDate from '../utils/CustomDate';
 import ViewController from '../ViewController';
 
 export default class SubjectRow extends ViewController {

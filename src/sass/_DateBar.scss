@@ -2,6 +2,7 @@
   display: inline-block;
   position: relative;
   height: $s-DateBar-height;
+  z-index: 1;
 
   flex: 0 0;
   box-sizing: inherit;

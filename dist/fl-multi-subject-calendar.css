@@ -73,7 +73,7 @@
   position: relative;
   background-color: inherit;
   width: 18em;
-  z-index: 1; }
+  z-index: 2; }
 
 .fl-msc-LabelsBar-header {
   height: 3em;
@@ -122,17 +122,9 @@
   height: 100%;
   background-color: white; }
 
-.fl-msc-SubjectRow-day {
-  display: inline-block;
-  width: 2em;
-  height: 100%;
-  background-color: #42b382; }
-
-.fl-msc-SubjectRow-day--busy,
 .fl-msc-SubjectRow-event--busy {
   background-color: #e4585b; }
 
-.fl-msc-SubjectRow-day--half-busy,
 .fl-msc-SubjectRow-event--half-busy {
   background-color: #fcb827; }
 
@@ -140,6 +132,7 @@
   display: inline-block;
   position: relative;
   height: 3em;
+  z-index: 1;
   -webkit-box-flex: 0;
   -webkit-flex: 0 0;
       -ms-flex: 0 0;
