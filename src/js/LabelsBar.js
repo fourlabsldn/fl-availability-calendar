@@ -1,4 +1,5 @@
 import ViewController from './ViewController';
+import assert from 'fl-assert';
 
 export default class LabelsBar extends ViewController {
   constructor(title, modulePrefix) {
@@ -34,8 +35,7 @@ export default class LabelsBar extends ViewController {
    * @param  {Array<Object>} subjects
    */
   setSubjects(subjects) {
-    const labels = Array.of(this.html.labelsContainer.children);
-    labels.forEach(l => l.remove());
+    this.removeSubjects(this.html.labelsContainer.children.length, 'end');
     this.addSubjects(subjects, 'end');
   }
   /**
@@ -71,18 +71,6 @@ export default class LabelsBar extends ViewController {
     return el;
   }
 
-  /**
-   * @public
-   * @method removeSubject
-   * @param  {Object} subject
-   * @return {void}
-   */
-  removeSubject(subject) {
-    const identifier = this.createLabelIdentifier(subject);
-    const labelNode = this.html.labelsContainer.querySelector(`.${identifier}`);
-    labelNode.remove();
-  }
-
 
   /**
    * @private
@@ -92,5 +80,17 @@ export default class LabelsBar extends ViewController {
    */
   createLabelIdentifier(subject) {
     return `${this.cssPrefix}-label-${subject.id}`;
+  }
+
+  removeSubjects(rawAmount, position = 'end') {
+    assert(typeof rawAmount === 'number', `Invalid amount type: ${amount}`);
+    const labels = Array.of(this.html.labelsContainer.children);
+    const amount = Math.min(rawAmount, labels.length);
+    const removeFromEnd = position === 'end';
+
+    const removeFrom = removeFromEnd ? amount : 0;
+    const removeTo = removeFromEnd ? labels.length : amount;
+    const labelsToRemove = labels.slice(removeFrom, removeTo);
+    labelsToRemove.forEach(r => r.remove());
   }
 }

@@ -7386,21 +7386,6 @@ var LabelsBar = function (_ViewController) {
     }
 
     /**
-     * @public
-     * @method removeSubject
-     * @param  {Object} subject
-     * @return {void}
-     */
-
-  }, {
-    key: 'removeSubject',
-    value: function removeSubject(subject) {
-      var identifier = this.createLabelIdentifier(subject);
-      var labelNode = this.html.labelsContainer.querySelector('.' + identifier);
-      labelNode.remove();
-    }
-
-    /**
      * @private
      * @method createLabelIdentifier
      * @param  {Object} subject
@@ -7411,6 +7396,13 @@ var LabelsBar = function (_ViewController) {
     key: 'createLabelIdentifier',
     value: function createLabelIdentifier(subject) {
       return this.cssPrefix + '-label-' + subject.id;
+    }
+  }, {
+    key: 'removeSubjects',
+    value: function removeSubjects(amount) {
+      var position = arguments.length <= 1 || arguments[1] === undefined ? 'end' : arguments[1];
+
+      assert(typeof amount === 'number', 'Invalid amount type: ' + amount);
     }
   }]);
 
