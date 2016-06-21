@@ -147,4 +147,8 @@ export default class ModuleCoordinator {
     this.datesPanel.addSubjects(newSubjects, position);
     this.labelsBar.addSubjects(newSubjects, position);
   }
+
+  removeSubjects(amount, position) {
+    console.warn('Not implemented yet');
+  }
 }

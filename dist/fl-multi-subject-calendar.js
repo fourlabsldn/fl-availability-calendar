@@ -8068,32 +8068,26 @@ var DatesPanel = function (_ViewController) {
   }, {
     key: 'clearRows',
     value: function clearRows() {
-      var _iteratorNormalCompletion2 = true;
-      var _didIteratorError2 = false;
-      var _iteratorError2 = undefined;
+      this.removeSubjects(this.subjectRows.length, 'end');
+    }
+  }, {
+    key: 'removeSubjects',
+    value: function removeSubjects(rawAmount) {
+      var position = arguments.length <= 1 || arguments[1] === undefined ? 'end' : arguments[1];
 
-      try {
-        for (var _iterator2 = this.subjectRows[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-          var row = _step2.value;
+      assert(typeof rawAmount === 'number', 'Invalid amount type: ' + amount);
+      var amount = Math.min(rawAmount, this.subjectRows.length);
+      var removeFromEnd = position === 'end';
 
-          row.destroy();
-        }
-      } catch (err) {
-        _didIteratorError2 = true;
-        _iteratorError2 = err;
-      } finally {
-        try {
-          if (!_iteratorNormalCompletion2 && _iterator2.return) {
-            _iterator2.return();
-          }
-        } finally {
-          if (_didIteratorError2) {
-            throw _iteratorError2;
-          }
-        }
-      }
+      var divider = removeFromEnd ? this.subjectRows.length - amount : amount;
+      var part1 = this.subjectRows.slice(0, divider);
+      var part2 = this.subjectRows.slice(divider, this.subjectRows.length);
 
-      this.subjectRows = [];
+      this.subjectRows = removeFromEnd ? part1 : part2;
+      var rowsToRemove = removeFromEnd ? part2 : part1;
+      rowsToRemove.forEach(function (r) {
+        return r.destroy();
+      });
     }
   }]);
 
@@ -8806,6 +8800,11 @@ var ModuleCoordinator = function () {
 
       return addSubjects;
     }()
+  }, {
+    key: 'removeSubjects',
+    value: function removeSubjects(amount, position) {
+      console.warn('Not implemented yet');
+    }
   }]);
 
   return ModuleCoordinator;

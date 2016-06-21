@@ -1,6 +1,7 @@
 import DateBar from './DateBar';
 import SubjectRow from './SubjectRow';
 import ViewController from '../ViewController';
+import assert from 'fl-assert';
 
 const CLASS_PREFIX = 'DatesPanel';
 export default class DatesPanel extends ViewController {
@@ -123,9 +124,20 @@ export default class DatesPanel extends ViewController {
   }
 
   clearRows() {
-    for (const row of this.subjectRows) {
-      row.destroy();
-    }
-    this.subjectRows = [];
+    this.removeSubjects(this.subjectRows.length, 'end');
+  }
+
+  removeSubjects(rawAmount, position = 'end') {
+    assert(typeof rawAmount === 'number', `Invalid amount type: ${amount}`);
+    const amount = Math.min(rawAmount, this.subjectRows.length);
+    const removeFromEnd = position === 'end';
+
+    const divider = removeFromEnd ? this.subjectRows.length - amount : amount;
+    const part1 = this.subjectRows.slice(0, divider);
+    const part2 = this.subjectRows.slice(divider, this.subjectRows.length);
+
+    this.subjectRows = removeFromEnd ? part1 : part2;
+    const rowsToRemove = removeFromEnd ? part2 : part1;
+    rowsToRemove.forEach(r => r.destroy());
   }
 }
