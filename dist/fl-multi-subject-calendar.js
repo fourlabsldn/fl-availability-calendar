@@ -7804,14 +7804,14 @@ var SubjectRow = function (_ViewController) {
       var frag = document.createDocumentFragment();
       var pointerDate = new CustomDate(rowStartDate);
       var pointerEventIndex = 0;
-      while (!pointerDate.isAfter(rowEndDate) && pointerEventIndex < events.length) {
+      while (!pointerDate.isAfter(rowEndDate)) {
         var currEvent = events[pointerEventIndex];
         var newDay = void 0;
         while (currEvent && pointerDate.isAfter(currEvent.end)) {
           pointerEventIndex++;
           currEvent = events[pointerEventIndex];
         }
-        if (pointerDate.isAfter(currEvent.start)) {
+        if (currEvent && pointerDate.isAfter(currEvent.start)) {
           newDay = new Day(pointerDate, [currEvent], this.cssPrefix);
         } else {
           newDay = new Day(pointerDate, [], this.cssPrefix);
@@ -7896,10 +7896,30 @@ var DatesPanel = function (_ViewController) {
 
   }, {
     key: 'setDayCount',
-    value: function setDayCount(count) {
-      this.dateBar.setDayCount(count);
-      this.setRowsStartDate(this.getStartDate());
-    }
+    value: function () {
+      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee(count) {
+        return _regeneratorRuntime.wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                this.dateBar.setDayCount(count);
+                _context.next = 3;
+                return this.setRowsStartDate(this.getStartDate());
+
+              case 3:
+              case 'end':
+                return _context.stop();
+            }
+          }
+        }, _callee, this);
+      }));
+
+      function setDayCount(_x) {
+        return ref.apply(this, arguments);
+      }
+
+      return setDayCount;
+    }()
 
     /**
      * @public
@@ -7910,24 +7930,24 @@ var DatesPanel = function (_ViewController) {
   }, {
     key: 'setStartDate',
     value: function () {
-      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee(date) {
-        return _regeneratorRuntime.wrap(function _callee$(_context) {
+      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee2(date) {
+        return _regeneratorRuntime.wrap(function _callee2$(_context2) {
           while (1) {
-            switch (_context.prev = _context.next) {
+            switch (_context2.prev = _context2.next) {
               case 0:
                 this.dateBar.setStartDate(date);
-                _context.next = 3;
+                _context2.next = 3;
                 return this.setRowsStartDate(date);
 
               case 3:
               case 'end':
-                return _context.stop();
+                return _context2.stop();
             }
           }
-        }, _callee, this);
+        }, _callee2, this);
       }));
 
-      function setStartDate(_x) {
+      function setStartDate(_x2) {
         return ref.apply(this, arguments);
       }
 
@@ -7944,12 +7964,12 @@ var DatesPanel = function (_ViewController) {
   }, {
     key: 'setRowsStartDate',
     value: function () {
-      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee2(date) {
+      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee3(date) {
         var dayCount, fromDate, toDate, subjects, newEvents, _iteratorNormalCompletion, _didIteratorError, _iteratorError, _iterator, _step, subjectRow, subject;
 
-        return _regeneratorRuntime.wrap(function _callee2$(_context2) {
+        return _regeneratorRuntime.wrap(function _callee3$(_context3) {
           while (1) {
-            switch (_context2.prev = _context2.next) {
+            switch (_context3.prev = _context3.next) {
               case 0:
                 dayCount = this.getDayCount();
                 fromDate = new CustomDate(date);
@@ -7957,15 +7977,15 @@ var DatesPanel = function (_ViewController) {
                 subjects = this.subjectRows.map(function (r) {
                   return r.getSubject();
                 });
-                _context2.next = 6;
+                _context3.next = 6;
                 return this.moduleCoordinator.getSubjectsEvents(subjects, fromDate, toDate);
 
               case 6:
-                newEvents = _context2.sent;
+                newEvents = _context3.sent;
                 _iteratorNormalCompletion = true;
                 _didIteratorError = false;
                 _iteratorError = undefined;
-                _context2.prev = 10;
+                _context3.prev = 10;
 
 
                 for (_iterator = this.subjectRows[Symbol.iterator](); !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
@@ -7974,48 +7994,48 @@ var DatesPanel = function (_ViewController) {
 
                   subjectRow.setEvents(newEvents[subject.id], fromDate, toDate);
                 }
-                _context2.next = 18;
+                _context3.next = 18;
                 break;
 
               case 14:
-                _context2.prev = 14;
-                _context2.t0 = _context2['catch'](10);
+                _context3.prev = 14;
+                _context3.t0 = _context3['catch'](10);
                 _didIteratorError = true;
-                _iteratorError = _context2.t0;
+                _iteratorError = _context3.t0;
 
               case 18:
-                _context2.prev = 18;
-                _context2.prev = 19;
+                _context3.prev = 18;
+                _context3.prev = 19;
 
                 if (!_iteratorNormalCompletion && _iterator.return) {
                   _iterator.return();
                 }
 
               case 21:
-                _context2.prev = 21;
+                _context3.prev = 21;
 
                 if (!_didIteratorError) {
-                  _context2.next = 24;
+                  _context3.next = 24;
                   break;
                 }
 
                 throw _iteratorError;
 
               case 24:
-                return _context2.finish(21);
+                return _context3.finish(21);
 
               case 25:
-                return _context2.finish(18);
+                return _context3.finish(18);
 
               case 26:
               case 'end':
-                return _context2.stop();
+                return _context3.stop();
             }
           }
-        }, _callee2, this, [[10, 14, 18, 26], [19,, 21, 25]]);
+        }, _callee3, this, [[10, 14, 18, 26], [19,, 21, 25]]);
       }));
 
-      function setRowsStartDate(_x2) {
+      function setRowsStartDate(_x3) {
         return ref.apply(this, arguments);
       }
 
@@ -8046,74 +8066,69 @@ var DatesPanel = function (_ViewController) {
   }, {
     key: 'addSubjects',
     value: function () {
-      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee3(subjects, position) {
-        var fromDate, toDate, events, _iteratorNormalCompletion2, _didIteratorError2, _iteratorError2, _iterator2, _step2, subject, newRow;
+      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee4(subjects, position) {
+        var fromDate, toDate, _iteratorNormalCompletion2, _didIteratorError2, _iteratorError2, _iterator2, _step2, subject, newRow;
 
-        return _regeneratorRuntime.wrap(function _callee3$(_context3) {
+        return _regeneratorRuntime.wrap(function _callee4$(_context4) {
           while (1) {
-            switch (_context3.prev = _context3.next) {
+            switch (_context4.prev = _context4.next) {
               case 0:
                 fromDate = this.getStartDate();
                 toDate = this.getEndDate();
-                _context3.next = 4;
-                return this.moduleCoordinator.getSubjectsEvents(subjects, fromDate, toDate);
-
-              case 4:
-                events = _context3.sent;
                 _iteratorNormalCompletion2 = true;
                 _didIteratorError2 = false;
                 _iteratorError2 = undefined;
-                _context3.prev = 8;
+                _context4.prev = 5;
 
                 for (_iterator2 = subjects[Symbol.iterator](); !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
                   subject = _step2.value;
                   newRow = new SubjectRow(subject, this.modulePrefix);
 
                   this.addRow(newRow, position);
-                  newRow.setEvents(events[subject.id], fromDate, toDate);
+                  newRow.setEvents(subject.events, fromDate, toDate);
                 }
-                _context3.next = 16;
+                _context4.next = 13;
                 break;
 
-              case 12:
-                _context3.prev = 12;
-                _context3.t0 = _context3['catch'](8);
+              case 9:
+                _context4.prev = 9;
+                _context4.t0 = _context4['catch'](5);
                 _didIteratorError2 = true;
-                _iteratorError2 = _context3.t0;
+                _iteratorError2 = _context4.t0;
 
-              case 16:
-                _context3.prev = 16;
-                _context3.prev = 17;
+              case 13:
+                _context4.prev = 13;
+                _context4.prev = 14;
 
                 if (!_iteratorNormalCompletion2 && _iterator2.return) {
                   _iterator2.return();
                 }
 
-              case 19:
-                _context3.prev = 19;
+              case 16:
+                _context4.prev = 16;
 
                 if (!_didIteratorError2) {
-                  _context3.next = 22;
+                  _context4.next = 19;
                   break;
                 }
 
                 throw _iteratorError2;
 
-              case 22:
-                return _context3.finish(19);
+              case 19:
+                return _context4.finish(16);
 
-              case 23:
-                return _context3.finish(16);
+              case 20:
+                return _context4.finish(13);
 
-              case 24:
+              case 21:
               case 'end':
-                return _context3.stop();
+                return _context4.stop();
             }
           }
-        }, _callee3, this, [[8, 12, 16, 24], [17,, 19, 23]]);
+        }, _callee4, this, [[5, 9, 13, 21], [14,, 16, 20]]);
       }));
 
-      function addSubjects(_x3, _x4) {
+      function addSubjects(_x4, _x5) {
         return ref.apply(this, arguments);
       }
 
@@ -8552,6 +8567,8 @@ var CUSTOM_DAYCOUNT = 80;
 
 var ModuleCoordinator = function () {
   function ModuleCoordinator(xdiv, loadUrl, subjectsHeader) {
+    var _this = this;
+
     var initialSubjectCount = arguments.length <= 3 || arguments[3] === undefined ? 100 : arguments[3];
 
     _classCallCheck(this, ModuleCoordinator);
@@ -8579,12 +8596,11 @@ var ModuleCoordinator = function () {
     xdiv.appendChild(this.calendarContainer.html.container);
 
     // set start date and dayCount
-    this.setStartDate(this.startDate);
-
-    this.setDayCount(CUSTOM_DAYCOUNT);
-
-    // add x subjects
-    this.setSubjectCount(initialSubjectCount);
+    this.setStartDate(this.startDate).then(function () {
+      return _this.setDayCount(CUSTOM_DAYCOUNT);
+    }).then(function () {
+      return _this.setSubjectCount(initialSubjectCount);
+    });
   }
 
   /**
@@ -8714,9 +8730,29 @@ var ModuleCoordinator = function () {
 
   }, {
     key: 'setDayCount',
-    value: function setDayCount(count) {
-      this.datesPanel.setDayCount(count);
-    }
+    value: function () {
+      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee3(count) {
+        return _regeneratorRuntime.wrap(function _callee3$(_context3) {
+          while (1) {
+            switch (_context3.prev = _context3.next) {
+              case 0:
+                _context3.next = 2;
+                return this.datesPanel.setDayCount(count);
+
+              case 2:
+              case 'end':
+                return _context3.stop();
+            }
+          }
+        }, _callee3, this);
+      }));
+
+      function setDayCount(_x4) {
+        return ref.apply(this, arguments);
+      }
+
+      return setDayCount;
+    }()
 
     /**
      * @public
@@ -8740,33 +8776,33 @@ var ModuleCoordinator = function () {
   }, {
     key: 'addSubjects',
     value: function () {
-      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee3(amount, position) {
+      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee4(amount, position) {
         var fromDate, toDate, referenceSubj, newSubjects;
-        return _regeneratorRuntime.wrap(function _callee3$(_context3) {
+        return _regeneratorRuntime.wrap(function _callee4$(_context4) {
           while (1) {
-            switch (_context3.prev = _context3.next) {
+            switch (_context4.prev = _context4.next) {
               case 0:
                 fromDate = this.getStartDate();
                 toDate = this.getEndDate();
                 referenceSubj = this.datesPanel.getSubjectAt(position);
-                _context3.next = 5;
+                _context4.next = 5;
                 return this.dataLoader.getSubjects(amount, position, referenceSubj, fromDate, toDate);
 
               case 5:
-                newSubjects = _context3.sent;
+                newSubjects = _context4.sent;
 
                 this.datesPanel.addSubjects(newSubjects, position);
                 this.labelsBar.addSubjects(newSubjects, position);
 
               case 8:
               case 'end':
-                return _context3.stop();
+                return _context4.stop();
             }
           }
-        }, _callee3, this);
+        }, _callee4, this);
       }));
 
-      function addSubjects(_x4, _x5) {
+      function addSubjects(_x5, _x6) {
         return ref.apply(this, arguments);
       }
 
@@ -8786,26 +8822,28 @@ var ModuleCoordinator = function () {
   }, {
     key: 'getSubjectsEvents',
     value: function () {
-      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee4(subjects, fromDate, toDate) {
-        return _regeneratorRuntime.wrap(function _callee4$(_context4) {
+      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee5(subjects, fromDate, toDate) {
+        var subjectEvents;
+        return _regeneratorRuntime.wrap(function _callee5$(_context5) {
           while (1) {
-            switch (_context4.prev = _context4.next) {
+            switch (_context5.prev = _context5.next) {
               case 0:
-                _context4.next = 2;
+                _context5.next = 2;
                 return this.dataLoader.getSubjectsEvents(subjects, fromDate, toDate);
 
               case 2:
-                return _context4.abrupt('return', _context4.sent);
+                subjectEvents = _context5.sent;
+                return _context5.abrupt('return', subjectEvents);
 
-              case 3:
+              case 4:
               case 'end':
-                return _context4.stop();
+                return _context5.stop();
             }
           }
-        }, _callee4, this);
+        }, _callee5, this);
       }));
 
-      function getSubjectsEvents(_x6, _x7, _x8) {
+      function getSubjectsEvents(_x7, _x8, _x9) {
         return ref.apply(this, arguments);
       }
 

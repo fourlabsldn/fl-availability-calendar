@@ -34,12 +34,9 @@ export default class ModuleCoordinator {
     xdiv.appendChild(this.calendarContainer.html.container);
 
     // set start date and dayCount
-    this.setStartDate(this.startDate);
-
-    this.setDayCount(CUSTOM_DAYCOUNT);
-
-    // add x subjects
-    this.setSubjectCount(initialSubjectCount);
+    this.setStartDate(this.startDate)
+    .then(() => this.setDayCount(CUSTOM_DAYCOUNT))
+    .then(() => this.setSubjectCount(initialSubjectCount));
   }
 
   /**
@@ -98,8 +95,8 @@ export default class ModuleCoordinator {
    * @method setDayCount
    * @param  {Int} count
    */
-  setDayCount(count) {
-    this.datesPanel.setDayCount(count);
+  async setDayCount(count) {
+    await this.datesPanel.setDayCount(count);
   }
 
   /**
@@ -142,7 +139,8 @@ export default class ModuleCoordinator {
    * each value an array of event objects
    */
   async getSubjectsEvents(subjects, fromDate, toDate) {
-    return await this.dataLoader.getSubjectsEvents(subjects, fromDate, toDate);
+    const subjectEvents = await this.dataLoader.getSubjectsEvents(subjects, fromDate, toDate);
+    return subjectEvents;
   }
 
   removeSubjects() {
