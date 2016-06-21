@@ -31,7 +31,6 @@ export default class ModuleCoordinator {
     this.calendarContainer.set('datesPanel', this.datesPanel);
 
     Object.preventExtensions(this);
-
     xdiv.appendChild(this.calendarContainer.html.container);
 
     // set start date and dayCount

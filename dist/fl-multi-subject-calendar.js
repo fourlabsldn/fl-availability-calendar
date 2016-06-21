@@ -7053,6 +7053,78 @@ exports.default = function (subClass, superClass) {
 
 var _inherits = (inherits && typeof inherits === 'object' && 'default' in inherits ? inherits['default'] : inherits);
 
+// Bug checking function that will throw an error whenever
+// the condition sent to it is evaluated to false
+/**
+ * Processes the message and outputs the correct message if the condition
+ * is false. Otherwise it outputs null.
+ * @api private
+ * @method processCondition
+ * @param  {Boolean} condition - Result of the evaluated condition
+ * @param  {String} errorMessage - Message explainig the error in case it is thrown
+ * @return {String | null}  - Error message if there is an error, nul otherwise.
+ */
+function processCondition(condition, errorMessage) {
+  if (!condition) {
+    var completeErrorMessage = '';
+    var re = /at ([^\s]+)\s\(/g;
+    var stackTrace = new Error().stack;
+    var stackFunctions = [];
+
+    var funcName = re.exec(stackTrace);
+    while (funcName && funcName[1]) {
+      stackFunctions.push(funcName[1]);
+      funcName = re.exec(stackTrace);
+    }
+
+    // Number 0 is processCondition itself,
+    // Number 1 is assert,
+    // Number 2 is the caller function.
+    if (stackFunctions[2]) {
+      completeErrorMessage = stackFunctions[2] + ': ' + completeErrorMessage;
+    }
+
+    completeErrorMessage += errorMessage;
+    return completeErrorMessage;
+  }
+
+  return null;
+}
+
+/**
+ * Throws an error if the boolean passed to it evaluates to false.
+ * To be used like this:
+ * 		assert(myDate !== undefined, "Date cannot be undefined.");
+ * @api public
+ * @method assert
+ * @param  {Boolean} condition - Result of the evaluated condition
+ * @param  {String} errorMessage - Message explainig the error in case it is thrown
+ * @return void
+ */
+function assert(condition, errorMessage) {
+  var error = processCondition(condition, errorMessage);
+  if (typeof error === 'string') {
+    throw new Error(error);
+  }
+}
+
+/**
+ * Logs a warning if the boolean passed to it evaluates to false.
+ * To be used like this:
+ * 		assert.warn(myDate !== undefined, "No date provided.");
+ * @api public
+ * @method warn
+ * @param  {Boolean} condition - Result of the evaluated condition
+ * @param  {String} errorMessage - Message explainig the error in case it is thrown
+ * @return void
+ */
+assert.warn = function warn(condition, errorMessage) {
+  var error = processCondition(condition, errorMessage);
+  if (typeof error === 'string') {
+    console.warn(error);
+  }
+};
+
 var ViewController = function () {
   function ViewController(modulePrefix) {
     var classPrefix = arguments.length <= 1 || arguments[1] === undefined ? this.constructor.name : arguments[1];
@@ -7064,6 +7136,9 @@ var ViewController = function () {
     this.html = {};
     this.html.container = document.createElement('div');
     this.html.container.classList.add(this.cssPrefix);
+
+    this.listeners = {};
+    this.acceptEvents('destroy');
 
     this.buildHtml();
   }
@@ -7087,6 +7162,89 @@ var ViewController = function () {
     }
 
     /**
+     * Sets which events will be accepted.
+     * @method acceptEvents
+     * @param  {Array<String>} eventList
+     * @return {void}
+     */
+
+  }, {
+    key: 'acceptEvents',
+    value: function acceptEvents() {
+      for (var _len = arguments.length, eventList = Array(_len), _key = 0; _key < _len; _key++) {
+        eventList[_key] = arguments[_key];
+      }
+
+      var _iteratorNormalCompletion = true;
+      var _didIteratorError = false;
+      var _iteratorError = undefined;
+
+      try {
+        for (var _iterator = eventList[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+          var eventName = _step.value;
+
+          this.listeners[eventName] = new Set();
+        }
+      } catch (err) {
+        _didIteratorError = true;
+        _iteratorError = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion && _iterator.return) {
+            _iterator.return();
+          }
+        } finally {
+          if (_didIteratorError) {
+            throw _iteratorError;
+          }
+        }
+      }
+    }
+
+    /**
+     * @method on
+     * @param  {function} fn
+     * @param {String} event
+     * @return {void}
+     */
+
+  }, {
+    key: 'on',
+    value: function on(event, fn) {
+      assert(this.listeners[event], 'Trying to listen to invalid event: ' + event);
+      this.listeners[event].add(fn);
+    }
+
+    /**
+     * @method removeListener
+     * @param  {String} event
+     * @param  {Function} fn
+     * @return {void}
+     */
+
+  }, {
+    key: 'removeListener',
+    value: function removeListener(event, fn) {
+      assert(this.listeners[event], 'Trying to remove listener from invalid event: ' + event);
+      this.listeners[event].delete(fn);
+    }
+
+    /**
+     * @method trigger
+     * @param  {String} event
+     */
+
+  }, {
+    key: 'trigger',
+    value: function trigger(event) {
+      var _this = this;
+
+      this.listeners[event].forEach(function (fn) {
+        return fn(_this);
+      });
+    }
+
+    /**
      * @public
      * @method destroy
      * @return {void}
@@ -7095,13 +7253,14 @@ var ViewController = function () {
   }, {
     key: 'destroy',
     value: function destroy() {
-      var _this = this;
+      var _this2 = this;
 
+      this.trigger('destroy');
       this.html.container.remove();
       this.html = {};
       var thisKeys = Object.keys(this);
       thisKeys.forEach(function (k) {
-        _this[k] = null;
+        _this2[k] = null;
       });
     }
   }]);
@@ -7372,78 +7531,6 @@ var ControlBar = function (_ViewController) {
 
   return ControlBar;
 }(ViewController);
-
-// Bug checking function that will throw an error whenever
-// the condition sent to it is evaluated to false
-/**
- * Processes the message and outputs the correct message if the condition
- * is false. Otherwise it outputs null.
- * @api private
- * @method processCondition
- * @param  {Boolean} condition - Result of the evaluated condition
- * @param  {String} errorMessage - Message explainig the error in case it is thrown
- * @return {String | null}  - Error message if there is an error, nul otherwise.
- */
-function processCondition(condition, errorMessage) {
-  if (!condition) {
-    var completeErrorMessage = '';
-    var re = /at ([^\s]+)\s\(/g;
-    var stackTrace = new Error().stack;
-    var stackFunctions = [];
-
-    var funcName = re.exec(stackTrace);
-    while (funcName && funcName[1]) {
-      stackFunctions.push(funcName[1]);
-      funcName = re.exec(stackTrace);
-    }
-
-    // Number 0 is processCondition itself,
-    // Number 1 is assert,
-    // Number 2 is the caller function.
-    if (stackFunctions[2]) {
-      completeErrorMessage = stackFunctions[2] + ': ' + completeErrorMessage;
-    }
-
-    completeErrorMessage += errorMessage;
-    return completeErrorMessage;
-  }
-
-  return null;
-}
-
-/**
- * Throws an error if the boolean passed to it evaluates to false.
- * To be used like this:
- * 		assert(myDate !== undefined, "Date cannot be undefined.");
- * @api public
- * @method assert
- * @param  {Boolean} condition - Result of the evaluated condition
- * @param  {String} errorMessage - Message explainig the error in case it is thrown
- * @return void
- */
-function assert(condition, errorMessage) {
-  var error = processCondition(condition, errorMessage);
-  if (typeof error === 'string') {
-    throw new Error(error);
-  }
-}
-
-/**
- * Logs a warning if the boolean passed to it evaluates to false.
- * To be used like this:
- * 		assert.warn(myDate !== undefined, "No date provided.");
- * @api public
- * @method warn
- * @param  {Boolean} condition - Result of the evaluated condition
- * @param  {String} errorMessage - Message explainig the error in case it is thrown
- * @return void
- */
-assert.warn = function warn(condition, errorMessage) {
-  var error = processCondition(condition, errorMessage);
-  if (typeof error === 'string') {
-    console.warn(error);
-  }
-};
 
 var CLASS_PREFIX$1 = 'DateBar';
 
@@ -8437,7 +8524,6 @@ var ModuleCoordinator = function () {
     this.calendarContainer.set('datesPanel', this.datesPanel);
 
     Object.preventExtensions(this);
-
     xdiv.appendChild(this.calendarContainer.html.container);
 
     // set start date and dayCount
