@@ -49,11 +49,11 @@ module.exports = class DB {
       const totalElementsBefore = refIndex;
       const responseSize = Math.min(totalElementsBefore, amount);
       fromIndex = Math.max(0, responseSize - 1);
-      toIndex = refIndex - 1;
+      toIndex = refIndex;
     } else {
       const totalElementsAfter = this.data.length - refIndex + 1;
       const responseSize = Math.min(totalElementsAfter, amount);
-      fromIndex = Math.max(0, refIndex);
+      fromIndex = Math.max(0, refIndex + 1);
       toIndex = Math.max(0, responseSize + refIndex);
     }
 
