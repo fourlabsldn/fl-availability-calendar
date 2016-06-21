@@ -3,9 +3,10 @@ import CustomDate from '../utils/CustomDate';
 import ViewController from '../ViewController';
 
 export default class SubjectRow extends ViewController {
-  constructor(subject, modulePrefix) {
+  constructor(subject, rowStartDate, rowEndDate, modulePrefix) {
     super(modulePrefix);
     this.subject = subject;
+    this.setEvents(subject.events, rowStartDate, rowEndDate);
   }
 
   buildHtml() {

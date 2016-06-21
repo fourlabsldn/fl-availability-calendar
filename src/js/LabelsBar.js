@@ -18,7 +18,7 @@ export default class LabelsBar extends ViewController {
     this.html.container.appendChild(this.html.labelsContainer);
   }
 
-  /** 
+  /**
    * Used by CalendarContainer
    * @public
    * @method getHeader
@@ -28,6 +28,16 @@ export default class LabelsBar extends ViewController {
     return this.html.header;
   }
 
+  /**
+   * @public
+   * @method setSubjects
+   * @param  {Array<Object>} subjects
+   */
+  setSubjects(subjects) {
+    const labels = Array.of(this.html.labelsContainer.children);
+    labels.forEach(l => l.remove());
+    this.addSubjects(subjects, 'end');
+  }
   /**
    * @public
    * @method addSubjecta

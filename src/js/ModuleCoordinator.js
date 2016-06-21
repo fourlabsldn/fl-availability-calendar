@@ -1,4 +1,4 @@
-import assert from 'fl-assert';
+// import assert from 'fl-assert';
 import CustomDate from './utils/CustomDate';
 import LabelsBar from './LabelsBar';
 import ControlBar from './ControlBar';
@@ -12,6 +12,7 @@ const CUSTOM_DAYCOUNT = 80;
 export default class ModuleCoordinator {
   constructor(xdiv, loadUrl, subjectsHeader, initialSubjectCount = 100) {
     this.startDate = new CustomDate();
+    this.endDate = new CustomDate();
     this.dataLoader = new DataLoader(loadUrl);
 
     // create html container
@@ -26,7 +27,7 @@ export default class ModuleCoordinator {
     this.calendarContainer.set('labelsBar', this.labelsBar);
 
     // create datesContainer
-    this.datesPanel = new DatesPanel(this.startDate, this, MODULE_PREFIX);
+    this.datesPanel = new DatesPanel(this.startDate, MODULE_PREFIX);
     this.calendarContainer.set('datesPanel', this.datesPanel);
 
     Object.preventExtensions(this);
@@ -34,8 +35,10 @@ export default class ModuleCoordinator {
     xdiv.appendChild(this.calendarContainer.html.container);
 
     // set start date and dayCount
-    this.setStartDate(this.startDate)
-    .then(() => this.setDayCount(CUSTOM_DAYCOUNT))
+    this.setDateRange(
+      this.startDate,
+      new CustomDate(this.startDate).add(CUSTOM_DAYCOUNT, 'days')
+    )
     .then(() => this.setSubjectCount(initialSubjectCount));
   }
 
@@ -53,32 +56,7 @@ export default class ModuleCoordinator {
    * @return {CustomDate}
    */
   getEndDate() {
-    return new CustomDate(this.startDate).add(this.getDayCount() - 1, 'days');
-  }
-
-  /**
-   * @public
-   * @method setStartDate
-   * @param  {CustomDate} date
-   */
-  async setStartDate(date) {
-    const newDate = new CustomDate(date).startOf('day');
-    await this.datesPanel.setStartDate(newDate);
-    this.startDate = new CustomDate(newDate);
-    this.controlBar.setDatepickerDate(newDate);
-  }
-
-  /**
-   * @public
-   * @method setSubjectCount
-   * @param {Int} count
-   */
-  async setSubjectCount(count) {
-    const currentCount = this.getSubjectCount();
-    if (count === currentCount) { return; }
-    const diff = Math.abs(currentCount - count);
-    const method = count > currentCount ? 'addSubjects' : 'removeSubjects';
-    this[method](diff, 'end');
+    return new CustomDate(this.endDate);
   }
 
   /**
@@ -92,25 +70,47 @@ export default class ModuleCoordinator {
 
   /**
    * @public
-   * @method setDayCount
-   * @param  {Int} count
+   * @method setStartDate
+   * @param  {CustomDate} fromDate
+   * @param  {CustomDate} toDate
    */
-  async setDayCount(count) {
-    await this.datesPanel.setDayCount(count);
+  async setDateRange(fromDate, toDate) {
+    if (fromDate.sameDay(this.getStartDate()) && toDate.sameDay(this.getEndDate())) { return; }
+    const newFromDate = new CustomDate(fromDate).startOf('day');
+    const newToDate = new CustomDate(toDate);
+    const currentSubjects = this.datesPanel.getSubjects();
+    const newSubjectEnvents = await this.dataLoader.getSubjectsEvents(
+      currentSubjects,
+      newFromDate,
+      newToDate
+    );
+    this.datesPanel.setSubjects(newSubjectEnvents, fromDate, toDate);
+    this.startDate = new CustomDate(newFromDate);
+    this.endDate = new CustomDate(newToDate);
+    this.controlBar.setDatepickerDate(newFromDate);
   }
 
   /**
    * @public
-   * @method getDayCount
-   * @param  {Int} count
-   * return {Int}
+   * @method setSubjectCount
+   * @param {Int} count
    */
-  getDayCount() {
-    return this.datesPanel.getDayCount();
+  async setSubjectCount(count) {
+    const currentSubjects = this.datesPanel.getSubjects();
+    const currentSubjectCount = currentSubjects.length;
+    if (count === currentSubjectCount) { return; }
+    if (count > currentSubjectCount) {
+      this.addSubjects(count - currentSubjectCount, 'end');
+    } else {
+      const fromDate = this.getStartDate();
+      const toDate = this.getEndDate();
+      this.datesPanel.setSubjects(currentSubjects.slice(0, count), fromDate, toDate);
+      this.labelsBar.setSubjects(currentSubjects.slice(0, count));
+    }
   }
 
   /**
-   * @public
+   * @private
    * @method addSubject
    * @param  {String} position 'beginning' or 'end'
    */
@@ -127,23 +127,5 @@ export default class ModuleCoordinator {
     );
     this.datesPanel.addSubjects(newSubjects, position);
     this.labelsBar.addSubjects(newSubjects, position);
-  }
-
-  /**
-   * @public
-   * @method getSubjectEvents
-   * @param  {Array<Object>} subjects
-   * @param  {CustomDate} fromDate
-   * @param  {CustomDate} toDate
-   * @return {Object<Array<Object>>} - Each key is a subjectId and
-   * each value an array of event objects
-   */
-  async getSubjectsEvents(subjects, fromDate, toDate) {
-    const subjectEvents = await this.dataLoader.getSubjectsEvents(subjects, fromDate, toDate);
-    return subjectEvents;
-  }
-
-  removeSubjects() {
-    assert.warn('Not implemented');
   }
 }

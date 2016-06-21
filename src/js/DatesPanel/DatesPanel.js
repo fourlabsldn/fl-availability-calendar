@@ -1,13 +1,11 @@
 import DateBar from './DateBar';
 import SubjectRow from './SubjectRow';
 import ViewController from '../ViewController';
-import CustomDate from '../utils/CustomDate';
 
 const CLASS_PREFIX = 'DatesPanel';
 export default class DatesPanel extends ViewController {
-  constructor(startDate, moduleCoordinator, modulePrefix) {
+  constructor(startDate, modulePrefix) {
     super(modulePrefix, CLASS_PREFIX);
-    this.moduleCoordinator = moduleCoordinator;
     this.dateBar = new DateBar(startDate, modulePrefix);
     this.subjectRows = [];
 
@@ -27,6 +25,10 @@ export default class DatesPanel extends ViewController {
 
   getSubjectCount() {
     return this.subjectRows.length;
+  }
+
+  getSubjects() {
+    return this.subjectRows.map(r => r.getSubject());
   }
 
   getDayCount() {
@@ -54,44 +56,6 @@ export default class DatesPanel extends ViewController {
 
   /**
    * @public
-   * @method setDayCount
-   * @param  {int} count
-   */
-  async setDayCount(count) {
-    this.dateBar.setDayCount(count);
-    await this.setRowsStartDate(this.getStartDate());
-  }
-
-  /**
-   * @public
-   * @method setStartDate
-   * @param  {CustomDate} date
-   */
-  async setStartDate(date) {
-    this.dateBar.setStartDate(date);
-    await this.setRowsStartDate(date);
-  }
-
-  /**
-   * Makes all subjectRows' start date be the current DatesPanel start Date.
-   * @private
-   * @method setRowsStartDate
-   * @return {Promise}
-   */
-  async setRowsStartDate(date) {
-    const dayCount = this.getDayCount();
-    const fromDate = new CustomDate(date);
-    const toDate = new CustomDate(date).add(dayCount - 1, 'days');
-    const subjects = this.subjectRows.map(r => r.getSubject());
-    const newEvents = await this.moduleCoordinator.getSubjectsEvents(subjects, fromDate, toDate);
-
-    for (const subjectRow of this.subjectRows) {
-      const subject = subjectRow.getSubject();
-      subjectRow.setEvents(newEvents[subject.id], fromDate, toDate);
-    }
-  }
-  /**
-   * @public
    * @method getSubjectAt
    * @param  {String} position 'end' or 'beginning'
    * @return {Object} - or Null if none exist.
@@ -103,19 +67,33 @@ export default class DatesPanel extends ViewController {
   }
 
   /**
-   * Create Subject rows
+   * @public
+   * @method setSubjects
+   * @param  {Array<objects>} subjects
+   * @param  {CustomDate} fromDate
+   * @param  {CustomDate} toDate
+   */
+  setSubjects(subjects, fromDate, toDate) {
+    // TODO: Change this for a setDateRange method
+    this.dateBar.setStartDate(fromDate);
+    this.dateBar.setDayCount(toDate.diff(fromDate, 'days'));
+
+    this.clearRows();
+    for (const subject of subjects) {
+      this.addRow(subject, fromDate, toDate, 'end');
+    }
+  }
+
+  /**
+   * Adds rows to represent subjects
    * @method addSubjects
    * @param  {Array<Object>} subjects
-   * @param  {String} position
+   * @param  {String} position 'beginning' or 'end'
    */
-  async addSubjects(subjects, position) {
+  addSubjects(subjects, position) {
     const fromDate = this.getStartDate();
     const toDate = this.getEndDate();
-    for (const subject of subjects) {
-      const newRow = new SubjectRow(subject, this.modulePrefix);
-      this.addRow(newRow, position);
-      newRow.setEvents(subject.events, fromDate, toDate);
-    }
+    subjects.forEach(s => this.addRow(s, fromDate, toDate, position));
   }
 
   /**
@@ -123,8 +101,10 @@ export default class DatesPanel extends ViewController {
    * @method addRow
    * @param  {SubjectRow} newRow
    * @param  {String} position 'beginning' or 'end'
+   * @return {SubjectRow}
    */
-  addRow(newRow, position) {
+  addRow(subject, fromDate, toDate, position) {
+    const newRow = new SubjectRow(subject, fromDate, toDate, this.modulePrefix);
     const subjectsContainer = this.html.subjectsContainer;
     let referenceNodeIndex;
     if (position === 'end') {
@@ -138,5 +118,14 @@ export default class DatesPanel extends ViewController {
       newRow.getContainer(),
       subjectsContainer.children[referenceNodeIndex]
     );
+
+    return newRow;
+  }
+
+  clearRows() {
+    for (const row of this.subjectRows) {
+      row.destroy();
+    }
+    this.subjectRows = [];
   }
 }

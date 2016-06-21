@@ -2321,78 +2321,6 @@ exports.default = function () {
 
 var _createClass = (createClass && typeof createClass === 'object' && 'default' in createClass ? createClass['default'] : createClass);
 
-// Bug checking function that will throw an error whenever
-// the condition sent to it is evaluated to false
-/**
- * Processes the message and outputs the correct message if the condition
- * is false. Otherwise it outputs null.
- * @api private
- * @method processCondition
- * @param  {Boolean} condition - Result of the evaluated condition
- * @param  {String} errorMessage - Message explainig the error in case it is thrown
- * @return {String | null}  - Error message if there is an error, nul otherwise.
- */
-function processCondition(condition, errorMessage) {
-  if (!condition) {
-    var completeErrorMessage = '';
-    var re = /at ([^\s]+)\s\(/g;
-    var stackTrace = new Error().stack;
-    var stackFunctions = [];
-
-    var funcName = re.exec(stackTrace);
-    while (funcName && funcName[1]) {
-      stackFunctions.push(funcName[1]);
-      funcName = re.exec(stackTrace);
-    }
-
-    // Number 0 is processCondition itself,
-    // Number 1 is assert,
-    // Number 2 is the caller function.
-    if (stackFunctions[2]) {
-      completeErrorMessage = stackFunctions[2] + ': ' + completeErrorMessage;
-    }
-
-    completeErrorMessage += errorMessage;
-    return completeErrorMessage;
-  }
-
-  return null;
-}
-
-/**
- * Throws an error if the boolean passed to it evaluates to false.
- * To be used like this:
- * 		assert(myDate !== undefined, "Date cannot be undefined.");
- * @api public
- * @method assert
- * @param  {Boolean} condition - Result of the evaluated condition
- * @param  {String} errorMessage - Message explainig the error in case it is thrown
- * @return void
- */
-function assert(condition, errorMessage) {
-  var error = processCondition(condition, errorMessage);
-  if (typeof error === 'string') {
-    throw new Error(error);
-  }
-}
-
-/**
- * Logs a warning if the boolean passed to it evaluates to false.
- * To be used like this:
- * 		assert.warn(myDate !== undefined, "No date provided.");
- * @api public
- * @method warn
- * @param  {Boolean} condition - Result of the evaluated condition
- * @param  {String} errorMessage - Message explainig the error in case it is thrown
- * @return void
- */
-assert.warn = function warn(condition, errorMessage) {
-  var error = processCondition(condition, errorMessage);
-  if (typeof error === 'string') {
-    console.warn(error);
-  }
-};
-
 var moment = __commonjs(function (module, exports, global) {
 //! moment.js
 //! version : 2.13.0
@@ -7182,7 +7110,7 @@ var LabelsBar = function (_ViewController) {
       this.html.container.appendChild(this.html.labelsContainer);
     }
 
-    /** 
+    /**
      * Used by CalendarContainer
      * @public
      * @method getHeader
@@ -7195,6 +7123,21 @@ var LabelsBar = function (_ViewController) {
       return this.html.header;
     }
 
+    /**
+     * @public
+     * @method setSubjects
+     * @param  {Array<Object>} subjects
+     */
+
+  }, {
+    key: 'setSubjects',
+    value: function setSubjects(subjects) {
+      var labels = Array.of(this.html.labelsContainer.children);
+      labels.forEach(function (l) {
+        return l.remove();
+      });
+      this.addSubjects(subjects, 'end');
+    }
     /**
      * @public
      * @method addSubjecta
@@ -7405,6 +7348,78 @@ var ControlBar = function (_ViewController) {
 
   return ControlBar;
 }(ViewController);
+
+// Bug checking function that will throw an error whenever
+// the condition sent to it is evaluated to false
+/**
+ * Processes the message and outputs the correct message if the condition
+ * is false. Otherwise it outputs null.
+ * @api private
+ * @method processCondition
+ * @param  {Boolean} condition - Result of the evaluated condition
+ * @param  {String} errorMessage - Message explainig the error in case it is thrown
+ * @return {String | null}  - Error message if there is an error, nul otherwise.
+ */
+function processCondition(condition, errorMessage) {
+  if (!condition) {
+    var completeErrorMessage = '';
+    var re = /at ([^\s]+)\s\(/g;
+    var stackTrace = new Error().stack;
+    var stackFunctions = [];
+
+    var funcName = re.exec(stackTrace);
+    while (funcName && funcName[1]) {
+      stackFunctions.push(funcName[1]);
+      funcName = re.exec(stackTrace);
+    }
+
+    // Number 0 is processCondition itself,
+    // Number 1 is assert,
+    // Number 2 is the caller function.
+    if (stackFunctions[2]) {
+      completeErrorMessage = stackFunctions[2] + ': ' + completeErrorMessage;
+    }
+
+    completeErrorMessage += errorMessage;
+    return completeErrorMessage;
+  }
+
+  return null;
+}
+
+/**
+ * Throws an error if the boolean passed to it evaluates to false.
+ * To be used like this:
+ * 		assert(myDate !== undefined, "Date cannot be undefined.");
+ * @api public
+ * @method assert
+ * @param  {Boolean} condition - Result of the evaluated condition
+ * @param  {String} errorMessage - Message explainig the error in case it is thrown
+ * @return void
+ */
+function assert(condition, errorMessage) {
+  var error = processCondition(condition, errorMessage);
+  if (typeof error === 'string') {
+    throw new Error(error);
+  }
+}
+
+/**
+ * Logs a warning if the boolean passed to it evaluates to false.
+ * To be used like this:
+ * 		assert.warn(myDate !== undefined, "No date provided.");
+ * @api public
+ * @method warn
+ * @param  {Boolean} condition - Result of the evaluated condition
+ * @param  {String} errorMessage - Message explainig the error in case it is thrown
+ * @return void
+ */
+assert.warn = function warn(condition, errorMessage) {
+  var error = processCondition(condition, errorMessage);
+  if (typeof error === 'string') {
+    console.warn(error);
+  }
+};
 
 var CLASS_PREFIX$1 = 'DateBar';
 
@@ -7765,12 +7780,13 @@ var Day = function (_ViewController) {
 var SubjectRow = function (_ViewController) {
   _inherits(SubjectRow, _ViewController);
 
-  function SubjectRow(subject, modulePrefix) {
+  function SubjectRow(subject, rowStartDate, rowEndDate, modulePrefix) {
     _classCallCheck(this, SubjectRow);
 
     var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(SubjectRow).call(this, modulePrefix));
 
     _this.subject = subject;
+    _this.setEvents(subject.events, rowStartDate, rowEndDate);
     return _this;
   }
 
@@ -7832,12 +7848,11 @@ var CLASS_PREFIX = 'DatesPanel';
 var DatesPanel = function (_ViewController) {
   _inherits(DatesPanel, _ViewController);
 
-  function DatesPanel(startDate, moduleCoordinator, modulePrefix) {
+  function DatesPanel(startDate, modulePrefix) {
     _classCallCheck(this, DatesPanel);
 
     var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(DatesPanel).call(this, modulePrefix, CLASS_PREFIX));
 
-    _this.moduleCoordinator = moduleCoordinator;
     _this.dateBar = new DateBar(startDate, modulePrefix);
     _this.subjectRows = [];
 
@@ -7858,6 +7873,13 @@ var DatesPanel = function (_ViewController) {
     key: 'getSubjectCount',
     value: function getSubjectCount() {
       return this.subjectRows.length;
+    }
+  }, {
+    key: 'getSubjects',
+    value: function getSubjects() {
+      return this.subjectRows.map(function (r) {
+        return r.getSubject();
+      });
     }
   }, {
     key: 'getDayCount',
@@ -7890,159 +7912,6 @@ var DatesPanel = function (_ViewController) {
 
     /**
      * @public
-     * @method setDayCount
-     * @param  {int} count
-     */
-
-  }, {
-    key: 'setDayCount',
-    value: function () {
-      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee(count) {
-        return _regeneratorRuntime.wrap(function _callee$(_context) {
-          while (1) {
-            switch (_context.prev = _context.next) {
-              case 0:
-                this.dateBar.setDayCount(count);
-                _context.next = 3;
-                return this.setRowsStartDate(this.getStartDate());
-
-              case 3:
-              case 'end':
-                return _context.stop();
-            }
-          }
-        }, _callee, this);
-      }));
-
-      function setDayCount(_x) {
-        return ref.apply(this, arguments);
-      }
-
-      return setDayCount;
-    }()
-
-    /**
-     * @public
-     * @method setStartDate
-     * @param  {CustomDate} date
-     */
-
-  }, {
-    key: 'setStartDate',
-    value: function () {
-      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee2(date) {
-        return _regeneratorRuntime.wrap(function _callee2$(_context2) {
-          while (1) {
-            switch (_context2.prev = _context2.next) {
-              case 0:
-                this.dateBar.setStartDate(date);
-                _context2.next = 3;
-                return this.setRowsStartDate(date);
-
-              case 3:
-              case 'end':
-                return _context2.stop();
-            }
-          }
-        }, _callee2, this);
-      }));
-
-      function setStartDate(_x2) {
-        return ref.apply(this, arguments);
-      }
-
-      return setStartDate;
-    }()
-
-    /**
-     * Makes all subjectRows' start date be the current DatesPanel start Date.
-     * @private
-     * @method setRowsStartDate
-     * @return {Promise}
-     */
-
-  }, {
-    key: 'setRowsStartDate',
-    value: function () {
-      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee3(date) {
-        var dayCount, fromDate, toDate, subjects, newEvents, _iteratorNormalCompletion, _didIteratorError, _iteratorError, _iterator, _step, subjectRow, subject;
-
-        return _regeneratorRuntime.wrap(function _callee3$(_context3) {
-          while (1) {
-            switch (_context3.prev = _context3.next) {
-              case 0:
-                dayCount = this.getDayCount();
-                fromDate = new CustomDate(date);
-                toDate = new CustomDate(date).add(dayCount - 1, 'days');
-                subjects = this.subjectRows.map(function (r) {
-                  return r.getSubject();
-                });
-                _context3.next = 6;
-                return this.moduleCoordinator.getSubjectsEvents(subjects, fromDate, toDate);
-
-              case 6:
-                newEvents = _context3.sent;
-                _iteratorNormalCompletion = true;
-                _didIteratorError = false;
-                _iteratorError = undefined;
-                _context3.prev = 10;
-
-
-                for (_iterator = this.subjectRows[Symbol.iterator](); !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-                  subjectRow = _step.value;
-                  subject = subjectRow.getSubject();
-
-                  subjectRow.setEvents(newEvents[subject.id], fromDate, toDate);
-                }
-                _context3.next = 18;
-                break;
-
-              case 14:
-                _context3.prev = 14;
-                _context3.t0 = _context3['catch'](10);
-                _didIteratorError = true;
-                _iteratorError = _context3.t0;
-
-              case 18:
-                _context3.prev = 18;
-                _context3.prev = 19;
-
-                if (!_iteratorNormalCompletion && _iterator.return) {
-                  _iterator.return();
-                }
-
-              case 21:
-                _context3.prev = 21;
-
-                if (!_didIteratorError) {
-                  _context3.next = 24;
-                  break;
-                }
-
-                throw _iteratorError;
-
-              case 24:
-                return _context3.finish(21);
-
-              case 25:
-                return _context3.finish(18);
-
-              case 26:
-              case 'end':
-                return _context3.stop();
-            }
-          }
-        }, _callee3, this, [[10, 14, 18, 26], [19,, 21, 25]]);
-      }));
-
-      function setRowsStartDate(_x3) {
-        return ref.apply(this, arguments);
-      }
-
-      return setRowsStartDate;
-    }()
-    /**
-     * @public
      * @method getSubjectAt
      * @param  {String} position 'end' or 'beginning'
      * @return {Object} - or Null if none exist.
@@ -8057,94 +7926,78 @@ var DatesPanel = function (_ViewController) {
     }
 
     /**
-     * Create Subject rows
+     * @public
+     * @method setSubjects
+     * @param  {Array<objects>} subjects
+     * @param  {CustomDate} fromDate
+     * @param  {CustomDate} toDate
+     */
+
+  }, {
+    key: 'setSubjects',
+    value: function setSubjects(subjects, fromDate, toDate) {
+      // TODO: Change this for a setDateRange method
+      this.dateBar.setStartDate(fromDate);
+      this.dateBar.setDayCount(toDate.diff(fromDate, 'days'));
+
+      this.clearRows();
+      var _iteratorNormalCompletion = true;
+      var _didIteratorError = false;
+      var _iteratorError = undefined;
+
+      try {
+        for (var _iterator = subjects[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+          var subject = _step.value;
+
+          this.addRow(subject, fromDate, toDate, 'end');
+        }
+      } catch (err) {
+        _didIteratorError = true;
+        _iteratorError = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion && _iterator.return) {
+            _iterator.return();
+          }
+        } finally {
+          if (_didIteratorError) {
+            throw _iteratorError;
+          }
+        }
+      }
+    }
+
+    /**
+     * Adds rows to represent subjects
      * @method addSubjects
      * @param  {Array<Object>} subjects
-     * @param  {String} position
+     * @param  {String} position 'beginning' or 'end'
      */
 
   }, {
     key: 'addSubjects',
-    value: function () {
-      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee4(subjects, position) {
-        var fromDate, toDate, _iteratorNormalCompletion2, _didIteratorError2, _iteratorError2, _iterator2, _step2, subject, newRow;
+    value: function addSubjects(subjects, position) {
+      var _this2 = this;
 
-        return _regeneratorRuntime.wrap(function _callee4$(_context4) {
-          while (1) {
-            switch (_context4.prev = _context4.next) {
-              case 0:
-                fromDate = this.getStartDate();
-                toDate = this.getEndDate();
-                _iteratorNormalCompletion2 = true;
-                _didIteratorError2 = false;
-                _iteratorError2 = undefined;
-                _context4.prev = 5;
-
-                for (_iterator2 = subjects[Symbol.iterator](); !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-                  subject = _step2.value;
-                  newRow = new SubjectRow(subject, this.modulePrefix);
-
-                  this.addRow(newRow, position);
-                  newRow.setEvents(subject.events, fromDate, toDate);
-                }
-                _context4.next = 13;
-                break;
-
-              case 9:
-                _context4.prev = 9;
-                _context4.t0 = _context4['catch'](5);
-                _didIteratorError2 = true;
-                _iteratorError2 = _context4.t0;
-
-              case 13:
-                _context4.prev = 13;
-                _context4.prev = 14;
-
-                if (!_iteratorNormalCompletion2 && _iterator2.return) {
-                  _iterator2.return();
-                }
-
-              case 16:
-                _context4.prev = 16;
-
-                if (!_didIteratorError2) {
-                  _context4.next = 19;
-                  break;
-                }
-
-                throw _iteratorError2;
-
-              case 19:
-                return _context4.finish(16);
-
-              case 20:
-                return _context4.finish(13);
-
-              case 21:
-              case 'end':
-                return _context4.stop();
-            }
-          }
-        }, _callee4, this, [[5, 9, 13, 21], [14,, 16, 20]]);
-      }));
-
-      function addSubjects(_x4, _x5) {
-        return ref.apply(this, arguments);
-      }
-
-      return addSubjects;
-    }()
+      var fromDate = this.getStartDate();
+      var toDate = this.getEndDate();
+      subjects.forEach(function (s) {
+        return _this2.addRow(s, fromDate, toDate, position);
+      });
+    }
 
     /**
      * @private
      * @method addRow
      * @param  {SubjectRow} newRow
      * @param  {String} position 'beginning' or 'end'
+     * @return {SubjectRow}
      */
 
   }, {
     key: 'addRow',
-    value: function addRow(newRow, position) {
+    value: function addRow(subject, fromDate, toDate, position) {
+      var newRow = new SubjectRow(subject, fromDate, toDate, this.modulePrefix);
       var subjectsContainer = this.html.subjectsContainer;
       var referenceNodeIndex = void 0;
       if (position === 'end') {
@@ -8155,6 +8008,38 @@ var DatesPanel = function (_ViewController) {
         referenceNodeIndex = 0;
       }
       subjectsContainer.insertBefore(newRow.getContainer(), subjectsContainer.children[referenceNodeIndex]);
+
+      return newRow;
+    }
+  }, {
+    key: 'clearRows',
+    value: function clearRows() {
+      var _iteratorNormalCompletion2 = true;
+      var _didIteratorError2 = false;
+      var _iteratorError2 = undefined;
+
+      try {
+        for (var _iterator2 = this.subjectRows[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+          var row = _step2.value;
+
+          row.destroy();
+        }
+      } catch (err) {
+        _didIteratorError2 = true;
+        _iteratorError2 = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion2 && _iterator2.return) {
+            _iterator2.return();
+          }
+        } finally {
+          if (_didIteratorError2) {
+            throw _iteratorError2;
+          }
+        }
+      }
+
+      this.subjectRows = [];
     }
   }]);
 
@@ -8574,6 +8459,7 @@ var ModuleCoordinator = function () {
     _classCallCheck(this, ModuleCoordinator);
 
     this.startDate = new CustomDate();
+    this.endDate = new CustomDate();
     this.dataLoader = new DataLoader(loadUrl);
 
     // create html container
@@ -8588,7 +8474,7 @@ var ModuleCoordinator = function () {
     this.calendarContainer.set('labelsBar', this.labelsBar);
 
     // create datesContainer
-    this.datesPanel = new DatesPanel(this.startDate, this, MODULE_PREFIX);
+    this.datesPanel = new DatesPanel(this.startDate, MODULE_PREFIX);
     this.calendarContainer.set('datesPanel', this.datesPanel);
 
     Object.preventExtensions(this);
@@ -8596,9 +8482,7 @@ var ModuleCoordinator = function () {
     xdiv.appendChild(this.calendarContainer.html.container);
 
     // set start date and dayCount
-    this.setStartDate(this.startDate).then(function () {
-      return _this.setDayCount(CUSTOM_DAYCOUNT);
-    }).then(function () {
+    this.setDateRange(this.startDate, new CustomDate(this.startDate).add(CUSTOM_DAYCOUNT, 'days')).then(function () {
       return _this.setSubjectCount(initialSubjectCount);
     });
   }
@@ -8624,91 +8508,8 @@ var ModuleCoordinator = function () {
   }, {
     key: 'getEndDate',
     value: function getEndDate() {
-      return new CustomDate(this.startDate).add(this.getDayCount() - 1, 'days');
+      return new CustomDate(this.endDate);
     }
-
-    /**
-     * @public
-     * @method setStartDate
-     * @param  {CustomDate} date
-     */
-
-  }, {
-    key: 'setStartDate',
-    value: function () {
-      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee(date) {
-        var newDate;
-        return _regeneratorRuntime.wrap(function _callee$(_context) {
-          while (1) {
-            switch (_context.prev = _context.next) {
-              case 0:
-                newDate = new CustomDate(date).startOf('day');
-                _context.next = 3;
-                return this.datesPanel.setStartDate(newDate);
-
-              case 3:
-                this.startDate = new CustomDate(newDate);
-                this.controlBar.setDatepickerDate(newDate);
-
-              case 5:
-              case 'end':
-                return _context.stop();
-            }
-          }
-        }, _callee, this);
-      }));
-
-      function setStartDate(_x2) {
-        return ref.apply(this, arguments);
-      }
-
-      return setStartDate;
-    }()
-
-    /**
-     * @public
-     * @method setSubjectCount
-     * @param {Int} count
-     */
-
-  }, {
-    key: 'setSubjectCount',
-    value: function () {
-      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee2(count) {
-        var currentCount, diff, method;
-        return _regeneratorRuntime.wrap(function _callee2$(_context2) {
-          while (1) {
-            switch (_context2.prev = _context2.next) {
-              case 0:
-                currentCount = this.getSubjectCount();
-
-                if (!(count === currentCount)) {
-                  _context2.next = 3;
-                  break;
-                }
-
-                return _context2.abrupt('return');
-
-              case 3:
-                diff = Math.abs(currentCount - count);
-                method = count > currentCount ? 'addSubjects' : 'removeSubjects';
-
-                this[method](diff, 'end');
-
-              case 6:
-              case 'end':
-                return _context2.stop();
-            }
-          }
-        }, _callee2, this);
-      }));
-
-      function setSubjectCount(_x3) {
-        return ref.apply(this, arguments);
-      }
-
-      return setSubjectCount;
-    }()
 
     /**
      * @public
@@ -8724,51 +8525,110 @@ var ModuleCoordinator = function () {
 
     /**
      * @public
-     * @method setDayCount
-     * @param  {Int} count
+     * @method setStartDate
+     * @param  {CustomDate} fromDate
+     * @param  {CustomDate} toDate
      */
 
   }, {
-    key: 'setDayCount',
+    key: 'setDateRange',
     value: function () {
-      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee3(count) {
-        return _regeneratorRuntime.wrap(function _callee3$(_context3) {
+      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee(fromDate, toDate) {
+        var newFromDate, newToDate, currentSubjects, newSubjectEnvents;
+        return _regeneratorRuntime.wrap(function _callee$(_context) {
           while (1) {
-            switch (_context3.prev = _context3.next) {
+            switch (_context.prev = _context.next) {
               case 0:
-                _context3.next = 2;
-                return this.datesPanel.setDayCount(count);
+                if (!(fromDate.sameDay(this.getStartDate()) && toDate.sameDay(this.getEndDate()))) {
+                  _context.next = 2;
+                  break;
+                }
+
+                return _context.abrupt('return');
 
               case 2:
+                newFromDate = new CustomDate(fromDate).startOf('day');
+                newToDate = new CustomDate(toDate);
+                currentSubjects = this.datesPanel.getSubjects();
+                _context.next = 7;
+                return this.dataLoader.getSubjectsEvents(currentSubjects, newFromDate, newToDate);
+
+              case 7:
+                newSubjectEnvents = _context.sent;
+
+                this.datesPanel.setSubjects(newSubjectEnvents, fromDate, toDate);
+                this.startDate = new CustomDate(newFromDate);
+                this.endDate = new CustomDate(newToDate);
+                this.controlBar.setDatepickerDate(newFromDate);
+
+              case 12:
               case 'end':
-                return _context3.stop();
+                return _context.stop();
             }
           }
-        }, _callee3, this);
+        }, _callee, this);
       }));
 
-      function setDayCount(_x4) {
+      function setDateRange(_x2, _x3) {
         return ref.apply(this, arguments);
       }
 
-      return setDayCount;
+      return setDateRange;
     }()
 
     /**
      * @public
-     * @method getDayCount
-     * @param  {Int} count
-     * return {Int}
+     * @method setSubjectCount
+     * @param {Int} count
      */
 
   }, {
-    key: 'getDayCount',
-    value: function getDayCount() {
-      return this.datesPanel.getDayCount();
-    }
+    key: 'setSubjectCount',
+    value: function () {
+      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee2(count) {
+        var currentSubjects, currentSubjectCount, fromDate, toDate;
+        return _regeneratorRuntime.wrap(function _callee2$(_context2) {
+          while (1) {
+            switch (_context2.prev = _context2.next) {
+              case 0:
+                currentSubjects = this.datesPanel.getSubjects();
+                currentSubjectCount = currentSubjects.length;
+
+                if (!(count === currentSubjectCount)) {
+                  _context2.next = 4;
+                  break;
+                }
+
+                return _context2.abrupt('return');
+
+              case 4:
+                if (count > currentSubjectCount) {
+                  this.addSubjects(count - currentSubjectCount, 'end');
+                } else {
+                  fromDate = this.getStartDate();
+                  toDate = this.getEndDate();
+
+                  this.datesPanel.setSubjects(currentSubjects.slice(0, count), fromDate, toDate);
+                  this.labelsBar.setSubjects(currentSubjects.slice(0, count));
+                }
+
+              case 5:
+              case 'end':
+                return _context2.stop();
+            }
+          }
+        }, _callee2, this);
+      }));
+
+      function setSubjectCount(_x4) {
+        return ref.apply(this, arguments);
+      }
+
+      return setSubjectCount;
+    }()
 
     /**
-     * @public
+     * @private
      * @method addSubject
      * @param  {String} position 'beginning' or 'end'
      */
@@ -8776,30 +8636,30 @@ var ModuleCoordinator = function () {
   }, {
     key: 'addSubjects',
     value: function () {
-      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee4(amount, position) {
+      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee3(amount, position) {
         var fromDate, toDate, referenceSubj, newSubjects;
-        return _regeneratorRuntime.wrap(function _callee4$(_context4) {
+        return _regeneratorRuntime.wrap(function _callee3$(_context3) {
           while (1) {
-            switch (_context4.prev = _context4.next) {
+            switch (_context3.prev = _context3.next) {
               case 0:
                 fromDate = this.getStartDate();
                 toDate = this.getEndDate();
                 referenceSubj = this.datesPanel.getSubjectAt(position);
-                _context4.next = 5;
+                _context3.next = 5;
                 return this.dataLoader.getSubjects(amount, position, referenceSubj, fromDate, toDate);
 
               case 5:
-                newSubjects = _context4.sent;
+                newSubjects = _context3.sent;
 
                 this.datesPanel.addSubjects(newSubjects, position);
                 this.labelsBar.addSubjects(newSubjects, position);
 
               case 8:
               case 'end':
-                return _context4.stop();
+                return _context3.stop();
             }
           }
-        }, _callee4, this);
+        }, _callee3, this);
       }));
 
       function addSubjects(_x5, _x6) {
@@ -8808,52 +8668,6 @@ var ModuleCoordinator = function () {
 
       return addSubjects;
     }()
-
-    /**
-     * @public
-     * @method getSubjectEvents
-     * @param  {Array<Object>} subjects
-     * @param  {CustomDate} fromDate
-     * @param  {CustomDate} toDate
-     * @return {Object<Array<Object>>} - Each key is a subjectId and
-     * each value an array of event objects
-     */
-
-  }, {
-    key: 'getSubjectsEvents',
-    value: function () {
-      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee5(subjects, fromDate, toDate) {
-        var subjectEvents;
-        return _regeneratorRuntime.wrap(function _callee5$(_context5) {
-          while (1) {
-            switch (_context5.prev = _context5.next) {
-              case 0:
-                _context5.next = 2;
-                return this.dataLoader.getSubjectsEvents(subjects, fromDate, toDate);
-
-              case 2:
-                subjectEvents = _context5.sent;
-                return _context5.abrupt('return', subjectEvents);
-
-              case 4:
-              case 'end':
-                return _context5.stop();
-            }
-          }
-        }, _callee5, this);
-      }));
-
-      function getSubjectsEvents(_x7, _x8, _x9) {
-        return ref.apply(this, arguments);
-      }
-
-      return getSubjectsEvents;
-    }()
-  }, {
-    key: 'removeSubjects',
-    value: function removeSubjects() {
-      assert.warn('Not implemented');
-    }
   }]);
 
   return ModuleCoordinator;
