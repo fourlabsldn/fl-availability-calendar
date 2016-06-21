@@ -86,9 +86,10 @@ export default class ControlBar extends ViewController {
    * @return {void}
    */
   scroll(direction) {
-    const monthsToScroll = direction === 'right' ? 1 : -1;
+    const dayCount = this.moduleCoordinator.getDayCount();
+    const daysToScroll = parseInt(dayCount * 2 / 3, 10) * (direction === 'right' ? 1 : -1);
     const currStartDate = this.moduleCoordinator.getStartDate();
-    const newStartDate = new CustomDate(currStartDate).add(monthsToScroll, 'month');
+    const newStartDate = new CustomDate(currStartDate).add(daysToScroll, 'days');
     this.moduleCoordinator.setStartDate(newStartDate);
   }
 }

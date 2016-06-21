@@ -7364,9 +7364,10 @@ var ControlBar = function (_ViewController) {
   }, {
     key: 'scroll',
     value: function scroll(direction) {
-      var monthsToScroll = direction === 'right' ? 1 : -1;
+      var dayCount = this.moduleCoordinator.getDayCount();
+      var daysToScroll = parseInt(dayCount * 2 / 3, 10) * (direction === 'right' ? 1 : -1);
       var currStartDate = this.moduleCoordinator.getStartDate();
-      var newStartDate = new CustomDate(currStartDate).add(monthsToScroll, 'month');
+      var newStartDate = new CustomDate(currStartDate).add(daysToScroll, 'days');
       this.moduleCoordinator.setStartDate(newStartDate);
     }
   }]);
@@ -8413,10 +8414,8 @@ var MODULE_PREFIX = 'fl-msc';
 var CUSTOM_DAYCOUNT = 80;
 
 var ModuleCoordinator = function () {
-  function ModuleCoordinator(xdiv, loadUrl, subjectsHeader) {
+  function ModuleCoordinator(xdiv, loadUrl, subjectsHeader, initialSubjectCount) {
     var _this = this;
-
-    var initialSubjectCount = arguments.length <= 3 || arguments[3] === undefined ? 100 : arguments[3];
 
     _classCallCheck(this, ModuleCoordinator);
 
@@ -8526,7 +8525,7 @@ var ModuleCoordinator = function () {
         }, _callee, this);
       }));
 
-      function setStartDate(_x2) {
+      function setStartDate(_x) {
         return ref.apply(this, arguments);
       }
 
@@ -8579,7 +8578,7 @@ var ModuleCoordinator = function () {
         }, _callee2, this);
       }));
 
-      function setDateRange(_x3, _x4) {
+      function setDateRange(_x2, _x3) {
         return ref.apply(this, arguments);
       }
 
@@ -8630,7 +8629,7 @@ var ModuleCoordinator = function () {
         }, _callee3, this);
       }));
 
-      function setSubjectCount(_x5) {
+      function setSubjectCount(_x4) {
         return ref.apply(this, arguments);
       }
 
@@ -8672,7 +8671,7 @@ var ModuleCoordinator = function () {
         }, _callee4, this);
       }));
 
-      function addSubjects(_x6, _x7) {
+      function addSubjects(_x5, _x6) {
         return ref.apply(this, arguments);
       }
 

@@ -10,7 +10,7 @@ const MODULE_PREFIX = 'fl-msc';
 const CUSTOM_DAYCOUNT = 80;
 
 export default class ModuleCoordinator {
-  constructor(xdiv, loadUrl, subjectsHeader, initialSubjectCount = 100) {
+  constructor(xdiv, loadUrl, subjectsHeader, initialSubjectCount) {
     this.startDate = new CustomDate();
     this.endDate = new CustomDate();
     this.dataLoader = new DataLoader(loadUrl);
