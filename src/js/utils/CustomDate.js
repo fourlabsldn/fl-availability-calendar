@@ -50,7 +50,12 @@ export default class CustomDate {
   }
 
   startOf(unit) {
-    const answer = this.date.startOf(unit);
+    const answer = moment(this.date).startOf(unit);
+    return new CustomDate(answer);
+  }
+
+  endOf(unit) {
+    const answer = moment(this.date).endOf(unit);
     return new CustomDate(answer);
   }
 

@@ -74,7 +74,7 @@ export default class ModuleCoordinator {
    * @return {Int}
    */
   getDayCount() {
-    this.endDate.diff(this.startDate, 'days');
+    return this.endDate.diff(this.startDate, 'days');
   }
 
   /**
