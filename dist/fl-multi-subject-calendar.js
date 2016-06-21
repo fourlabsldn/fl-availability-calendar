@@ -7328,9 +7328,7 @@ var ControlBar = function (_ViewController) {
       this.html.datePicker.addEventListener('change', function () {
         var datepickerDate = new CustomDate(_this2.html.datePicker.value);
         var normalisedDate = datepickerDate.startOf('isoweek');
-        _this2.setDatepickerDate(normalisedDate);
-        // TODO: Change general date from here
-        console.warn('Datepicker date not fully implemented.');
+        _this2.moduleCoordinator.setStartDate(normalisedDate);
       });
 
       this.html.scrollLeftBtn.addEventListener('mousedown', function () {

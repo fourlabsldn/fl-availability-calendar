@@ -56,9 +56,7 @@ export default class ControlBar extends ViewController {
     this.html.datePicker.addEventListener('change', () => {
       const datepickerDate = new CustomDate(this.html.datePicker.value);
       const normalisedDate = datepickerDate.startOf('isoweek');
-      this.setDatepickerDate(normalisedDate);
-      // TODO: Change general date from here
-      console.warn('Datepicker date not fully implemented.');
+      this.moduleCoordinator.setStartDate(normalisedDate);
     });
 
     this.html.scrollLeftBtn.addEventListener('mousedown', () => {
