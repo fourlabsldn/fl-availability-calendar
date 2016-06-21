@@ -1,22 +1,11 @@
 import Ajax from './Ajax';
-import Cache from './Cache';
 import assert from 'fl-assert';
 import CustomDate from '../utils/CustomDate';
 
-const CONTENT_LOADING_PADDING = 100;
-const MAX_LOADED_RANGE = 120; // in days
-
 export default class DataLoader {
   constructor(loadUrl) {
-    // The comparison function accepts both ids and subjects
-    this.cache = new Cache((a, b) => {
-      const id1 = a.id || a;
-      const id2 = b.id || b;
-      return id1 - id2;
-    });
-    this.ajax = new Ajax(loadUrl);
-    this.cacheStartDate = new CustomDate();
-    this.cacheEndDate = new CustomDate();
+    this.ajaxNewSubjectsEvents = new Ajax(loadUrl);
+    this.ajaxNewSubjects = new Ajax(loadUrl);
   }
 
   /**
@@ -30,28 +19,16 @@ export default class DataLoader {
    */
   async getSubjectsEvents(subjects, fromDate, toDate) {
     if (subjects.length === 0) { return []; }
-    const ids = subjects.map(s => s.id);
-    let subjectsLoaded;
-    let loadedFromCache = false;
-    if (this.cacheCoversPeriod(fromDate, toDate)) {
-      subjectsLoaded = this.cache.getWithIds(ids);
-      loadedFromCache = subjects.length === subjectsLoaded.length;
-    }
-
-    if (!loadedFromCache) {
-      subjectsLoaded = await this.loadSubjects({
-        ids,
-        fromDate,
-        toDate,
-      });
-    }
+    const params = { ids: subjects.map(s => s.id), fromDate, toDate };
+    const subjectsLoaded = await this.load(params, this.ajaxNewSubjectsEvents);
 
     const subjectsEvents = {};
-    for (const subject of subjects) {
-      const sLoaded = subjectsLoaded.find(sl => sl.id === subject.id);
-      assert(sLoaded, `Events for subject of id "${subject.id}" not loaded.`);
-      subjectsEvents[subject.id] = sLoaded.events;
-    }
+    subjectsLoaded.forEach(s => { subjectsEvents[s.id] = s; });
+
+    // check that all subjects were loaded
+    subjects.forEach(
+      s => assert(subjectsEvents[s.id], `Events for subject of id "${s.id}" not loaded.`)
+    );
     return subjectsEvents;
   }
 
@@ -64,64 +41,33 @@ export default class DataLoader {
    * @return {Array<Object>}
    */
   async getSubjects(amount, position, referenceSubj, fromDate, toDate) {
-    const cached = this.cacheCoversPeriod(fromDate, toDate)
-      ? this.cache.get(amount, position, referenceSubj)
-      : [];
-    const missingCount = amount - cached.length;
-    if (missingCount === 0) { return cached; }
-
-    const cachedReferenceSubj = position === 'end' ? cached[cached.length - 1] : cached[0];
-    const cachedReferenceSubjId = cachedReferenceSubj ? cachedReferenceSubj.id : null;
-    await this.loadSubjects({
+    const params = {
       fromDate,
       toDate,
-      referenceId: cachedReferenceSubjId,
+      referenceId: referenceSubj ? referenceSubj.id : null,
       recordCount: amount,
       beforeAfter: position === 'end' ? 'after' : 'before',
-    });
+    };
 
-    return this.cache.get(amount, position, referenceSubj);
+    const subjectsLoaded = await this.load(params, this.ajaxNewSubjects);
+    return subjectsLoaded;
   }
 
   /**
+   * Performs an ajax call
    * @private
-   * @method loadSubjects
-   * @param  {Object} params - pre request object
+   * @method load
+   * @param  {Object} params
+   * @param  {Function} ajaxFunc
    * @return {Array<Object>}
    */
-  async loadSubjects(params) {
-    // Prepare dates
-    const { loadFrom, loadTo } = this.calculateLoadingDate(params.fromDate, params.toDate);
-    params.fromDate = loadFrom.toISOString(); // eslint-disable-line no-param-reassign
-    params.toDate = loadTo.toISOString(); // eslint-disable-line no-param-reassign
+  async load(params, ajaxFunc) {
+    params.fromDate = params.fromDate.toISOString(); // eslint-disable-line no-param-reassign
+    params.toDate = params.toDate.toISOString(); // eslint-disable-line no-param-reassign
 
-    // Prepare amount
-    if (params.recordCount) {
-      params.recordCount += CONTENT_LOADING_PADDING; // eslint-disable-line no-param-reassign
-    }
-
-    const response = await this.ajax.query(params);
+    const response = await ajaxFunc.query(params);
     const subjects = this.processServerResponse(response);
     return subjects;
-  }
-
-  /**
-   * Compares from and to dates with cacheStartDate and cacheEndDate, choosing
-   * the widest possible range within the range limit and adding adequate
-   * padding
-   * @private
-   * @method calculateLoadingDate
-   * @param  {CustomDate} fromDate
-   * @param  {CustomDate} toDate
-   * @return {Object}
-   */
-  calculateLoadingDate(fromDate, toDate) {
-    const initialRange = toDate.diff(fromDate, 'days');
-    const maximumPaddding = (MAX_LOADED_RANGE - initialRange) / 2;
-    const padding = Math.min(maximumPaddding, CONTENT_LOADING_PADDING);
-    const loadFrom = new CustomDate(fromDate).add(-padding, 'days');
-    const loadTo = new CustomDate(toDate).add(padding, 'days');
-    return { loadFrom, loadTo };
   }
 
   /**
@@ -138,25 +84,13 @@ export default class DataLoader {
         e.end = new CustomDate(e.end); // eslint-disable-line no-param-reassign
       });
     });
+
+    // TODO: this from and to dates are not needed any more.
     const fromDate = new CustomDate(responseObj.fromDate);
     const toDate = new CustomDate(responseObj.toDate);
 
     assert(fromDate.isValid() && toDate.isValid(), 'fromDate or fromToDate not in responseObj.');
-    this.cacheStartDate = fromDate;
-    this.cacheEndDate = toDate;
-    this.cache.set(responseObj.subjects);
     return responseObj.subjects;
-  }
-
-  /**
-   * @private
-   * @method cacheCoversPeriod
-   * @param  {CustomDate} fromDate
-   * @param  {CustomDate} toDate
-   * @return {Boolean}
-   */
-  cacheCoversPeriod(fromDate, toDate) {
-    return !(fromDate.isBefore(this.cacheStartDate) || toDate.isAfter(this.cacheEndDate));;
   }
 }
 

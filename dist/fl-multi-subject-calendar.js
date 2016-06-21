@@ -8251,133 +8251,12 @@ var Ajax = function () {
   return Ajax;
 }();
 
-var Cache = function () {
-  function Cache(comparisonFunction) {
-    _classCallCheck(this, Cache);
-
-    this.storage = [];
-    this.compare = comparisonFunction;
-  }
-
-  /**
-   * @public
-   * @method set
-   * @param  {Array<Object>} records
-   */
-
-
-  _createClass(Cache, [{
-    key: 'set',
-    value: function set(records) {
-      var _this = this;
-
-      var _iteratorNormalCompletion = true;
-      var _didIteratorError = false;
-      var _iteratorError = undefined;
-
-      try {
-        var _loop = function _loop() {
-          var newRecord = _step.value;
-
-          var idxFound = _this.storage.findIndex(function (s) {
-            return _this.compare(s, newRecord) === 0;
-          });
-          if (idxFound !== -1) {
-            _this.storage[idxFound] = newRecord;
-          } else {
-            _this.storage.push(newRecord);
-          }
-        };
-
-        for (var _iterator = records[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-          _loop();
-        }
-      } catch (err) {
-        _didIteratorError = true;
-        _iteratorError = err;
-      } finally {
-        try {
-          if (!_iteratorNormalCompletion && _iterator.return) {
-            _iterator.return();
-          }
-        } finally {
-          if (_didIteratorError) {
-            throw _iteratorError;
-          }
-        }
-      }
-
-      this.storage.sort(this.compare);
-    }
-
-    /**
-     * Returns a section of the cache. If there is no reference object,
-     * it returns the amount requested from the beginning.
-     * @public
-     * @method get
-     * @param  {Int} amount
-     * @param  {String} position 'beginning' or 'end'
-     * @param  {Object | Subject} referenceObj
-     * @return {Array<Object>}
-     */
-
-  }, {
-    key: 'get',
-    value: function get(amount, position, referenceObj) {
-      var _this2 = this;
-
-      if (!referenceObj) {
-        return this.storage.slice(0, amount);
-      }
-
-      var idxFound = this.storage.findIndex(function (s) {
-        return _this2.compare(referenceObj, s) === 0;
-      });
-      assert(idxFound === -1, 'Invalid reference object: ' + JSON.stringify(referenceObj));
-
-      var fromIndex = void 0;
-      var toIndex = void 0;
-      if (position === 'end') {
-        fromIndex = idxFound + 1;
-        toIndex = fromIndex + amount;
-      } else {
-        fromIndex = Math.max(0, idxFound - amount);
-        toIndex = idxFound;
-      }
-      return this.storage.slice(fromIndex, toIndex);
-    }
-  }, {
-    key: 'getWithIds',
-    value: function getWithIds(ids) {
-      var _this3 = this;
-
-      return this.storage.filter(function (s) {
-        return ids.find(function (id) {
-          return _this3.compare(s, id) === 0;
-        });
-      });
-    }
-  }]);
-
-  return Cache;
-}();
-
-var CONTENT_LOADING_PADDING = 100;
-var MAX_LOADED_RANGE = 120; // in days
-
 var DataLoader = function () {
   function DataLoader(loadUrl) {
     _classCallCheck(this, DataLoader);
 
-    // The comparison function accepts both ids and subjects
-    this.cache = new Cache(function (a, b) {
-      var id1 = a.id || a;
-      var id2 = b.id || b;
-      return id1 - id2;
-    });
-    this.ajax = new Ajax(loadUrl);
-    this.cacheStartDate = new CustomDate();
-    this.cacheEndDate = new CustomDate();
+    this.ajaxNewSubjectsEvents = new Ajax(loadUrl);
+    this.ajaxNewSubjects = new Ajax(loadUrl);
   }
 
   /**
@@ -8395,8 +8274,7 @@ var DataLoader = function () {
     key: 'getSubjectsEvents',
     value: function () {
       var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee(subjects, fromDate, toDate) {
-        var ids, subjectsLoaded, loadedFromCache, subjectsEvents, _iteratorNormalCompletion, _didIteratorError, _iteratorError, _loop, _iterator, _step;
-
+        var params, subjectsLoaded, subjectsEvents;
         return _regeneratorRuntime.wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
@@ -8409,94 +8287,32 @@ var DataLoader = function () {
                 return _context.abrupt('return', []);
 
               case 2:
-                ids = subjects.map(function (s) {
-                  return s.id;
-                });
-                subjectsLoaded = void 0;
-                loadedFromCache = false;
+                params = { ids: subjects.map(function (s) {
+                    return s.id;
+                  }), fromDate: fromDate, toDate: toDate };
+                _context.next = 5;
+                return this.load(params, this.ajaxNewSubjectsEvents);
 
-                if (this.cacheCoversPeriod(fromDate, toDate)) {
-                  subjectsLoaded = this.cache.getWithIds(ids);
-                  loadedFromCache = subjects.length === subjectsLoaded.length;
-                }
-
-                if (loadedFromCache) {
-                  _context.next = 10;
-                  break;
-                }
-
-                _context.next = 9;
-                return this.loadSubjects({
-                  ids: ids,
-                  fromDate: fromDate,
-                  toDate: toDate
-                });
-
-              case 9:
+              case 5:
                 subjectsLoaded = _context.sent;
-
-              case 10:
                 subjectsEvents = {};
-                _iteratorNormalCompletion = true;
-                _didIteratorError = false;
-                _iteratorError = undefined;
-                _context.prev = 14;
 
-                _loop = function _loop() {
-                  var subject = _step.value;
+                subjectsLoaded.forEach(function (s) {
+                  subjectsEvents[s.id] = s;
+                });
 
-                  var sLoaded = subjectsLoaded.find(function (sl) {
-                    return sl.id === subject.id;
-                  });
-                  assert(sLoaded, 'Events for subject of id "' + subject.id + '" not loaded.');
-                  subjectsEvents[subject.id] = sLoaded.events;
-                };
-
-                for (_iterator = subjects[Symbol.iterator](); !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-                  _loop();
-                }
-                _context.next = 23;
-                break;
-
-              case 19:
-                _context.prev = 19;
-                _context.t0 = _context['catch'](14);
-                _didIteratorError = true;
-                _iteratorError = _context.t0;
-
-              case 23:
-                _context.prev = 23;
-                _context.prev = 24;
-
-                if (!_iteratorNormalCompletion && _iterator.return) {
-                  _iterator.return();
-                }
-
-              case 26:
-                _context.prev = 26;
-
-                if (!_didIteratorError) {
-                  _context.next = 29;
-                  break;
-                }
-
-                throw _iteratorError;
-
-              case 29:
-                return _context.finish(26);
-
-              case 30:
-                return _context.finish(23);
-
-              case 31:
+                // check that all subjects were loaded
+                subjects.forEach(function (s) {
+                  return assert(subjectsEvents[s.id], 'Events for subject of id "' + s.id + '" not loaded.');
+                });
                 return _context.abrupt('return', subjectsEvents);
 
-              case 32:
+              case 10:
               case 'end':
                 return _context.stop();
             }
           }
-        }, _callee, this, [[14, 19, 23, 31], [24,, 26, 30]]);
+        }, _callee, this);
       }));
 
       function getSubjectsEvents(_x, _x2, _x3) {
@@ -8519,37 +8335,26 @@ var DataLoader = function () {
     key: 'getSubjects',
     value: function () {
       var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee2(amount, position, referenceSubj, fromDate, toDate) {
-        var cached, missingCount, cachedReferenceSubj, cachedReferenceSubjId;
+        var params, subjectsLoaded;
         return _regeneratorRuntime.wrap(function _callee2$(_context2) {
           while (1) {
             switch (_context2.prev = _context2.next) {
               case 0:
-                cached = this.cacheCoversPeriod(fromDate, toDate) ? this.cache.get(amount, position, referenceSubj) : [];
-                missingCount = amount - cached.length;
-
-                if (!(missingCount === 0)) {
-                  _context2.next = 4;
-                  break;
-                }
-
-                return _context2.abrupt('return', cached);
-
-              case 4:
-                cachedReferenceSubj = position === 'end' ? cached[cached.length - 1] : cached[0];
-                cachedReferenceSubjId = cachedReferenceSubj ? cachedReferenceSubj.id : null;
-                _context2.next = 8;
-                return this.loadSubjects({
+                params = {
                   fromDate: fromDate,
                   toDate: toDate,
-                  referenceId: cachedReferenceSubjId,
+                  referenceId: referenceSubj ? referenceSubj.id : null,
                   recordCount: amount,
                   beforeAfter: position === 'end' ? 'after' : 'before'
-                });
+                };
+                _context2.next = 3;
+                return this.load(params, this.ajaxNewSubjects);
 
-              case 8:
-                return _context2.abrupt('return', this.cache.get(amount, position, referenceSubj));
+              case 3:
+                subjectsLoaded = _context2.sent;
+                return _context2.abrupt('return', subjectsLoaded);
 
-              case 9:
+              case 5:
               case 'end':
                 return _context2.stop();
             }
@@ -8565,45 +8370,35 @@ var DataLoader = function () {
     }()
 
     /**
+     * Performs an ajax call
      * @private
-     * @method loadSubjects
-     * @param  {Object} params - pre request object
+     * @method load
+     * @param  {Object} params
+     * @param  {Function} ajaxFunc
      * @return {Array<Object>}
      */
 
   }, {
-    key: 'loadSubjects',
+    key: 'load',
     value: function () {
-      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee3(params) {
-        var _calculateLoadingDate,
-        // Prepare dates
-        loadFrom, loadTo, response, subjects;
-
+      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee3(params, ajaxFunc) {
+        var response, subjects;
         return _regeneratorRuntime.wrap(function _callee3$(_context3) {
           while (1) {
             switch (_context3.prev = _context3.next) {
               case 0:
-                _calculateLoadingDate = this.calculateLoadingDate(params.fromDate, params.toDate);
-                loadFrom = _calculateLoadingDate.loadFrom;
-                loadTo = _calculateLoadingDate.loadTo;
+                params.fromDate = params.fromDate.toISOString(); // eslint-disable-line no-param-reassign
+                params.toDate = params.toDate.toISOString(); // eslint-disable-line no-param-reassign
 
-                params.fromDate = loadFrom.toISOString(); // eslint-disable-line no-param-reassign
-                params.toDate = loadTo.toISOString(); // eslint-disable-line no-param-reassign
+                _context3.next = 4;
+                return ajaxFunc.query(params);
 
-                // Prepare amount
-                if (params.recordCount) {
-                  params.recordCount += CONTENT_LOADING_PADDING; // eslint-disable-line no-param-reassign
-                }
-
-                _context3.next = 8;
-                return this.ajax.query(params);
-
-              case 8:
+              case 4:
                 response = _context3.sent;
                 subjects = this.processServerResponse(response);
                 return _context3.abrupt('return', subjects);
 
-              case 11:
+              case 7:
               case 'end':
                 return _context3.stop();
             }
@@ -8611,34 +8406,12 @@ var DataLoader = function () {
         }, _callee3, this);
       }));
 
-      function loadSubjects(_x9) {
+      function load(_x9, _x10) {
         return ref.apply(this, arguments);
       }
 
-      return loadSubjects;
+      return load;
     }()
-
-    /**
-     * Compares from and to dates with cacheStartDate and cacheEndDate, choosing
-     * the widest possible range within the range limit and adding adequate
-     * padding
-     * @private
-     * @method calculateLoadingDate
-     * @param  {CustomDate} fromDate
-     * @param  {CustomDate} toDate
-     * @return {Object}
-     */
-
-  }, {
-    key: 'calculateLoadingDate',
-    value: function calculateLoadingDate(fromDate, toDate) {
-      var initialRange = toDate.diff(fromDate, 'days');
-      var maximumPaddding = (MAX_LOADED_RANGE - initialRange) / 2;
-      var padding = Math.min(maximumPaddding, CONTENT_LOADING_PADDING);
-      var loadFrom = new CustomDate(fromDate).add(-padding, 'days');
-      var loadTo = new CustomDate(toDate).add(padding, 'days');
-      return { loadFrom: loadFrom, loadTo: loadTo };
-    }
 
     /**
      * @private
@@ -8657,28 +8430,13 @@ var DataLoader = function () {
           e.end = new CustomDate(e.end); // eslint-disable-line no-param-reassign
         });
       });
+
+      // TODO: this from and to dates are not needed any more.
       var fromDate = new CustomDate(responseObj.fromDate);
       var toDate = new CustomDate(responseObj.toDate);
 
       assert(fromDate.isValid() && toDate.isValid(), 'fromDate or fromToDate not in responseObj.');
-      this.cacheStartDate = fromDate;
-      this.cacheEndDate = toDate;
-      this.cache.set(responseObj.subjects);
       return responseObj.subjects;
-    }
-
-    /**
-     * @private
-     * @method cacheCoversPeriod
-     * @param  {CustomDate} fromDate
-     * @param  {CustomDate} toDate
-     * @return {Boolean}
-     */
-
-  }, {
-    key: 'cacheCoversPeriod',
-    value: function cacheCoversPeriod(fromDate, toDate) {
-      return !(fromDate.isBefore(this.cacheStartDate) || toDate.isAfter(this.cacheEndDate));;
     }
   }]);
 
