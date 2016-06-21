@@ -104,26 +104,36 @@
   display: block; }
 
 .fl-msc-SubjectRow {
-  -webkit-box-sizing: inherit;
-          box-sizing: inherit;
-  display: block;
-  height: 1.5em; }
-
-.fl-msc-SubjectRow-day {
   -webkit-box-sizing: border-box;
           box-sizing: border-box;
-  display: inline-block;
-  width: 2em;
+  display: block;
+  position: relative;
   height: 1.5em;
   border-color: #f9f9f9;
   border-style: solid;
   border-width: 2px 0;
   background-color: #42b382; }
 
-.fl-msc-SubjectRow-day--busy {
+.fl-msc-SubjectRow-event {
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  display: block;
+  position: absolute;
+  height: 100%;
+  background-color: white; }
+
+.fl-msc-SubjectRow-day {
+  display: inline-block;
+  width: 2em;
+  height: 100%;
+  background-color: #42b382; }
+
+.fl-msc-SubjectRow-day--busy,
+.fl-msc-SubjectRow-event--busy {
   background-color: #e4585b; }
 
-.fl-msc-SubjectRow-day--half-busy {
+.fl-msc-SubjectRow-day--half-busy,
+.fl-msc-SubjectRow-event--half-busy {
   background-color: #fcb827; }
 
 .fl-msc-DateBar {

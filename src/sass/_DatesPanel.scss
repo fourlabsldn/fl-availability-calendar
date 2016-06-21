@@ -26,17 +26,10 @@
 // }
 
 .fl-msc-SubjectRow {
-  box-sizing: inherit;
-  display: block;
-
-  height: $s-day-height;
-}
-
-.fl-msc-SubjectRow-day {
   box-sizing: border-box;
-  display: inline-block;
+  display: block;
+  position: relative;
 
-  width: $s-day-width;
   height: $s-day-height;
 
   border-color: $c-plain-background;
@@ -46,10 +39,29 @@
   background-color: $c-free;
 }
 
-.fl-msc-SubjectRow-day--busy {
+.fl-msc-SubjectRow-event {
+  box-sizing: border-box;
+  display: block;
+  position: absolute;
+
+  height: 100%;
+  background-color: white;
+}
+
+.fl-msc-SubjectRow-day {
+  display: inline-block;
+
+  width: $s-day-width;
+  height: 100%;
+  background-color: $c-free;
+}
+
+.fl-msc-SubjectRow-day--busy,
+.fl-msc-SubjectRow-event--busy {
   background-color: $c-busy;
 }
 
-.fl-msc-SubjectRow-day--half-busy {
+.fl-msc-SubjectRow-day--half-busy,
+.fl-msc-SubjectRow-event--half-busy {
   background-color: $c-half-busy;
 }

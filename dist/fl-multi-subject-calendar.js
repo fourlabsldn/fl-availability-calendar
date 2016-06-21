@@ -6497,13 +6497,13 @@ var _wksExt = __commonjs(function (module, exports) {
 exports.f = require$$19;
 });
 
-var require$$0$24 = (_wksExt && typeof _wksExt === 'object' && 'default' in _wksExt ? _wksExt['default'] : _wksExt);
+var require$$0$25 = (_wksExt && typeof _wksExt === 'object' && 'default' in _wksExt ? _wksExt['default'] : _wksExt);
 
 var _wksDefine = __commonjs(function (module) {
 var global         = require$$29
   , core           = require$$0$4
   , LIBRARY        = require$$1$10
-  , wksExt         = require$$0$24
+  , wksExt         = require$$0$25
   , defineProperty = require$$1.f;
 module.exports = function(name){
   var $Symbol = core.Symbol || (core.Symbol = LIBRARY ? {} : global.Symbol || {});
@@ -6537,12 +6537,12 @@ exports.f = Object.getOwnPropertyNames || function getOwnPropertyNames(O){
 };
 });
 
-var require$$0$25 = (_objectGopn && typeof _objectGopn === 'object' && 'default' in _objectGopn ? _objectGopn['default'] : _objectGopn);
+var require$$0$26 = (_objectGopn && typeof _objectGopn === 'object' && 'default' in _objectGopn ? _objectGopn['default'] : _objectGopn);
 
 var _objectGopnExt = __commonjs(function (module) {
 // fallback for IE11 buggy Object.getOwnPropertyNames with iframe and window
 var toIObject = require$$0$11
-  , gOPN      = require$$0$25.f
+  , gOPN      = require$$0$26.f
   , toString  = {}.toString;
 
 var windowNames = typeof window == 'object' && window && Object.getOwnPropertyNames
@@ -6680,7 +6680,7 @@ var global         = require$$29
   , setToStringTag = require$$21
   , uid            = require$$4
   , wks            = require$$19
-  , wksExt         = require$$0$24
+  , wksExt         = require$$0$25
   , wksDefine      = require$$17
   , keyOf          = require$$16
   , enumKeys       = require$$15
@@ -6816,7 +6816,7 @@ if(!USE_NATIVE){
 
   $GOPD.f = $getOwnPropertyDescriptor;
   $DP.f   = $defineProperty;
-  require$$0$25.f = gOPNExt.f = $getOwnPropertyNames;
+  require$$0$26.f = gOPNExt.f = $getOwnPropertyNames;
   require$$0$13.f  = $propertyIsEnumerable;
   require$$1$17.f = $getOwnPropertySymbols;
 
@@ -6908,22 +6908,22 @@ var index$1 = __commonjs(function (module) {
 module.exports = require$$0$4.Symbol;
 });
 
-var require$$0$23 = (index$1 && typeof index$1 === 'object' && 'default' in index$1 ? index$1['default'] : index$1);
+var require$$0$24 = (index$1 && typeof index$1 === 'object' && 'default' in index$1 ? index$1['default'] : index$1);
 
 var symbol = __commonjs(function (module) {
-module.exports = { "default": require$$0$23, __esModule: true };
+module.exports = { "default": require$$0$24, __esModule: true };
 });
 
-var require$$0$22 = (symbol && typeof symbol === 'object' && 'default' in symbol ? symbol['default'] : symbol);
+var require$$0$23 = (symbol && typeof symbol === 'object' && 'default' in symbol ? symbol['default'] : symbol);
 
 var iterator$1 = __commonjs(function (module) {
-module.exports = require$$0$24.f('iterator');
+module.exports = require$$0$25.f('iterator');
 });
 
-var require$$0$26 = (iterator$1 && typeof iterator$1 === 'object' && 'default' in iterator$1 ? iterator$1['default'] : iterator$1);
+var require$$0$27 = (iterator$1 && typeof iterator$1 === 'object' && 'default' in iterator$1 ? iterator$1['default'] : iterator$1);
 
 var iterator = __commonjs(function (module) {
-module.exports = { "default": require$$0$26, __esModule: true };
+module.exports = { "default": require$$0$27, __esModule: true };
 });
 
 var require$$1$18 = (iterator && typeof iterator === 'object' && 'default' in iterator ? iterator['default'] : iterator);
@@ -6937,7 +6937,7 @@ var _iterator = require$$1$18;
 
 var _iterator2 = _interopRequireDefault(_iterator);
 
-var _symbol = require$$0$22;
+var _symbol = require$$0$23;
 
 var _symbol2 = _interopRequireDefault(_symbol);
 
@@ -6952,14 +6952,14 @@ exports.default = typeof _symbol2.default === "function" && _typeof(_iterator2.d
 };
 });
 
-var _typeof$1 = (_typeof && typeof _typeof === 'object' && 'default' in _typeof ? _typeof['default'] : _typeof);
+var require$$0$22 = (_typeof && typeof _typeof === 'object' && 'default' in _typeof ? _typeof['default'] : _typeof);
 
 var possibleConstructorReturn = __commonjs(function (module, exports) {
 "use strict";
 
 exports.__esModule = true;
 
-var _typeof2 = _typeof$1;
+var _typeof2 = require$$0$22;
 
 var _typeof3 = _interopRequireDefault(_typeof2);
 
@@ -6989,10 +6989,10 @@ module.exports = function create(P, D){
 };
 });
 
-var require$$0$27 = (create$1 && typeof create$1 === 'object' && 'default' in create$1 ? create$1['default'] : create$1);
+var require$$0$28 = (create$1 && typeof create$1 === 'object' && 'default' in create$1 ? create$1['default'] : create$1);
 
 var create = __commonjs(function (module) {
-module.exports = { "default": require$$0$27, __esModule: true };
+module.exports = { "default": require$$0$28, __esModule: true };
 });
 
 var require$$1$19 = (create && typeof create === 'object' && 'default' in create ? create['default'] : create);
@@ -7007,10 +7007,10 @@ var setPrototypeOf$1 = __commonjs(function (module) {
 module.exports = require$$0$4.Object.setPrototypeOf;
 });
 
-var require$$0$28 = (setPrototypeOf$1 && typeof setPrototypeOf$1 === 'object' && 'default' in setPrototypeOf$1 ? setPrototypeOf$1['default'] : setPrototypeOf$1);
+var require$$0$29 = (setPrototypeOf$1 && typeof setPrototypeOf$1 === 'object' && 'default' in setPrototypeOf$1 ? setPrototypeOf$1['default'] : setPrototypeOf$1);
 
 var setPrototypeOf = __commonjs(function (module) {
-module.exports = { "default": require$$0$28, __esModule: true };
+module.exports = { "default": require$$0$29, __esModule: true };
 });
 
 var require$$2$2 = (setPrototypeOf && typeof setPrototypeOf === 'object' && 'default' in setPrototypeOf ? setPrototypeOf['default'] : setPrototypeOf);
@@ -7028,7 +7028,7 @@ var _create = require$$1$19;
 
 var _create2 = _interopRequireDefault(_create);
 
-var _typeof2 = _typeof$1;
+var _typeof2 = require$$0$22;
 
 var _typeof3 = _interopRequireDefault(_typeof2);
 
@@ -7740,105 +7740,6 @@ var DateBar = function (_ViewController) {
   return DateBar;
 }(ViewController);
 
-var Day = function (_ViewController) {
-  _inherits(Day, _ViewController);
-
-  /**
-   * @method constructor
-   * @param  {CustomDate} date
-   * @param  {Array<Object>} events
-   * @param  {String} modulePrefix
-   * @return {Day}
-   */
-
-  function Day(date, events, modulePrefix) {
-    _classCallCheck(this, Day);
-
-    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Day).call(this));
-
-    _this.destroyed = false;
-    _this.modulePrefix = modulePrefix;
-    _this.date = date;
-    Object.preventExtensions(_this);
-
-    // TODO: FIXME: REMOVE THIS SUBJECTID
-    var subjectId = events[0] ? events[0].subjectId : '';
-    _this.html.container.setAttribute('title', date.toString() + (' ' + subjectId));
-    if (events) {
-      _this.setEvents(events);
-    }
-    return _this;
-  }
-
-  _createClass(Day, [{
-    key: 'destroy',
-    value: function destroy() {
-      this.destroyed = true;
-      this.html.container.remove();
-      this.html = null;
-    }
-  }, {
-    key: 'checkIfdestroyed',
-    value: function checkIfdestroyed() {
-      assert(!this.destroyed, 'Trying to call function on destroyed day.');
-    }
-
-    /**
-     * @method setEvents
-     * @param  {Array<Object>} events
-     */
-
-  }, {
-    key: 'setEvents',
-    value: function setEvents(events) {
-      assert(Array.isArray(events), 'Invalid events object. Expected array and got ' + (typeof events === 'undefined' ? 'undefined' : _typeof$1(events)));
-
-      var classesToAdd = this.modulePrefix + '-day';
-      var statuses = new Set();
-
-      events.forEach(function (event) {
-        if (typeof event.className === 'string') {
-          classesToAdd += ' ' + event.className;
-        }
-        if (typeof event.status === 'string') {
-          statuses.add(event.status);
-        }
-      });
-
-      var _iteratorNormalCompletion = true;
-      var _didIteratorError = false;
-      var _iteratorError = undefined;
-
-      try {
-        for (var _iterator = statuses[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-          var status = _step.value;
-
-          classesToAdd += ' ' + this.modulePrefix + '-day--' + status;
-        }
-      } catch (err) {
-        _didIteratorError = true;
-        _iteratorError = err;
-      } finally {
-        try {
-          if (!_iteratorNormalCompletion && _iterator.return) {
-            _iterator.return();
-          }
-        } finally {
-          if (_didIteratorError) {
-            throw _iteratorError;
-          }
-        }
-      }
-
-      if (classesToAdd !== this.html.container.className) {
-        this.html.container.className = classesToAdd;
-      }
-    }
-  }]);
-
-  return Day;
-}(ViewController);
-
 var SubjectRow = function (_ViewController) {
   _inherits(SubjectRow, _ViewController);
 
@@ -7878,27 +7779,48 @@ var SubjectRow = function (_ViewController) {
 
   }, {
     key: 'setEvents',
-    value: function setEvents(events, rowStartDate, rowEndDate) {
+    value: function setEvents(events, rawRowStartDate, rawRowEndDate) {
+      var rowStartDate = rawRowStartDate.startOf('day');
+      var rowEndDate = rawRowEndDate.endOf('day');
+
       var frag = document.createDocumentFragment();
-      var pointerDate = new CustomDate(rowStartDate);
-      var pointerEventIndex = 0;
-      while (!pointerDate.isAfter(rowEndDate)) {
-        var currEvent = events[pointerEventIndex];
-        var newDay = void 0;
-        while (currEvent && pointerDate.isAfter(currEvent.end)) {
-          pointerEventIndex++;
-          currEvent = events[pointerEventIndex];
-        }
-        if (currEvent && pointerDate.isAfter(currEvent.start)) {
-          newDay = new Day(pointerDate, [currEvent], this.cssPrefix);
-        } else {
-          newDay = new Day(pointerDate, [], this.cssPrefix);
-        }
-        frag.appendChild(newDay.getContainer());
-        pointerDate = new CustomDate(pointerDate).add(1, 'day');
+      var eventsIterator = events[Symbol.iterator]();
+      var currEvent = eventsIterator.next();
+      while (!currEvent.done && currEvent.value.end.isBefore(rowStartDate)) {
+        currEvent = eventsIterator.next();
       }
+
+      while (!currEvent.done && !currEvent.value.start.isAfter(rowEndDate)) {
+        var newEvent = this.createEvent(currEvent.value, rowStartDate, rowEndDate);
+        frag.appendChild(newEvent);
+        currEvent = eventsIterator.next();
+      }
+
       this.html.container.innerHTML = '';
       this.html.container.appendChild(frag);
+    }
+  }, {
+    key: 'createEvent',
+    value: function createEvent(event, rowStartDate, rowEndDate) {
+      var dayWidth = '2em';
+      var eventStart = event.start.isBefore(rowStartDate) ? rowStartDate : event.start.startOf('day');
+      var eventEnd = event.end.isAfter(rowEndDate) ? rowEndDate : event.end.startOf('day');
+
+      var offset = Math.max(0, eventStart.diff(rowStartDate, 'days'));
+      var duration = eventEnd.diff(eventStart, 'days') + 1;
+
+      var eventEl = document.createElement('div');
+      eventEl.classList.add(this.cssPrefix + '-event');
+      eventEl.classList.add(this.cssPrefix + '-event--' + event.status);
+      if (event.className) {
+        eventEl.classList.add('' + event.className);
+      }
+      eventEl.style.width = 'calc(' + duration + ' * ' + dayWidth + ')';
+      eventEl.style.left = 'calc(' + offset + ' * ' + dayWidth + ')';
+
+      var title = event.start.format('DD/MM') + ' - ' + event.end.format('DD/MM') + '\n    ID - ' + event.subjectId;
+      eventEl.setAttribute('title', title);
+      return eventEl;
     }
   }]);
 
