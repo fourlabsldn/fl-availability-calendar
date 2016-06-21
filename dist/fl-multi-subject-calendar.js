@@ -8113,7 +8113,7 @@ var Ajax = function () {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
-                console.log('LOADING FROM SERVER', params);
+                console.log('LOADING FROM SERVER');
                 requestUrl = this.addParametersToUrl(params, url);
                 requestConfig = {
                   method: 'GET',
