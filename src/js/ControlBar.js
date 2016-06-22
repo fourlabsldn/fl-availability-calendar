@@ -1,5 +1,6 @@
 import ViewController from './ViewController';
 import CustomDate from './utils/CustomDate';
+import debounce from './utils/debounce';
 
 const DATEPICKER_FORMAT = 'YYYY-[W]WW';
 export default class ControlBar extends ViewController {
@@ -13,6 +14,7 @@ export default class ControlBar extends ViewController {
     super(modulePrefix);
     this.moduleCoordinator = moduleCoordinator;
     this.startDate = this.moduleCoordinator.getStartDate();
+    this.prepareSetLoading();
     Object.preventExtensions(this);
 
     this.acceptEvents('refreshBtnPressed');
@@ -105,16 +107,32 @@ export default class ControlBar extends ViewController {
   }
 
   /**
-   * Activates the loading icon spin
-   * @public
-   * @method setLoading
-   * @param  {Boolean} active
+   * Creates the setLoading function. It has to be done this way because
+   * it has to be debounced.
+   * @private
+   * @method prepareSetLoading
+   * @return {void}
    */
-  setLoading(active) {
-    if (active) {
-      this.html.refreshBtn.classList.add(`${this.cssPrefix}-btn-refresh--rotate`);
-    } else {
-      this.html.refreshBtn.classList.remove(`${this.cssPrefix}-btn-refresh--rotate`);
-    }
+  prepareSetLoading() {
+    const minimumAnimationTime = 500;
+    const setLoadingImmediate = (active) => {
+      if (active) {
+        this.html.refreshBtn.classList.add(`${this.cssPrefix}-btn-refresh--rotate`);
+      } else {
+        this.html.refreshBtn.classList.remove(`${this.cssPrefix}-btn-refresh--rotate`);
+      }
+    };
+    const setLoadingDebounced = debounce(minimumAnimationTime, setLoadingImmediate);
+
+    /**
+     * Activates the loading icon spin
+     * @public
+     * @method setLoading
+     * @param  {Boolean} active
+     */
+    this.setLoading = (active) => {
+      return active ? setLoadingImmediate(active) : setLoadingDebounced(active);
+    };
   }
+
 }

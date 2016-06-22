@@ -7425,6 +7425,26 @@ var LabelsBar = function (_ViewController) {
   return LabelsBar;
 }(ViewController);
 
+// Returns a function, that, as long as it continues to be invoked, will not
+// be triggered. The function will be called after it stops being called for
+// N milliseconds. If `immediate` is passed, trigger the function on the
+// leading edge, instead of the trailing.
+function debounce(wait, func, immediate) {
+	var timeout;
+	return function () {
+		var context = this,
+		    args = arguments;
+		var later = function later() {
+			timeout = null;
+			if (!immediate) func.apply(context, args);
+		};
+		var callNow = immediate && !timeout;
+		clearTimeout(timeout);
+		timeout = setTimeout(later, wait);
+		if (callNow) func.apply(context, args);
+	};
+}
+
 var DATEPICKER_FORMAT = 'YYYY-[W]WW';
 
 var ControlBar = function (_ViewController) {
@@ -7444,6 +7464,7 @@ var ControlBar = function (_ViewController) {
 
     _this.moduleCoordinator = moduleCoordinator;
     _this.startDate = _this.moduleCoordinator.getStartDate();
+    _this.prepareSetLoading();
     Object.preventExtensions(_this);
 
     _this.acceptEvents('refreshBtnPressed');
@@ -7553,20 +7574,37 @@ var ControlBar = function (_ViewController) {
     }
 
     /**
-     * Activates the loading icon spin
-     * @public
-     * @method setLoading
-     * @param  {Boolean} active
+     * Creates the setLoading function. It has to be done this way because
+     * it has to be debounced.
+     * @private
+     * @method prepareSetLoading
+     * @return {void}
      */
 
   }, {
-    key: 'setLoading',
-    value: function setLoading(active) {
-      if (active) {
-        this.html.refreshBtn.classList.add(this.cssPrefix + '-btn-refresh--rotate');
-      } else {
-        this.html.refreshBtn.classList.remove(this.cssPrefix + '-btn-refresh--rotate');
-      }
+    key: 'prepareSetLoading',
+    value: function prepareSetLoading() {
+      var _this3 = this;
+
+      var minimumAnimationTime = 500;
+      var setLoadingImmediate = function setLoadingImmediate(active) {
+        if (active) {
+          _this3.html.refreshBtn.classList.add(_this3.cssPrefix + '-btn-refresh--rotate');
+        } else {
+          _this3.html.refreshBtn.classList.remove(_this3.cssPrefix + '-btn-refresh--rotate');
+        }
+      };
+      var setLoadingDebounced = debounce(minimumAnimationTime, setLoadingImmediate);
+
+      /**
+       * Activates the loading icon spin
+       * @public
+       * @method setLoading
+       * @param  {Boolean} active
+       */
+      this.setLoading = function (active) {
+        return active ? setLoadingImmediate(active) : setLoadingDebounced(active);
+      };
     }
   }]);
 
@@ -8396,26 +8434,6 @@ function updateContainerCoordinates(el) {
     scrollLeft: el.scrollLeft
   });
   updatedContainers.set(el, true);
-}
-
-// Returns a function, that, as long as it continues to be invoked, will not
-// be triggered. The function will be called after it stops being called for
-// N milliseconds. If `immediate` is passed, trigger the function on the
-// leading edge, instead of the trailing.
-function debounce(wait, func, immediate) {
-	var timeout;
-	return function () {
-		var context = this,
-		    args = arguments;
-		var later = function later() {
-			timeout = null;
-			if (!immediate) func.apply(context, args);
-		};
-		var callNow = immediate && !timeout;
-		clearTimeout(timeout);
-		timeout = setTimeout(later, wait);
-		if (callNow) func.apply(context, args);
-	};
 }
 
 var CalendarContainer = function (_ViewController) {
