@@ -8554,6 +8554,7 @@ var CalendarContainer = function (_ViewController) {
 
 var MODULE_PREFIX = 'fl-msc';
 var CUSTOM_DAYCOUNT = 120;
+var ELEMENTS_TO_LOAD_ON_SCROLL = 50;
 
 var ModuleCoordinator = function () {
   function ModuleCoordinator(xdiv, loadUrl, subjectsHeader, initialSubjectCount) {
@@ -8596,7 +8597,6 @@ var ModuleCoordinator = function () {
     value: function listenToComponentsEvents() {
       var _this2 = this;
 
-      var elementsToScroll = 20;
       this.calendarContainer.on('scrollEndBottom', _asyncToGenerator(_regeneratorRuntime.mark(function _callee() {
         var container, scrollBefore, amountRemoved, scrollAfter;
         return _regeneratorRuntime.wrap(function _callee$(_context) {
@@ -8606,7 +8606,7 @@ var ModuleCoordinator = function () {
                 container = _this2.calendarContainer.getScrollContainer();
                 scrollBefore = container.scrollHeight;
                 _context.next = 4;
-                return _this2.addSubjects(elementsToScroll, 'end');
+                return _this2.addSubjects(ELEMENTS_TO_LOAD_ON_SCROLL, 'end');
 
               case 4:
                 amountRemoved = _context.sent;
@@ -8633,7 +8633,7 @@ var ModuleCoordinator = function () {
                 container = _this2.calendarContainer.getScrollContainer();
                 scrollBefore = container.scrollHeight;
                 _context2.next = 4;
-                return _this2.addSubjects(elementsToScroll, 'beginning');
+                return _this2.addSubjects(ELEMENTS_TO_LOAD_ON_SCROLL, 'beginning');
 
               case 4:
                 amountAdded = _context2.sent;
@@ -8938,7 +8938,7 @@ function laymanifyError(e) {
   return isCustomError ? e.message : 'Unknown error.';
 }
 
-var INITIAL_SUBJECT_COUNT = 50;
+var INITIAL_SUBJECT_COUNT = 100;
 
 xController(function (xdiv) {
   var subjectsHeader = 'Properties';

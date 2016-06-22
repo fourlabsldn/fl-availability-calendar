@@ -8,6 +8,7 @@ import CalendarContainer from './CalendarContainer';
 
 const MODULE_PREFIX = 'fl-msc';
 const CUSTOM_DAYCOUNT = 120;
+const ELEMENTS_TO_LOAD_ON_SCROLL = 50;
 
 export default class ModuleCoordinator {
   constructor(xdiv, loadUrl, subjectsHeader, initialSubjectCount) {
@@ -44,12 +45,11 @@ export default class ModuleCoordinator {
   }
 
   listenToComponentsEvents() {
-    const elementsToScroll = 20;
     this.calendarContainer.on('scrollEndBottom', async () => {
       const container = this.calendarContainer.getScrollContainer();
       const scrollBefore = container.scrollHeight;
 
-      const amountRemoved = await this.addSubjects(elementsToScroll, 'end');
+      const amountRemoved = await this.addSubjects(ELEMENTS_TO_LOAD_ON_SCROLL, 'end');
       const scrollAfter = container.scrollHeight;
 
       this.removeSubjects(amountRemoved, 'beginning');
@@ -60,7 +60,7 @@ export default class ModuleCoordinator {
       const container = this.calendarContainer.getScrollContainer();
       const scrollBefore = container.scrollHeight;
 
-      const amountAdded = await this.addSubjects(elementsToScroll, 'beginning');
+      const amountAdded = await this.addSubjects(ELEMENTS_TO_LOAD_ON_SCROLL, 'beginning');
       const scrollAfter = container.scrollHeight;
 
       this.removeSubjects(amountAdded, 'end');

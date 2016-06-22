@@ -1,7 +1,7 @@
 /* globals xController */
 import ModuleCoordinator from './ModuleCoordinator';
 
-const INITIAL_SUBJECT_COUNT = 50;
+const INITIAL_SUBJECT_COUNT = 100;
 
 xController((xdiv) => {
   const subjectsHeader = 'Properties';
