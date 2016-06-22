@@ -7,7 +7,7 @@ import DataLoader from './data/DataLoader';
 import CalendarContainer from './CalendarContainer';
 
 const MODULE_PREFIX = 'fl-msc';
-const CUSTOM_DAYCOUNT = 80;
+const CUSTOM_DAYCOUNT = 120;
 
 export default class ModuleCoordinator {
   constructor(xdiv, loadUrl, subjectsHeader, initialSubjectCount) {
@@ -33,21 +33,31 @@ export default class ModuleCoordinator {
     Object.preventExtensions(this);
     xdiv.appendChild(this.calendarContainer.html.container);
 
-    const elementsToScroll = 20;
-    this.calendarContainer.on('scrollEndBottom', () => {
-      this.addSubjects(elementsToScroll, 'end')
-      .then(amountAdded => this.removeSubjects(amountAdded, 'beginning'));
-    });
-    this.calendarContainer.on('scrollEndTop', () => {
-      this.addSubjects(elementsToScroll, 'beginning')
-      .then(amountAdded => this.removeSubjects(amountAdded, 'end'));
-    });
+    this.listenToComponentsEvents();
+
     // set start date and dayCount
     this.setDateRange(
       this.startDate,
       new CustomDate(this.endDate).add(CUSTOM_DAYCOUNT, 'days')
     )
     .then(() => this.setSubjectCount(initialSubjectCount));
+  }
+
+  listenToComponentsEvents() {
+    const elementsToScroll = 20;
+    this.calendarContainer.on('scrollEndBottom', () => {
+      this.addSubjects(elementsToScroll, 'end')
+      .then(amountAdded => this.removeSubjects(amountAdded, 'beginning'));
+    });
+    
+    this.calendarContainer.on('scrollEndTop', () => {
+      this.addSubjects(elementsToScroll, 'beginning')
+      .then(amountAdded => this.removeSubjects(amountAdded, 'end'));
+    });
+
+    this.controlBar.on('refreshBtnPressed', () => {
+      this.setStartDate(this.startDate);
+    })
   }
 
   /**
@@ -101,7 +111,8 @@ export default class ModuleCoordinator {
    * @param  {CustomDate} toDate
    */
   async setDateRange(fromDate, toDate) {
-    if (fromDate.sameDay(this.getStartDate()) && toDate.sameDay(this.getEndDate())) { return; }
+    this.setLoading(true);
+    // if (fromDate.sameDay(this.getStartDate()) && toDate.sameDay(this.getEndDate())) { return; }
     const newFromDate = new CustomDate(fromDate).startOf('day');
     const newToDate = new CustomDate(toDate);
     const currentSubjects = this.datesPanel.getSubjects();
@@ -114,6 +125,7 @@ export default class ModuleCoordinator {
     this.startDate = new CustomDate(newFromDate);
     this.endDate = new CustomDate(newToDate);
     this.controlBar.setDatepickerDate(newFromDate);
+    this.setLoading(false);
   }
 
   /**
@@ -142,6 +154,7 @@ export default class ModuleCoordinator {
    * @return {Promise<Int>} Amount of subjects added.
    */
   async addSubjects(amount, position) {
+    this.setLoading(true);
     const fromDate = this.getStartDate();
     const toDate = this.getEndDate();
     const referenceSubj = this.datesPanel.getSubjectAt(position);
@@ -154,6 +167,8 @@ export default class ModuleCoordinator {
     );
     this.datesPanel.addSubjects(newSubjects, position);
     this.labelsBar.addSubjects(newSubjects, position);
+
+    this.setLoading(false);
     return newSubjects.length;
   }
 
@@ -167,5 +182,15 @@ export default class ModuleCoordinator {
   removeSubjects(amount, position) {
     this.datesPanel.removeSubjects(amount, position);
     this.labelsBar.removeSubjects(amount, position);
+  }
+
+  /**
+   * Activates loading state
+   * @public
+   * @method setLoading
+   * @param  {Boolean} active
+   */
+  setLoading(active) {
+    this.controlBar.setLoading(active);
   }
 }

@@ -7445,6 +7445,8 @@ var ControlBar = function (_ViewController) {
     _this.moduleCoordinator = moduleCoordinator;
     _this.startDate = _this.moduleCoordinator.getStartDate();
     Object.preventExtensions(_this);
+
+    _this.acceptEvents('refreshBtnPressed');
     return _this;
   }
 
@@ -7483,6 +7485,13 @@ var ControlBar = function (_ViewController) {
       scrollRightBtn.innerHTML = '>';
       this.html.scrollRightBtn = scrollRightBtn;
       this.html.container.appendChild(scrollRightBtn);
+
+      var refreshBtn = document.createElement('button');
+      refreshBtn.classList.add(this.cssPrefix + '-btn');
+      refreshBtn.classList.add(this.cssPrefix + '-btn-refresh');
+      refreshBtn.innerHTML = '';
+      this.html.refreshBtn = refreshBtn;
+      this.html.container.appendChild(refreshBtn);
     }
 
     /**
@@ -7501,12 +7510,16 @@ var ControlBar = function (_ViewController) {
         _this2.moduleCoordinator.setStartDate(normalisedDate);
       });
 
-      this.html.scrollLeftBtn.addEventListener('mousedown', function () {
+      this.html.scrollLeftBtn.addEventListener('click', function () {
         _this2.scroll('left');
       });
 
-      this.html.scrollRightBtn.addEventListener('mousedown', function () {
+      this.html.scrollRightBtn.addEventListener('click', function () {
         _this2.scroll('right');
+      });
+
+      this.html.refreshBtn.addEventListener('click', function () {
+        _this2.trigger('refreshBtnPressed');
       });
     }
 
@@ -7537,6 +7550,23 @@ var ControlBar = function (_ViewController) {
       var currStartDate = this.moduleCoordinator.getStartDate();
       var newStartDate = new CustomDate(currStartDate).add(daysToScroll, 'days');
       this.moduleCoordinator.setStartDate(newStartDate);
+    }
+
+    /**
+     * Activates the loading icon spin
+     * @public
+     * @method setLoading
+     * @param  {Boolean} active
+     */
+
+  }, {
+    key: 'setLoading',
+    value: function setLoading(active) {
+      if (active) {
+        this.html.refreshBtn.classList.add(this.cssPrefix + '-btn-refresh--rotate');
+      } else {
+        this.html.refreshBtn.classList.remove(this.cssPrefix + '-btn-refresh--rotate');
+      }
     }
   }]);
 
@@ -8461,7 +8491,7 @@ var CalendarContainer = function (_ViewController) {
 }(ViewController);
 
 var MODULE_PREFIX = 'fl-msc';
-var CUSTOM_DAYCOUNT = 80;
+var CUSTOM_DAYCOUNT = 120;
 
 var ModuleCoordinator = function () {
   function ModuleCoordinator(xdiv, loadUrl, subjectsHeader, initialSubjectCount) {
@@ -8491,31 +8521,44 @@ var ModuleCoordinator = function () {
     Object.preventExtensions(this);
     xdiv.appendChild(this.calendarContainer.html.container);
 
-    var elementsToScroll = 20;
-    this.calendarContainer.on('scrollEndBottom', function () {
-      _this.addSubjects(elementsToScroll, 'end').then(function (amountAdded) {
-        return _this.removeSubjects(amountAdded, 'beginning');
-      });
-    });
-    this.calendarContainer.on('scrollEndTop', function () {
-      _this.addSubjects(elementsToScroll, 'beginning').then(function (amountAdded) {
-        return _this.removeSubjects(amountAdded, 'end');
-      });
-    });
+    this.listenToComponentsEvents();
+
     // set start date and dayCount
     this.setDateRange(this.startDate, new CustomDate(this.endDate).add(CUSTOM_DAYCOUNT, 'days')).then(function () {
       return _this.setSubjectCount(initialSubjectCount);
     });
   }
 
-  /**
-   * @public
-   * @method getStartDate
-   * @return {CustomDate}
-   */
-
-
   _createClass(ModuleCoordinator, [{
+    key: 'listenToComponentsEvents',
+    value: function listenToComponentsEvents() {
+      var _this2 = this;
+
+      var elementsToScroll = 20;
+      this.calendarContainer.on('scrollEndBottom', function () {
+        _this2.addSubjects(elementsToScroll, 'end').then(function (amountAdded) {
+          return _this2.removeSubjects(amountAdded, 'beginning');
+        });
+      });
+
+      this.calendarContainer.on('scrollEndTop', function () {
+        _this2.addSubjects(elementsToScroll, 'beginning').then(function (amountAdded) {
+          return _this2.removeSubjects(amountAdded, 'end');
+        });
+      });
+
+      this.controlBar.on('refreshBtnPressed', function () {
+        _this2.setStartDate(_this2.startDate);
+      });
+    }
+
+    /**
+     * @public
+     * @method getStartDate
+     * @return {CustomDate}
+     */
+
+  }, {
     key: 'getStartDate',
     value: function getStartDate() {
       return new CustomDate(this.startDate);
@@ -8608,27 +8651,22 @@ var ModuleCoordinator = function () {
           while (1) {
             switch (_context2.prev = _context2.next) {
               case 0:
-                if (!(fromDate.sameDay(this.getStartDate()) && toDate.sameDay(this.getEndDate()))) {
-                  _context2.next = 2;
-                  break;
-                }
-
-                return _context2.abrupt('return');
-
-              case 2:
+                this.setLoading(true);
+                // if (fromDate.sameDay(this.getStartDate()) && toDate.sameDay(this.getEndDate())) { return; }
                 newFromDate = new CustomDate(fromDate).startOf('day');
                 newToDate = new CustomDate(toDate);
                 currentSubjects = this.datesPanel.getSubjects();
-                _context2.next = 7;
+                _context2.next = 6;
                 return this.dataLoader.getSubjectsEvents(currentSubjects, newFromDate, newToDate);
 
-              case 7:
+              case 6:
                 newSubjectEnvents = _context2.sent;
 
                 this.datesPanel.setSubjects(newSubjectEnvents, fromDate, toDate);
                 this.startDate = new CustomDate(newFromDate);
                 this.endDate = new CustomDate(newToDate);
                 this.controlBar.setDatepickerDate(newFromDate);
+                this.setLoading(false);
 
               case 12:
               case 'end':
@@ -8712,20 +8750,23 @@ var ModuleCoordinator = function () {
           while (1) {
             switch (_context4.prev = _context4.next) {
               case 0:
+                this.setLoading(true);
                 fromDate = this.getStartDate();
                 toDate = this.getEndDate();
                 referenceSubj = this.datesPanel.getSubjectAt(position);
-                _context4.next = 5;
+                _context4.next = 6;
                 return this.dataLoader.getSubjects(amount, position, referenceSubj, fromDate, toDate);
 
-              case 5:
+              case 6:
                 newSubjects = _context4.sent;
 
                 this.datesPanel.addSubjects(newSubjects, position);
                 this.labelsBar.addSubjects(newSubjects, position);
+
+                this.setLoading(false);
                 return _context4.abrupt('return', newSubjects.length);
 
-              case 9:
+              case 11:
               case 'end':
                 return _context4.stop();
             }
@@ -8753,6 +8794,19 @@ var ModuleCoordinator = function () {
     value: function removeSubjects(amount, position) {
       this.datesPanel.removeSubjects(amount, position);
       this.labelsBar.removeSubjects(amount, position);
+    }
+
+    /**
+     * Activates loading state
+     * @public
+     * @method setLoading
+     * @param  {Boolean} active
+     */
+
+  }, {
+    key: 'setLoading',
+    value: function setLoading(active) {
+      this.controlBar.setLoading(active);
     }
   }]);
 

@@ -14,6 +14,8 @@ export default class ControlBar extends ViewController {
     this.moduleCoordinator = moduleCoordinator;
     this.startDate = this.moduleCoordinator.getStartDate();
     Object.preventExtensions(this);
+
+    this.acceptEvents('refreshBtnPressed');
   }
 
   buildHtml() {
@@ -46,6 +48,13 @@ export default class ControlBar extends ViewController {
     scrollRightBtn.innerHTML = '>';
     this.html.scrollRightBtn = scrollRightBtn;
     this.html.container.appendChild(scrollRightBtn);
+
+    const refreshBtn = document.createElement('button');
+    refreshBtn.classList.add(`${this.cssPrefix}-btn`);
+    refreshBtn.classList.add(`${this.cssPrefix}-btn-refresh`);
+    refreshBtn.innerHTML = '';
+    this.html.refreshBtn = refreshBtn;
+    this.html.container.appendChild(refreshBtn);
   }
 
   /**
@@ -59,12 +68,16 @@ export default class ControlBar extends ViewController {
       this.moduleCoordinator.setStartDate(normalisedDate);
     });
 
-    this.html.scrollLeftBtn.addEventListener('mousedown', () => {
+    this.html.scrollLeftBtn.addEventListener('click', () => {
       this.scroll('left');
     });
 
-    this.html.scrollRightBtn.addEventListener('mousedown', () => {
+    this.html.scrollRightBtn.addEventListener('click', () => {
       this.scroll('right');
+    });
+
+    this.html.refreshBtn.addEventListener('click', () => {
+      this.trigger('refreshBtnPressed');
     });
   }
 
@@ -89,5 +102,19 @@ export default class ControlBar extends ViewController {
     const currStartDate = this.moduleCoordinator.getStartDate();
     const newStartDate = new CustomDate(currStartDate).add(daysToScroll, 'days');
     this.moduleCoordinator.setStartDate(newStartDate);
+  }
+
+  /**
+   * Activates the loading icon spin
+   * @public
+   * @method setLoading
+   * @param  {Boolean} active
+   */
+  setLoading(active) {
+    if (active) {
+      this.html.refreshBtn.classList.add(`${this.cssPrefix}-btn-refresh--rotate`);
+    } else {
+      this.html.refreshBtn.classList.remove(`${this.cssPrefix}-btn-refresh--rotate`);
+    }
   }
 }
