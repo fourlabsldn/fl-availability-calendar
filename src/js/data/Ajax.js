@@ -15,9 +15,19 @@ export default class Ajax {
       // credentials: 'include',
     };
 
-    const response = await fetch(requestUrl, requestConfig);
-    const content = await response.json();
-    return content;
+    let response;
+    try {
+      response = await fetch(requestUrl, requestConfig);
+    } catch (e) {
+      throw new Error('Error connecting to server.');
+    }
+
+    try {
+      const content = await response.json();
+      return content;
+    } catch (e) {
+      throw new Error('Invalid server response.');
+    }
   }
 
   /**

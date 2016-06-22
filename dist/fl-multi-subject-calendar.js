@@ -8110,24 +8110,42 @@ var Ajax = function () {
                   method: 'GET',
                   cache: 'no-cache'
                 };
-                _context.next = 5;
+                // credentials: 'include',
+                response = void 0;
+                _context.prev = 4;
+                _context.next = 7;
                 return fetch(requestUrl, requestConfig);
 
-              case 5:
+              case 7:
                 response = _context.sent;
-                _context.next = 8;
+                _context.next = 13;
+                break;
+
+              case 10:
+                _context.prev = 10;
+                _context.t0 = _context['catch'](4);
+                throw new Error('Error connecting to server.');
+
+              case 13:
+                _context.prev = 13;
+                _context.next = 16;
                 return response.json();
 
-              case 8:
+              case 16:
                 content = _context.sent;
                 return _context.abrupt('return', content);
 
-              case 10:
+              case 20:
+                _context.prev = 20;
+                _context.t1 = _context['catch'](13);
+                throw new Error('Invalid server response.');
+
+              case 23:
               case 'end':
                 return _context.stop();
             }
           }
-        }, _callee, this);
+        }, _callee, this, [[4, 10], [13, 20]]);
       }));
 
       function query(_x, _x2) {
@@ -8720,7 +8738,7 @@ var ModuleCoordinator = function () {
                 _context2.prev = 15;
                 _context2.t0 = _context2['catch'](4);
 
-                this.setLoadingState('failure', 'Error connecting with the server.');
+                this.setLoadingState('failure', laymanifyError(_context2.t0));
 
               case 18:
               case 'end':
@@ -8824,7 +8842,7 @@ var ModuleCoordinator = function () {
                 _context4.prev = 14;
                 _context4.t0 = _context4['catch'](4);
 
-                this.setLoadingState('failure', 'Error connecting with the server.');
+                this.setLoadingState('failure', laymanifyError(_context4.t0));
                 return _context4.abrupt('return', 0);
 
               case 18:
@@ -8873,6 +8891,11 @@ var ModuleCoordinator = function () {
 
   return ModuleCoordinator;
 }();
+
+function laymanifyError(e) {
+  var isCustomError = e && e.constructor && e.constructor.name === 'Error';
+  return isCustomError ? e.message : 'Unknown error.';
+}
 
 var INITIAL_SUBJECT_COUNT = 50;
 

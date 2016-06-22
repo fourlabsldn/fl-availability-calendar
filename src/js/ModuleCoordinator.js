@@ -131,7 +131,7 @@ export default class ModuleCoordinator {
       this.controlBar.setDatepickerDate(newFromDate);
       this.setLoadingState('success');
     } catch (e) {
-      this.setLoadingState('failure', 'Error connecting with the server.');
+      this.setLoadingState('failure', laymanifyError(e));
     }
   }
 
@@ -178,7 +178,7 @@ export default class ModuleCoordinator {
       this.setLoadingState('success');
       return newSubjects.length;
     } catch (e) {
-      this.setLoadingState('failure', 'Error connecting with the server.');
+      this.setLoadingState('failure', laymanifyError(e));
       return 0;
     }
   }
@@ -204,4 +204,9 @@ export default class ModuleCoordinator {
   setLoadingState(state, message) {
     this.controlBar.setLoadingState(state, message);
   }
+}
+
+function laymanifyError(e) {
+  const isCustomError = e && e.constructor && e.constructor.name === 'Error';
+  return isCustomError ? e.message : 'Unknown error.';
 }
