@@ -59,4 +59,8 @@ export default class CalendarContainer extends ViewController {
     this.html.datesPanel = document.createElement('div');
     this.html.panelWrapper.appendChild(this.html.datesPanel);
   }
+
+  getScrollContainer() {
+    return this.html.panelWrapper;
+  }
 }

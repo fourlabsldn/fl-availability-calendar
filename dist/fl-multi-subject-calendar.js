@@ -8542,6 +8542,11 @@ var CalendarContainer = function (_ViewController) {
       this.html.datesPanel = document.createElement('div');
       this.html.panelWrapper.appendChild(this.html.datesPanel);
     }
+  }, {
+    key: 'getScrollContainer',
+    value: function getScrollContainer() {
+      return this.html.panelWrapper;
+    }
   }]);
 
   return CalendarContainer;
@@ -8592,26 +8597,62 @@ var ModuleCoordinator = function () {
       var _this2 = this;
 
       var elementsToScroll = 20;
-      this.calendarContainer.on('scrollEndBottom', function () {
-        _this2.addSubjects(elementsToScroll, 'end').then(function (amountAdded) {
-          return _this2.removeSubjects(amountAdded, 'beginning');
-        }).catch(function () {
-          return console.log('Error loading resources');
-        });
-      });
+      this.calendarContainer.on('scrollEndBottom', _asyncToGenerator(_regeneratorRuntime.mark(function _callee() {
+        var container, scrollBefore, amountRemoved, scrollAfter;
+        return _regeneratorRuntime.wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                container = _this2.calendarContainer.getScrollContainer();
+                scrollBefore = container.scrollHeight;
+                _context.next = 4;
+                return _this2.addSubjects(elementsToScroll, 'end');
 
-      this.calendarContainer.on('scrollEndTop', function () {
-        _this2.addSubjects(elementsToScroll, 'beginning').then(function (amountAdded) {
-          return _this2.removeSubjects(amountAdded, 'end');
-        }).catch(function () {
-          return console.log('Error loading resources');
-        });
-      });
+              case 4:
+                amountRemoved = _context.sent;
+                scrollAfter = container.scrollHeight;
+
+
+                _this2.removeSubjects(amountRemoved, 'beginning');
+                container.scrollTop -= scrollAfter - scrollBefore;
+
+              case 8:
+              case 'end':
+                return _context.stop();
+            }
+          }
+        }, _callee, _this2);
+      })));
+
+      this.calendarContainer.on('scrollEndTop', _asyncToGenerator(_regeneratorRuntime.mark(function _callee2() {
+        var container, scrollBefore, amountAdded, scrollAfter;
+        return _regeneratorRuntime.wrap(function _callee2$(_context2) {
+          while (1) {
+            switch (_context2.prev = _context2.next) {
+              case 0:
+                container = _this2.calendarContainer.getScrollContainer();
+                scrollBefore = container.scrollHeight;
+                _context2.next = 4;
+                return _this2.addSubjects(elementsToScroll, 'beginning');
+
+              case 4:
+                amountAdded = _context2.sent;
+                scrollAfter = container.scrollHeight;
+
+
+                _this2.removeSubjects(amountAdded, 'end');
+                container.scrollTop += scrollAfter - scrollBefore;
+
+              case 8:
+              case 'end':
+                return _context2.stop();
+            }
+          }
+        }, _callee2, _this2);
+      })));
 
       this.controlBar.on('refreshBtnPressed', function () {
-        _this2.setStartDate(_this2.startDate).catch(function () {
-          return console.log('Error loading resources');
-        });
+        return _this2.setStartDate(_this2.startDate);
       });
     }
 
@@ -8670,25 +8711,25 @@ var ModuleCoordinator = function () {
   }, {
     key: 'setStartDate',
     value: function () {
-      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee(date) {
+      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee3(date) {
         var newEndDate;
-        return _regeneratorRuntime.wrap(function _callee$(_context) {
+        return _regeneratorRuntime.wrap(function _callee3$(_context3) {
           while (1) {
-            switch (_context.prev = _context.next) {
+            switch (_context3.prev = _context3.next) {
               case 0:
                 newEndDate = new CustomDate(date).add(this.getDayCount(), 'days');
-                _context.next = 3;
+                _context3.next = 3;
                 return this.setDateRange(date, newEndDate);
 
               case 3:
-                return _context.abrupt('return', _context.sent);
+                return _context3.abrupt('return', _context3.sent);
 
               case 4:
               case 'end':
-                return _context.stop();
+                return _context3.stop();
             }
           }
-        }, _callee, this);
+        }, _callee3, this);
       }));
 
       function setStartDate(_x) {
@@ -8708,44 +8749,44 @@ var ModuleCoordinator = function () {
   }, {
     key: 'setDateRange',
     value: function () {
-      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee2(fromDate, toDate) {
+      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee4(fromDate, toDate) {
         var newFromDate, newToDate, currentSubjects, newSubjectEnvents;
-        return _regeneratorRuntime.wrap(function _callee2$(_context2) {
+        return _regeneratorRuntime.wrap(function _callee4$(_context4) {
           while (1) {
-            switch (_context2.prev = _context2.next) {
+            switch (_context4.prev = _context4.next) {
               case 0:
                 this.setLoadingState('loading');
                 // if (fromDate.sameDay(this.getStartDate()) && toDate.sameDay(this.getEndDate())) { return; }
                 newFromDate = new CustomDate(fromDate).startOf('day');
                 newToDate = new CustomDate(toDate);
                 currentSubjects = this.datesPanel.getSubjects();
-                _context2.prev = 4;
-                _context2.next = 7;
+                _context4.prev = 4;
+                _context4.next = 7;
                 return this.dataLoader.getSubjectsEvents(currentSubjects, newFromDate, newToDate);
 
               case 7:
-                newSubjectEnvents = _context2.sent;
+                newSubjectEnvents = _context4.sent;
 
                 this.datesPanel.setSubjects(newSubjectEnvents, fromDate, toDate);
                 this.startDate = new CustomDate(newFromDate);
                 this.endDate = new CustomDate(newToDate);
                 this.controlBar.setDatepickerDate(newFromDate);
                 this.setLoadingState('success');
-                _context2.next = 18;
+                _context4.next = 18;
                 break;
 
               case 15:
-                _context2.prev = 15;
-                _context2.t0 = _context2['catch'](4);
+                _context4.prev = 15;
+                _context4.t0 = _context4['catch'](4);
 
-                this.setLoadingState('failure', laymanifyError(_context2.t0));
+                this.setLoadingState('failure', laymanifyError(_context4.t0));
 
               case 18:
               case 'end':
-                return _context2.stop();
+                return _context4.stop();
             }
           }
-        }, _callee2, this, [[4, 15]]);
+        }, _callee4, this, [[4, 15]]);
       }));
 
       function setDateRange(_x2, _x3) {
@@ -8764,21 +8805,21 @@ var ModuleCoordinator = function () {
   }, {
     key: 'setSubjectCount',
     value: function () {
-      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee3(count) {
+      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee5(count) {
         var currentSubjects, currentSubjectCount, fromDate, toDate;
-        return _regeneratorRuntime.wrap(function _callee3$(_context3) {
+        return _regeneratorRuntime.wrap(function _callee5$(_context5) {
           while (1) {
-            switch (_context3.prev = _context3.next) {
+            switch (_context5.prev = _context5.next) {
               case 0:
                 currentSubjects = this.datesPanel.getSubjects();
                 currentSubjectCount = currentSubjects.length;
 
                 if (!(count === currentSubjectCount)) {
-                  _context3.next = 4;
+                  _context5.next = 4;
                   break;
                 }
 
-                return _context3.abrupt('return');
+                return _context5.abrupt('return');
 
               case 4:
                 if (count > currentSubjectCount) {
@@ -8793,10 +8834,10 @@ var ModuleCoordinator = function () {
 
               case 5:
               case 'end':
-                return _context3.stop();
+                return _context5.stop();
             }
           }
-        }, _callee3, this);
+        }, _callee5, this);
       }));
 
       function setSubjectCount(_x4) {
@@ -8816,41 +8857,41 @@ var ModuleCoordinator = function () {
   }, {
     key: 'addSubjects',
     value: function () {
-      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee4(amount, position) {
+      var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee6(amount, position) {
         var fromDate, toDate, referenceSubj, newSubjects;
-        return _regeneratorRuntime.wrap(function _callee4$(_context4) {
+        return _regeneratorRuntime.wrap(function _callee6$(_context6) {
           while (1) {
-            switch (_context4.prev = _context4.next) {
+            switch (_context6.prev = _context6.next) {
               case 0:
                 this.setLoadingState('loading');
                 fromDate = this.getStartDate();
                 toDate = this.getEndDate();
                 referenceSubj = this.datesPanel.getSubjectAt(position);
-                _context4.prev = 4;
-                _context4.next = 7;
+                _context6.prev = 4;
+                _context6.next = 7;
                 return this.dataLoader.getSubjects(amount, position, referenceSubj, fromDate, toDate);
 
               case 7:
-                newSubjects = _context4.sent;
+                newSubjects = _context6.sent;
 
                 this.datesPanel.addSubjects(newSubjects, position);
                 this.labelsBar.addSubjects(newSubjects, position);
                 this.setLoadingState('success');
-                return _context4.abrupt('return', newSubjects.length);
+                return _context6.abrupt('return', newSubjects.length);
 
               case 14:
-                _context4.prev = 14;
-                _context4.t0 = _context4['catch'](4);
+                _context6.prev = 14;
+                _context6.t0 = _context6['catch'](4);
 
-                this.setLoadingState('failure', laymanifyError(_context4.t0));
-                return _context4.abrupt('return', 0);
+                this.setLoadingState('failure', laymanifyError(_context6.t0));
+                return _context6.abrupt('return', 0);
 
               case 18:
               case 'end':
-                return _context4.stop();
+                return _context6.stop();
             }
           }
-        }, _callee4, this, [[4, 14]]);
+        }, _callee6, this, [[4, 14]]);
       }));
 
       function addSubjects(_x5, _x6) {

@@ -45,22 +45,29 @@ export default class ModuleCoordinator {
 
   listenToComponentsEvents() {
     const elementsToScroll = 20;
-    this.calendarContainer.on('scrollEndBottom', () => {
-      this.addSubjects(elementsToScroll, 'end')
-      .then(amountAdded => this.removeSubjects(amountAdded, 'beginning'))
-      .catch(() => console.log('Error loading resources'));
+    this.calendarContainer.on('scrollEndBottom', async () => {
+      const container = this.calendarContainer.getScrollContainer();
+      const scrollBefore = container.scrollHeight;
+
+      const amountRemoved = await this.addSubjects(elementsToScroll, 'end');
+      const scrollAfter = container.scrollHeight;
+
+      this.removeSubjects(amountRemoved, 'beginning');
+      container.scrollTop -= scrollAfter - scrollBefore;
     });
 
-    this.calendarContainer.on('scrollEndTop', () => {
-      this.addSubjects(elementsToScroll, 'beginning')
-      .then(amountAdded => this.removeSubjects(amountAdded, 'end'))
-      .catch(() => console.log('Error loading resources'));
+    this.calendarContainer.on('scrollEndTop', async () => {
+      const container = this.calendarContainer.getScrollContainer();
+      const scrollBefore = container.scrollHeight;
+
+      const amountAdded = await this.addSubjects(elementsToScroll, 'beginning');
+      const scrollAfter = container.scrollHeight;
+
+      this.removeSubjects(amountAdded, 'end');
+      container.scrollTop += scrollAfter - scrollBefore;
     });
 
-    this.controlBar.on('refreshBtnPressed', () => {
-      this.setStartDate(this.startDate)
-      .catch(() => console.log('Error loading resources'));
-    });
+    this.controlBar.on('refreshBtnPressed', () => this.setStartDate(this.startDate));
   }
 
   /**
