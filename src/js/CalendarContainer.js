@@ -33,15 +33,14 @@ export default class CalendarContainer extends ViewController {
     this.html.panelWrapper = document.createElement('div');
     this.html.panelWrapper.classList.add(`${this.cssPrefix}-panelWrapper`);
 
-    let lastScrollVal;
+    let lastScrollVal = 0;
     const scrollCheck = debounce(250, () => {
       const panel = this.html.panelWrapper;
       const scrolledToTheEnd = panel.clientHeight + panel.scrollTop === panel.scrollHeight;
       const scrolletToTheTop = panel.scrollTop === 0;
       const movedInYAxis = panel.scrollTop !== lastScrollVal;
-      const firstMove = lastScrollVal === undefined;
 
-      if (movedInYAxis && !firstMove) {
+      if (movedInYAxis) {
         if (scrolledToTheEnd) {
           this.trigger('scrollEndBottom');
         } else if (scrolletToTheTop) {

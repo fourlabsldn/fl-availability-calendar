@@ -8516,15 +8516,14 @@ var CalendarContainer = function (_ViewController) {
       this.html.panelWrapper = document.createElement('div');
       this.html.panelWrapper.classList.add(this.cssPrefix + '-panelWrapper');
 
-      var lastScrollVal = void 0;
+      var lastScrollVal = 0;
       var scrollCheck = debounce(250, function () {
         var panel = _this2.html.panelWrapper;
         var scrolledToTheEnd = panel.clientHeight + panel.scrollTop === panel.scrollHeight;
         var scrolletToTheTop = panel.scrollTop === 0;
         var movedInYAxis = panel.scrollTop !== lastScrollVal;
-        var firstMove = lastScrollVal === undefined;
 
-        if (movedInYAxis && !firstMove) {
+        if (movedInYAxis) {
           if (scrolledToTheEnd) {
             _this2.trigger('scrollEndBottom');
           } else if (scrolletToTheTop) {
