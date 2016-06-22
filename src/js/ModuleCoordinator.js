@@ -47,17 +47,20 @@ export default class ModuleCoordinator {
     const elementsToScroll = 20;
     this.calendarContainer.on('scrollEndBottom', () => {
       this.addSubjects(elementsToScroll, 'end')
-      .then(amountAdded => this.removeSubjects(amountAdded, 'beginning'));
+      .then(amountAdded => this.removeSubjects(amountAdded, 'beginning'))
+      .catch(() => console.log('Error loading resources'));
     });
-    
+
     this.calendarContainer.on('scrollEndTop', () => {
       this.addSubjects(elementsToScroll, 'beginning')
-      .then(amountAdded => this.removeSubjects(amountAdded, 'end'));
+      .then(amountAdded => this.removeSubjects(amountAdded, 'end'))
+      .catch(() => console.log('Error loading resources'));
     });
 
     this.controlBar.on('refreshBtnPressed', () => {
-      this.setStartDate(this.startDate);
-    })
+      this.setStartDate(this.startDate)
+      .catch(() => console.log('Error loading resources'));
+    });
   }
 
   /**
@@ -116,15 +119,19 @@ export default class ModuleCoordinator {
     const newFromDate = new CustomDate(fromDate).startOf('day');
     const newToDate = new CustomDate(toDate);
     const currentSubjects = this.datesPanel.getSubjects();
-    const newSubjectEnvents = await this.dataLoader.getSubjectsEvents(
-      currentSubjects,
-      newFromDate,
-      newToDate
-    );
-    this.datesPanel.setSubjects(newSubjectEnvents, fromDate, toDate);
-    this.startDate = new CustomDate(newFromDate);
-    this.endDate = new CustomDate(newToDate);
-    this.controlBar.setDatepickerDate(newFromDate);
+    try {
+      const newSubjectEnvents = await this.dataLoader.getSubjectsEvents(
+        currentSubjects,
+        newFromDate,
+        newToDate
+      );
+      this.datesPanel.setSubjects(newSubjectEnvents, fromDate, toDate);
+      this.startDate = new CustomDate(newFromDate);
+      this.endDate = new CustomDate(newToDate);
+      this.controlBar.setDatepickerDate(newFromDate);
+    } catch (e) {
+      // Nothing to do
+    }
     this.setLoading(false);
   }
 
@@ -158,18 +165,22 @@ export default class ModuleCoordinator {
     const fromDate = this.getStartDate();
     const toDate = this.getEndDate();
     const referenceSubj = this.datesPanel.getSubjectAt(position);
-    const newSubjects = await this.dataLoader.getSubjects(
-      amount,
-      position,
-      referenceSubj,
-      fromDate,
-      toDate
-    );
-    this.datesPanel.addSubjects(newSubjects, position);
-    this.labelsBar.addSubjects(newSubjects, position);
-
-    this.setLoading(false);
-    return newSubjects.length;
+    try {
+      const newSubjects = await this.dataLoader.getSubjects(
+        amount,
+        position,
+        referenceSubj,
+        fromDate,
+        toDate
+      );
+      this.datesPanel.addSubjects(newSubjects, position);
+      this.labelsBar.addSubjects(newSubjects, position);
+      this.setLoading(false);
+      return newSubjects.length;
+    } catch (e) {
+      this.setLoading(false);
+      return 0;
+    }
   }
 
   /**

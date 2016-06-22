@@ -8556,17 +8556,23 @@ var ModuleCoordinator = function () {
       this.calendarContainer.on('scrollEndBottom', function () {
         _this2.addSubjects(elementsToScroll, 'end').then(function (amountAdded) {
           return _this2.removeSubjects(amountAdded, 'beginning');
+        }).catch(function () {
+          return console.log('Error loading resources');
         });
       });
 
       this.calendarContainer.on('scrollEndTop', function () {
         _this2.addSubjects(elementsToScroll, 'beginning').then(function (amountAdded) {
           return _this2.removeSubjects(amountAdded, 'end');
+        }).catch(function () {
+          return console.log('Error loading resources');
         });
       });
 
       this.controlBar.on('refreshBtnPressed', function () {
-        _this2.setStartDate(_this2.startDate);
+        _this2.setStartDate(_this2.startDate).catch(function () {
+          return console.log('Error loading resources');
+        });
       });
     }
 
@@ -8674,24 +8680,35 @@ var ModuleCoordinator = function () {
                 newFromDate = new CustomDate(fromDate).startOf('day');
                 newToDate = new CustomDate(toDate);
                 currentSubjects = this.datesPanel.getSubjects();
-                _context2.next = 6;
+                _context2.prev = 4;
+                _context2.next = 7;
                 return this.dataLoader.getSubjectsEvents(currentSubjects, newFromDate, newToDate);
 
-              case 6:
+              case 7:
                 newSubjectEnvents = _context2.sent;
 
                 this.datesPanel.setSubjects(newSubjectEnvents, fromDate, toDate);
                 this.startDate = new CustomDate(newFromDate);
                 this.endDate = new CustomDate(newToDate);
                 this.controlBar.setDatepickerDate(newFromDate);
+                _context2.next = 16;
+                break;
+
+              case 14:
+                _context2.prev = 14;
+                _context2.t0 = _context2['catch'](4);
+
+              case 16:
+                // Nothing to do
+
                 this.setLoading(false);
 
-              case 12:
+              case 17:
               case 'end':
                 return _context2.stop();
             }
           }
-        }, _callee2, this);
+        }, _callee2, this, [[4, 14]]);
       }));
 
       function setDateRange(_x2, _x3) {
@@ -8772,24 +8789,31 @@ var ModuleCoordinator = function () {
                 fromDate = this.getStartDate();
                 toDate = this.getEndDate();
                 referenceSubj = this.datesPanel.getSubjectAt(position);
-                _context4.next = 6;
+                _context4.prev = 4;
+                _context4.next = 7;
                 return this.dataLoader.getSubjects(amount, position, referenceSubj, fromDate, toDate);
 
-              case 6:
+              case 7:
                 newSubjects = _context4.sent;
 
                 this.datesPanel.addSubjects(newSubjects, position);
                 this.labelsBar.addSubjects(newSubjects, position);
-
                 this.setLoading(false);
                 return _context4.abrupt('return', newSubjects.length);
 
-              case 11:
+              case 14:
+                _context4.prev = 14;
+                _context4.t0 = _context4['catch'](4);
+
+                this.setLoading(false);
+                return _context4.abrupt('return', 0);
+
+              case 18:
               case 'end':
                 return _context4.stop();
             }
           }
-        }, _callee4, this);
+        }, _callee4, this, [[4, 14]]);
       }));
 
       function addSubjects(_x5, _x6) {
