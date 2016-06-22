@@ -7425,26 +7425,6 @@ var LabelsBar = function (_ViewController) {
   return LabelsBar;
 }(ViewController);
 
-// Returns a function, that, as long as it continues to be invoked, will not
-// be triggered. The function will be called after it stops being called for
-// N milliseconds. If `immediate` is passed, trigger the function on the
-// leading edge, instead of the trailing.
-function debounce(wait, func, immediate) {
-	var timeout;
-	return function () {
-		var context = this,
-		    args = arguments;
-		var later = function later() {
-			timeout = null;
-			if (!immediate) func.apply(context, args);
-		};
-		var callNow = immediate && !timeout;
-		clearTimeout(timeout);
-		timeout = setTimeout(later, wait);
-		if (callNow) func.apply(context, args);
-	};
-}
-
 var DATEPICKER_FORMAT = 'YYYY-[W]WW';
 
 var ControlBar = function (_ViewController) {
@@ -7464,7 +7444,7 @@ var ControlBar = function (_ViewController) {
 
     _this.moduleCoordinator = moduleCoordinator;
     _this.startDate = _this.moduleCoordinator.getStartDate();
-    _this.prepareSetLoading();
+    _this.loadingTimeout = null;
     Object.preventExtensions(_this);
 
     _this.acceptEvents('refreshBtnPressed');
@@ -7513,6 +7493,12 @@ var ControlBar = function (_ViewController) {
       refreshBtn.innerHTML = '';
       this.html.refreshBtn = refreshBtn;
       this.html.container.appendChild(refreshBtn);
+
+      var errorMessage = document.createElement('span');
+      errorMessage.classList.add(this.cssPrefix + '-errorMessage');
+      errorMessage.innerHTML = '';
+      this.html.errorMessage = errorMessage;
+      this.html.container.appendChild(errorMessage);
     }
 
     /**
@@ -7574,37 +7560,52 @@ var ControlBar = function (_ViewController) {
     }
 
     /**
-     * Creates the setLoading function. It has to be done this way because
-     * it has to be debounced.
-     * @private
-     * @method prepareSetLoading
-     * @return {void}
-     */
+    * @public
+    * @method setLoadingState
+    * @param  {String} state 'loading', 'success', 'failure'
+    */
 
   }, {
-    key: 'prepareSetLoading',
-    value: function prepareSetLoading() {
+    key: 'setLoadingState',
+    value: function setLoadingState(state) {
       var _this3 = this;
 
-      var minimumAnimationTime = 500;
-      var setLoadingImmediate = function setLoadingImmediate(active) {
-        if (active) {
-          _this3.html.refreshBtn.classList.add(_this3.cssPrefix + '-btn-refresh--rotate');
-        } else {
-          _this3.html.refreshBtn.classList.remove(_this3.cssPrefix + '-btn-refresh--rotate');
-        }
-      };
-      var setLoadingDebounced = debounce(minimumAnimationTime, setLoadingImmediate);
+      var message = arguments.length <= 1 || arguments[1] === undefined ? '' : arguments[1];
 
-      /**
-       * Activates the loading icon spin
-       * @public
-       * @method setLoading
-       * @param  {Boolean} active
-       */
-      this.setLoading = function (active) {
-        return active ? setLoadingImmediate(active) : setLoadingDebounced(active);
+      var minimumDelay = 1500;
+      var loadingClass = this.cssPrefix + '-btn-refresh--loading';
+      var successClass = this.cssPrefix + '-btn-refresh--success';
+      var failureClass = this.cssPrefix + '-btn-refresh--failure';
+
+      var setLoadingSpin = function setLoadingSpin(on) {
+        var method = on ? 'add' : 'remove';
+        _this3.html.refreshBtn.classList[method](loadingClass);
+        _this3.html.refreshBtn.classList.remove(successClass, failureClass);
+        _this3.html.errorMessage.innerHTML = '';
       };
+
+      clearTimeout(this.loadingTimeout);
+      this.html.refreshBtn.classList.remove(loadingClass, successClass, failureClass);
+      switch (state) {
+        case 'loading':
+          setLoadingSpin(true);
+          break;
+        case 'success':
+          this.html.refreshBtn.classList.add(successClass);
+          this.loadingTimeout = setTimeout(function () {
+            return setLoadingSpin(false);
+          }, minimumDelay);
+          break;
+        case 'failure':
+          this.html.refreshBtn.classList.add(failureClass);
+          this.html.errorMessage.innerHTML = message;
+          this.loadingTimeout = setTimeout(function () {
+            return setLoadingSpin(false);
+          }, minimumDelay);
+          break;
+        default:
+          assert(false, 'Invalid state option ' + state);
+      }
     }
   }]);
 
@@ -8436,6 +8437,26 @@ function updateContainerCoordinates(el) {
   updatedContainers.set(el, true);
 }
 
+// Returns a function, that, as long as it continues to be invoked, will not
+// be triggered. The function will be called after it stops being called for
+// N milliseconds. If `immediate` is passed, trigger the function on the
+// leading edge, instead of the trailing.
+function debounce(wait, func, immediate) {
+	var timeout;
+	return function () {
+		var context = this,
+		    args = arguments;
+		var later = function later() {
+			timeout = null;
+			if (!immediate) func.apply(context, args);
+		};
+		var callNow = immediate && !timeout;
+		clearTimeout(timeout);
+		timeout = setTimeout(later, wait);
+		if (callNow) func.apply(context, args);
+	};
+}
+
 var CalendarContainer = function (_ViewController) {
   _inherits(CalendarContainer, _ViewController);
 
@@ -8675,7 +8696,7 @@ var ModuleCoordinator = function () {
           while (1) {
             switch (_context2.prev = _context2.next) {
               case 0:
-                this.setLoading(true);
+                this.setLoadingState('loading');
                 // if (fromDate.sameDay(this.getStartDate()) && toDate.sameDay(this.getEndDate())) { return; }
                 newFromDate = new CustomDate(fromDate).startOf('day');
                 newToDate = new CustomDate(toDate);
@@ -8691,24 +8712,22 @@ var ModuleCoordinator = function () {
                 this.startDate = new CustomDate(newFromDate);
                 this.endDate = new CustomDate(newToDate);
                 this.controlBar.setDatepickerDate(newFromDate);
-                _context2.next = 16;
+                this.setLoadingState('success');
+                _context2.next = 18;
                 break;
 
-              case 14:
-                _context2.prev = 14;
+              case 15:
+                _context2.prev = 15;
                 _context2.t0 = _context2['catch'](4);
 
-              case 16:
-                // Nothing to do
+                this.setLoadingState('failure', 'Error connecting with the server.');
 
-                this.setLoading(false);
-
-              case 17:
+              case 18:
               case 'end':
                 return _context2.stop();
             }
           }
-        }, _callee2, this, [[4, 14]]);
+        }, _callee2, this, [[4, 15]]);
       }));
 
       function setDateRange(_x2, _x3) {
@@ -8785,7 +8804,7 @@ var ModuleCoordinator = function () {
           while (1) {
             switch (_context4.prev = _context4.next) {
               case 0:
-                this.setLoading(true);
+                this.setLoadingState('loading');
                 fromDate = this.getStartDate();
                 toDate = this.getEndDate();
                 referenceSubj = this.datesPanel.getSubjectAt(position);
@@ -8798,14 +8817,14 @@ var ModuleCoordinator = function () {
 
                 this.datesPanel.addSubjects(newSubjects, position);
                 this.labelsBar.addSubjects(newSubjects, position);
-                this.setLoading(false);
+                this.setLoadingState('success');
                 return _context4.abrupt('return', newSubjects.length);
 
               case 14:
                 _context4.prev = 14;
                 _context4.t0 = _context4['catch'](4);
 
-                this.setLoading(false);
+                this.setLoadingState('failure', 'Error connecting with the server.');
                 return _context4.abrupt('return', 0);
 
               case 18:
@@ -8839,16 +8858,16 @@ var ModuleCoordinator = function () {
     }
 
     /**
-     * Activates loading state
      * @public
      * @method setLoading
-     * @param  {Boolean} active
+     * @param  {String} state 'loading', 'success' or 'failure'
+     * @param {String} message
      */
 
   }, {
-    key: 'setLoading',
-    value: function setLoading(active) {
-      this.controlBar.setLoading(active);
+    key: 'setLoadingState',
+    value: function setLoadingState(state, message) {
+      this.controlBar.setLoadingState(state, message);
     }
   }]);
 

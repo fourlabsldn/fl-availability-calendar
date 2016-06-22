@@ -1,6 +1,7 @@
 import ViewController from './ViewController';
 import CustomDate from './utils/CustomDate';
-import debounce from './utils/debounce';
+import assert from 'fl-assert';
+
 
 const DATEPICKER_FORMAT = 'YYYY-[W]WW';
 export default class ControlBar extends ViewController {
@@ -14,7 +15,7 @@ export default class ControlBar extends ViewController {
     super(modulePrefix);
     this.moduleCoordinator = moduleCoordinator;
     this.startDate = this.moduleCoordinator.getStartDate();
-    this.prepareSetLoading();
+    this.loadingTimeout = null;
     Object.preventExtensions(this);
 
     this.acceptEvents('refreshBtnPressed');
@@ -57,6 +58,12 @@ export default class ControlBar extends ViewController {
     refreshBtn.innerHTML = '';
     this.html.refreshBtn = refreshBtn;
     this.html.container.appendChild(refreshBtn);
+
+    const errorMessage = document.createElement('span');
+    errorMessage.classList.add(`${this.cssPrefix}-errorMessage`);
+    errorMessage.innerHTML = '';
+    this.html.errorMessage = errorMessage;
+    this.html.container.appendChild(errorMessage);
   }
 
   /**
@@ -107,32 +114,40 @@ export default class ControlBar extends ViewController {
   }
 
   /**
-   * Creates the setLoading function. It has to be done this way because
-   * it has to be debounced.
-   * @private
-   * @method prepareSetLoading
-   * @return {void}
-   */
-  prepareSetLoading() {
-    const minimumAnimationTime = 500;
-    const setLoadingImmediate = (active) => {
-      if (active) {
-        this.html.refreshBtn.classList.add(`${this.cssPrefix}-btn-refresh--rotate`);
-      } else {
-        this.html.refreshBtn.classList.remove(`${this.cssPrefix}-btn-refresh--rotate`);
-      }
-    };
-    const setLoadingDebounced = debounce(minimumAnimationTime, setLoadingImmediate);
+  * @public
+  * @method setLoadingState
+  * @param  {String} state 'loading', 'success', 'failure'
+  */
+  setLoadingState(state, message = '') {
+    const minimumDelay = 1500;
+    const loadingClass = `${this.cssPrefix}-btn-refresh--loading`;
+    const successClass = `${this.cssPrefix}-btn-refresh--success`;
+    const failureClass = `${this.cssPrefix}-btn-refresh--failure`;
 
-    /**
-     * Activates the loading icon spin
-     * @public
-     * @method setLoading
-     * @param  {Boolean} active
-     */
-    this.setLoading = (active) => {
-      return active ? setLoadingImmediate(active) : setLoadingDebounced(active);
+    const setLoadingSpin = (on) => {
+      const method = on ? 'add' : 'remove';
+      this.html.refreshBtn.classList[method](loadingClass);
+      this.html.refreshBtn.classList.remove(successClass, failureClass);
+      this.html.errorMessage.innerHTML = '';
     };
+
+    clearTimeout(this.loadingTimeout);
+    this.html.refreshBtn.classList.remove(loadingClass, successClass, failureClass);
+    switch (state) {
+      case 'loading':
+        setLoadingSpin(true);
+        break;
+      case 'success':
+        this.html.refreshBtn.classList.add(successClass);
+        this.loadingTimeout = setTimeout(() => setLoadingSpin(false), minimumDelay);
+        break;
+      case 'failure':
+        this.html.refreshBtn.classList.add(failureClass);
+        this.html.errorMessage.innerHTML = message;
+        this.loadingTimeout = setTimeout(() => setLoadingSpin(false), minimumDelay);
+        break;
+      default:
+        assert(false, `Invalid state option ${state}`);
+    }
   }
-
 }

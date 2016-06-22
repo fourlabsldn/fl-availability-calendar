@@ -114,7 +114,7 @@ export default class ModuleCoordinator {
    * @param  {CustomDate} toDate
    */
   async setDateRange(fromDate, toDate) {
-    this.setLoading(true);
+    this.setLoadingState('loading');
     // if (fromDate.sameDay(this.getStartDate()) && toDate.sameDay(this.getEndDate())) { return; }
     const newFromDate = new CustomDate(fromDate).startOf('day');
     const newToDate = new CustomDate(toDate);
@@ -129,10 +129,10 @@ export default class ModuleCoordinator {
       this.startDate = new CustomDate(newFromDate);
       this.endDate = new CustomDate(newToDate);
       this.controlBar.setDatepickerDate(newFromDate);
+      this.setLoadingState('success');
     } catch (e) {
-      // Nothing to do
+      this.setLoadingState('failure', 'Error connecting with the server.');
     }
-    this.setLoading(false);
   }
 
   /**
@@ -161,7 +161,7 @@ export default class ModuleCoordinator {
    * @return {Promise<Int>} Amount of subjects added.
    */
   async addSubjects(amount, position) {
-    this.setLoading(true);
+    this.setLoadingState('loading');
     const fromDate = this.getStartDate();
     const toDate = this.getEndDate();
     const referenceSubj = this.datesPanel.getSubjectAt(position);
@@ -175,10 +175,10 @@ export default class ModuleCoordinator {
       );
       this.datesPanel.addSubjects(newSubjects, position);
       this.labelsBar.addSubjects(newSubjects, position);
-      this.setLoading(false);
+      this.setLoadingState('success');
       return newSubjects.length;
     } catch (e) {
-      this.setLoading(false);
+      this.setLoadingState('failure', 'Error connecting with the server.');
       return 0;
     }
   }
@@ -196,12 +196,12 @@ export default class ModuleCoordinator {
   }
 
   /**
-   * Activates loading state
    * @public
    * @method setLoading
-   * @param  {Boolean} active
+   * @param  {String} state 'loading', 'success' or 'failure'
+   * @param {String} message
    */
-  setLoading(active) {
-    this.controlBar.setLoading(active);
+  setLoadingState(state, message) {
+    this.controlBar.setLoadingState(state, message);
   }
 }
