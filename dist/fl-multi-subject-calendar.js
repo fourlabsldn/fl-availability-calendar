@@ -1,3 +1,4 @@
+(function () {
 var __commonjs_global = typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : this;
 function __commonjs(fn, module) { return module = { exports: {} }, fn(module, module.exports, __commonjs_global), module.exports; }
 
@@ -8945,4 +8946,5 @@ xController(function (xdiv) {
   // return new Calendar(subjectsTitle, loadUrl, xdiv);
   return new ModuleCoordinator(xdiv, loadUrl, subjectsHeader, INITIAL_SUBJECT_COUNT);
 });
+}());
 //# sourceMappingURL=fl-multi-subject-calendar.js.map

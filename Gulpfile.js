@@ -39,6 +39,11 @@ gulp.task('build:src', () => {
   gulp.src(paths.js.main)
   .pipe(sourcemaps.init())
   .pipe(rollup({
+    // Function names leak to the global namespace. To avoid that,
+    // let's just put everything within an immediate function, this way variables
+    // are all beautifully namespaced.
+    banner: '(function () {',
+    footer: '}());',
     plugins: [
       nodeResolve({ jsnext: true, main: true }),
       commonjs(),
