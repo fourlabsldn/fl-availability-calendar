@@ -1,3 +1,5 @@
+$s-month-side-margin: 3px;
+
 .fl-msc-DateBar {
   display: inline-block;
   position: relative;
@@ -23,16 +25,17 @@
   box-sizing: inherit;
 
   display: inline-block;
-  height: $s-day-height;
+  padding: .1em 0 .2em;
 
   background-color: $c-button-background;
   color: $c-button-text;
 
-  border: 2px solid $c-plain-background;
+  border: 1px solid $c-border;
+  margin: 6px $s-month-side-margin 0;
 
   @for $i from 1 through 32 {
     &-#{$i} {
-      width: calc(#{$s-day-width} * #{$i});
+      width: calc(#{$s-day-width} * #{$i} - 2 * #{$s-month-side-margin});
     }
   }
 }

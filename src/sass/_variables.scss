@@ -8,7 +8,7 @@ $c-button-text: $c-text;
 $c-main: #009ddc;
 $c-main-text: $c-plain-background;
 
-$c-border: darken($c-plain-background, 10.9804);
+$c-border: darken($c-plain-background, 30%);
 
 $c-busy: #e4585b;
 $c-busy-text: $c-plain-background;
@@ -23,11 +23,14 @@ $c-half-busy-text: $c-plain-background;
 // Measures
 $s-first-column-width: 17em;
 $s-day-width: 2em;
-$s-day-height: 1.5em;
+$s-day-height: 26px;
 $s-day-border-width: 2px;
 
 $s-DateBar-height: 2 * $s-day-height;
 $s-LabelsBar-width: 9 * $s-day-width;
+
+$s-font-small: 10px;
+$s-font-medium: 13px;
 
 
 // Mixins

@@ -3,7 +3,7 @@
   background-color: #f9f9f9;
   display: inline-block;
   font-family: 'Helvetica', 'sans-serif';
-  font-size: 12px;
+  font-size: 13px;
   -webkit-box-sizing: border-box;
           box-sizing: border-box; }
 
@@ -19,7 +19,7 @@
       -ms-flex-line-pack: stretch;
           align-content: stretch;
   position: relative;
-  max-height: 33em;
+  max-height: 572px;
   max-width: 80em;
   overflow-y: scroll;
   overflow-x: visible;
@@ -46,7 +46,7 @@
   -webkit-align-content: stretch;
       -ms-flex-line-pack: stretch;
           align-content: stretch;
-  border: 1px solid #dddddd; }
+  border: 1px solid #adadad; }
 
 .fl-msc-ControlBar-btn {
   background-color: #e0e0e0;
@@ -140,7 +140,7 @@
 
 .fl-msc-LabelsBar {
   border-style: solid;
-  border-width: 0 2px 0 0;
+  border-width: 0 10px 0 0;
   border-color: #f9f9f9;
   display: block;
   position: relative;
@@ -149,24 +149,27 @@
   z-index: 2; }
 
 .fl-msc-LabelsBar-header {
-  height: 3em;
+  height: 52px;
   width: 100%;
   position: relative;
   border-width: 2px 0 0;
   border-color: #f9f9f9;
   border-style: solid;
-  background-color: #e0e0e0;
+  border: 1px solid #adadad;
   color: #303030;
   text-align: center;
-  line-height: 3em; }
+  line-height: 52px; }
 
 .fl-msc-LabelsBar-label {
-  height: 1.5em;
-  line-height: 1.5em;
+  height: 26px;
+  line-height: 26px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  padding: 0 .5em; }
+  padding: 0 .5em;
+  border-width: 0 1px 1px;
+  border-style: solid;
+  border-color: #adadad; }
 
 .fl-msc-DatesPanel {
   background-color: inherit; }
@@ -181,7 +184,7 @@
           box-sizing: border-box;
   display: block;
   position: relative;
-  height: 1.5em;
+  height: 26px;
   border-color: #f9f9f9;
   border-style: solid;
   border-width: 2px 0;
@@ -204,7 +207,7 @@
 .fl-msc-DateBar {
   display: inline-block;
   position: relative;
-  height: 3em;
+  height: 52px;
   z-index: 1;
   -webkit-box-flex: 0;
   -webkit-flex: 0 0;
@@ -234,113 +237,114 @@
   -webkit-box-sizing: inherit;
           box-sizing: inherit;
   display: inline-block;
-  height: 1.5em;
+  padding: .1em 0 .2em;
   background-color: #e0e0e0;
   color: #303030;
-  border: 2px solid #f9f9f9; }
+  border: 1px solid #adadad;
+  margin: 6px 3px 0; }
   .fl-msc-DateBar-month-1 {
-    width: -webkit-calc(2em * 1);
-    width: calc(2em * 1); }
+    width: -webkit-calc(2em * 1 - 2 * 3px);
+    width: calc(2em * 1 - 2 * 3px); }
   .fl-msc-DateBar-month-2 {
-    width: -webkit-calc(2em * 2);
-    width: calc(2em * 2); }
+    width: -webkit-calc(2em * 2 - 2 * 3px);
+    width: calc(2em * 2 - 2 * 3px); }
   .fl-msc-DateBar-month-3 {
-    width: -webkit-calc(2em * 3);
-    width: calc(2em * 3); }
+    width: -webkit-calc(2em * 3 - 2 * 3px);
+    width: calc(2em * 3 - 2 * 3px); }
   .fl-msc-DateBar-month-4 {
-    width: -webkit-calc(2em * 4);
-    width: calc(2em * 4); }
+    width: -webkit-calc(2em * 4 - 2 * 3px);
+    width: calc(2em * 4 - 2 * 3px); }
   .fl-msc-DateBar-month-5 {
-    width: -webkit-calc(2em * 5);
-    width: calc(2em * 5); }
+    width: -webkit-calc(2em * 5 - 2 * 3px);
+    width: calc(2em * 5 - 2 * 3px); }
   .fl-msc-DateBar-month-6 {
-    width: -webkit-calc(2em * 6);
-    width: calc(2em * 6); }
+    width: -webkit-calc(2em * 6 - 2 * 3px);
+    width: calc(2em * 6 - 2 * 3px); }
   .fl-msc-DateBar-month-7 {
-    width: -webkit-calc(2em * 7);
-    width: calc(2em * 7); }
+    width: -webkit-calc(2em * 7 - 2 * 3px);
+    width: calc(2em * 7 - 2 * 3px); }
   .fl-msc-DateBar-month-8 {
-    width: -webkit-calc(2em * 8);
-    width: calc(2em * 8); }
+    width: -webkit-calc(2em * 8 - 2 * 3px);
+    width: calc(2em * 8 - 2 * 3px); }
   .fl-msc-DateBar-month-9 {
-    width: -webkit-calc(2em * 9);
-    width: calc(2em * 9); }
+    width: -webkit-calc(2em * 9 - 2 * 3px);
+    width: calc(2em * 9 - 2 * 3px); }
   .fl-msc-DateBar-month-10 {
-    width: -webkit-calc(2em * 10);
-    width: calc(2em * 10); }
+    width: -webkit-calc(2em * 10 - 2 * 3px);
+    width: calc(2em * 10 - 2 * 3px); }
   .fl-msc-DateBar-month-11 {
-    width: -webkit-calc(2em * 11);
-    width: calc(2em * 11); }
+    width: -webkit-calc(2em * 11 - 2 * 3px);
+    width: calc(2em * 11 - 2 * 3px); }
   .fl-msc-DateBar-month-12 {
-    width: -webkit-calc(2em * 12);
-    width: calc(2em * 12); }
+    width: -webkit-calc(2em * 12 - 2 * 3px);
+    width: calc(2em * 12 - 2 * 3px); }
   .fl-msc-DateBar-month-13 {
-    width: -webkit-calc(2em * 13);
-    width: calc(2em * 13); }
+    width: -webkit-calc(2em * 13 - 2 * 3px);
+    width: calc(2em * 13 - 2 * 3px); }
   .fl-msc-DateBar-month-14 {
-    width: -webkit-calc(2em * 14);
-    width: calc(2em * 14); }
+    width: -webkit-calc(2em * 14 - 2 * 3px);
+    width: calc(2em * 14 - 2 * 3px); }
   .fl-msc-DateBar-month-15 {
-    width: -webkit-calc(2em * 15);
-    width: calc(2em * 15); }
+    width: -webkit-calc(2em * 15 - 2 * 3px);
+    width: calc(2em * 15 - 2 * 3px); }
   .fl-msc-DateBar-month-16 {
-    width: -webkit-calc(2em * 16);
-    width: calc(2em * 16); }
+    width: -webkit-calc(2em * 16 - 2 * 3px);
+    width: calc(2em * 16 - 2 * 3px); }
   .fl-msc-DateBar-month-17 {
-    width: -webkit-calc(2em * 17);
-    width: calc(2em * 17); }
+    width: -webkit-calc(2em * 17 - 2 * 3px);
+    width: calc(2em * 17 - 2 * 3px); }
   .fl-msc-DateBar-month-18 {
-    width: -webkit-calc(2em * 18);
-    width: calc(2em * 18); }
+    width: -webkit-calc(2em * 18 - 2 * 3px);
+    width: calc(2em * 18 - 2 * 3px); }
   .fl-msc-DateBar-month-19 {
-    width: -webkit-calc(2em * 19);
-    width: calc(2em * 19); }
+    width: -webkit-calc(2em * 19 - 2 * 3px);
+    width: calc(2em * 19 - 2 * 3px); }
   .fl-msc-DateBar-month-20 {
-    width: -webkit-calc(2em * 20);
-    width: calc(2em * 20); }
+    width: -webkit-calc(2em * 20 - 2 * 3px);
+    width: calc(2em * 20 - 2 * 3px); }
   .fl-msc-DateBar-month-21 {
-    width: -webkit-calc(2em * 21);
-    width: calc(2em * 21); }
+    width: -webkit-calc(2em * 21 - 2 * 3px);
+    width: calc(2em * 21 - 2 * 3px); }
   .fl-msc-DateBar-month-22 {
-    width: -webkit-calc(2em * 22);
-    width: calc(2em * 22); }
+    width: -webkit-calc(2em * 22 - 2 * 3px);
+    width: calc(2em * 22 - 2 * 3px); }
   .fl-msc-DateBar-month-23 {
-    width: -webkit-calc(2em * 23);
-    width: calc(2em * 23); }
+    width: -webkit-calc(2em * 23 - 2 * 3px);
+    width: calc(2em * 23 - 2 * 3px); }
   .fl-msc-DateBar-month-24 {
-    width: -webkit-calc(2em * 24);
-    width: calc(2em * 24); }
+    width: -webkit-calc(2em * 24 - 2 * 3px);
+    width: calc(2em * 24 - 2 * 3px); }
   .fl-msc-DateBar-month-25 {
-    width: -webkit-calc(2em * 25);
-    width: calc(2em * 25); }
+    width: -webkit-calc(2em * 25 - 2 * 3px);
+    width: calc(2em * 25 - 2 * 3px); }
   .fl-msc-DateBar-month-26 {
-    width: -webkit-calc(2em * 26);
-    width: calc(2em * 26); }
+    width: -webkit-calc(2em * 26 - 2 * 3px);
+    width: calc(2em * 26 - 2 * 3px); }
   .fl-msc-DateBar-month-27 {
-    width: -webkit-calc(2em * 27);
-    width: calc(2em * 27); }
+    width: -webkit-calc(2em * 27 - 2 * 3px);
+    width: calc(2em * 27 - 2 * 3px); }
   .fl-msc-DateBar-month-28 {
-    width: -webkit-calc(2em * 28);
-    width: calc(2em * 28); }
+    width: -webkit-calc(2em * 28 - 2 * 3px);
+    width: calc(2em * 28 - 2 * 3px); }
   .fl-msc-DateBar-month-29 {
-    width: -webkit-calc(2em * 29);
-    width: calc(2em * 29); }
+    width: -webkit-calc(2em * 29 - 2 * 3px);
+    width: calc(2em * 29 - 2 * 3px); }
   .fl-msc-DateBar-month-30 {
-    width: -webkit-calc(2em * 30);
-    width: calc(2em * 30); }
+    width: -webkit-calc(2em * 30 - 2 * 3px);
+    width: calc(2em * 30 - 2 * 3px); }
   .fl-msc-DateBar-month-31 {
-    width: -webkit-calc(2em * 31);
-    width: calc(2em * 31); }
+    width: -webkit-calc(2em * 31 - 2 * 3px);
+    width: calc(2em * 31 - 2 * 3px); }
   .fl-msc-DateBar-month-32 {
-    width: -webkit-calc(2em * 32);
-    width: calc(2em * 32); }
+    width: -webkit-calc(2em * 32 - 2 * 3px);
+    width: calc(2em * 32 - 2 * 3px); }
 
 .fl-msc-DateBar-day {
   -webkit-box-sizing: border-box;
           box-sizing: border-box;
   display: inline-block;
   width: 2em;
-  height: 1.5em;
+  height: 26px;
   border: 2px solid transparent; }
 
 /*# sourceMappingURL=fl-multi-subject-calendar.css.map */
