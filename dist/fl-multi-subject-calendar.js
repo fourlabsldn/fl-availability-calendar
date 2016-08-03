@@ -8164,7 +8164,7 @@ var Ajax = function () {
      * @param  {String} url
      * @return {String} The full URL with parameters
      */
-    // TODO: this must be more robust. What about www.asdf.com/, www.asdf.com/?, www.asdf.com
+    // TODO: this must be more robust. What about www.primary.com/, www.primary.com/?, www.primary.com
 
   }, {
     key: 'addParametersToUrl',
