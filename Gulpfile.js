@@ -12,6 +12,7 @@ const rename = require('gulp-rename');
 const autoprefixer = require('autoprefixer');
 const postcss = require('gulp-postcss');
 const demoServer = require('./demo/demoServer/main.js');
+const browserSync = require('browser-sync').create();
 
 const moduleName = 'fl-multi-subject-calendar';
 const paths = {
@@ -65,7 +66,7 @@ gulp.task('build:src', () => {
 });
 
 gulp.task('watch:build:src', () => {
-  gulp.watch(paths.js.src, ['build']);
+  gulp.watch(paths.js.src, ['build:src']).on('change', browserSync.reload);
 });
 
 
@@ -76,11 +77,12 @@ gulp.task('build:sass', () => {
   .pipe(postcss([autoprefixer({ browsers: ['last 15 versions'] })]))
   .pipe(rename({ basename: moduleName }))
   .pipe(sourcemaps.write('.'))
-  .pipe(gulp.dest(paths.sass.dest));
+  .pipe(gulp.dest(paths.sass.dest))
+  .pipe(browserSync.stream());
 });
 
 gulp.task('watch:build:sass', () => {
-  gulp.watch(paths.sass.src, ['build']);
+  gulp.watch(paths.sass.src, ['build:sass']);
 });
 
 gulp.task('startDemoServer', () => {
@@ -97,4 +99,13 @@ gulp.task('watch', [
   'watch:build:src',
 ]);
 
-gulp.task('demo', ['copy-dependencies', 'build', 'startDemoServer', 'watch']);
+gulp.task('demo', ['copy-dependencies', 'build', 'watch'], () => {
+  browserSync.init({
+    server: {
+      baseDir: './',
+      directory: true,
+    },
+  });
+
+  demoServer();
+});
