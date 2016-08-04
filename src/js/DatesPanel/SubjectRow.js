@@ -1,5 +1,5 @@
 import ViewController from '../ViewController';
-import globals from '../globals';
+import Configuration from '../Configuration';
 
 export default class SubjectRow extends ViewController {
   constructor(subject, rowStartDate, rowEndDate, modulePrefix) {
@@ -9,7 +9,7 @@ export default class SubjectRow extends ViewController {
     // On event click
     this.html.container.addEventListener('click', (e) => {
       const eventData = getEventDataFromElement(e.target);
-      const evtClickCallback = globals.getEventClickCallback();
+      const evtClickCallback = Configuration.get('eventClickCallback');
       if (eventData && evtClickCallback) {
         evtClickCallback(eventData, e);
       }
@@ -78,8 +78,7 @@ export default class SubjectRow extends ViewController {
     eventEl.style.width = `calc(${duration} * ${dayWidth})`;
     eventEl.style.left = `calc(${offset} * ${dayWidth})`;
 
-    const hoverTextGenerator = globals.getEventHoverTextGenerator();
-
+    const hoverTextGenerator = Configuration.get('eventHoverTextGenerator');
     const title = hoverTextGenerator
       ? hoverTextGenerator(event)
       : `${event.start.format('DD/MM')} - ${event.end.format('DD/MM')}

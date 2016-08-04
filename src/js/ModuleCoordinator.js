@@ -5,7 +5,6 @@ import ControlBar from './ControlBar';
 import DatesPanel from './DatesPanel/DatesPanel';
 import DataLoader from './data/DataLoader';
 import CalendarContainer from './CalendarContainer';
-import globals from './globals';
 
 const MODULE_PREFIX = 'fl-msc';
 const CUSTOM_DAYCOUNT = 120;
@@ -211,44 +210,6 @@ export default class ModuleCoordinator {
    */
   setLoadingState(state, message) {
     this.controlBar.setLoadingState(state, message);
-  }
-
-  /**
-   * @public
-   * @method setCredentials
-   * @param  {Object} credentials
-   */
-  setCredentials(credentials) {
-    this.dataLoader.setCredentials(credentials);
-  }
-
-  /**
-   * @public
-   * @method setFilter
-   * @param  {Object} credentials
-   */
-  setFilter(credentials) {
-    this.dataLoader.setFilter(credentials);
-  }
-
-  /**
-   * @public
-   * @method eventHoverText
-   * @param  {Function} callback
-   * @return {void}
-   */
-  eventHoverText(callback) {
-    globals.setEventHoverTextGenerator(callback);
-  }
-
-  /**
-   * @public
-   * @method eventHoverText
-   * @param  {Function} callback
-   * @return {void}
-   */
-  onEventClick(callback) {
-    globals.setEventClickCallback(callback);
   }
 }
 

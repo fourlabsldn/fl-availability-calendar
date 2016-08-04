@@ -1,14 +1,12 @@
 import Ajax from './Ajax';
 import assert from 'fl-assert';
 import CustomDate from '../utils/CustomDate';
+import Configuration from '../Configuration';
 
 export default class DataLoader {
   constructor(loadUrl) {
     this.ajaxNewSubjectsEvents = new Ajax(loadUrl);
     this.ajaxNewSubjects = new Ajax(loadUrl);
-
-    this.credentials = {};
-    this.filter = {};
   }
 
   /**
@@ -67,7 +65,9 @@ export default class DataLoader {
       toDate: params.toDate.toISOString(), // eslint-disable-line no-param-reassign
     };
 
-    const queryParams = Object.assign({}, params, this.filter, this.credentials, dateRange);
+    const filters = Configuration.get('filters') || {};
+    const credentials = Configuration.get('credentials') || {};
+    const queryParams = Object.assign({}, params, filters, credentials, dateRange);
     const response = await ajaxFunc.query(queryParams);
     const subjects = this.processServerResponse(response);
     return subjects;

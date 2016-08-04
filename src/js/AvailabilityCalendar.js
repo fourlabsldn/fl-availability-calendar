@@ -1,4 +1,6 @@
 import ModuleCoordinator from './ModuleCoordinator';
+import Configuration from './Configuration';
+import assert from 'fl-assert';
 const INITIAL_SUBJECT_COUNT = 100;
 
 /**
@@ -16,11 +18,13 @@ export default class AvailabilityCalendar {
   }
 
   setCredentials(credentials) {
-    this.moduleCoordinator.setCredentials(credentials);
+    assert(typeof credentials === 'object', `${credentials} is not an object`);
+    Configuration.set('credentials', credentials);
   }
 
   setFilter(filters) {
-    this.moduleCoordinator.setFilter(filters);
+    assert(typeof filters === 'object', `${filters} is not an object`);
+    Configuration.set('filters', filters);
   }
 
   /**
@@ -30,7 +34,8 @@ export default class AvailabilityCalendar {
    * @return {void}
    */
   onEventClick(callback) {
-    this.moduleCoordinator.onEventClick(callback);
+    assert(typeof callback === 'function', `${callback} is not a function`);
+    Configuration.set('eventClickCallback', callback);
   }
 
   /**
@@ -41,6 +46,7 @@ export default class AvailabilityCalendar {
    * @return {void}
    */
   eventHoverText(callback) {
-    this.moduleCoordinator.eventHoverText(callback);
+    assert(typeof callback === 'function', `${callback} is not a function`);
+    Configuration.set('eventHoverTextGenerator', callback);
   }
 }
