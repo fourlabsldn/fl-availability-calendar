@@ -7810,6 +7810,42 @@ var DateBar = function (_ViewController) {
   return DateBar;
 }(ViewController);
 
+var Globals = function () {
+  function Globals() {
+    _classCallCheck(this, Globals);
+
+    this.state = {};
+  }
+
+  _createClass(Globals, [{
+    key: 'setEventHoverTextGenerator',
+    value: function setEventHoverTextGenerator(func) {
+      assert(typeof func === 'function', func + ' is not a function.');
+      this.state.eventHoverTextGenerator = func;
+    }
+  }, {
+    key: 'getEventHoverTextGenerator',
+    value: function getEventHoverTextGenerator() {
+      return this.state.eventHoverTextGenerator;
+    }
+  }, {
+    key: 'setEventClickCallback',
+    value: function setEventClickCallback(func) {
+      assert(typeof func === 'function', func + ' is not a function.');
+      this.state.eventClick = func;
+    }
+  }, {
+    key: 'getEventClickCallback',
+    value: function getEventClickCallback() {
+      return this.state.eventClick;
+    }
+  }]);
+
+  return Globals;
+}();
+
+var globals = new Globals();
+
 var SubjectRow = function (_ViewController) {
   _inherits(SubjectRow, _ViewController);
 
@@ -7819,6 +7855,16 @@ var SubjectRow = function (_ViewController) {
     var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(SubjectRow).call(this, modulePrefix));
 
     _this.subject = subject;
+
+    // On event click
+    _this.html.container.addEventListener('click', function (e) {
+      var eventData = getEventDataFromElement(e.target);
+      var evtClickCallback = globals.getEventClickCallback();
+      if (eventData && evtClickCallback) {
+        evtClickCallback(eventData, e);
+      }
+    });
+
     _this.setEvents(subject.events, rowStartDate, rowEndDate);
     return _this;
   }
@@ -7888,14 +7934,26 @@ var SubjectRow = function (_ViewController) {
       eventEl.style.width = 'calc(' + duration + ' * ' + dayWidth + ')';
       eventEl.style.left = 'calc(' + offset + ' * ' + dayWidth + ')';
 
-      var title = event.start.format('DD/MM') + ' - ' + event.end.format('DD/MM') + '\n    ID - ' + event.subjectId;
+      var hoverTextGenerator = globals.getEventHoverTextGenerator();
+
+      var title = hoverTextGenerator ? hoverTextGenerator(event) : event.start.format('DD/MM') + ' - ' + event.end.format('DD/MM') + '\n\n    ID - ' + event.subjectId;
       eventEl.setAttribute('title', title);
+
+      setEventDataToElement(event, eventEl);
       return eventEl;
     }
   }]);
 
   return SubjectRow;
 }(ViewController);
+
+function setEventDataToElement(data, el) {
+  el.eventData = data;
+}
+
+function getEventDataFromElement(el) {
+  return el.eventData;
+}
 
 var CLASS_PREFIX = 'DatesPanel';
 
@@ -8981,6 +9039,32 @@ var ModuleCoordinator = function () {
     value: function setFilter(credentials) {
       this.dataLoader.setFilter(credentials);
     }
+
+    /**
+     * @public
+     * @method eventHoverText
+     * @param  {Function} callback
+     * @return {void}
+     */
+
+  }, {
+    key: 'eventHoverText',
+    value: function eventHoverText(callback) {
+      globals.setEventHoverTextGenerator(callback);
+    }
+
+    /**
+     * @public
+     * @method eventHoverText
+     * @param  {Function} callback
+     * @return {void}
+     */
+
+  }, {
+    key: 'onEventClick',
+    value: function onEventClick(callback) {
+      globals.setEventClickCallback(callback);
+    }
   }]);
 
   return ModuleCoordinator;
@@ -9026,7 +9110,7 @@ var AvailabilityCalendar = function () {
   }, {
     key: 'onEventClick',
     value: function onEventClick(callback) {
-      console.log(arguments.callee.name);
+      this.moduleCoordinator.onEventClick(callback);
     }
 
     /**
@@ -9040,7 +9124,7 @@ var AvailabilityCalendar = function () {
   }, {
     key: 'eventHoverText',
     value: function eventHoverText(callback) {
-      console.log(arguments.callee.name);
+      this.moduleCoordinator.eventHoverText(callback);
     }
   }]);
 

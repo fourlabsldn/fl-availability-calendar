@@ -1,9 +1,20 @@
 import ViewController from '../ViewController';
+import globals from '../globals';
 
 export default class SubjectRow extends ViewController {
   constructor(subject, rowStartDate, rowEndDate, modulePrefix) {
     super(modulePrefix);
     this.subject = subject;
+
+    // On event click
+    this.html.container.addEventListener('click', (e) => {
+      const eventData = getEventDataFromElement(e.target);
+      const evtClickCallback = globals.getEventClickCallback();
+      if (eventData && evtClickCallback) {
+        evtClickCallback(eventData, e);
+      }
+    });
+
     this.setEvents(subject.events, rowStartDate, rowEndDate);
   }
 
@@ -67,9 +78,24 @@ export default class SubjectRow extends ViewController {
     eventEl.style.width = `calc(${duration} * ${dayWidth})`;
     eventEl.style.left = `calc(${offset} * ${dayWidth})`;
 
-    const title = `${event.start.format('DD/MM')} - ${event.end.format('DD/MM')}
+    const hoverTextGenerator = globals.getEventHoverTextGenerator();
+
+    const title = hoverTextGenerator
+      ? hoverTextGenerator(event)
+      : `${event.start.format('DD/MM')} - ${event.end.format('DD/MM')}
+
     ID - ${event.subjectId}`;
     eventEl.setAttribute('title', title);
+
+    setEventDataToElement(event, eventEl);
     return eventEl;
   }
+}
+
+function setEventDataToElement(data, el) {
+  el.eventData = data;
+}
+
+function getEventDataFromElement(el) {
+  return el.eventData;
 }

@@ -30,7 +30,7 @@ export default class AvailabilityCalendar {
    * @return {void}
    */
   onEventClick(callback) {
-    console.log(arguments.callee.name);
+    this.moduleCoordinator.onEventClick(callback);
   }
 
   /**
@@ -41,6 +41,6 @@ export default class AvailabilityCalendar {
    * @return {void}
    */
   eventHoverText(callback) {
-    console.log(arguments.callee.name);
+    this.moduleCoordinator.eventHoverText(callback);
   }
 }
