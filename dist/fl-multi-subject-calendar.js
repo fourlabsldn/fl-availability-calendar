@@ -7272,17 +7272,76 @@ var ViewController = function () {
   return ViewController;
 }();
 
+var allowedProperties = ['eventHoverTextGenerator', 'eventClickCallback', 'filters', 'credentials', 'header', 'loadUrl'];
+
+var Configuration = function () {
+  function Configuration() {
+    _classCallCheck(this, Configuration);
+
+    this.state = {};
+    this.listeners = {};
+  }
+
+  _createClass(Configuration, [{
+    key: 'set',
+    value: function set(property, value) {
+      assert(allowedProperties.includes(property), property + ' is not a valid configuraiton property');
+      var oldValue = this.state[property];
+      this.state[property] = value;
+      this.trigger(property, value, oldValue);
+    }
+  }, {
+    key: 'get',
+    value: function get(property) {
+      return this.state[property];
+    }
+  }, {
+    key: 'onChange',
+    value: function onChange(property, listener) {
+      assert(typeof listener === 'function', listener + ' is not a function');
+      if (!this.listeners[property]) {
+        this.listeners[property] = [];
+      }
+
+      this.listeners[property].push(listener);
+    }
+  }, {
+    key: 'trigger',
+    value: function trigger(property) {
+      for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+        args[_key - 1] = arguments[_key];
+      }
+
+      if (!this.listeners[property]) {
+        return;
+      }
+
+      this.listeners[property].forEach(function (l) {
+        return l.apply(undefined, args);
+      });
+    }
+  }]);
+
+  return Configuration;
+}();
+
+var Configuration$1 = new Configuration();
+
 var LabelsBar = function (_ViewController) {
   _inherits(LabelsBar, _ViewController);
 
-  function LabelsBar(title, modulePrefix) {
+  function LabelsBar(modulePrefix) {
     _classCallCheck(this, LabelsBar);
 
     var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(LabelsBar).call(this, modulePrefix));
 
     Object.preventExtensions(_this);
 
-    _this.html.header.textContent = title;
+    _this.html.header.textContent = Configuration$1.get('header');
+
+    Configuration$1.onChange('header', function (newText) {
+      _this.html.header.textContent = newText;
+    });
     return _this;
   }
 
@@ -7810,61 +7869,6 @@ var DateBar = function (_ViewController) {
   return DateBar;
 }(ViewController);
 
-var allowedProperties = ['eventHoverTextGenerator', 'eventClickCallback', 'filters', 'credentials'];
-
-var Configuration = function () {
-  function Configuration() {
-    _classCallCheck(this, Configuration);
-
-    this.state = {};
-    this.listeners = {};
-  }
-
-  _createClass(Configuration, [{
-    key: 'set',
-    value: function set(property, value) {
-      assert(allowedProperties.includes(property), property + ' is not a valid configuraiton property');
-      var oldValue = this.state[property];
-      this.state[property] = value;
-      this.trigger(property, value, oldValue);
-    }
-  }, {
-    key: 'get',
-    value: function get(property) {
-      return this.state[property];
-    }
-  }, {
-    key: 'onChange',
-    value: function onChange(property, listener) {
-      assert(typeof listener === 'function', listener + ' is not a function');
-      if (!this.listeners[property]) {
-        this.listeners[property] = [];
-      }
-
-      this.listeners[property].push(listener);
-    }
-  }, {
-    key: 'trigger',
-    value: function trigger(property) {
-      for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-        args[_key - 1] = arguments[_key];
-      }
-
-      if (!this.listeners[property]) {
-        return;
-      }
-
-      this.listeners[property].forEach(function (l) {
-        return l.apply(undefined, args);
-      });
-    }
-  }]);
-
-  return Configuration;
-}();
-
-var Configuration$1 = new Configuration();
-
 var SubjectRow = function (_ViewController) {
   _inherits(SubjectRow, _ViewController);
 
@@ -8281,14 +8285,36 @@ var Ajax = function () {
       var fullUrl = url + '?' + encodedGetParams;
       return fullUrl;
     }
+
+    /**
+     * @public
+     * @method setUrl
+     * @param  {string} newUrl
+     */
+
+  }, {
+    key: 'setUrl',
+    value: function setUrl(newUrl) {
+      assert(typeof newUrl === 'string', 'Url must be a string. Received ' + newUrl);
+      this.url = newUrl;
+    }
   }]);
 
   return Ajax;
 }();
 
 var DataLoader = function () {
-  function DataLoader(loadUrl) {
+  function DataLoader() {
+    var _this = this;
+
     _classCallCheck(this, DataLoader);
+
+    var loadUrl = Configuration$1.get('loadUrl');
+
+    Configuration$1.onChange('loadUrl', function (newUrl) {
+      _this.ajaxNewSubjectsEvents.seturl(newUrl);
+      _this.ajaxNewSubjects.setUrl(newUrl);
+    });
 
     this.ajaxNewSubjectsEvents = new Ajax(loadUrl);
     this.ajaxNewSubjects = new Ajax(loadUrl);
@@ -8661,14 +8687,14 @@ var CUSTOM_DAYCOUNT = 120;
 var ELEMENTS_TO_LOAD_ON_SCROLL = 50;
 
 var ModuleCoordinator = function () {
-  function ModuleCoordinator(xdiv, loadUrl, subjectsHeader, initialSubjectCount) {
+  function ModuleCoordinator(xdiv, initialSubjectCount) {
     var _this = this;
 
     _classCallCheck(this, ModuleCoordinator);
 
     this.startDate = new CustomDate();
     this.endDate = new CustomDate();
-    this.dataLoader = new DataLoader(loadUrl);
+    this.dataLoader = new DataLoader();
 
     // create html container
     this.calendarContainer = new CalendarContainer(MODULE_PREFIX);
@@ -8678,7 +8704,7 @@ var ModuleCoordinator = function () {
     this.calendarContainer.set('controlBar', this.controlBar);
 
     // create titlesContainer
-    this.labelsBar = new LabelsBar(subjectsHeader, MODULE_PREFIX);
+    this.labelsBar = new LabelsBar(MODULE_PREFIX);
     this.calendarContainer.set('labelsBar', this.labelsBar);
 
     // create datesContainer
@@ -9032,6 +9058,18 @@ var ModuleCoordinator = function () {
     value: function setLoadingState(state, message) {
       this.controlBar.setLoadingState(state, message);
     }
+
+    /**
+     * @public
+     * @method refresh
+     * @return {void}
+     */
+
+  }, {
+    key: 'refresh',
+    value: function refresh() {
+      this.setStartDate(this.startDate);
+    }
   }]);
 
   return ModuleCoordinator;
@@ -9050,10 +9088,20 @@ var INITIAL_SUBJECT_COUNT = 100;
  */
 
 var AvailabilityCalendar = function () {
-  function AvailabilityCalendar(xdiv, loadUrl, subjectsHeader) {
+  function AvailabilityCalendar(xdiv) {
+    var _this = this;
+
     _classCallCheck(this, AvailabilityCalendar);
 
-    this.moduleCoordinator = new ModuleCoordinator(xdiv, loadUrl, subjectsHeader, INITIAL_SUBJECT_COUNT);
+    this.moduleCoordinator = new ModuleCoordinator(xdiv, INITIAL_SUBJECT_COUNT);
+
+    var refresh = function refresh() {
+      return _this.moduleCoordinator.refresh();
+    };
+    Configuration$1.onChange('loadUrl', refresh);
+    Configuration$1.onChange('eventHoverTextGenerator', refresh);
+    Configuration$1.onChange('filters', refresh);
+    Configuration$1.onChange('credentials', refresh);
   }
 
   _createClass(AvailabilityCalendar, [{
@@ -9063,10 +9111,20 @@ var AvailabilityCalendar = function () {
       Configuration$1.set('credentials', credentials);
     }
   }, {
-    key: 'setFilter',
-    value: function setFilter(filters) {
+    key: 'setFilters',
+    value: function setFilters(filters) {
       assert((typeof filters === 'undefined' ? 'undefined' : require$$0(filters)) === 'object', filters + ' is not an object');
       Configuration$1.set('filters', filters);
+    }
+  }, {
+    key: 'setHeader',
+    value: function setHeader(headerText) {
+      Configuration$1.set('header', headerText);
+    }
+  }, {
+    key: 'setLoadUrl',
+    value: function setLoadUrl(url) {
+      Configuration$1.set('loadUrl', url);
     }
 
     /**
@@ -9103,10 +9161,12 @@ var AvailabilityCalendar = function () {
 }();
 
 xController(function (xdiv) {
-  var loadUrl = xdiv.dataset.loadUrl;
-  var subjectsHeader = xdiv.dataset.header || 'Subjects';
+  Configuration$1.set('loadUrl', xdiv.dataset.loadUrl);
+  Configuration$1.set('header', xdiv.dataset.header);
+  Configuration$1.set('filters', JSON.parse(xdiv.dataset.filters));
+  Configuration$1.set('credentials', JSON.parse(xdiv.dataset.credentials));
   // return new Calendar(subjectsTitle, loadUrl, xdiv);
-  window.AvailabilityCalendar = new AvailabilityCalendar(xdiv, loadUrl, subjectsHeader);
+  window.AvailabilityCalendar = new AvailabilityCalendar(xdiv);
 });
 }());
 //# sourceMappingURL=fl-multi-subject-calendar.js.map

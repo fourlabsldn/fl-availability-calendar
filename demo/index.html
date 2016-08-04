@@ -12,23 +12,22 @@
 </head>
 <body>
   <x-div
-  data-controller="../dist/fl-multi-subject-calendar.js"
-  data-header="Properties"
-  data-load-url="http://localhost:3005/"
+    data-controller="../dist/fl-multi-subject-calendar.js"
+    data-load-url="http://localhost:3005/"
+    data-header="Properties"
+    data-filters='{ "takingCleaning": true, "takingWifi": false }'
+    data-credentials='{ "user": 1234, "token": "£!123$%"}'
   ></x-div>
 
   <script>
     setTimeout(() => {
-      AvailabilityCalendar.setCredentials({
-        user: 1234,
-        token: '£!123$%'
-      });
-
-      AvailabilityCalendar.setFilter({
-        startDate: new Date(),
-        takingCleaning: true,
-        takingWifi: false,
-      });
+      // AvailabilityCalendar.setCredentials({
+      //
+      // });
+      //
+      // AvailabilityCalendar.setFilters({
+      //
+      // });
 
       AvailabilityCalendar.onEventClick((details, e) => {
         console.table(details);

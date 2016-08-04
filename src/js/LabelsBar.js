@@ -1,12 +1,17 @@
 import ViewController from './ViewController';
+import Configuration from './Configuration';
 import assert from 'fl-assert';
 
 export default class LabelsBar extends ViewController {
-  constructor(title, modulePrefix) {
+  constructor(modulePrefix) {
     super(modulePrefix);
     Object.preventExtensions(this);
 
-    this.html.header.textContent = title;
+    this.html.header.textContent = Configuration.get('header');
+
+    Configuration.onChange('header', (newText) => {
+      this.html.header.textContent = newText;
+    });
   }
 
   buildHtml() {

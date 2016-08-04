@@ -4,7 +4,14 @@ import CustomDate from '../utils/CustomDate';
 import Configuration from '../Configuration';
 
 export default class DataLoader {
-  constructor(loadUrl) {
+  constructor() {
+    const loadUrl = Configuration.get('loadUrl');
+
+    Configuration.onChange('loadUrl', (newUrl) => {
+      this.ajaxNewSubjectsEvents.seturl(newUrl);
+      this.ajaxNewSubjects.setUrl(newUrl);
+    });
+
     this.ajaxNewSubjectsEvents = new Ajax(loadUrl);
     this.ajaxNewSubjects = new Ajax(loadUrl);
   }

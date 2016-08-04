@@ -8,13 +8,14 @@ const INITIAL_SUBJECT_COUNT = 100;
  * @class AvailabilityCalendar
  */
 export default class AvailabilityCalendar {
-  constructor(xdiv, loadUrl, subjectsHeader) {
-    this.moduleCoordinator = new ModuleCoordinator(
-      xdiv,
-      loadUrl,
-      subjectsHeader,
-      INITIAL_SUBJECT_COUNT
-    );
+  constructor(xdiv) {
+    this.moduleCoordinator = new ModuleCoordinator(xdiv, INITIAL_SUBJECT_COUNT);
+
+    const refresh = () => this.moduleCoordinator.refresh();
+    Configuration.onChange('loadUrl', refresh);
+    Configuration.onChange('eventHoverTextGenerator', refresh);
+    Configuration.onChange('filters', refresh);
+    Configuration.onChange('credentials', refresh);
   }
 
   setCredentials(credentials) {
@@ -22,9 +23,17 @@ export default class AvailabilityCalendar {
     Configuration.set('credentials', credentials);
   }
 
-  setFilter(filters) {
+  setFilters(filters) {
     assert(typeof filters === 'object', `${filters} is not an object`);
     Configuration.set('filters', filters);
+  }
+
+  setHeader(headerText) {
+    Configuration.set('header', headerText);
+  }
+
+  setLoadUrl(url) {
+    Configuration.set('loadUrl', url);
   }
 
   /**

@@ -11,10 +11,10 @@ const CUSTOM_DAYCOUNT = 120;
 const ELEMENTS_TO_LOAD_ON_SCROLL = 50;
 
 export default class ModuleCoordinator {
-  constructor(xdiv, loadUrl, subjectsHeader, initialSubjectCount) {
+  constructor(xdiv, initialSubjectCount) {
     this.startDate = new CustomDate();
     this.endDate = new CustomDate();
-    this.dataLoader = new DataLoader(loadUrl);
+    this.dataLoader = new DataLoader();
 
     // create html container
     this.calendarContainer = new CalendarContainer(MODULE_PREFIX);
@@ -24,7 +24,7 @@ export default class ModuleCoordinator {
     this.calendarContainer.set('controlBar', this.controlBar);
 
     // create titlesContainer
-    this.labelsBar = new LabelsBar(subjectsHeader, MODULE_PREFIX);
+    this.labelsBar = new LabelsBar(MODULE_PREFIX);
     this.calendarContainer.set('labelsBar', this.labelsBar);
 
     // create datesContainer
@@ -210,6 +210,15 @@ export default class ModuleCoordinator {
    */
   setLoadingState(state, message) {
     this.controlBar.setLoadingState(state, message);
+  }
+
+  /**
+   * @public
+   * @method refresh
+   * @return {void}
+   */
+  refresh() {
+    this.setStartDate(this.startDate);
   }
 }
 

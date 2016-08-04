@@ -53,4 +53,14 @@ export default class Ajax {
     const fullUrl = `${url}?${encodedGetParams}`;
     return fullUrl;
   }
+
+  /**
+   * @public
+   * @method setUrl
+   * @param  {string} newUrl
+   */
+  setUrl(newUrl) {
+    assert(typeof newUrl === 'string', `Url must be a string. Received ${newUrl}`);
+    this.url = newUrl;
+  }
 }

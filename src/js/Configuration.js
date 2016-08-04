@@ -4,6 +4,8 @@ const allowedProperties = [
   'eventClickCallback',
   'filters',
   'credentials',
+  'header',
+  'loadUrl',
 ];
 
 class Configuration {
