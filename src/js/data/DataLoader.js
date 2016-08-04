@@ -6,6 +6,9 @@ export default class DataLoader {
   constructor(loadUrl) {
     this.ajaxNewSubjectsEvents = new Ajax(loadUrl);
     this.ajaxNewSubjects = new Ajax(loadUrl);
+
+    this.credentials = {};
+    this.filter = {};
   }
 
   /**
@@ -59,10 +62,13 @@ export default class DataLoader {
    * @return {Array<Object>}
    */
   async load(params, ajaxFunc) {
-    params.fromDate = params.fromDate.toISOString(); // eslint-disable-line no-param-reassign
-    params.toDate = params.toDate.toISOString(); // eslint-disable-line no-param-reassign
+    const dateRange = {
+      fromDate: params.fromDate.toISOString(), // eslint-disable-line no-param-reassign
+      toDate: params.toDate.toISOString(), // eslint-disable-line no-param-reassign
+    };
 
-    const response = await ajaxFunc.query(params);
+    const queryParams = Object.assign({}, params, this.filter, this.credentials, dateRange);
+    const response = await ajaxFunc.query(queryParams);
     const subjects = this.processServerResponse(response);
     return subjects;
   }
@@ -90,6 +96,24 @@ export default class DataLoader {
 
     assert(fromDate.isValid() && toDate.isValid(), 'fromDate or fromToDate not in responseObj.');
     return responseObj.subjects;
+  }
+
+  /**
+   * @public
+   * @method setCredentials
+   * @param  {Object} credentials
+   */
+  setCredentials(credentials) {
+    this.credentials = credentials;
+  }
+
+  /**
+   * @public
+   * @method setCredentials
+   * @param  {Object} credentials
+   */
+  setFilter(filter) {
+    this.filter = filter;
   }
 }
 

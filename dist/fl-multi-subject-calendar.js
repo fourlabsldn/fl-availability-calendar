@@ -2,6 +2,312 @@
 var __commonjs_global = typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : this;
 function __commonjs(fn, module) { return module = { exports: {} }, fn(module, module.exports, __commonjs_global), module.exports; }
 
+var classCallCheck = __commonjs(function (module, exports) {
+"use strict";
+
+exports.__esModule = true;
+
+exports.default = function (instance, Constructor) {
+  if (!(instance instanceof Constructor)) {
+    throw new TypeError("Cannot call a class as a function");
+  }
+};
+});
+
+var _classCallCheck = (classCallCheck && typeof classCallCheck === 'object' && 'default' in classCallCheck ? classCallCheck['default'] : classCallCheck);
+
+var _core = __commonjs(function (module) {
+var core = module.exports = {version: '2.4.0'};
+if(typeof __e == 'number')__e = core; // eslint-disable-line no-undef
+});
+
+var require$$0$2 = (_core && typeof _core === 'object' && 'default' in _core ? _core['default'] : _core);
+
+var _fails = __commonjs(function (module) {
+module.exports = function(exec){
+  try {
+    return !!exec();
+  } catch(e){
+    return true;
+  }
+};
+});
+
+var require$$0$3 = (_fails && typeof _fails === 'object' && 'default' in _fails ? _fails['default'] : _fails);
+
+var _descriptors = __commonjs(function (module) {
+// Thank's IE8 for his funny defineProperty
+module.exports = !require$$0$3(function(){
+  return Object.defineProperty({}, 'a', {get: function(){ return 7; }}).a != 7;
+});
+});
+
+var require$$27 = (_descriptors && typeof _descriptors === 'object' && 'default' in _descriptors ? _descriptors['default'] : _descriptors);
+
+var _isObject = __commonjs(function (module) {
+module.exports = function(it){
+  return typeof it === 'object' ? it !== null : typeof it === 'function';
+};
+});
+
+var require$$3 = (_isObject && typeof _isObject === 'object' && 'default' in _isObject ? _isObject['default'] : _isObject);
+
+var _toPrimitive = __commonjs(function (module) {
+// 7.1.1 ToPrimitive(input [, PreferredType])
+var isObject = require$$3;
+// instead of the ES6 spec version, we didn't implement @@toPrimitive case
+// and the second argument - flag - preferred type is a string
+module.exports = function(it, S){
+  if(!isObject(it))return it;
+  var fn, val;
+  if(S && typeof (fn = it.toString) == 'function' && !isObject(val = fn.call(it)))return val;
+  if(typeof (fn = it.valueOf) == 'function' && !isObject(val = fn.call(it)))return val;
+  if(!S && typeof (fn = it.toString) == 'function' && !isObject(val = fn.call(it)))return val;
+  throw TypeError("Can't convert object to primitive value");
+};
+});
+
+var require$$11 = (_toPrimitive && typeof _toPrimitive === 'object' && 'default' in _toPrimitive ? _toPrimitive['default'] : _toPrimitive);
+
+var _global = __commonjs(function (module) {
+// https://github.com/zloirock/core-js/issues/86#issuecomment-115759028
+var global = module.exports = typeof window != 'undefined' && window.Math == Math
+  ? window : typeof self != 'undefined' && self.Math == Math ? self : Function('return this')();
+if(typeof __g == 'number')__g = global; // eslint-disable-line no-undef
+});
+
+var require$$29 = (_global && typeof _global === 'object' && 'default' in _global ? _global['default'] : _global);
+
+var _domCreate = __commonjs(function (module) {
+var isObject = require$$3
+  , document = require$$29.document
+  // in old IE typeof document.createElement is 'object'
+  , is = isObject(document) && isObject(document.createElement);
+module.exports = function(it){
+  return is ? document.createElement(it) : {};
+};
+});
+
+var require$$1$2 = (_domCreate && typeof _domCreate === 'object' && 'default' in _domCreate ? _domCreate['default'] : _domCreate);
+
+var _ie8DomDefine = __commonjs(function (module) {
+module.exports = !require$$27 && !require$$0$3(function(){
+  return Object.defineProperty(require$$1$2('div'), 'a', {get: function(){ return 7; }}).a != 7;
+});
+});
+
+var require$$1$1 = (_ie8DomDefine && typeof _ie8DomDefine === 'object' && 'default' in _ie8DomDefine ? _ie8DomDefine['default'] : _ie8DomDefine);
+
+var _anObject = __commonjs(function (module) {
+var isObject = require$$3;
+module.exports = function(it){
+  if(!isObject(it))throw TypeError(it + ' is not an object!');
+  return it;
+};
+});
+
+var require$$13 = (_anObject && typeof _anObject === 'object' && 'default' in _anObject ? _anObject['default'] : _anObject);
+
+var _objectDp = __commonjs(function (module, exports) {
+var anObject       = require$$13
+  , IE8_DOM_DEFINE = require$$1$1
+  , toPrimitive    = require$$11
+  , dP             = Object.defineProperty;
+
+exports.f = require$$27 ? Object.defineProperty : function defineProperty(O, P, Attributes){
+  anObject(O);
+  P = toPrimitive(P, true);
+  anObject(Attributes);
+  if(IE8_DOM_DEFINE)try {
+    return dP(O, P, Attributes);
+  } catch(e){ /* empty */ }
+  if('get' in Attributes || 'set' in Attributes)throw TypeError('Accessors not supported!');
+  if('value' in Attributes)O[P] = Attributes.value;
+  return O;
+};
+});
+
+var require$$1 = (_objectDp && typeof _objectDp === 'object' && 'default' in _objectDp ? _objectDp['default'] : _objectDp);
+
+var _propertyDesc = __commonjs(function (module) {
+module.exports = function(bitmap, value){
+  return {
+    enumerable  : !(bitmap & 1),
+    configurable: !(bitmap & 2),
+    writable    : !(bitmap & 4),
+    value       : value
+  };
+};
+});
+
+var require$$10 = (_propertyDesc && typeof _propertyDesc === 'object' && 'default' in _propertyDesc ? _propertyDesc['default'] : _propertyDesc);
+
+var _hide = __commonjs(function (module) {
+var dP         = require$$1
+  , createDesc = require$$10;
+module.exports = require$$27 ? function(object, key, value){
+  return dP.f(object, key, createDesc(1, value));
+} : function(object, key, value){
+  object[key] = value;
+  return object;
+};
+});
+
+var require$$0$4 = (_hide && typeof _hide === 'object' && 'default' in _hide ? _hide['default'] : _hide);
+
+var _aFunction = __commonjs(function (module) {
+module.exports = function(it){
+  if(typeof it != 'function')throw TypeError(it + ' is not a function!');
+  return it;
+};
+});
+
+var require$$1$4 = (_aFunction && typeof _aFunction === 'object' && 'default' in _aFunction ? _aFunction['default'] : _aFunction);
+
+var _ctx = __commonjs(function (module) {
+// optional / simple context binding
+var aFunction = require$$1$4;
+module.exports = function(fn, that, length){
+  aFunction(fn);
+  if(that === undefined)return fn;
+  switch(length){
+    case 1: return function(a){
+      return fn.call(that, a);
+    };
+    case 2: return function(a, b){
+      return fn.call(that, a, b);
+    };
+    case 3: return function(a, b, c){
+      return fn.call(that, a, b, c);
+    };
+  }
+  return function(/* ...args */){
+    return fn.apply(that, arguments);
+  };
+};
+});
+
+var require$$5 = (_ctx && typeof _ctx === 'object' && 'default' in _ctx ? _ctx['default'] : _ctx);
+
+var _export = __commonjs(function (module, exports) {
+var global    = require$$29
+  , core      = require$$0$2
+  , ctx       = require$$5
+  , hide      = require$$0$4
+  , PROTOTYPE = 'prototype';
+
+var $export = function(type, name, source){
+  var IS_FORCED = type & $export.F
+    , IS_GLOBAL = type & $export.G
+    , IS_STATIC = type & $export.S
+    , IS_PROTO  = type & $export.P
+    , IS_BIND   = type & $export.B
+    , IS_WRAP   = type & $export.W
+    , exports   = IS_GLOBAL ? core : core[name] || (core[name] = {})
+    , expProto  = exports[PROTOTYPE]
+    , target    = IS_GLOBAL ? global : IS_STATIC ? global[name] : (global[name] || {})[PROTOTYPE]
+    , key, own, out;
+  if(IS_GLOBAL)source = name;
+  for(key in source){
+    // contains in native
+    own = !IS_FORCED && target && target[key] !== undefined;
+    if(own && key in exports)continue;
+    // export native or passed
+    out = own ? target[key] : source[key];
+    // prevent global pollution for namespaces
+    exports[key] = IS_GLOBAL && typeof target[key] != 'function' ? source[key]
+    // bind timers to global for call from export context
+    : IS_BIND && own ? ctx(out, global)
+    // wrap global constructors for prevent change them in library
+    : IS_WRAP && target[key] == out ? (function(C){
+      var F = function(a, b, c){
+        if(this instanceof C){
+          switch(arguments.length){
+            case 0: return new C;
+            case 1: return new C(a);
+            case 2: return new C(a, b);
+          } return new C(a, b, c);
+        } return C.apply(this, arguments);
+      };
+      F[PROTOTYPE] = C[PROTOTYPE];
+      return F;
+    // make static versions for prototype methods
+    })(out) : IS_PROTO && typeof out == 'function' ? ctx(Function.call, out) : out;
+    // export proto methods to core.%CONSTRUCTOR%.methods.%NAME%
+    if(IS_PROTO){
+      (exports.virtual || (exports.virtual = {}))[key] = out;
+      // export proto methods to core.%CONSTRUCTOR%.prototype.%NAME%
+      if(type & $export.R && expProto && !expProto[key])hide(expProto, key, out);
+    }
+  }
+};
+// type bitmap
+$export.F = 1;   // forced
+$export.G = 2;   // global
+$export.S = 4;   // static
+$export.P = 8;   // proto
+$export.B = 16;  // bind
+$export.W = 32;  // wrap
+$export.U = 64;  // safe
+$export.R = 128; // real proto method for `library` 
+module.exports = $export;
+});
+
+var require$$1$3 = (_export && typeof _export === 'object' && 'default' in _export ? _export['default'] : _export);
+
+var es6_object_defineProperty = __commonjs(function (module) {
+var $export = require$$1$3;
+// 19.1.2.4 / 15.2.3.6 Object.defineProperty(O, P, Attributes)
+$export($export.S + $export.F * !require$$27, 'Object', {defineProperty: require$$1.f});
+});
+
+var defineProperty$1 = __commonjs(function (module) {
+var $Object = require$$0$2.Object;
+module.exports = function defineProperty(it, key, desc){
+  return $Object.defineProperty(it, key, desc);
+};
+});
+
+var require$$0$1 = (defineProperty$1 && typeof defineProperty$1 === 'object' && 'default' in defineProperty$1 ? defineProperty$1['default'] : defineProperty$1);
+
+var defineProperty = __commonjs(function (module) {
+module.exports = { "default": require$$0$1, __esModule: true };
+});
+
+var require$$0 = (defineProperty && typeof defineProperty === 'object' && 'default' in defineProperty ? defineProperty['default'] : defineProperty);
+
+var createClass = __commonjs(function (module, exports) {
+"use strict";
+
+exports.__esModule = true;
+
+var _defineProperty = require$$0;
+
+var _defineProperty2 = _interopRequireDefault(_defineProperty);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = function () {
+  function defineProperties(target, props) {
+    for (var i = 0; i < props.length; i++) {
+      var descriptor = props[i];
+      descriptor.enumerable = descriptor.enumerable || false;
+      descriptor.configurable = true;
+      if ("value" in descriptor) descriptor.writable = true;
+      (0, _defineProperty2.default)(target, descriptor.key, descriptor);
+    }
+  }
+
+  return function (Constructor, protoProps, staticProps) {
+    if (protoProps) defineProperties(Constructor.prototype, protoProps);
+    if (staticProps) defineProperties(Constructor, staticProps);
+    return Constructor;
+  };
+}();
+});
+
+var _createClass = (createClass && typeof createClass === 'object' && 'default' in createClass ? createClass['default'] : createClass);
+
 var runtime = __commonjs(function (module, exports, global) {
 /**
  * Copyright (c) 2014, Facebook, Inc.
@@ -673,7 +979,7 @@ var runtime = __commonjs(function (module, exports, global) {
 );
 });
 
-var require$$0$1 = (runtime && typeof runtime === 'object' && 'default' in runtime ? runtime['default'] : runtime);
+var require$$0$6 = (runtime && typeof runtime === 'object' && 'default' in runtime ? runtime['default'] : runtime);
 
 var runtimeModule = __commonjs(function (module, exports, global) {
 // This method of obtaining a reference to the global object needs to be
@@ -694,7 +1000,7 @@ var oldRuntime = hadRuntime && g.regeneratorRuntime;
 // Force reevalutation of runtime.js.
 g.regeneratorRuntime = undefined;
 
-module.exports = require$$0$1;
+module.exports = require$$0$6;
 
 if (hadRuntime) {
   // Restore the original runtime.
@@ -709,29 +1015,13 @@ if (hadRuntime) {
 }
 });
 
-var require$$0 = (runtimeModule && typeof runtimeModule === 'object' && 'default' in runtimeModule ? runtimeModule['default'] : runtimeModule);
+var require$$0$5 = (runtimeModule && typeof runtimeModule === 'object' && 'default' in runtimeModule ? runtimeModule['default'] : runtimeModule);
 
 var index = __commonjs(function (module) {
-module.exports = require$$0;
+module.exports = require$$0$5;
 });
 
 var _regeneratorRuntime = (index && typeof index === 'object' && 'default' in index ? index['default'] : index);
-
-var _core = __commonjs(function (module) {
-var core = module.exports = {version: '2.4.0'};
-if(typeof __e == 'number')__e = core; // eslint-disable-line no-undef
-});
-
-var require$$0$4 = (_core && typeof _core === 'object' && 'default' in _core ? _core['default'] : _core);
-
-var _global = __commonjs(function (module) {
-// https://github.com/zloirock/core-js/issues/86#issuecomment-115759028
-var global = module.exports = typeof window != 'undefined' && window.Math == Math
-  ? window : typeof self != 'undefined' && self.Math == Math ? self : Function('return this')();
-if(typeof __g == 'number')__g = global; // eslint-disable-line no-undef
-});
-
-var require$$29 = (_global && typeof _global === 'object' && 'default' in _global ? _global['default'] : _global);
 
 var _uid = __commonjs(function (module) {
 var id = 0
@@ -794,109 +1084,12 @@ module.exports = function(exec, skipClosing){
 };
 });
 
-var require$$0$5 = (_iterDetect && typeof _iterDetect === 'object' && 'default' in _iterDetect ? _iterDetect['default'] : _iterDetect);
-
-var _fails = __commonjs(function (module) {
-module.exports = function(exec){
-  try {
-    return !!exec();
-  } catch(e){
-    return true;
-  }
-};
-});
-
-var require$$0$6 = (_fails && typeof _fails === 'object' && 'default' in _fails ? _fails['default'] : _fails);
-
-var _descriptors = __commonjs(function (module) {
-// Thank's IE8 for his funny defineProperty
-module.exports = !require$$0$6(function(){
-  return Object.defineProperty({}, 'a', {get: function(){ return 7; }}).a != 7;
-});
-});
-
-var require$$27 = (_descriptors && typeof _descriptors === 'object' && 'default' in _descriptors ? _descriptors['default'] : _descriptors);
-
-var _isObject = __commonjs(function (module) {
-module.exports = function(it){
-  return typeof it === 'object' ? it !== null : typeof it === 'function';
-};
-});
-
-var require$$3 = (_isObject && typeof _isObject === 'object' && 'default' in _isObject ? _isObject['default'] : _isObject);
-
-var _toPrimitive = __commonjs(function (module) {
-// 7.1.1 ToPrimitive(input [, PreferredType])
-var isObject = require$$3;
-// instead of the ES6 spec version, we didn't implement @@toPrimitive case
-// and the second argument - flag - preferred type is a string
-module.exports = function(it, S){
-  if(!isObject(it))return it;
-  var fn, val;
-  if(S && typeof (fn = it.toString) == 'function' && !isObject(val = fn.call(it)))return val;
-  if(typeof (fn = it.valueOf) == 'function' && !isObject(val = fn.call(it)))return val;
-  if(!S && typeof (fn = it.toString) == 'function' && !isObject(val = fn.call(it)))return val;
-  throw TypeError("Can't convert object to primitive value");
-};
-});
-
-var require$$11 = (_toPrimitive && typeof _toPrimitive === 'object' && 'default' in _toPrimitive ? _toPrimitive['default'] : _toPrimitive);
-
-var _domCreate = __commonjs(function (module) {
-var isObject = require$$3
-  , document = require$$29.document
-  // in old IE typeof document.createElement is 'object'
-  , is = isObject(document) && isObject(document.createElement);
-module.exports = function(it){
-  return is ? document.createElement(it) : {};
-};
-});
-
-var require$$1$2 = (_domCreate && typeof _domCreate === 'object' && 'default' in _domCreate ? _domCreate['default'] : _domCreate);
-
-var _ie8DomDefine = __commonjs(function (module) {
-module.exports = !require$$27 && !require$$0$6(function(){
-  return Object.defineProperty(require$$1$2('div'), 'a', {get: function(){ return 7; }}).a != 7;
-});
-});
-
-var require$$1$1 = (_ie8DomDefine && typeof _ie8DomDefine === 'object' && 'default' in _ie8DomDefine ? _ie8DomDefine['default'] : _ie8DomDefine);
-
-var _anObject = __commonjs(function (module) {
-var isObject = require$$3;
-module.exports = function(it){
-  if(!isObject(it))throw TypeError(it + ' is not an object!');
-  return it;
-};
-});
-
-var require$$13 = (_anObject && typeof _anObject === 'object' && 'default' in _anObject ? _anObject['default'] : _anObject);
-
-var _objectDp = __commonjs(function (module, exports) {
-var anObject       = require$$13
-  , IE8_DOM_DEFINE = require$$1$1
-  , toPrimitive    = require$$11
-  , dP             = Object.defineProperty;
-
-exports.f = require$$27 ? Object.defineProperty : function defineProperty(O, P, Attributes){
-  anObject(O);
-  P = toPrimitive(P, true);
-  anObject(Attributes);
-  if(IE8_DOM_DEFINE)try {
-    return dP(O, P, Attributes);
-  } catch(e){ /* empty */ }
-  if('get' in Attributes || 'set' in Attributes)throw TypeError('Accessors not supported!');
-  if('value' in Attributes)O[P] = Attributes.value;
-  return O;
-};
-});
-
-var require$$1 = (_objectDp && typeof _objectDp === 'object' && 'default' in _objectDp ? _objectDp['default'] : _objectDp);
+var require$$0$9 = (_iterDetect && typeof _iterDetect === 'object' && 'default' in _iterDetect ? _iterDetect['default'] : _iterDetect);
 
 var _setSpecies = __commonjs(function (module) {
 'use strict';
 var global      = require$$29
-  , core        = require$$0$4
+  , core        = require$$0$2
   , dP          = require$$1
   , DESCRIPTORS = require$$27
   , SPECIES     = require$$19('species');
@@ -933,34 +1126,8 @@ module.exports = function(it, tag, stat){
 
 var require$$21 = (_setToStringTag && typeof _setToStringTag === 'object' && 'default' in _setToStringTag ? _setToStringTag['default'] : _setToStringTag);
 
-var _propertyDesc = __commonjs(function (module) {
-module.exports = function(bitmap, value){
-  return {
-    enumerable  : !(bitmap & 1),
-    configurable: !(bitmap & 2),
-    writable    : !(bitmap & 4),
-    value       : value
-  };
-};
-});
-
-var require$$10 = (_propertyDesc && typeof _propertyDesc === 'object' && 'default' in _propertyDesc ? _propertyDesc['default'] : _propertyDesc);
-
-var _hide = __commonjs(function (module) {
-var dP         = require$$1
-  , createDesc = require$$10;
-module.exports = require$$27 ? function(object, key, value){
-  return dP.f(object, key, createDesc(1, value));
-} : function(object, key, value){
-  object[key] = value;
-  return object;
-};
-});
-
-var require$$0$7 = (_hide && typeof _hide === 'object' && 'default' in _hide ? _hide['default'] : _hide);
-
 var _redefineAll = __commonjs(function (module) {
-var hide = require$$0$7;
+var hide = require$$0$4;
 module.exports = function(target, src, safe){
   for(var key in src){
     if(safe && target[key])target[key] = src[key];
@@ -979,13 +1146,13 @@ module.exports = function(it){
 };
 });
 
-var require$$0$8 = (_cof && typeof _cof === 'object' && 'default' in _cof ? _cof['default'] : _cof);
+var require$$0$10 = (_cof && typeof _cof === 'object' && 'default' in _cof ? _cof['default'] : _cof);
 
 var _html = __commonjs(function (module) {
 module.exports = require$$29.document && document.documentElement;
 });
 
-var require$$0$9 = (_html && typeof _html === 'object' && 'default' in _html ? _html['default'] : _html);
+var require$$0$11 = (_html && typeof _html === 'object' && 'default' in _html ? _html['default'] : _html);
 
 var _invoke = __commonjs(function (module) {
 // fast apply, http://jsperf.lnkit.com/fast-apply/5
@@ -1008,44 +1175,10 @@ module.exports = function(fn, args, that){
 
 var require$$4$2 = (_invoke && typeof _invoke === 'object' && 'default' in _invoke ? _invoke['default'] : _invoke);
 
-var _aFunction = __commonjs(function (module) {
-module.exports = function(it){
-  if(typeof it != 'function')throw TypeError(it + ' is not a function!');
-  return it;
-};
-});
-
-var require$$1$5 = (_aFunction && typeof _aFunction === 'object' && 'default' in _aFunction ? _aFunction['default'] : _aFunction);
-
-var _ctx = __commonjs(function (module) {
-// optional / simple context binding
-var aFunction = require$$1$5;
-module.exports = function(fn, that, length){
-  aFunction(fn);
-  if(that === undefined)return fn;
-  switch(length){
-    case 1: return function(a){
-      return fn.call(that, a);
-    };
-    case 2: return function(a, b){
-      return fn.call(that, a, b);
-    };
-    case 3: return function(a, b, c){
-      return fn.call(that, a, b, c);
-    };
-  }
-  return function(/* ...args */){
-    return fn.apply(that, arguments);
-  };
-};
-});
-
-var require$$1$4 = (_ctx && typeof _ctx === 'object' && 'default' in _ctx ? _ctx['default'] : _ctx);
-
 var _task = __commonjs(function (module, exports, global) {
-var ctx                = require$$1$4
+var ctx                = require$$5
   , invoke             = require$$4$2
-  , html               = require$$0$9
+  , html               = require$$0$11
   , cel                = require$$1$2
   , global             = require$$29
   , process            = global.process
@@ -1082,7 +1215,7 @@ if(!setTask || !clearTask){
     delete queue[id];
   };
   // Node.js 0.8-
-  if(require$$0$8(process) == 'process'){
+  if(require$$0$10(process) == 'process'){
     defer = function(id){
       process.nextTick(ctx(run, id, 1));
     };
@@ -1120,15 +1253,15 @@ module.exports = {
 };
 });
 
-var require$$1$3 = (_task && typeof _task === 'object' && 'default' in _task ? _task['default'] : _task);
+var require$$1$5 = (_task && typeof _task === 'object' && 'default' in _task ? _task['default'] : _task);
 
 var _microtask = __commonjs(function (module) {
 var global    = require$$29
-  , macrotask = require$$1$3.set
+  , macrotask = require$$1$5.set
   , Observer  = global.MutationObserver || global.WebKitMutationObserver
   , process   = global.process
   , Promise   = global.Promise
-  , isNode    = require$$0$8(process) == 'process';
+  , isNode    = require$$0$10(process) == 'process';
 
 module.exports = function(){
   var head, last, notify;
@@ -1198,7 +1331,7 @@ var require$$6 = (_microtask && typeof _microtask === 'object' && 'default' in _
 var _speciesConstructor = __commonjs(function (module) {
 // 7.3.20 SpeciesConstructor(O, defaultConstructor)
 var anObject  = require$$13
-  , aFunction = require$$1$5
+  , aFunction = require$$1$4
   , SPECIES   = require$$19('species');
 module.exports = function(O, D){
   var C = anObject(O).constructor, S;
@@ -1216,11 +1349,11 @@ module.exports = function(it){
 };
 });
 
-var require$$0$12 = (_defined && typeof _defined === 'object' && 'default' in _defined ? _defined['default'] : _defined);
+var require$$0$14 = (_defined && typeof _defined === 'object' && 'default' in _defined ? _defined['default'] : _defined);
 
 var _iobject = __commonjs(function (module) {
 // fallback for non-array-like ES3 and non-enumerable old V8 strings
-var cof = require$$0$8;
+var cof = require$$0$10;
 module.exports = Object('z').propertyIsEnumerable(0) ? Object : function(it){
   return cof(it) == 'String' ? it.split('') : Object(it);
 };
@@ -1231,24 +1364,24 @@ var require$$1$6 = (_iobject && typeof _iobject === 'object' && 'default' in _io
 var _toIobject = __commonjs(function (module) {
 // to indexed object, toObject with fallback for non-array-like ES3 strings
 var IObject = require$$1$6
-  , defined = require$$0$12;
+  , defined = require$$0$14;
 module.exports = function(it){
   return IObject(defined(it));
 };
 });
 
-var require$$0$11 = (_toIobject && typeof _toIobject === 'object' && 'default' in _toIobject ? _toIobject['default'] : _toIobject);
+var require$$0$13 = (_toIobject && typeof _toIobject === 'object' && 'default' in _toIobject ? _toIobject['default'] : _toIobject);
 
 var _objectPie = __commonjs(function (module, exports) {
 exports.f = {}.propertyIsEnumerable;
 });
 
-var require$$0$13 = (_objectPie && typeof _objectPie === 'object' && 'default' in _objectPie ? _objectPie['default'] : _objectPie);
+var require$$0$15 = (_objectPie && typeof _objectPie === 'object' && 'default' in _objectPie ? _objectPie['default'] : _objectPie);
 
 var _objectGopd = __commonjs(function (module, exports) {
-var pIE            = require$$0$13
+var pIE            = require$$0$15
   , createDesc     = require$$10
-  , toIObject      = require$$0$11
+  , toIObject      = require$$0$13
   , toPrimitive    = require$$11
   , has            = require$$2$1
   , IE8_DOM_DEFINE = require$$1$1
@@ -1279,7 +1412,7 @@ module.exports = {
   set: Object.setPrototypeOf || ('__proto__' in {} ? // eslint-disable-line
     function(test, buggy, set){
       try {
-        set = require$$1$4(Function.call, require$$7.f(Object.prototype, '__proto__').set, 2);
+        set = require$$5(Function.call, require$$7.f(Object.prototype, '__proto__').set, 2);
         set(test, []);
         buggy = !(test instanceof Array);
       } catch(e){ buggy = true; }
@@ -1294,7 +1427,7 @@ module.exports = {
 };
 });
 
-var require$$0$10 = (_setProto && typeof _setProto === 'object' && 'default' in _setProto ? _setProto['default'] : _setProto);
+var require$$0$12 = (_setProto && typeof _setProto === 'object' && 'default' in _setProto ? _setProto['default'] : _setProto);
 
 var _iterators = __commonjs(function (module) {
 module.exports = {};
@@ -1304,7 +1437,7 @@ var require$$4$3 = (_iterators && typeof _iterators === 'object' && 'default' in
 
 var _classof = __commonjs(function (module) {
 // getting tag from 19.1.3.6 Object.prototype.toString()
-var cof = require$$0$8
+var cof = require$$0$10
   , TAG = require$$19('toStringTag')
   // ES3 wrong here
   , ARG = cof(function(){ return arguments; }()) == 'Arguments';
@@ -1334,14 +1467,14 @@ var core_getIteratorMethod = __commonjs(function (module) {
 var classof   = require$$3$1
   , ITERATOR  = require$$19('iterator')
   , Iterators = require$$4$3;
-module.exports = require$$0$4.getIteratorMethod = function(it){
+module.exports = require$$0$2.getIteratorMethod = function(it){
   if(it != undefined)return it[ITERATOR]
     || it['@@iterator']
     || Iterators[classof(it)];
 };
 });
 
-var require$$0$14 = (core_getIteratorMethod && typeof core_getIteratorMethod === 'object' && 'default' in core_getIteratorMethod ? core_getIteratorMethod['default'] : core_getIteratorMethod);
+var require$$0$16 = (core_getIteratorMethod && typeof core_getIteratorMethod === 'object' && 'default' in core_getIteratorMethod ? core_getIteratorMethod['default'] : core_getIteratorMethod);
 
 var _toInteger = __commonjs(function (module) {
 // 7.1.4 ToInteger
@@ -1396,12 +1529,12 @@ module.exports = function(iterator, fn, value, entries){
 var require$$4$4 = (_iterCall && typeof _iterCall === 'object' && 'default' in _iterCall ? _iterCall['default'] : _iterCall);
 
 var _forOf = __commonjs(function (module) {
-var ctx         = require$$1$4
+var ctx         = require$$5
   , call        = require$$4$4
   , isArrayIter = require$$3$2
   , anObject    = require$$13
   , toLength    = require$$1$7
-  , getIterFn   = require$$0$14
+  , getIterFn   = require$$0$16
   , BREAK       = {}
   , RETURN      = {};
 var exports = module.exports = function(iterable, entries, fn, that, ITERATOR){
@@ -1435,93 +1568,27 @@ module.exports = function(it, Constructor, name, forbiddenField){
 
 var require$$11$1 = (_anInstance && typeof _anInstance === 'object' && 'default' in _anInstance ? _anInstance['default'] : _anInstance);
 
-var _export = __commonjs(function (module, exports) {
-var global    = require$$29
-  , core      = require$$0$4
-  , ctx       = require$$1$4
-  , hide      = require$$0$7
-  , PROTOTYPE = 'prototype';
-
-var $export = function(type, name, source){
-  var IS_FORCED = type & $export.F
-    , IS_GLOBAL = type & $export.G
-    , IS_STATIC = type & $export.S
-    , IS_PROTO  = type & $export.P
-    , IS_BIND   = type & $export.B
-    , IS_WRAP   = type & $export.W
-    , exports   = IS_GLOBAL ? core : core[name] || (core[name] = {})
-    , expProto  = exports[PROTOTYPE]
-    , target    = IS_GLOBAL ? global : IS_STATIC ? global[name] : (global[name] || {})[PROTOTYPE]
-    , key, own, out;
-  if(IS_GLOBAL)source = name;
-  for(key in source){
-    // contains in native
-    own = !IS_FORCED && target && target[key] !== undefined;
-    if(own && key in exports)continue;
-    // export native or passed
-    out = own ? target[key] : source[key];
-    // prevent global pollution for namespaces
-    exports[key] = IS_GLOBAL && typeof target[key] != 'function' ? source[key]
-    // bind timers to global for call from export context
-    : IS_BIND && own ? ctx(out, global)
-    // wrap global constructors for prevent change them in library
-    : IS_WRAP && target[key] == out ? (function(C){
-      var F = function(a, b, c){
-        if(this instanceof C){
-          switch(arguments.length){
-            case 0: return new C;
-            case 1: return new C(a);
-            case 2: return new C(a, b);
-          } return new C(a, b, c);
-        } return C.apply(this, arguments);
-      };
-      F[PROTOTYPE] = C[PROTOTYPE];
-      return F;
-    // make static versions for prototype methods
-    })(out) : IS_PROTO && typeof out == 'function' ? ctx(Function.call, out) : out;
-    // export proto methods to core.%CONSTRUCTOR%.methods.%NAME%
-    if(IS_PROTO){
-      (exports.virtual || (exports.virtual = {}))[key] = out;
-      // export proto methods to core.%CONSTRUCTOR%.prototype.%NAME%
-      if(type & $export.R && expProto && !expProto[key])hide(expProto, key, out);
-    }
-  }
-};
-// type bitmap
-$export.F = 1;   // forced
-$export.G = 2;   // global
-$export.S = 4;   // static
-$export.P = 8;   // proto
-$export.B = 16;  // bind
-$export.W = 32;  // wrap
-$export.U = 64;  // safe
-$export.R = 128; // real proto method for `library` 
-module.exports = $export;
-});
-
-var require$$1$9 = (_export && typeof _export === 'object' && 'default' in _export ? _export['default'] : _export);
-
 var _library = __commonjs(function (module) {
 module.exports = true;
 });
 
-var require$$1$10 = (_library && typeof _library === 'object' && 'default' in _library ? _library['default'] : _library);
+var require$$1$9 = (_library && typeof _library === 'object' && 'default' in _library ? _library['default'] : _library);
 
 var es6_promise = __commonjs(function (module, exports, global) {
 'use strict';
-var LIBRARY            = require$$1$10
+var LIBRARY            = require$$1$9
   , global             = require$$29
-  , ctx                = require$$1$4
+  , ctx                = require$$5
   , classof            = require$$3$1
-  , $export            = require$$1$9
+  , $export            = require$$1$3
   , isObject           = require$$3
   , anObject           = require$$13
-  , aFunction          = require$$1$5
+  , aFunction          = require$$1$4
   , anInstance         = require$$11$1
   , forOf              = require$$10$1
-  , setProto           = require$$0$10.set
+  , setProto           = require$$0$12.set
   , speciesConstructor = require$$8
-  , task               = require$$1$3.set
+  , task               = require$$1$5.set
   , microtask          = require$$6()
   , PROMISE            = 'Promise'
   , TypeError          = global.TypeError
@@ -1742,7 +1809,7 @@ if(!USE_NATIVE){
 $export($export.G + $export.W + $export.F * !USE_NATIVE, {Promise: $Promise});
 require$$21($Promise, PROMISE);
 require$$2(PROMISE);
-Wrapper = require$$0$4[PROMISE];
+Wrapper = require$$0$2[PROMISE];
 
 // statics
 $export($export.S + $export.F * !USE_NATIVE, PROMISE, {
@@ -1765,7 +1832,7 @@ $export($export.S + $export.F * (LIBRARY || !USE_NATIVE), PROMISE, {
     return capability.promise;
   }
 });
-$export($export.S + $export.F * !(USE_NATIVE && require$$0$5(function(iter){
+$export($export.S + $export.F * !(USE_NATIVE && require$$0$9(function(iter){
   $Promise.all(iter)['catch'](empty);
 })), PROMISE, {
   // 25.4.4.1 Promise.all(iterable)
@@ -1819,23 +1886,23 @@ module.exports = function(key){
 };
 });
 
-var require$$0$16 = (_sharedKey && typeof _sharedKey === 'object' && 'default' in _sharedKey ? _sharedKey['default'] : _sharedKey);
+var require$$0$18 = (_sharedKey && typeof _sharedKey === 'object' && 'default' in _sharedKey ? _sharedKey['default'] : _sharedKey);
 
 var _toObject = __commonjs(function (module) {
 // 7.1.13 ToObject(argument)
-var defined = require$$0$12;
+var defined = require$$0$14;
 module.exports = function(it){
   return Object(defined(it));
 };
 });
 
-var require$$1$12 = (_toObject && typeof _toObject === 'object' && 'default' in _toObject ? _toObject['default'] : _toObject);
+var require$$1$11 = (_toObject && typeof _toObject === 'object' && 'default' in _toObject ? _toObject['default'] : _toObject);
 
 var _objectGpo = __commonjs(function (module) {
 // 19.1.2.9 / 15.2.3.2 Object.getPrototypeOf(O)
 var has         = require$$2$1
-  , toObject    = require$$1$12
-  , IE_PROTO    = require$$0$16('IE_PROTO')
+  , toObject    = require$$1$11
+  , IE_PROTO    = require$$0$18('IE_PROTO')
   , ObjectProto = Object.prototype;
 
 module.exports = Object.getPrototypeOf || function(O){
@@ -1847,7 +1914,7 @@ module.exports = Object.getPrototypeOf || function(O){
 };
 });
 
-var require$$1$11 = (_objectGpo && typeof _objectGpo === 'object' && 'default' in _objectGpo ? _objectGpo['default'] : _objectGpo);
+var require$$1$10 = (_objectGpo && typeof _objectGpo === 'object' && 'default' in _objectGpo ? _objectGpo['default'] : _objectGpo);
 
 var _enumBugKeys = __commonjs(function (module) {
 // IE 8- don't enum bug keys
@@ -1856,7 +1923,7 @@ module.exports = (
 ).split(',');
 });
 
-var require$$0$18 = (_enumBugKeys && typeof _enumBugKeys === 'object' && 'default' in _enumBugKeys ? _enumBugKeys['default'] : _enumBugKeys);
+var require$$0$20 = (_enumBugKeys && typeof _enumBugKeys === 'object' && 'default' in _enumBugKeys ? _enumBugKeys['default'] : _enumBugKeys);
 
 var _toIndex = __commonjs(function (module) {
 var toInteger = require$$1$8
@@ -1868,14 +1935,14 @@ module.exports = function(index, length){
 };
 });
 
-var require$$0$19 = (_toIndex && typeof _toIndex === 'object' && 'default' in _toIndex ? _toIndex['default'] : _toIndex);
+var require$$0$21 = (_toIndex && typeof _toIndex === 'object' && 'default' in _toIndex ? _toIndex['default'] : _toIndex);
 
 var _arrayIncludes = __commonjs(function (module) {
 // false -> Array#indexOf
 // true  -> Array#includes
-var toIObject = require$$0$11
+var toIObject = require$$0$13
   , toLength  = require$$1$7
-  , toIndex   = require$$0$19;
+  , toIndex   = require$$0$21;
 module.exports = function(IS_INCLUDES){
   return function($this, el, fromIndex){
     var O      = toIObject($this)
@@ -1894,13 +1961,13 @@ module.exports = function(IS_INCLUDES){
 };
 });
 
-var require$$1$15 = (_arrayIncludes && typeof _arrayIncludes === 'object' && 'default' in _arrayIncludes ? _arrayIncludes['default'] : _arrayIncludes);
+var require$$1$14 = (_arrayIncludes && typeof _arrayIncludes === 'object' && 'default' in _arrayIncludes ? _arrayIncludes['default'] : _arrayIncludes);
 
 var _objectKeysInternal = __commonjs(function (module) {
 var has          = require$$2$1
-  , toIObject    = require$$0$11
-  , arrayIndexOf = require$$1$15(false)
-  , IE_PROTO     = require$$0$16('IE_PROTO');
+  , toIObject    = require$$0$13
+  , arrayIndexOf = require$$1$14(false)
+  , IE_PROTO     = require$$0$18('IE_PROTO');
 
 module.exports = function(object, names){
   var O      = toIObject(object)
@@ -1916,24 +1983,24 @@ module.exports = function(object, names){
 };
 });
 
-var require$$1$14 = (_objectKeysInternal && typeof _objectKeysInternal === 'object' && 'default' in _objectKeysInternal ? _objectKeysInternal['default'] : _objectKeysInternal);
+var require$$1$13 = (_objectKeysInternal && typeof _objectKeysInternal === 'object' && 'default' in _objectKeysInternal ? _objectKeysInternal['default'] : _objectKeysInternal);
 
 var _objectKeys = __commonjs(function (module) {
 // 19.1.2.14 / 15.2.3.14 Object.keys(O)
-var $keys       = require$$1$14
-  , enumBugKeys = require$$0$18;
+var $keys       = require$$1$13
+  , enumBugKeys = require$$0$20;
 
 module.exports = Object.keys || function keys(O){
   return $keys(O, enumBugKeys);
 };
 });
 
-var require$$1$13 = (_objectKeys && typeof _objectKeys === 'object' && 'default' in _objectKeys ? _objectKeys['default'] : _objectKeys);
+var require$$1$12 = (_objectKeys && typeof _objectKeys === 'object' && 'default' in _objectKeys ? _objectKeys['default'] : _objectKeys);
 
 var _objectDps = __commonjs(function (module) {
 var dP       = require$$1
   , anObject = require$$13
-  , getKeys  = require$$1$13;
+  , getKeys  = require$$1$12;
 
 module.exports = require$$27 ? Object.defineProperties : function defineProperties(O, Properties){
   anObject(O);
@@ -1952,8 +2019,8 @@ var _objectCreate = __commonjs(function (module) {
 // 19.1.2.2 / 15.2.3.5 Object.create(O [, Properties])
 var anObject    = require$$13
   , dPs         = require$$4$5
-  , enumBugKeys = require$$0$18
-  , IE_PROTO    = require$$0$16('IE_PROTO')
+  , enumBugKeys = require$$0$20
+  , IE_PROTO    = require$$0$18('IE_PROTO')
   , Empty       = function(){ /* empty */ }
   , PROTOTYPE   = 'prototype';
 
@@ -1965,7 +2032,7 @@ var createDict = function(){
     , gt     = '>'
     , iframeDocument;
   iframe.style.display = 'none';
-  require$$0$9.appendChild(iframe);
+  require$$0$11.appendChild(iframe);
   iframe.src = 'javascript:'; // eslint-disable-line no-script-url
   // createDict = iframe.contentWindow.Object;
   // html.removeChild(iframe);
@@ -1991,17 +2058,17 @@ module.exports = Object.create || function create(O, Properties){
 };
 });
 
-var require$$0$17 = (_objectCreate && typeof _objectCreate === 'object' && 'default' in _objectCreate ? _objectCreate['default'] : _objectCreate);
+var require$$0$19 = (_objectCreate && typeof _objectCreate === 'object' && 'default' in _objectCreate ? _objectCreate['default'] : _objectCreate);
 
 var _iterCreate = __commonjs(function (module) {
 'use strict';
-var create         = require$$0$17
+var create         = require$$0$19
   , descriptor     = require$$10
   , setToStringTag = require$$21
   , IteratorPrototype = {};
 
 // 25.1.2.1.1 %IteratorPrototype%[@@iterator]()
-require$$0$7(IteratorPrototype, require$$19('iterator'), function(){ return this; });
+require$$0$4(IteratorPrototype, require$$19('iterator'), function(){ return this; });
 
 module.exports = function(Constructor, NAME, next){
   Constructor.prototype = create(IteratorPrototype, {next: descriptor(1, next)});
@@ -2012,22 +2079,22 @@ module.exports = function(Constructor, NAME, next){
 var require$$3$3 = (_iterCreate && typeof _iterCreate === 'object' && 'default' in _iterCreate ? _iterCreate['default'] : _iterCreate);
 
 var _redefine = __commonjs(function (module) {
-module.exports = require$$0$7;
+module.exports = require$$0$4;
 });
 
 var require$$25 = (_redefine && typeof _redefine === 'object' && 'default' in _redefine ? _redefine['default'] : _redefine);
 
 var _iterDefine = __commonjs(function (module) {
 'use strict';
-var LIBRARY        = require$$1$10
-  , $export        = require$$1$9
+var LIBRARY        = require$$1$9
+  , $export        = require$$1$3
   , redefine       = require$$25
-  , hide           = require$$0$7
+  , hide           = require$$0$4
   , has            = require$$2$1
   , Iterators      = require$$4$3
   , $iterCreate    = require$$3$3
   , setToStringTag = require$$21
-  , getPrototypeOf = require$$1$11
+  , getPrototypeOf = require$$1$10
   , ITERATOR       = require$$19('iterator')
   , BUGGY          = !([].keys && 'next' in [].keys()) // Safari has buggy iterators w/o `next`
   , FF_ITERATOR    = '@@iterator'
@@ -2090,7 +2157,7 @@ module.exports = function(Base, NAME, Constructor, next, DEFAULT, IS_SET, FORCED
 };
 });
 
-var require$$0$15 = (_iterDefine && typeof _iterDefine === 'object' && 'default' in _iterDefine ? _iterDefine['default'] : _iterDefine);
+var require$$0$17 = (_iterDefine && typeof _iterDefine === 'object' && 'default' in _iterDefine ? _iterDefine['default'] : _iterDefine);
 
 var _iterStep = __commonjs(function (module) {
 module.exports = function(done, value){
@@ -2111,13 +2178,13 @@ var es6_array_iterator = __commonjs(function (module) {
 var addToUnscopables = require$$4$6
   , step             = require$$3$4
   , Iterators        = require$$4$3
-  , toIObject        = require$$0$11;
+  , toIObject        = require$$0$13;
 
 // 22.1.3.4 Array.prototype.entries()
 // 22.1.3.13 Array.prototype.keys()
 // 22.1.3.29 Array.prototype.values()
 // 22.1.3.30 Array.prototype[@@iterator]()
-module.exports = require$$0$15(Array, 'Array', function(iterated, kind){
+module.exports = require$$0$17(Array, 'Array', function(iterated, kind){
   this._t = toIObject(iterated); // target
   this._i = 0;                   // next index
   this._k = kind;                // kind
@@ -2145,7 +2212,7 @@ addToUnscopables('entries');
 
 var web_dom_iterable = __commonjs(function (module) {
 var global        = require$$29
-  , hide          = require$$0$7
+  , hide          = require$$0$4
   , Iterators     = require$$4$3
   , TO_STRING_TAG = require$$19('toStringTag');
 
@@ -2160,7 +2227,7 @@ for(var collections = ['NodeList', 'DOMTokenList', 'MediaList', 'StyleSheetList'
 
 var _stringAt = __commonjs(function (module) {
 var toInteger = require$$1$8
-  , defined   = require$$0$12;
+  , defined   = require$$0$14;
 // true  -> String#at
 // false -> String#codePointAt
 module.exports = function(TO_STRING){
@@ -2178,14 +2245,14 @@ module.exports = function(TO_STRING){
 };
 });
 
-var require$$1$16 = (_stringAt && typeof _stringAt === 'object' && 'default' in _stringAt ? _stringAt['default'] : _stringAt);
+var require$$1$15 = (_stringAt && typeof _stringAt === 'object' && 'default' in _stringAt ? _stringAt['default'] : _stringAt);
 
 var es6_string_iterator = __commonjs(function (module) {
 'use strict';
-var $at  = require$$1$16(true);
+var $at  = require$$1$15(true);
 
 // 21.1.3.27 String.prototype[@@iterator]()
-require$$0$15(String, 'String', function(iterated){
+require$$0$17(String, 'String', function(iterated){
   this._t = String(iterated); // target
   this._i = 0;                // next index
 // 21.1.5.2.1 %StringIteratorPrototype%.next()
@@ -2201,23 +2268,23 @@ require$$0$15(String, 'String', function(iterated){
 });
 
 var promise$1 = __commonjs(function (module) {
-module.exports = require$$0$4.Promise;
+module.exports = require$$0$2.Promise;
 });
 
-var require$$0$3 = (promise$1 && typeof promise$1 === 'object' && 'default' in promise$1 ? promise$1['default'] : promise$1);
+var require$$0$8 = (promise$1 && typeof promise$1 === 'object' && 'default' in promise$1 ? promise$1['default'] : promise$1);
 
 var promise = __commonjs(function (module) {
-module.exports = { "default": require$$0$3, __esModule: true };
+module.exports = { "default": require$$0$8, __esModule: true };
 });
 
-var require$$0$2 = (promise && typeof promise === 'object' && 'default' in promise ? promise['default'] : promise);
+var require$$0$7 = (promise && typeof promise === 'object' && 'default' in promise ? promise['default'] : promise);
 
 var asyncToGenerator = __commonjs(function (module, exports) {
 "use strict";
 
 exports.__esModule = true;
 
-var _promise = require$$0$2;
+var _promise = require$$0$7;
 
 var _promise2 = _interopRequireDefault(_promise);
 
@@ -2254,73 +2321,6 @@ exports.default = function (fn) {
 });
 
 var _asyncToGenerator = (asyncToGenerator && typeof asyncToGenerator === 'object' && 'default' in asyncToGenerator ? asyncToGenerator['default'] : asyncToGenerator);
-
-var classCallCheck = __commonjs(function (module, exports) {
-"use strict";
-
-exports.__esModule = true;
-
-exports.default = function (instance, Constructor) {
-  if (!(instance instanceof Constructor)) {
-    throw new TypeError("Cannot call a class as a function");
-  }
-};
-});
-
-var _classCallCheck = (classCallCheck && typeof classCallCheck === 'object' && 'default' in classCallCheck ? classCallCheck['default'] : classCallCheck);
-
-var es6_object_defineProperty = __commonjs(function (module) {
-var $export = require$$1$9;
-// 19.1.2.4 / 15.2.3.6 Object.defineProperty(O, P, Attributes)
-$export($export.S + $export.F * !require$$27, 'Object', {defineProperty: require$$1.f});
-});
-
-var defineProperty$1 = __commonjs(function (module) {
-var $Object = require$$0$4.Object;
-module.exports = function defineProperty(it, key, desc){
-  return $Object.defineProperty(it, key, desc);
-};
-});
-
-var require$$0$21 = (defineProperty$1 && typeof defineProperty$1 === 'object' && 'default' in defineProperty$1 ? defineProperty$1['default'] : defineProperty$1);
-
-var defineProperty = __commonjs(function (module) {
-module.exports = { "default": require$$0$21, __esModule: true };
-});
-
-var require$$0$20 = (defineProperty && typeof defineProperty === 'object' && 'default' in defineProperty ? defineProperty['default'] : defineProperty);
-
-var createClass = __commonjs(function (module, exports) {
-"use strict";
-
-exports.__esModule = true;
-
-var _defineProperty = require$$0$20;
-
-var _defineProperty2 = _interopRequireDefault(_defineProperty);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-exports.default = function () {
-  function defineProperties(target, props) {
-    for (var i = 0; i < props.length; i++) {
-      var descriptor = props[i];
-      descriptor.enumerable = descriptor.enumerable || false;
-      descriptor.configurable = true;
-      if ("value" in descriptor) descriptor.writable = true;
-      (0, _defineProperty2.default)(target, descriptor.key, descriptor);
-    }
-  }
-
-  return function (Constructor, protoProps, staticProps) {
-    if (protoProps) defineProperties(Constructor.prototype, protoProps);
-    if (staticProps) defineProperties(Constructor, staticProps);
-    return Constructor;
-  };
-}();
-});
-
-var _createClass = (createClass && typeof createClass === 'object' && 'default' in createClass ? createClass['default'] : createClass);
 
 var moment = __commonjs(function (module, exports, global) {
 //! moment.js
@@ -6502,8 +6502,8 @@ var require$$0$25 = (_wksExt && typeof _wksExt === 'object' && 'default' in _wks
 
 var _wksDefine = __commonjs(function (module) {
 var global         = require$$29
-  , core           = require$$0$4
-  , LIBRARY        = require$$1$10
+  , core           = require$$0$2
+  , LIBRARY        = require$$1$9
   , wksExt         = require$$0$25
   , defineProperty = require$$1.f;
 module.exports = function(name){
@@ -6526,12 +6526,12 @@ var _objectGops = __commonjs(function (module, exports) {
 exports.f = Object.getOwnPropertySymbols;
 });
 
-var require$$1$17 = (_objectGops && typeof _objectGops === 'object' && 'default' in _objectGops ? _objectGops['default'] : _objectGops);
+var require$$1$16 = (_objectGops && typeof _objectGops === 'object' && 'default' in _objectGops ? _objectGops['default'] : _objectGops);
 
 var _objectGopn = __commonjs(function (module, exports) {
 // 19.1.2.7 / 15.2.3.4 Object.getOwnPropertyNames(O)
-var $keys      = require$$1$14
-  , hiddenKeys = require$$0$18.concat('length', 'prototype');
+var $keys      = require$$1$13
+  , hiddenKeys = require$$0$20.concat('length', 'prototype');
 
 exports.f = Object.getOwnPropertyNames || function getOwnPropertyNames(O){
   return $keys(O, hiddenKeys);
@@ -6542,7 +6542,7 @@ var require$$0$26 = (_objectGopn && typeof _objectGopn === 'object' && 'default'
 
 var _objectGopnExt = __commonjs(function (module) {
 // fallback for IE11 buggy Object.getOwnPropertyNames with iframe and window
-var toIObject = require$$0$11
+var toIObject = require$$0$13
   , gOPN      = require$$0$26.f
   , toString  = {}.toString;
 
@@ -6566,7 +6566,7 @@ var require$$8$1 = (_objectGopnExt && typeof _objectGopnExt === 'object' && 'def
 
 var _isArray = __commonjs(function (module) {
 // 7.2.2 IsArray(argument)
-var cof = require$$0$8;
+var cof = require$$0$10;
 module.exports = Array.isArray || function isArray(arg){
   return cof(arg) == 'Array';
 };
@@ -6576,9 +6576,9 @@ var require$$14 = (_isArray && typeof _isArray === 'object' && 'default' in _isA
 
 var _enumKeys = __commonjs(function (module) {
 // all enumerable object keys, includes symbols
-var getKeys = require$$1$13
-  , gOPS    = require$$1$17
-  , pIE     = require$$0$13;
+var getKeys = require$$1$12
+  , gOPS    = require$$1$16
+  , pIE     = require$$0$15;
 module.exports = function(it){
   var result     = getKeys(it)
     , getSymbols = gOPS.f;
@@ -6595,8 +6595,8 @@ module.exports = function(it){
 var require$$15 = (_enumKeys && typeof _enumKeys === 'object' && 'default' in _enumKeys ? _enumKeys['default'] : _enumKeys);
 
 var _keyof = __commonjs(function (module) {
-var getKeys   = require$$1$13
-  , toIObject = require$$0$11;
+var getKeys   = require$$1$12
+  , toIObject = require$$0$13;
 module.exports = function(object, el){
   var O      = toIObject(object)
     , keys   = getKeys(O)
@@ -6618,7 +6618,7 @@ var META     = require$$4('meta')
 var isExtensible = Object.isExtensible || function(){
   return true;
 };
-var FREEZE = !require$$0$6(function(){
+var FREEZE = !require$$0$3(function(){
   return isExtensible(Object.preventExtensions({}));
 });
 var setMeta = function(it){
@@ -6673,10 +6673,10 @@ var es6_symbol = __commonjs(function (module) {
 var global         = require$$29
   , has            = require$$2$1
   , DESCRIPTORS    = require$$27
-  , $export        = require$$1$9
+  , $export        = require$$1$3
   , redefine       = require$$25
   , META           = require$$24.KEY
-  , $fails         = require$$0$6
+  , $fails         = require$$0$3
   , shared         = require$$22
   , setToStringTag = require$$21
   , uid            = require$$4
@@ -6687,14 +6687,14 @@ var global         = require$$29
   , enumKeys       = require$$15
   , isArray        = require$$14
   , anObject       = require$$13
-  , toIObject      = require$$0$11
+  , toIObject      = require$$0$13
   , toPrimitive    = require$$11
   , createDesc     = require$$10
-  , _create        = require$$0$17
+  , _create        = require$$0$19
   , gOPNExt        = require$$8$1
   , $GOPD          = require$$7
   , $DP            = require$$1
-  , $keys          = require$$1$13
+  , $keys          = require$$1$12
   , gOPD           = $GOPD.f
   , dP             = $DP.f
   , gOPN           = gOPNExt.f
@@ -6818,10 +6818,10 @@ if(!USE_NATIVE){
   $GOPD.f = $getOwnPropertyDescriptor;
   $DP.f   = $defineProperty;
   require$$0$26.f = gOPNExt.f = $getOwnPropertyNames;
-  require$$0$13.f  = $propertyIsEnumerable;
-  require$$1$17.f = $getOwnPropertySymbols;
+  require$$0$15.f  = $propertyIsEnumerable;
+  require$$1$16.f = $getOwnPropertySymbols;
 
-  if(DESCRIPTORS && !require$$1$10){
+  if(DESCRIPTORS && !require$$1$9){
     redefine(ObjectProto, 'propertyIsEnumerable', $propertyIsEnumerable, true);
   }
 
@@ -6896,7 +6896,7 @@ $JSON && $export($export.S + $export.F * (!USE_NATIVE || $fails(function(){
 });
 
 // 19.4.3.4 Symbol.prototype[@@toPrimitive](hint)
-$Symbol[PROTOTYPE][TO_PRIMITIVE] || require$$0$7($Symbol[PROTOTYPE], TO_PRIMITIVE, $Symbol[PROTOTYPE].valueOf);
+$Symbol[PROTOTYPE][TO_PRIMITIVE] || require$$0$4($Symbol[PROTOTYPE], TO_PRIMITIVE, $Symbol[PROTOTYPE].valueOf);
 // 19.4.3.5 Symbol.prototype[@@toStringTag]
 setToStringTag($Symbol, 'Symbol');
 // 20.2.1.9 Math[@@toStringTag]
@@ -6906,7 +6906,7 @@ setToStringTag(global.JSON, 'JSON', true);
 });
 
 var index$1 = __commonjs(function (module) {
-module.exports = require$$0$4.Symbol;
+module.exports = require$$0$2.Symbol;
 });
 
 var require$$0$24 = (index$1 && typeof index$1 === 'object' && 'default' in index$1 ? index$1['default'] : index$1);
@@ -6927,14 +6927,14 @@ var iterator = __commonjs(function (module) {
 module.exports = { "default": require$$0$27, __esModule: true };
 });
 
-var require$$1$18 = (iterator && typeof iterator === 'object' && 'default' in iterator ? iterator['default'] : iterator);
+var require$$1$17 = (iterator && typeof iterator === 'object' && 'default' in iterator ? iterator['default'] : iterator);
 
 var _typeof = __commonjs(function (module, exports) {
 "use strict";
 
 exports.__esModule = true;
 
-var _iterator = require$$1$18;
+var _iterator = require$$1$17;
 
 var _iterator2 = _interopRequireDefault(_iterator);
 
@@ -6978,13 +6978,13 @@ exports.default = function (self, call) {
 var _possibleConstructorReturn = (possibleConstructorReturn && typeof possibleConstructorReturn === 'object' && 'default' in possibleConstructorReturn ? possibleConstructorReturn['default'] : possibleConstructorReturn);
 
 var es6_object_create = __commonjs(function (module) {
-var $export = require$$1$9
+var $export = require$$1$3
 // 19.1.2.2 / 15.2.3.5 Object.create(O [, Properties])
-$export($export.S, 'Object', {create: require$$0$17});
+$export($export.S, 'Object', {create: require$$0$19});
 });
 
 var create$1 = __commonjs(function (module) {
-var $Object = require$$0$4.Object;
+var $Object = require$$0$2.Object;
 module.exports = function create(P, D){
   return $Object.create(P, D);
 };
@@ -6996,16 +6996,16 @@ var create = __commonjs(function (module) {
 module.exports = { "default": require$$0$28, __esModule: true };
 });
 
-var require$$1$19 = (create && typeof create === 'object' && 'default' in create ? create['default'] : create);
+var require$$1$18 = (create && typeof create === 'object' && 'default' in create ? create['default'] : create);
 
 var es6_object_setPrototypeOf = __commonjs(function (module) {
 // 19.1.3.19 Object.setPrototypeOf(O, proto)
-var $export = require$$1$9;
-$export($export.S, 'Object', {setPrototypeOf: require$$0$10.set});
+var $export = require$$1$3;
+$export($export.S, 'Object', {setPrototypeOf: require$$0$12.set});
 });
 
 var setPrototypeOf$1 = __commonjs(function (module) {
-module.exports = require$$0$4.Object.setPrototypeOf;
+module.exports = require$$0$2.Object.setPrototypeOf;
 });
 
 var require$$0$29 = (setPrototypeOf$1 && typeof setPrototypeOf$1 === 'object' && 'default' in setPrototypeOf$1 ? setPrototypeOf$1['default'] : setPrototypeOf$1);
@@ -7025,7 +7025,7 @@ var _setPrototypeOf = require$$2$2;
 
 var _setPrototypeOf2 = _interopRequireDefault(_setPrototypeOf);
 
-var _create = require$$1$19;
+var _create = require$$1$18;
 
 var _create2 = _interopRequireDefault(_create);
 
@@ -8216,6 +8216,9 @@ var DataLoader = function () {
 
     this.ajaxNewSubjectsEvents = new Ajax(loadUrl);
     this.ajaxNewSubjects = new Ajax(loadUrl);
+
+    this.credentials = {};
+    this.filter = {};
   }
 
   /**
@@ -8338,16 +8341,18 @@ var DataLoader = function () {
     key: 'load',
     value: function () {
       var ref = _asyncToGenerator(_regeneratorRuntime.mark(function _callee3(params, ajaxFunc) {
-        var response, subjects;
+        var dateRange, queryParams, response, subjects;
         return _regeneratorRuntime.wrap(function _callee3$(_context3) {
           while (1) {
             switch (_context3.prev = _context3.next) {
               case 0:
-                params.fromDate = params.fromDate.toISOString(); // eslint-disable-line no-param-reassign
-                params.toDate = params.toDate.toISOString(); // eslint-disable-line no-param-reassign
-
+                dateRange = {
+                  fromDate: params.fromDate.toISOString(), // eslint-disable-line no-param-reassign
+                  toDate: params.toDate.toISOString() };
+                // eslint-disable-line no-param-reassign
+                queryParams = Object.assign({}, params, this.filter, this.credentials, dateRange);
                 _context3.next = 4;
-                return ajaxFunc.query(params);
+                return ajaxFunc.query(queryParams);
 
               case 4:
                 response = _context3.sent;
@@ -8395,6 +8400,30 @@ var DataLoader = function () {
 
       assert(fromDate.isValid() && toDate.isValid(), 'fromDate or fromToDate not in responseObj.');
       return responseObj.subjects;
+    }
+
+    /**
+     * @public
+     * @method setCredentials
+     * @param  {Object} credentials
+     */
+
+  }, {
+    key: 'setCredentials',
+    value: function setCredentials(credentials) {
+      this.credentials = credentials;
+    }
+
+    /**
+     * @public
+     * @method setCredentials
+     * @param  {Object} credentials
+     */
+
+  }, {
+    key: 'setFilter',
+    value: function setFilter(filter) {
+      this.filter = filter;
     }
   }]);
 
@@ -8928,6 +8957,30 @@ var ModuleCoordinator = function () {
     value: function setLoadingState(state, message) {
       this.controlBar.setLoadingState(state, message);
     }
+
+    /**
+     * @public
+     * @method setCredentials
+     * @param  {Object} credentials
+     */
+
+  }, {
+    key: 'setCredentials',
+    value: function setCredentials(credentials) {
+      this.dataLoader.setCredentials(credentials);
+    }
+
+    /**
+     * @public
+     * @method setFilter
+     * @param  {Object} credentials
+     */
+
+  }, {
+    key: 'setFilter',
+    value: function setFilter(credentials) {
+      this.dataLoader.setFilter(credentials);
+    }
   }]);
 
   return ModuleCoordinator;
@@ -8940,11 +8993,65 @@ function laymanifyError(e) {
 
 var INITIAL_SUBJECT_COUNT = 100;
 
+/**
+ *  API that will talk to the outside world.
+ * @class AvailabilityCalendar
+ */
+
+var AvailabilityCalendar = function () {
+  function AvailabilityCalendar(xdiv, loadUrl, subjectsHeader) {
+    _classCallCheck(this, AvailabilityCalendar);
+
+    this.moduleCoordinator = new ModuleCoordinator(xdiv, loadUrl, subjectsHeader, INITIAL_SUBJECT_COUNT);
+  }
+
+  _createClass(AvailabilityCalendar, [{
+    key: 'setCredentials',
+    value: function setCredentials(credentials) {
+      this.moduleCoordinator.setCredentials(credentials);
+    }
+  }, {
+    key: 'setFilter',
+    value: function setFilter(filters) {
+      this.moduleCoordinator.setFilter(filters);
+    }
+
+    /**
+     * @public
+     * @method onEventClick
+     * @param  {Function} callback :: (details, e) => void
+     * @return {void}
+     */
+
+  }, {
+    key: 'onEventClick',
+    value: function onEventClick(callback) {
+      console.log(arguments.callee.name);
+    }
+
+    /**
+     * Process the text to be shown on event hover
+     * @public
+     * @method hoverText
+     * @param  {Function} callback :: (details) => String
+     * @return {void}
+     */
+
+  }, {
+    key: 'eventHoverText',
+    value: function eventHoverText(callback) {
+      console.log(arguments.callee.name);
+    }
+  }]);
+
+  return AvailabilityCalendar;
+}();
+
 xController(function (xdiv) {
-  var subjectsHeader = 'Properties';
   var loadUrl = xdiv.dataset.loadUrl;
+  var subjectsHeader = xdiv.dataset.header || 'Subjects';
   // return new Calendar(subjectsTitle, loadUrl, xdiv);
-  return new ModuleCoordinator(xdiv, loadUrl, subjectsHeader, INITIAL_SUBJECT_COUNT);
+  window.AvailabilityCalendar = new AvailabilityCalendar(xdiv, loadUrl, subjectsHeader);
 });
 }());
 //# sourceMappingURL=fl-multi-subject-calendar.js.map

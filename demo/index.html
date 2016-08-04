@@ -13,6 +13,32 @@
 <body>
   <x-div
   data-controller="../dist/fl-multi-subject-calendar.js"
-  data-load-url="http://localhost:3005/"></script>
+  data-header="Properties"
+  data-load-url="http://localhost:3005/"
+  ></x-div>
+
+  <script>
+    setTimeout(() => {
+      AvailabilityCalendar.setCredentials({
+        user: 1234,
+        token: '£!123$%'
+      });
+
+      AvailabilityCalendar.setFilter({
+        startDate: new Date(),
+        takingCleaning: true,
+        takingWifi: false,
+      });
+
+      AvailabilityCalendar.onEventClick((details, e) => {
+        console.table(details);
+      });
+
+      AvailabilityCalendar.eventHoverText((details) => {
+        return `${details.start} - ${details.end}`
+      });
+    }, 1000);
+
+  </script>
 </body>
 </html>

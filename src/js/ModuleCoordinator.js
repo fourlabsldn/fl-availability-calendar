@@ -211,6 +211,24 @@ export default class ModuleCoordinator {
   setLoadingState(state, message) {
     this.controlBar.setLoadingState(state, message);
   }
+
+  /**
+   * @public
+   * @method setCredentials
+   * @param  {Object} credentials
+   */
+  setCredentials(credentials) {
+    this.dataLoader.setCredentials(credentials);
+  }
+
+  /**
+   * @public
+   * @method setFilter
+   * @param  {Object} credentials
+   */
+  setFilter(credentials) {
+    this.dataLoader.setFilter(credentials);
+  }
 }
 
 function laymanifyError(e) {
