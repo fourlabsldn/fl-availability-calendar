@@ -10,15 +10,20 @@ $c-main-text: $c-plain-background;
 
 $c-border: darken($c-plain-background, 30%);
 
-$c-busy: #E77E80; // #e4585b;
+$c-busy: #E77E80;
 $c-busy-text: $c-plain-background;
 
-$c-free: #EEE; // #42b382
+$c-free: #EEE;
 $c-free-text:$c-plain-background;
 
 $c-half-busy: #F5D082; // #fcb827;
 $c-half-busy-text: $c-plain-background;
 
+$c-ok: #42b382;
+$c-ok-text: $c-plain-background;
+
+$c-error: #e4585b;
+$c-error-text: $c-plain-background;
 
 // Measures
 $s-first-column-width: 17em;

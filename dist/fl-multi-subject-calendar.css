@@ -70,6 +70,8 @@
   .fl-msc-ControlBar-btn:hover {
     -webkit-filter: brightness(115%);
             filter: brightness(115%); }
+  .fl-msc-ControlBar-btn:focus {
+    outline: 0; }
   .fl-msc-ControlBar-btn:nth-child(2) {
     border-left: 0;
     margin-left: 10px; }
@@ -136,14 +138,14 @@
           animation-play-state: running; }
 
 .fl-msc-ControlBar-btn-refresh--success {
-  background-color: #EEE; }
+  background-color: #42b382; }
   .fl-msc-ControlBar-btn-refresh--success::before {
     background-image: url('data:image/svg+xml;utf8,<svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" version="1.1" id="svg2" viewBox="0 0 638.77642 496.74715" height="1em" width="1em" style="fill:#eee"><defs id="defs4" /><metadata id="metadata7"><rdf:RDF><cc:Work rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage" /><dc:title></dc:title></cc:Work></rdf:RDF></metadata><g transform="translate(2.2926896,-1.0668021)" id="layer1"><path d="m 240.64286,497.437 c -1.1,-0.4353 -1.7647,-0.823 -1.4771,-0.8616 0.28759,-0.039 -22.21241,-22.7281 -50,-50.4209 C 142.01517,399.1647 -0.77957714,262.49953 -0.92052714,264.22781 c -0.0349,0.42749 -0.47035996,-0.23524 -0.96776996,-1.47274 -0.53919,-1.34142 -0.53919,-3.15858 0,-4.5 0.49741,-1.2375 0.93290996,-1.98487 0.96776996,-1.66083 0.0349,0.32405 5.38970004,-4.85095 11.89963014,-11.5 6.50993,-6.64904 27.43797,-28.04996 46.50674,-47.55759 19.06877,-19.50764 35.67997,-36.02919 36.91376,-36.71457 1.2338,-0.68538 3.87356,-1.26209 5.866147,-1.28157 3.43739,-0.0336 7.13793,3.29286 72.2697,64.96456 37.75574,35.75 69.42332,65 70.37238,65 1.50594,0 289.58155,-286.89646 288.24323,-287.06339 -0.27951,-0.0349 0.5043,-0.47036 1.7418,-0.96777 2.43913,-0.98042 6.08577,-0.0804 6.20407,1.53116 0.10547,1.43692 96.02878,97.25262 96.13188,96.02406 0.047,-0.56323 0.4584,0.21344 0.9135,1.72594 0.4552,1.5125 0.4552,3.9875 0,5.5 -0.4551,1.5125 -0.8619,2.525 -0.904,2.25 -0.042,-0.275 -71.74319,71.06683 -159.33593,158.5374 -87.59273,87.47053 -175.51274,174.86733 -195.3778,194.21503 -19.86505,19.3477 -35.93314,35.3628 -35.70687,35.5891 0.88795,0.8879 -2.28775,1.337 -4.17485,0.5904 z" id="path4149" /></g></svg>');
     -webkit-animation: none;
             animation: none; }
 
 .fl-msc-ControlBar-btn-refresh--failure {
-  background-color: #E77E80; }
+  background-color: #e4585b; }
   .fl-msc-ControlBar-btn-refresh--failure::before {
     background-image: url('data:image/svg+xml;utf8,<svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" version="1.1" id="svg2" viewBox="0 0 208.98213 208.98214" height="58.979404mm" width="58.979401mm" style="fill:#eee" ><defs id="defs4" /><metadata id="metadata7"><rdf:RDF><cc:Work rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage" /><dc:title></dc:title></cc:Work></rdf:RDF></metadata><g transform="translate(-73.600351,-29.776102)" id="layer1"><path d="m 93.089491,218.76525 -19.48269,-19.50193 32.486529,-32.49807 32.48654,-32.49808 -32.48976,-32.5013 -32.489759,-32.501309 19.74423,-19.74423 19.744219,-19.744229 32.50131,32.489759 32.5013,32.48977 32.5013,-32.48977 32.50131,-32.489759 19.74423,19.744229 19.74423,19.74423 -32.48977,32.501309 -32.48976,32.5013 32.48976,32.5013 32.48977,32.50131 -19.74423,19.74423 -19.74423,19.74423 -32.50131,-32.48977 -32.5013,-32.48976 -32.25568,32.24423 c -17.74063,17.73433 -32.48246,32.24423 -32.75962,32.24423 -0.27716,0 -9.27114,-8.77587 -19.986619,-19.50192 z" id="path4149" /></g></svg>');
     -webkit-animation: none;
