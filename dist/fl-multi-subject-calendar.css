@@ -29,7 +29,7 @@
   .fl-msc-CalendarContainer-panelWrapper::-webkit-scrollbar-track {
     border: 1px solid #adadad; }
   .fl-msc-CalendarContainer-panelWrapper::-webkit-scrollbar-thumb {
-    background-color: #e0e0e0;
+    background-color: white;
     border: 1px solid #adadad;
     -webkit-border-radius: 10px;
             border-radius: 10px; }
@@ -60,7 +60,7 @@
   margin: 0; }
 
 .fl-msc-ControlBar-btn {
-  background-color: #e0e0e0;
+  background-color: white;
   color: #303030;
   cursor: pointer;
   min-width: 45px;
@@ -68,8 +68,9 @@
   -webkit-box-shadow: 0 0 0px 1px #adadad inset;
           box-shadow: 0 0 0px 1px #adadad inset; }
   .fl-msc-ControlBar-btn:hover {
-    -webkit-filter: brightness(115%);
-            filter: brightness(115%); }
+    background-color: #EEE; }
+  .fl-msc-ControlBar-btn:active {
+    background-color: #e1e1e1; }
   .fl-msc-ControlBar-btn:focus {
     outline: 0; }
   .fl-msc-ControlBar-btn:nth-child(2) {
@@ -181,7 +182,7 @@
   width: -webkit-calc(100% - 10px);
   width: calc(100% - 10px);
   position: relative;
-  background-color: #e0e0e0;
+  background-color: white;
   border: 1px solid #adadad;
   border-top: 0;
   color: #303030;
@@ -271,7 +272,7 @@
           box-sizing: content-box;
   display: inline-block;
   padding: .1em 0 .2em;
-  background-color: #e0e0e0;
+  background-color: #EEE;
   color: #303030;
   -webkit-box-shadow: 0 0 0 1px #adadad inset;
           box-shadow: 0 0 0 1px #adadad inset;

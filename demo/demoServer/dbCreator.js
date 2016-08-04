@@ -23,8 +23,6 @@ module.exports = function dbCreator(totalSubjects, fromDate, toDate) {
     'maintenance',
     'wifi',
     'cleaning',
-    'paid',
-    'unpaid',
   ];
 
   const maxEventLength = 10;

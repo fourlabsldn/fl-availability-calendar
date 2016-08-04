@@ -1,4 +1,54 @@
 .body {
   background-color: #eee;
   color: #222;
+  max-width: 100vw;
+  height: 150vh;
+}
+
+
+/*///////////////////////////// Sidebar////////////////////////////////*/
+.sidebar {
+  background-color: #272B34;
+  height: 150vh;
+  color: #929397;
+  font-size: 16px;
+  padding-top: 8em;
+}
+.sidebar i {
+  font-size: 1.2em;
+  margin-right: 1em;
+}
+.sidebar .row {
+  padding: .7em 60px;
+}
+
+.selectedRow {
+  color: #272B34;
+  background-color: #FFCB00;
+}
+
+/*///////////////////////////// Main content ////////////////////////////////*/
+
+.contentWrapper {
+  background-color: #F1F2F7;
+  position: relative;
+  padding-top: 12em;
+  height: 150vh;
+}
+
+.topbar {
+  height: 4em;
+  background-color: white;
+  box-shadow: 0 0 10px grey;
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+x-div {
+  padding: 1em 1em;
+  box-shadow: 0 0 15px rgba(0,0,0,0.1);
+  display: block;
+  background-color: white;
 }

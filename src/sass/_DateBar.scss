@@ -27,8 +27,8 @@ $s-month-side-margin: 3px;
   display: inline-block;
   padding: .1em 0 .2em;
 
-  background-color: $c-button-background;
-  color: $c-button-text;
+  background-color: $c-month-background;
+  color: $c-month-text;
 
   // As we are using content-box, for the border not to be counted
   // in the size we use box-shadow for border.

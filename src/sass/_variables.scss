@@ -2,8 +2,12 @@
 $c-text: #303030;
 $c-plain-background: #f9f9f9;
 
-$c-button-background: darken($c-plain-background, 10%) ;
+// $c-button-background: darken($c-plain-background, 10%) ;
+$c-button-background: white ;
 $c-button-text: $c-text;
+
+$c-month-background:#EEE;
+$c-month-text: $c-text;
 
 $c-main: #009ddc;
 $c-main-text: $c-plain-background;

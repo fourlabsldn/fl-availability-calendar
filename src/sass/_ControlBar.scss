@@ -29,8 +29,13 @@ $s-controlBar-height: 45px;
   box-shadow: 0 0 0px $s-labels-border-width $c-border inset;
 
   &:hover {
-    filter: brightness(115%);
+    background-color: $c-month-background;
   }
+
+  &:active {
+    background-color: darken($c-month-background, 5%);
+  }
+
   &:focus {
     outline: 0;
   }

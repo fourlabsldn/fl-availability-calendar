@@ -3,21 +3,37 @@
 <head>
   <meta charset="UTF-8">
   <title>Demo - fl-multi-subject-form</title>
-  <link rel="stylesheet" href="demo.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
   <link rel="stylesheet" href="../dist/fl-multi-subject-calendar.css">
+  <link rel="stylesheet" href="demo.css">
 
   <script src="dependencies/x-div.js"></script>
   <script src="dependencies/moment.js"></script>
   <script src="dependencies/moment-range.js"></script>
 </head>
 <body>
-  <x-div
-    data-controller="../dist/fl-multi-subject-calendar.js"
-    data-load-url="http://192.168.100.65:3005/"
-    data-header="Properties"
-    data-filters='{ "takingCleaning": true, "takingWifi": false }'
-    data-credentials='{ "user": 1234, "token": "£!123$%"}'
-  ></x-div>
+
+    <div class="col-sm-2 sidebar">
+      <div class="row selectedRow"><i class="glyphicon glyphicon-user"></i> Lorem</div>
+      <div class="row"><i class="glyphicon glyphicon-briefcase"></i> Ipsum</div>
+      <div class="row"><i class="glyphicon glyphicon-tasks"></i> Dolor</div>
+      <div class="row"><i class="glyphicon glyphicon-stats"></i> Sit amet</div>
+    </div>
+    <div class="col-sm-10 contentWrapper">
+      <div class="topbar"></div>
+      <x-div
+        data-controller="../dist/fl-multi-subject-calendar.js"
+        data-load-url="http://192.168.100.65:3005/"
+        data-header="Properties"
+        data-filters='{ "takingCleaning": true, "takingWifi": false }'
+        data-credentials='{ "user": 1234, "token": "£!123$%"}'
+      ></x-div>
+    </div>
+
+
+
+
+
 
   <script>
     setTimeout(() => {
@@ -44,24 +60,24 @@ Status:   ${details.status}`;
   </script>
 
   <style>
-  .fl-msc-SubjectRow-event--refurbishment {
-    background: repeating-linear-gradient(-45deg, #F8EDD9, #F8EDD9 2px, #9F2F2B 2px, #9F2F2B 4px);
-  }
-  .fl-msc-SubjectRow-event--maintenance {
-    background: repeating-linear-gradient(-45deg, #AEC35E, #AEC35E 2px, #AEC35E 2px, #AEC35E 4px);
-  }
-  .fl-msc-SubjectRow-event--wifi {
-    background: #5E8B76;
-  }
-  .fl-msc-SubjectRow-event--cleaning {
-    background: repeating-linear-gradient(45deg, white, white 5px, transparent 5px, transparent 10px);
-  }
-  .fl-msc-SubjectRow-event--paid {
-    background: repeating-linear-gradient(-45deg, #FF80C0, #FF80C0 2px, white 2px, white 4px);
-  }
-  .fl-msc-SubjectRow-event--unpaid {
-    background: darkorange;
-  }
+    .fl-msc-SubjectRow-event--refurbishment {
+      background: #00A7F7;
+    }
+    .fl-msc-SubjectRow-event--maintenance {
+      background: #EC1561;
+    }
+    .fl-msc-SubjectRow-event--wifi {
+      background: #009788;
+    }
+    .fl-msc-SubjectRow-event--cleaning {
+      background: #6734BA;
+    }
+    .fl-msc-SubjectRow-event--busy {
+      background: #FF5607;
+    }
+    .fl-msc-SubjectRow-event--half-busy {
+      background: #FFC200;
+    }
   </style>
 </body>
 </html>
