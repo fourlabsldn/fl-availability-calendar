@@ -5,7 +5,8 @@
   font-family: 'Helvetica', 'sans-serif';
   font-size: 13px;
   -webkit-box-sizing: border-box;
-          box-sizing: border-box; }
+          box-sizing: border-box;
+  max-width: 100%; }
 
 .fl-msc-CalendarContainer-panelWrapper {
   display: -webkit-box;
@@ -20,7 +21,6 @@
           align-content: stretch;
   position: relative;
   max-height: 572px;
-  max-width: 80em;
   overflow-y: scroll;
   overflow-x: visible;
   background-color: inherit; }

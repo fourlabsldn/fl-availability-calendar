@@ -5,6 +5,7 @@
   font-family: 'Helvetica', 'sans-serif';
   font-size: $s-font-medium;
   box-sizing: border-box;
+  max-width: 100%;
 }
 
 .fl-msc-CalendarContainer-panelWrapper {
@@ -14,7 +15,6 @@
 
   position: relative;
   max-height: $s-DateBar-height + 20 * $s-day-height;
-  max-width: 40 * $s-day-width;
 
   overflow-y: scroll;
   overflow-x: visible;
