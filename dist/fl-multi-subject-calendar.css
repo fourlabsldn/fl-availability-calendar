@@ -59,20 +59,29 @@
   border: 1px solid #adadad;
   margin: 0; }
 
-.fl-msc-ControlBar-datepicker {
-  width: -webkit-calc(18em - 10px);
-  width: calc(18em - 10px);
-  height: 100%; }
-
 .fl-msc-ControlBar-btn {
   background-color: #e0e0e0;
   color: #303030;
-  border: 1px solid #f9f9f9;
   cursor: pointer;
-  min-width: 45px; }
+  min-width: 45px;
+  border: 6px solid #f9f9f9;
+  -webkit-box-shadow: 0 0 0px 1px #adadad inset;
+          box-shadow: 0 0 0px 1px #adadad inset; }
   .fl-msc-ControlBar-btn:hover {
     -webkit-filter: brightness(115%);
             filter: brightness(115%); }
+  .fl-msc-ControlBar-btn:nth-child(2) {
+    border-left: 0;
+    margin-left: 10px; }
+
+.fl-msc-ControlBar-datepicker {
+  width: -webkit-calc(18em - 10px - 1px);
+  width: calc(18em - 10px - 1px);
+  height: 100%;
+  border: 0 solid #adadad;
+  border-right-width: 1px;
+  -webkit-box-shadow: none;
+          box-shadow: none; }
 
 @-webkit-keyframes fl-msc-ControlBar-btn-rotate {
   0% {
@@ -172,6 +181,7 @@
   position: relative;
   background-color: #e0e0e0;
   border: 1px solid #adadad;
+  border-top: 0;
   color: #303030;
   text-align: center;
   line-height: 52px; }

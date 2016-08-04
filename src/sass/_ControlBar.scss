@@ -18,21 +18,33 @@ $s-controlBar-height: 45px;
   margin: 0;
 }
 
-.fl-msc-ControlBar-datepicker {
-  width: calc(#{$s-LabelsBar-width} - #{$s-labels-container-border-right});
-  height: 100%;
-}
-
 .fl-msc-ControlBar-btn {
   background-color: $c-button-background;
   color: $c-button-text;
-  border: 1px solid $c-plain-background;
   cursor: pointer;
   min-width: $s-controlBar-height;
+
+  border: 6px solid $c-plain-background;
+  // perform the role of a border
+  box-shadow: 0 0 0px $s-labels-border-width $c-border inset;
 
   &:hover {
     filter: brightness(115%);
   }
+
+  // make button after datepicker align with the labels container right border;
+  &:nth-child(2) {
+    border-left: 0;
+    margin-left: $s-labels-container-border-right;
+  }
+}
+
+.fl-msc-ControlBar-datepicker {
+  width: calc(#{$s-LabelsBar-width} - #{$s-labels-container-border-right} - #{$s-labels-border-width});
+  height: 100%;
+  border: 0 solid $c-border;
+  border-right-width: $s-labels-border-width;
+  box-shadow: none;
 }
 
 @keyframes fl-msc-ControlBar-btn-rotate {
