@@ -265,13 +265,14 @@
   text-align: center; }
 
 .fl-msc-DateBar-month {
-  -webkit-box-sizing: inherit;
-          box-sizing: inherit;
+  -webkit-box-sizing: content-box;
+          box-sizing: content-box;
   display: inline-block;
   padding: .1em 0 .2em;
   background-color: #e0e0e0;
   color: #303030;
-  border: 1px solid #adadad;
+  -webkit-box-shadow: 0 0 0 1px #adadad inset;
+          box-shadow: 0 0 0 1px #adadad inset;
   margin: 6px 3px 0; }
   .fl-msc-DateBar-month-1 {
     width: -webkit-calc(2em * 1 - 2 * 3px);
@@ -369,6 +370,9 @@
   .fl-msc-DateBar-month-32 {
     width: -webkit-calc(2em * 32 - 2 * 3px);
     width: calc(2em * 32 - 2 * 3px); }
+  .fl-msc-DateBar-month:nth-of-type(1) {
+    margin-left: 0;
+    padding-left: 3px; }
 
 .fl-msc-DateBar-day {
   -webkit-box-sizing: border-box;

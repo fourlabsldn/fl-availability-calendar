@@ -22,7 +22,7 @@ $s-month-side-margin: 3px;
 }
 
 .fl-msc-DateBar-month {
-  box-sizing: inherit;
+  box-sizing: content-box;
 
   display: inline-block;
   padding: .1em 0 .2em;
@@ -30,13 +30,20 @@ $s-month-side-margin: 3px;
   background-color: $c-button-background;
   color: $c-button-text;
 
-  border: 1px solid $c-border;
+  // As we are using content-box, for the border not to be counted
+  // in the size we use box-shadow for border.
+  box-shadow: 0 0 0 1px $c-border inset;
   margin: 6px $s-month-side-margin 0;
 
   @for $i from 1 through 32 {
     &-#{$i} {
       width: calc(#{$s-day-width} * #{$i} - 2 * #{$s-month-side-margin});
     }
+  }
+
+  &:nth-of-type(1) {
+    margin-left: 0;
+    padding-left: $s-month-side-margin;
   }
 }
 
