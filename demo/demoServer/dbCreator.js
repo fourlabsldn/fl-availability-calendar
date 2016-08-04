@@ -15,6 +15,18 @@ module.exports = function dbCreator(totalSubjects, fromDate, toDate) {
     return Math.max(1, randomNum);
   }
 
+  const statusOptions = [
+    'free',
+    'busy',
+    'half-busy',
+    'refurbishment',
+    'maintenance',
+    'wifi',
+    'cleaning',
+    'paid',
+    'unpaid',
+  ];
+
   const maxEventLength = 10;
   const maxEventSpacing = 10;
   const subjects = [];
@@ -31,7 +43,7 @@ module.exports = function dbCreator(totalSubjects, fromDate, toDate) {
     do {
       const newEvent = {};
       newEvent.desc = `Event ${eventCount}`;
-      newEvent.status = (rand() % 2) === 0 ? 'busy' : 'half-busy';
+      newEvent.status = statusOptions[rand(statusOptions.length)] || statusOptions[0];
 
       lastDate.add(rand(maxEventSpacing), 'days');
       newEvent.start = moment(lastDate);

@@ -13,7 +13,7 @@
 <body>
   <x-div
     data-controller="../dist/fl-multi-subject-calendar.js"
-    data-load-url="http://localhost:3005/"
+    data-load-url="http://192.168.100.65:3005/"
     data-header="Properties"
     data-filters='{ "takingCleaning": true, "takingWifi": false }'
     data-credentials='{ "user": 1234, "token": "£!123$%"}'
@@ -34,10 +34,34 @@
       });
 
       AvailabilityCalendar.eventHoverText((details) => {
-        return `${details.start} - ${details.end}`
+        return `
+Period:   ${details.start.format('D MMMM')} - ${details.start.format('D MMMM')}
+Status:   ${details.status}`;
       });
+
     }, 1000);
 
   </script>
+
+  <style>
+  .fl-msc-SubjectRow-event--refurbishment {
+    background: repeating-linear-gradient(-45deg, #F8EDD9, #F8EDD9 2px, #9F2F2B 2px, #9F2F2B 4px);
+  }
+  .fl-msc-SubjectRow-event--maintenance {
+    background: repeating-linear-gradient(-45deg, #AEC35E, #AEC35E 2px, #AEC35E 2px, #AEC35E 4px);
+  }
+  .fl-msc-SubjectRow-event--wifi {
+    background: #5E8B76;
+  }
+  .fl-msc-SubjectRow-event--cleaning {
+    background: repeating-linear-gradient(45deg, white, white 5px, transparent 5px, transparent 10px);
+  }
+  .fl-msc-SubjectRow-event--paid {
+    background: repeating-linear-gradient(-45deg, #FF80C0, #FF80C0 2px, white 2px, white 4px);
+  }
+  .fl-msc-SubjectRow-event--unpaid {
+    background: darkorange;
+  }
+  </style>
 </body>
 </html>
