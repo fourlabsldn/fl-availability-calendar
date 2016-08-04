@@ -10,13 +10,13 @@ $c-main-text: $c-plain-background;
 
 $c-border: darken($c-plain-background, 30%);
 
-$c-busy: #e4585b;
+$c-busy: #E77E80; // #e4585b;
 $c-busy-text: $c-plain-background;
 
-$c-free: #42b382;
+$c-free: #EEE; // #42b382
 $c-free-text:$c-plain-background;
 
-$c-half-busy: #fcb827;
+$c-half-busy: #F5D082; // #fcb827;
 $c-half-busy-text: $c-plain-background;
 
 
@@ -32,6 +32,8 @@ $s-LabelsBar-width: 9 * $s-day-width;
 $s-font-small: 10px;
 $s-font-medium: 13px;
 
+$s-labels-border-width: 1px;
+$s-labels-container-border-right: 10px;
 
 // Mixins
 @mixin inherit-font() {

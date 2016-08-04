@@ -1,5 +1,3 @@
-
-$s-labels-border-width: 1px;
 .fl-msc-LabelsBar,
 .fl-msc-LabelsBar-header,
 .fl-msc-LabelsBar-labelsContainer,
@@ -10,15 +8,14 @@ $s-labels-border-width: 1px;
 
 
 .fl-msc-LabelsBar {
-  border-style: solid;
-  border-width: 0 10px 0 0;
-  border-color: $c-plain-background;
-
+  border:0;
   display: block;
 
   position: relative;
   background-color: inherit;
   width: $s-LabelsBar-width;
+  max-width: $s-LabelsBar-width;
+  min-width: $s-LabelsBar-width;
   z-index: 2;
 }
 
@@ -26,13 +23,10 @@ $s-labels-border-width: 1px;
   // This is equivalend to the height of the month row plus the
   // height of the day row.
   height: (2 * $s-day-height);
-  width: 100%;
+  width: calc(100% - #{$s-labels-container-border-right});
   position: relative;
 
-  border-width: $s-day-border-width 0 0;
-  border-color: $c-plain-background;
-  border-style: solid;
-
+  background-color: $c-button-background;
   border: $s-labels-border-width solid $c-border;
   color: $c-button-text;
 
@@ -41,6 +35,8 @@ $s-labels-border-width: 1px;
 }
 
 .fl-msc-LabelsBar-labelsContainer {
+  border: $s-labels-container-border-right solid $c-plain-background;
+  border-width: 0 $s-labels-container-border-right 0 0;
 }
 
 .fl-msc-LabelsBar-label {

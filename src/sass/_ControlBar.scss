@@ -1,9 +1,10 @@
+$s-controlBar-height: 45px;
+
 .fl-msc-ControlBar,
 .fl-msc-ControlBar-btn,
 .fl-msc-ControlBar-datepicker {
    @include inherit-font();
    box-sizing: inherit;
-
    text-align: center;
 }
 
@@ -12,15 +13,23 @@
   flex-flow: row nowrap;
   align-content: stretch;
 
+  height: $s-controlBar-height;
   border: 1px solid $c-border;
+  margin: 0;
+}
+
+.fl-msc-ControlBar-datepicker {
+  width: calc(#{$s-LabelsBar-width} - #{$s-labels-container-border-right});
+  height: 100%;
 }
 
 .fl-msc-ControlBar-btn {
   background-color: $c-button-background;
   color: $c-button-text;
   border: 1px solid $c-plain-background;
-
   cursor: pointer;
+  min-width: $s-controlBar-height;
+
   &:hover {
     filter: brightness(115%);
   }
