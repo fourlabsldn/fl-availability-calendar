@@ -5,6 +5,8 @@
   <title>Demo - fl-multi-subject-form</title>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
   <link rel="stylesheet" href="../dist/fl-multi-subject-calendar.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
   <link rel="stylesheet" href="demo.css">
 
   <script src="dependencies/x-div.js"></script>
@@ -14,10 +16,25 @@
 <body>
 
     <div class="col-sm-2 sidebar">
-      <div class="row selectedRow"><i class="glyphicon glyphicon-user"></i> Lorem</div>
-      <div class="row"><i class="glyphicon glyphicon-briefcase"></i> Ipsum</div>
-      <div class="row"><i class="glyphicon glyphicon-tasks"></i> Dolor</div>
-      <div class="row"><i class="glyphicon glyphicon-stats"></i> Sit amet</div>
+      <div class="row selectedRow">
+        <span>
+          <i class="glyphicon glyphicon-user"></i> Lorem
+        </span>
+      </div>
+      <div class="row">
+        <span>
+          <i class="glyphicon glyphicon-briefcase"></i> Ipsum
+        </span>
+      </div>
+      <div class="row">
+        <span>
+          <i class="glyphicon glyphicon-tasks"></i> Dolor
+        </span>
+      </div>
+        <div class="row">
+          <span><i class="glyphicon glyphicon-stats"></i> Sit amet
+        </span>
+      </div>
     </div>
     <div class="col-sm-10 contentWrapper">
       <div class="topbar"></div>
@@ -28,15 +45,65 @@
         data-filters='{ "takingCleaning": true, "takingWifi": false }'
         data-credentials='{ "user": 1234, "token": "£!123$%"}'
       ></x-div>
+
     </div>
 
-
-
-
-
-
   <script>
-    setTimeout(() => {
+    function doubleClickHandler(oneClickCallback, twoClicksCallback, delay) {
+      delay = delay || 200;
+      var lastCallTime = new Date();
+      var timeout = null;
+
+      return function () {
+        var now = new Date();
+        var arg = arguments
+        if (now - lastCallTime < delay) {
+          clearTimeout(timeout);
+          twoClicksCallback.apply(null, arg);
+        } else {
+          timeout = setTimeout(function () {
+            oneClickCallback.apply(null, arg)
+          }, delay);
+        }
+        lastCallTime = new Date();
+      }
+    }
+    function createPopover(details, prop, e) {
+      var popover = document.createElement('div');
+      popover.className = 'popover';
+      popover.innerHTML = `
+        <div class="popover-container popover-header">
+          <h2 class="popover-topbar">
+          Event details
+          </h2>
+        </div>
+
+        <div class="popover-container">
+          <button data-toggle="modal" data-target="#myModal">Manage</button>
+          <button>Send</button>
+
+          </br>Property: <b>${prop.name}</b>
+          </br>Rent contract: <b>Long term</b>
+          </br>Wifi payment: <b>up-to-date</b>
+          </br>Cleaning: <b>subscribed</b>
+        </div>
+        `;
+
+      popover.style.top = `${e.clientY}px`;
+      popover.style.left = `${e.clientX}px`;
+
+      // Overlay element to dismiss popup
+      const overlay = document.createElement('div');
+      overlay.classList.add('popover-overlay');
+      overlay.addEventListener('click', function (e) {
+        overlay.remove()
+      });
+
+      overlay.appendChild(popover);
+      document.body.appendChild(overlay);
+    }
+
+    setTimeout(function () {
       // AvailabilityCalendar.setCredentials({
       //
       // });
@@ -45,14 +112,15 @@
       //
       // });
 
-      AvailabilityCalendar.onEventClick((details, e) => {
-        console.table(details);
-      });
+      const handleDoubleClick = doubleClickHandler(
+        createPopover,
+        function () { $('#myModal').modal('show') }
+      );
 
-      AvailabilityCalendar.eventHoverText((details) => {
-        return `
-Period:   ${details.start.format('D MMMM')} - ${details.start.format('D MMMM')}
-Status:   ${details.status}`;
+      AvailabilityCalendar.onEventClick(handleDoubleClick);
+      AvailabilityCalendar.eventHoverText(function (details) {
+        return `Period:   ${details.start.format('D MMMM')} - ${details.start.format('D MMMM')}\n` +
+          `Status:   ${details.status}`;
       });
 
     }, 1000);
@@ -79,5 +147,24 @@ Status:   ${details.status}`;
       background: #FFC200;
     }
   </style>
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Modal title</h4>
+      </div>
+      <div class="modal-body">
+        ...
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
 </body>
 </html>

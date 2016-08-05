@@ -66,7 +66,7 @@ gulp.task('build:src', () => {
 });
 
 gulp.task('watch:build:src', () => {
-  gulp.watch(paths.js.src, ['build:src']).on('change', browserSync.reload);
+  gulp.watch(paths.js.src, ['build:src']);
 });
 
 
@@ -108,4 +108,6 @@ gulp.task('demo', ['copy-dependencies', 'build', 'watch'], () => {
   });
 
   demoServer();
+  gulp.watch(paths.demo.src).on('change', browserSync.reload);
+  gulp.watch(paths.js.dist).on('change', browserSync.reload);
 });

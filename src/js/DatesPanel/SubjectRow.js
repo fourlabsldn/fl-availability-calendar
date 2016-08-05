@@ -11,7 +11,7 @@ export default class SubjectRow extends ViewController {
       const eventData = getEventDataFromElement(e.target);
       const evtClickCallback = Configuration.get('eventClickCallback');
       if (eventData && evtClickCallback) {
-        evtClickCallback(eventData, e);
+        evtClickCallback(eventData, subject, e);
       }
     });
 
