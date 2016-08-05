@@ -28,24 +28,6 @@ export default class CalendarContainer extends ViewController {
 
     this.html.panelWrapper = document.createElement('div');
     this.html.panelWrapper.classList.add(`${this.cssPrefix}-panelWrapper`);
-
-    let lastScrollVal = 0;
-    const scrollCheck = debounce(250, () => {
-      const panel = this.html.panelWrapper;
-      const scrolledToTheEnd = panel.clientHeight + panel.scrollTop === panel.scrollHeight;
-      const scrolletToTheTop = panel.scrollTop === 0;
-      const movedInYAxis = panel.scrollTop !== lastScrollVal;
-
-      if (movedInYAxis) {
-        if (scrolledToTheEnd) {
-          this.trigger('scrollEndBottom');
-        } else if (scrolletToTheTop) {
-          this.trigger('scrollEndTop');
-        }
-      }
-      lastScrollVal = panel.scrollTop;
-    });
-    this.html.panelWrapper.addEventListener('scroll', scrollCheck);
     this.html.container.appendChild(this.html.panelWrapper);
 
     this.html.labelsBar = document.createElement('div');
@@ -62,7 +44,7 @@ export default class CalendarContainer extends ViewController {
   synchroniseScrolls() {
     const subjectsContainer = this.datesPanel.getSubectsContainer();
     const dateBar = this.datesPanel.getDateBarContainer();
-    const labelsContainer = this.labelsBar.getLabelsContainer();        
+    const labelsContainer = this.labelsBar.getLabelsContainer();
 
     subjectsContainer.addEventListener('scroll', () => {
       const topScroll = subjectsContainer.scrollTop;
@@ -70,5 +52,24 @@ export default class CalendarContainer extends ViewController {
       labelsContainer.scrollTop = topScroll;
       dateBar.scrollLeft = leftScroll;
     });
+
+
+    let lastScrollVal = 0;
+    const scrollCheck = debounce(250, () => {
+      const panel = subjectsContainer;
+      const scrolledToTheEnd = panel.clientHeight + panel.scrollTop === panel.scrollHeight;
+      const scrolletToTheTop = panel.scrollTop === 0;
+      const movedInYAxis = panel.scrollTop !== lastScrollVal;
+
+      if (movedInYAxis) {
+        if (scrolledToTheEnd) {
+          this.trigger('scrollEndBottom');
+        } else if (scrolletToTheTop) {
+          this.trigger('scrollEndTop');
+        }
+      }
+      lastScrollVal = panel.scrollTop;
+    });
+    subjectsContainer.addEventListener('scroll', scrollCheck);
   }
 }

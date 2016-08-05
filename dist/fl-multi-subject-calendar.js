@@ -9037,31 +9037,11 @@ var CalendarContainer = function (_ViewController) {
   }, {
     key: 'buildHtml',
     value: function buildHtml() {
-      var _this3 = this;
-
       this.html.controlBar = document.createElement('div');
       this.html.container.appendChild(this.html.controlBar);
 
       this.html.panelWrapper = document.createElement('div');
       this.html.panelWrapper.classList.add(this.cssPrefix + '-panelWrapper');
-
-      var lastScrollVal = 0;
-      var scrollCheck = debounce(250, function () {
-        var panel = _this3.html.panelWrapper;
-        var scrolledToTheEnd = panel.clientHeight + panel.scrollTop === panel.scrollHeight;
-        var scrolletToTheTop = panel.scrollTop === 0;
-        var movedInYAxis = panel.scrollTop !== lastScrollVal;
-
-        if (movedInYAxis) {
-          if (scrolledToTheEnd) {
-            _this3.trigger('scrollEndBottom');
-          } else if (scrolletToTheTop) {
-            _this3.trigger('scrollEndTop');
-          }
-        }
-        lastScrollVal = panel.scrollTop;
-      });
-      this.html.panelWrapper.addEventListener('scroll', scrollCheck);
       this.html.container.appendChild(this.html.panelWrapper);
 
       this.html.labelsBar = document.createElement('div');
@@ -9078,6 +9058,8 @@ var CalendarContainer = function (_ViewController) {
   }, {
     key: 'synchroniseScrolls',
     value: function synchroniseScrolls() {
+      var _this3 = this;
+
       var subjectsContainer = this.datesPanel.getSubectsContainer();
       var dateBar = this.datesPanel.getDateBarContainer();
       var labelsContainer = this.labelsBar.getLabelsContainer();
@@ -9088,6 +9070,24 @@ var CalendarContainer = function (_ViewController) {
         labelsContainer.scrollTop = topScroll;
         dateBar.scrollLeft = leftScroll;
       });
+
+      var lastScrollVal = 0;
+      var scrollCheck = debounce(250, function () {
+        var panel = subjectsContainer;
+        var scrolledToTheEnd = panel.clientHeight + panel.scrollTop === panel.scrollHeight;
+        var scrolletToTheTop = panel.scrollTop === 0;
+        var movedInYAxis = panel.scrollTop !== lastScrollVal;
+
+        if (movedInYAxis) {
+          if (scrolledToTheEnd) {
+            _this3.trigger('scrollEndBottom');
+          } else if (scrolletToTheTop) {
+            _this3.trigger('scrollEndTop');
+          }
+        }
+        lastScrollVal = panel.scrollTop;
+      });
+      subjectsContainer.addEventListener('scroll', scrollCheck);
     }
   }]);
 
