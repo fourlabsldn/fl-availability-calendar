@@ -20,19 +20,8 @@
       -ms-flex-line-pack: stretch;
           align-content: stretch;
   position: relative;
-  max-height: 572px;
-  overflow-y: scroll;
-  overflow-x: visible;
+  max-height: 500px;
   background-color: inherit; }
-  .fl-msc-CalendarContainer-panelWrapper::-webkit-scrollbar {
-    width: 1em; }
-  .fl-msc-CalendarContainer-panelWrapper::-webkit-scrollbar-track {
-    border: 1px solid #adadad; }
-  .fl-msc-CalendarContainer-panelWrapper::-webkit-scrollbar-thumb {
-    background-color: white;
-    border: 1px solid #adadad;
-    -webkit-border-radius: 10px;
-            border-radius: 10px; }
 
 .fl-msc-ControlBar,
 .fl-msc-ControlBar-btn,
@@ -175,7 +164,8 @@
   width: 18em;
   max-width: 18em;
   min-width: 18em;
-  z-index: 2; }
+  z-index: 2;
+  height: 100%; }
 
 .fl-msc-LabelsBar-header {
   height: 52px;
@@ -191,7 +181,12 @@
 
 .fl-msc-LabelsBar-labelsContainer {
   border: 10px solid #f9f9f9;
-  border-width: 0 10px 0 0; }
+  border-width: 0 10px 0 0;
+  height: 448px;
+  overflow: auto; }
+  .fl-msc-LabelsBar-labelsContainer::-webkit-scrollbar {
+    display: none;
+    margin: -5px; }
 
 .fl-msc-LabelsBar-label {
   height: 26px;
@@ -205,12 +200,28 @@
   border-color: #adadad; }
 
 .fl-msc-DatesPanel {
-  background-color: inherit; }
+  background-color: inherit;
+  max-width: -webkit-calc(100% - 18em);
+  max-width: calc(100% - 18em);
+  max-height: 100%; }
 
 .fl-msc-DatesPanel-subjectsContainer {
   -webkit-box-sizing: inherit;
           box-sizing: inherit;
-  display: block; }
+  display: block;
+  max-width: 100%;
+  max-height: 100%;
+  overflow: scroll;
+  height: 448px; }
+  .fl-msc-DatesPanel-subjectsContainer::-webkit-scrollbar {
+    width: 1em; }
+  .fl-msc-DatesPanel-subjectsContainer::-webkit-scrollbar-track {
+    border: 1px solid #adadad; }
+  .fl-msc-DatesPanel-subjectsContainer::-webkit-scrollbar-thumb {
+    background-color: white;
+    border: 1px solid #adadad;
+    -webkit-border-radius: 10px;
+            border-radius: 10px; }
 
 .fl-msc-SubjectRow {
   -webkit-box-sizing: border-box;
@@ -239,7 +250,7 @@
   background-color: #F5D082; }
 
 .fl-msc-DateBar {
-  display: inline-block;
+  display: block;
   position: relative;
   height: 52px;
   z-index: 1;
@@ -249,7 +260,12 @@
           flex: 0 0;
   -webkit-box-sizing: inherit;
           box-sizing: inherit;
-  background-color: inherit; }
+  background-color: inherit;
+  width: 100%;
+  overflow-x: scroll; }
+  .fl-msc-DateBar::-webkit-scrollbar {
+    display: none;
+    margin: -5px; }
 
 .fl-msc-DateBar-monthRow,
 .fl-msc-DateBar-dayRow {

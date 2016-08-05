@@ -1,7 +1,8 @@
 $s-month-side-margin: 3px;
 
 .fl-msc-DateBar {
-  display: inline-block;
+  @include  hide-scrollbar();
+  display: block;
   position: relative;
   height: $s-DateBar-height;
   z-index: 1;
@@ -9,6 +10,8 @@ $s-month-side-margin: 3px;
   flex: 0 0;
   box-sizing: inherit;
   background-color: inherit;
+  width: 100%;
+  overflow-x: scroll;
 }
 
 .fl-msc-DateBar-monthRow,

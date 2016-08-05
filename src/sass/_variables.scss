@@ -35,6 +35,8 @@ $s-day-width: 2em;
 $s-day-height: 26px;
 $s-day-border-width: 2px;
 
+$s-panelWrapper-height: 500px;
+
 $s-DateBar-height: 2 * $s-day-height;
 $s-LabelsBar-width: 9 * $s-day-width;
 
@@ -54,4 +56,11 @@ $s-labels-container-border-right: 10px;
 @mixin elipsis-overflow() {
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+@mixin hide-scrollbar() {
+  &::-webkit-scrollbar {
+    display: none;
+    margin: -5px;
+  }
 }

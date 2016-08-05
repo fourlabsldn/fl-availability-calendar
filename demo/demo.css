@@ -14,19 +14,6 @@
   font-size: 16px;
   padding-top: 8em;
 }
-.sidebar i {
-  font-size: 1.2em;
-  margin-right: 1em;
-}
-.sidebar .row {
-  padding: .7em 30px;
-  white-space: nowrap;
-}
-
-.selectedRow {
-  color: #272B34;
-  background-color: #FFCB00;
-}
 
 /*///////////////////////////// Main content ////////////////////////////////*/
 
@@ -99,20 +86,19 @@ x-div {
   z-index: 5;
 }
 .popover:before {
-    content: ' ';
-    position: absolute;
-    top: 5px;
-    left: 0;
-    border: 2px solid grey;
-    height: 0px;
-    border-color: transparent rgb(228, 228, 228);
-    border-width: 7px 7px 7px 0;
-    left: -7px;
+  content: ' ';
+  position: absolute;
+  top: 5px;
+  left: 0;
+  border: 2px solid grey;
+  height: 0px;
+  border-color: transparent rgb(228, 228, 228);
+  border-width: 7px 7px 7px 0;
+  left: -7px;
 }
 
 .popover-container {
   padding: 1em;
-  white-space: nowrap;
 }
 
 .popover-header {

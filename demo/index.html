@@ -3,6 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <title>Demo - fl-multi-subject-form</title>
+
+  <!-- Prevent zooming on mobile -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
   <link rel="stylesheet" href="../dist/fl-multi-subject-calendar.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
@@ -15,28 +19,8 @@
 </head>
 <body>
 
-    <div class="col-sm-2 sidebar">
-      <div class="row selectedRow">
-        <span>
-          <i class="glyphicon glyphicon-user"></i> Lorem
-        </span>
-      </div>
-      <div class="row">
-        <span>
-          <i class="glyphicon glyphicon-briefcase"></i> Ipsum
-        </span>
-      </div>
-      <div class="row">
-        <span>
-          <i class="glyphicon glyphicon-tasks"></i> Dolor
-        </span>
-      </div>
-        <div class="row">
-          <span><i class="glyphicon glyphicon-stats"></i> Sit amet
-        </span>
-      </div>
-    </div>
-    <div class="col-sm-10 contentWrapper">
+    <div class="col-sm-1 sidebar"></div>
+    <div class="col-sm-11 contentWrapper">
       <div class="topbar"></div>
       <x-div
         data-controller="../dist/fl-multi-subject-calendar.js"
@@ -79,8 +63,8 @@
         </div>
 
         <div class="popover-container">
-          <button data-toggle="modal" data-target="#myModal">Manage</button>
-          <button>Send</button>
+          <button class="btn" data-toggle="modal" data-target="#myModal">Manage</button>
+          <button class="btn">Send</button>
 
           </br>Property: <b>${prop.name}</b>
           </br>Rent contract: <b>Long term</b>

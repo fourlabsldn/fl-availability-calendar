@@ -14,23 +14,6 @@
   align-content: stretch;
 
   position: relative;
-  max-height: $s-DateBar-height + 20 * $s-day-height;
-
-  overflow-y: scroll;
-  overflow-x: visible;
+  max-height: $s-panelWrapper-height;
   background-color: inherit;
-
-  &::-webkit-scrollbar {
-    width: 1em;
-  }
-
-  &::-webkit-scrollbar-track {
-    border: 1px solid $c-border;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background-color: $c-button-background;
-    border: 1px solid $c-border;
-    border-radius: 10px;
-  }
 }

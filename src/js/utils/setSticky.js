@@ -8,6 +8,7 @@ const updatedContainers = new Map();
 
 
 export default function setSticky(side, element, container) {
+  return;
   assert(acceptableSides.includes(side), `Invalid value for side: ${side}`);
   assert(container && typeof container.addEventListener === 'function',
     'Element does not have a parent.');

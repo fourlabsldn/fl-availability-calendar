@@ -17,12 +17,13 @@
   max-width: $s-LabelsBar-width;
   min-width: $s-LabelsBar-width;
   z-index: 2;
+  height: 100%;
 }
 
 .fl-msc-LabelsBar-header {
   // This is equivalend to the height of the month row plus the
   // height of the day row.
-  height: (2 * $s-day-height);
+  height: $s-DateBar-height;
   width: calc(100% - #{$s-labels-container-border-right});
   position: relative;
 
@@ -36,8 +37,12 @@
 }
 
 .fl-msc-LabelsBar-labelsContainer {
+  @include  hide-scrollbar();
+
   border: $s-labels-container-border-right solid $c-plain-background;
   border-width: 0 $s-labels-container-border-right 0 0;
+  height: $s-panelWrapper-height - $s-DateBar-height;
+  overflow: auto;
 }
 
 .fl-msc-LabelsBar-label {
