@@ -27,11 +27,11 @@ export default class LabelsBar extends ViewController {
   /**
    * Used by CalendarContainer
    * @public
-   * @method getHeader
+   * @method getLabelsContainer
    * @return {HTMLElement}
    */
-  getHeader() {
-    return this.html.header;
+  getLabelsContainer() {
+    return this.html.labelsContainer;
   }
 
   /**

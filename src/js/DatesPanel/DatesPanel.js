@@ -51,8 +51,18 @@ export default class DatesPanel extends ViewController {
    * @method getDateBar
    * @return {ViewController}
    */
-  getDateBar() {
-    return this.dateBar;
+  getDateBarContainer() {
+    return this.dateBar.getContainer();
+  }
+
+  /**
+   * Used by CalendarContainer
+   * @public
+   * @method getSubectsContainer
+   * @return {HTMLElement}
+   */
+  getSubectsContainer() {
+    return this.html.subjectsContainer;
   }
 
   /**

@@ -7799,14 +7799,14 @@ var LabelsBar = function (_ViewController) {
     /**
      * Used by CalendarContainer
      * @public
-     * @method getHeader
+     * @method getLabelsContainer
      * @return {HTMLElement}
      */
 
   }, {
-    key: 'getHeader',
-    value: function getHeader() {
-      return this.html.header;
+    key: 'getLabelsContainer',
+    value: function getLabelsContainer() {
+      return this.html.labelsContainer;
     }
 
     /**
@@ -8478,9 +8478,22 @@ var DatesPanel = function (_ViewController) {
      */
 
   }, {
-    key: 'getDateBar',
-    value: function getDateBar() {
-      return this.dateBar;
+    key: 'getDateBarContainer',
+    value: function getDateBarContainer() {
+      return this.dateBar.getContainer();
+    }
+
+    /**
+     * Used by CalendarContainer
+     * @public
+     * @method getSubectsContainer
+     * @return {HTMLElement}
+     */
+
+  }, {
+    key: 'getSubectsContainer',
+    value: function getSubectsContainer() {
+      return this.html.subjectsContainer;
     }
 
     /**
@@ -8970,62 +8983,6 @@ var DataLoader = function () {
   return DataLoader;
 }();
 
-var acceptableSides = ['left', 'top'];
-var containers = new Map();
-var updatedContainers = new Map();
-
-function setSticky(side, element, container) {
-  return;
-  assert(acceptableSides.includes(side), 'Invalid value for side: ' + side);
-  assert(container && typeof container.addEventListener === 'function', 'Element does not have a parent.');
-
-  if (!containers.has(container)) {
-    trackContainer(container);
-  }
-
-  var upToDate = true;
-  function moveFunction() {
-    upToDate = true;
-    var containerInfo = containers.get(container);
-    if (side === 'left') {
-      element.style.left = containerInfo.scrollLeft + 'px';
-    } else {
-      element.style.top = containerInfo.scrollTop + 'px';
-    }
-  }
-
-  container.addEventListener('scroll', function () {
-    // If not moved is because scroll has been called and the animation frame
-    // function was not triggered yet
-    if (!upToDate) {
-      return;
-    }
-    upToDate = false;
-    requestAnimationFrame(moveFunction);
-  });
-}
-
-function trackContainer(container) {
-  updatedContainers.set(container, true);
-  container.addEventListener('scroll', function prepareContainerValueUpdate() {
-    if (updatedContainers.get(container) === false) {
-      return;
-    }
-    updatedContainers.set(container, false);
-    requestAnimationFrame(function () {
-      return updateContainerCoordinates(container);
-    });
-  });
-}
-
-function updateContainerCoordinates(el) {
-  containers.set(el, {
-    scrollTop: el.scrollTop,
-    scrollLeft: el.scrollLeft
-  });
-  updatedContainers.set(el, true);
-}
-
 // Returns a function, that, as long as it continues to be invoked, will not
 // be triggered. The function will be called after it stops being called for
 // N milliseconds. If `immediate` is passed, trigger the function on the
@@ -9046,6 +9003,8 @@ function debounce(wait, func, immediate) {
 	};
 }
 
+var scrollSync = ['datesPanel', 'labelsBar'];
+
 var CalendarContainer = function (_ViewController) {
   _inherits(CalendarContainer, _ViewController);
 
@@ -9054,8 +9013,6 @@ var CalendarContainer = function (_ViewController) {
 
     var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(CalendarContainer).call(this, modulePrefix));
 
-    Object.preventExtensions(_this);
-
     _this.acceptEvents('scrollEndBottom', 'scrollEndTop');
     return _this;
   }
@@ -9063,23 +9020,24 @@ var CalendarContainer = function (_ViewController) {
   _createClass(CalendarContainer, [{
     key: 'set',
     value: function set(name, instance) {
+      var _this2 = this;
+
       assert(this.html[name], 'Trying to set invalid property: ' + name);
       this.html[name].parentNode.replaceChild(instance.html.container, this.html[name]);
       this.html[name] = instance.html.container;
-      if (name === 'labelsBar') {
-        setSticky('left', this.html[name], this.html.panelWrapper);
-        var header = instance.getHeader();
-        setSticky('top', header, this.html.panelWrapper);
-      } else if (name === 'datesPanel') {
-        var dateBar = instance.getDateBar();
-        var dateBarContainer = dateBar.getContainer();
-        setSticky('top', dateBarContainer, this.html.panelWrapper);
+      this[name] = instance;
+
+      // if this has all properties in scrollSync array
+      if (scrollSync.reduce(function (outcome, prop) {
+        return !!(outcome && _this2[prop]);
+      }, true)) {
+        this.synchroniseScrolls();
       }
     }
   }, {
     key: 'buildHtml',
     value: function buildHtml() {
-      var _this2 = this;
+      var _this3 = this;
 
       this.html.controlBar = document.createElement('div');
       this.html.container.appendChild(this.html.controlBar);
@@ -9089,16 +9047,16 @@ var CalendarContainer = function (_ViewController) {
 
       var lastScrollVal = 0;
       var scrollCheck = debounce(250, function () {
-        var panel = _this2.html.panelWrapper;
+        var panel = _this3.html.panelWrapper;
         var scrolledToTheEnd = panel.clientHeight + panel.scrollTop === panel.scrollHeight;
         var scrolletToTheTop = panel.scrollTop === 0;
         var movedInYAxis = panel.scrollTop !== lastScrollVal;
 
         if (movedInYAxis) {
           if (scrolledToTheEnd) {
-            _this2.trigger('scrollEndBottom');
+            _this3.trigger('scrollEndBottom');
           } else if (scrolletToTheTop) {
-            _this2.trigger('scrollEndTop');
+            _this3.trigger('scrollEndTop');
           }
         }
         lastScrollVal = panel.scrollTop;
@@ -9116,6 +9074,20 @@ var CalendarContainer = function (_ViewController) {
     key: 'getScrollContainer',
     value: function getScrollContainer() {
       return this.html.panelWrapper;
+    }
+  }, {
+    key: 'synchroniseScrolls',
+    value: function synchroniseScrolls() {
+      var subjectsContainer = this.datesPanel.getSubectsContainer();
+      var dateBar = this.datesPanel.getDateBarContainer();
+      var labelsContainer = this.labelsBar.getLabelsContainer();
+
+      subjectsContainer.addEventListener('scroll', function () {
+        var topScroll = subjectsContainer.scrollTop;
+        var leftScroll = subjectsContainer.scrollLeft;
+        labelsContainer.scrollTop = topScroll;
+        dateBar.scrollLeft = leftScroll;
+      });
     }
   }]);
 

@@ -1,13 +1,12 @@
 import ViewController from './ViewController';
-import setSticky from './utils/setSticky';
 import debounce from './utils/debounce';
 import assert from 'fl-assert';
+
+const scrollSync = ['datesPanel', 'labelsBar'];
 
 export default class CalendarContainer extends ViewController {
   constructor(modulePrefix) {
     super(modulePrefix);
-    Object.preventExtensions(this);
-
     this.acceptEvents('scrollEndBottom', 'scrollEndTop');
   }
 
@@ -15,14 +14,11 @@ export default class CalendarContainer extends ViewController {
     assert(this.html[name], `Trying to set invalid property: ${name}`);
     this.html[name].parentNode.replaceChild(instance.html.container, this.html[name]);
     this.html[name] = instance.html.container;
-    if (name === 'labelsBar') {
-      setSticky('left', this.html[name], this.html.panelWrapper);
-      const header = instance.getHeader();
-      setSticky('top', header, this.html.panelWrapper);
-    } else if (name === 'datesPanel') {
-      const dateBar = instance.getDateBar();
-      const dateBarContainer = dateBar.getContainer();
-      setSticky('top', dateBarContainer, this.html.panelWrapper);
+    this[name] = instance;
+
+    // if this has all properties in scrollSync array
+    if (scrollSync.reduce((outcome, prop) => !!(outcome && this[prop]), true)) {
+      this.synchroniseScrolls();
     }
   }
 
@@ -61,5 +57,18 @@ export default class CalendarContainer extends ViewController {
 
   getScrollContainer() {
     return this.html.panelWrapper;
+  }
+
+  synchroniseScrolls() {
+    const subjectsContainer = this.datesPanel.getSubectsContainer();
+    const dateBar = this.datesPanel.getDateBarContainer();
+    const labelsContainer = this.labelsBar.getLabelsContainer();        
+
+    subjectsContainer.addEventListener('scroll', () => {
+      const topScroll = subjectsContainer.scrollTop;
+      const leftScroll = subjectsContainer.scrollLeft;
+      labelsContainer.scrollTop = topScroll;
+      dateBar.scrollLeft = leftScroll;
+    });
   }
 }
