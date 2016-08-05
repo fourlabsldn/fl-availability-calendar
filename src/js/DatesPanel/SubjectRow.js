@@ -1,5 +1,6 @@
 import ViewController from '../ViewController';
 import Configuration from '../Configuration';
+import EventCentral from '../EventCentral';
 
 export default class SubjectRow extends ViewController {
   constructor(subject, rowStartDate, rowEndDate, modulePrefix) {
@@ -73,7 +74,9 @@ export default class SubjectRow extends ViewController {
 
     const eventEl = document.createElement('div');
     eventEl.classList.add(`${this.cssPrefix}-event`);
-    eventEl.classList.add(`${this.cssPrefix}-event--${event.status}`);
+
+    const eventClass = `${this.cssPrefix}-event--${event.status}`;
+    eventEl.classList.add(eventClass);
     if (event.className) { eventEl.classList.add(`${event.className}`); }
     eventEl.style.width = `calc(${duration} * ${dayWidth})`;
     eventEl.style.left = `calc(${offset} * ${dayWidth})`;
@@ -87,6 +90,7 @@ export default class SubjectRow extends ViewController {
     eventEl.setAttribute('title', title);
 
     setEventDataToElement(event, eventEl);
+    EventCentral.trigger('eventCreated', event, eventClass);
     return eventEl;
   }
 }

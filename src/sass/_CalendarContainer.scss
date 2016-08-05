@@ -17,3 +17,21 @@
   max-height: $s-panelWrapper-height;
   background-color: inherit;
 }
+
+.fl-msc-Legend {
+  padding: 2em 1em;
+}
+.fl-msc-Legend-item {
+  display: inline-block;
+}
+.fl-msc-Legend-name {
+  display: inline-block;
+  text-transform:capitalize;
+}
+
+.fl-msc-Legend-color {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  margin: 0 1em;
+}

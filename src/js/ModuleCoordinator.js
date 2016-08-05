@@ -5,6 +5,7 @@ import ControlBar from './ControlBar';
 import DatesPanel from './DatesPanel/DatesPanel';
 import DataLoader from './data/DataLoader';
 import CalendarContainer from './CalendarContainer';
+import Legend from './Legend';
 
 const MODULE_PREFIX = 'fl-msc';
 const CUSTOM_DAYCOUNT = 120;
@@ -30,6 +31,9 @@ export default class ModuleCoordinator {
     // create datesContainer
     this.datesPanel = new DatesPanel(this.startDate, MODULE_PREFIX);
     this.calendarContainer.set('datesPanel', this.datesPanel);
+
+    this.legend = new Legend(MODULE_PREFIX);
+    this.calendarContainer.set('legend', this.legend);
 
     Object.preventExtensions(this);
     xdiv.appendChild(this.calendarContainer.html.container);

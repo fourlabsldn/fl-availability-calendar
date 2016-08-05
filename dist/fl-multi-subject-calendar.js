@@ -8308,6 +8308,48 @@ var DateBar = function (_ViewController) {
   return DateBar;
 }(ViewController);
 
+var allowedEvents = ['eventCreated'];
+
+var EventCentral = function () {
+  function EventCentral() {
+    _classCallCheck(this, EventCentral);
+
+    this.listeners = {};
+  }
+
+  _createClass(EventCentral, [{
+    key: 'on',
+    value: function on(eventName, listener) {
+      assert(allowedEvents.includes(eventName), eventName + ' is not a valid configuraiton event');
+      assert(typeof listener === 'function', listener + ' is not a function');
+      if (!this.listeners[eventName]) {
+        this.listeners[eventName] = [];
+      }
+
+      this.listeners[eventName].push(listener);
+    }
+  }, {
+    key: 'trigger',
+    value: function trigger(eventName) {
+      for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+        args[_key - 1] = arguments[_key];
+      }
+
+      if (!this.listeners[eventName]) {
+        return;
+      }
+
+      this.listeners[eventName].forEach(function (l) {
+        return l.apply(undefined, args);
+      });
+    }
+  }]);
+
+  return EventCentral;
+}();
+
+var EventCentral$1 = new EventCentral();
+
 var SubjectRow = function (_ViewController) {
   _inherits(SubjectRow, _ViewController);
 
@@ -8389,7 +8431,9 @@ var SubjectRow = function (_ViewController) {
 
       var eventEl = document.createElement('div');
       eventEl.classList.add(this.cssPrefix + '-event');
-      eventEl.classList.add(this.cssPrefix + '-event--' + event.status);
+
+      var eventClass = this.cssPrefix + '-event--' + event.status;
+      eventEl.classList.add(eventClass);
       if (event.className) {
         eventEl.classList.add('' + event.className);
       }
@@ -8401,6 +8445,7 @@ var SubjectRow = function (_ViewController) {
       eventEl.setAttribute('title', title);
 
       setEventDataToElement(event, eventEl);
+      EventCentral$1.trigger('eventCreated', event, eventClass);
       return eventEl;
     }
   }]);
@@ -9049,6 +9094,9 @@ var CalendarContainer = function (_ViewController) {
 
       this.html.datesPanel = document.createElement('div');
       this.html.panelWrapper.appendChild(this.html.datesPanel);
+
+      this.html.legend = document.createElement('div');
+      this.html.container.appendChild(this.html.legend);
     }
   }, {
     key: 'getScrollContainer',
@@ -9094,6 +9142,59 @@ var CalendarContainer = function (_ViewController) {
   return CalendarContainer;
 }(ViewController);
 
+var Legend = function (_ViewController) {
+  _inherits(Legend, _ViewController);
+
+  function Legend(modulePrefix) {
+    _classCallCheck(this, Legend);
+
+    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Legend).call(this, modulePrefix));
+
+    _this.eventTypes = [];
+
+    Object.preventExtensions(_this);
+
+    EventCentral$1.on('eventCreated', _this.registerEventLegend.bind(_this));
+    return _this;
+  }
+
+  /**
+   * @private
+   * @method registerEventLegend
+   * @param {object} event - Calendar event object
+   * @return {void}
+   */
+
+
+  _createClass(Legend, [{
+    key: 'registerEventLegend',
+    value: function registerEventLegend(event, eventClass) {
+      if (this.eventTypes.includes(event.status)) {
+        return;
+      }
+
+      this.eventTypes = this.eventTypes.concat([event.status]);
+
+      var legendObject = document.createElement('div');
+      legendObject.classList.add(this.modulePrefix + '-Legend-item');
+
+      var legendName = document.createElement('span');
+      legendName.classList.add(this.modulePrefix + '-Legend-name');
+      legendName.textContent = event.status;
+      legendObject.appendChild(legendName);
+
+      var legendColor = document.createElement('div');
+      legendColor.classList.add(this.modulePrefix + '-Legend-color');
+      legendColor.classList.add(eventClass);
+      legendObject.appendChild(legendColor);
+
+      this.html.container.appendChild(legendObject);
+    }
+  }]);
+
+  return Legend;
+}(ViewController);
+
 var MODULE_PREFIX = 'fl-msc';
 var CUSTOM_DAYCOUNT = 120;
 var ELEMENTS_TO_LOAD_ON_SCROLL = 50;
@@ -9122,6 +9223,9 @@ var ModuleCoordinator = function () {
     // create datesContainer
     this.datesPanel = new DatesPanel(this.startDate, MODULE_PREFIX);
     this.calendarContainer.set('datesPanel', this.datesPanel);
+
+    this.legend = new Legend(MODULE_PREFIX);
+    this.calendarContainer.set('legend', this.legend);
 
     Object.preventExtensions(this);
     xdiv.appendChild(this.calendarContainer.html.container);
