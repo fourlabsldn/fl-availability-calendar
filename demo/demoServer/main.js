@@ -11,6 +11,15 @@ const app = express();
 
 module.exports = () => {
   return new Promise((resolve) => {
+    // serve static files
+    app.use('/demo', (req, res, next) => {
+      if (req.url.indexOf('demoServer') !== -1) {
+        return res.status(403).end('403 Forbidden')
+      }
+      next();
+    });
+    app.use(express.static('.'));
+
     app.get('/finish', () => {
       resolve();
     });
