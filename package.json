@@ -8,13 +8,8 @@
     "demo": "gulp demo",
     "dev": "gulp build && gulp watch"
   },
-  "keywords": [
-    "four",
-    "labs",
-    "multi-subject",
-    "calendar"
-  ],
-  "author": "Lazamar @ FourLabs",
+  "keywords": [],
+  "author": "Lazamar @ Four Labs",
   "license": "ISC",
   "devDependencies": {
     "autoprefixer": "^6.3.6",
@@ -25,6 +20,7 @@
     "babel-preset-es2015": "^6.9.0",
     "babel-preset-es2015-rollup": "^1.1.1",
     "babel-preset-stage-0": "^6.5.0",
+    "browser-sync": "^2.14.0",
     "dep-linker": ">=0.1.24",
     "express": "^4.13.4",
     "fl-assert": "^1.0.10",
