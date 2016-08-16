@@ -45,6 +45,8 @@ gulp.task('build:src', () => {
     // are all beautifully namespaced.
     banner: '(function () {',
     footer: '}());',
+    entry: paths.js.main,
+    allowRealFiles: true, // avoid the hypothetical file system error
     plugins: [
       nodeResolve({ jsnext: true, main: true }),
       commonjs(),
