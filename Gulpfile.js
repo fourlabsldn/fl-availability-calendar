@@ -49,13 +49,9 @@ gulp.task('build:src', () => {
       nodeResolve({ jsnext: false, main: true }),
       commonjs(),
       babel({
-        runtimeHelpers: true,
         exclude: 'node_modules/**',
-        plugins: ['transform-async-to-generator', [
-          'transform-runtime', {
-            polyfill: false,
-            regenerator: true,
-          }]],
+        babelrc: false,
+        plugins: ['transform-async-to-generator', 'external-helpers-2'],
         presets: ['es2015-rollup'],
       }),
     ],

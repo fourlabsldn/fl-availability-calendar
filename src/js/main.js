@@ -1,4 +1,5 @@
 // /* globals xController */
+import 'babel-polyfill';
 import './utils/fetch-polyfill';
 import AvailabilityCalendar from './AvailabilityCalendar';
 import Configuration from './Configuration';
