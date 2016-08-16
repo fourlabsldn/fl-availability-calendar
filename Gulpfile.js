@@ -11,7 +11,7 @@ const DepLinker = require('dep-linker');
 const rename = require('gulp-rename');
 const autoprefixer = require('autoprefixer');
 const postcss = require('gulp-postcss');
-const demoServer = require('./demo/demoServer/main.js');
+const demoServer = require('./examples/default/demoServer/main.js');
 const browserSync = require('browser-sync').create();
 
 const moduleName = 'fl-availability-calendar';
@@ -27,8 +27,9 @@ const paths = {
     dest: './dist/',
   },
   demo: {
-    src: './demo',
-    dep: './demo/dependencies',
+    main: './examples/default/index.html',
+    src: './examples/default',
+    dep: './examples/default/dependencies',
   },
 };
 
@@ -97,6 +98,7 @@ gulp.task('watch', [
 
 gulp.task('demo', ['copy-dependencies', 'build', 'watch'], () => {
   browserSync.init({
+    startPath: paths.demo.main,
     server: {
       baseDir: './',
       directory: true,
