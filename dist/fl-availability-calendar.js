@@ -14430,4 +14430,4 @@ xController(function (xdiv) {
   window.AvailabilityCalendar = new AvailabilityCalendar(xdiv);
 });
 }());
-//# sourceMappingURL=fl-multi-subject-calendar.js.map
+//# sourceMappingURL=fl-availability-calendar.js.map

@@ -14,7 +14,7 @@ const postcss = require('gulp-postcss');
 const demoServer = require('./demo/demoServer/main.js');
 const browserSync = require('browser-sync').create();
 
-const moduleName = 'fl-multi-subject-calendar';
+const moduleName = 'fl-availability-calendar';
 const paths = {
   js: {
     src: './src/**/*',
