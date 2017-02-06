@@ -3,6 +3,20 @@
 Each event has a class which is set based in the `status` property of the
 event.
 
+The availability calendar x-div element accepts the following properties.
+
+``` html
+<x-div
+  data-controller="../../dist/fl-availability-calendar.js"
+  data-load-url="http://localhost:3005"
+  data-header="Properties"
+  data-filters='{ "takingCleaning": true, "takingWifi": false }'
+  data-credentials='{ "user": 1234, "token": "£!123$%"}'
+>
+```
+
+`data-filters` and `data-credentials` contain data that will be sent with every request.
+
 # Testing
 
 Run `gulp demo` to have the default example in the `examples` page running in the browser. Make sure to run `gulp build` before starting the demo.
