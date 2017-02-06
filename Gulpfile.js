@@ -82,9 +82,19 @@ gulp.task('watch:build:sass', () => {
   gulp.watch(paths.sass.src, ['build:sass']);
 });
 
-gulp.task('startDemoServer', () => {
-  return demoServer();
+gulp.task('demo', () => {
+
+  demoServer();
+
+  browserSync.init({
+    startPath: '/index.html',
+    server: {
+      baseDir: './examples/default'
+    },
+  });
 });
+
+
 
 gulp.task('build', [
   'build:src',
